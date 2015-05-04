@@ -13,7 +13,6 @@ requires 'Catalyst::Runtime' => '5.90085';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Action::RenderView';
-requires 'Catalyst::View::Mason2';
 requires 'Moose';
 requires 'namespace::autoclean';
 requires
