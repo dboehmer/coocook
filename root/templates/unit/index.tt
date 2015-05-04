@@ -1,0 +1,15 @@
+<h2>Units</h2>
+
+<ul>
+[% FOR unit IN units.all %]
+	<li>[% unit.name %]
+		<form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="post"><input type="submit" value="Delete"></form>
+		<form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="post"><input type="text" name="name" value="[% unit.name %]"><input type="submit" value="Rename"></form>
+	</li>
+[% END %]
+</ul>
+
+<form action="[% c.uri_for_action('/unit/create') %]" method="post">
+<input type="text" name="name" placeholder="name">
+<input type="submit" value="Create">
+</form>

@@ -5,7 +5,13 @@
 
 <body>
 
-<h1>[% c.config.name %]</title>
+<h1><a href="[% c.uri_for('/') %]">[% c.config.name %]</a></h1>
+
+<nav>
+<ul>
+<li><a href="[% c.uri_for_action('/unit/index') %]">Units</a></li>
+</ul>
+</nav>
 
 [% content %]
 
