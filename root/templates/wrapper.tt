@@ -1,0 +1,13 @@
+<html>
+<head>
+	<title>[% c.config.name %]</title>
+</head>
+
+<body>
+
+<h1>[% c.config.name %]</title>
+
+[% content %]
+
+</body>
+</html>
