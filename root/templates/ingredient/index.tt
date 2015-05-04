@@ -1,0 +1,15 @@
+<h2>Ingredients</h2>
+
+<ul>
+[% FOR ingredient IN ingredients.all %]
+	<li>[% ingredient.name %]
+		<form action="[% c.uri_for_action('/ingredient/delete', ingredient.id) %]" method="post"><input type="submit" value="Delete"></form>
+		<form action="[% c.uri_for_action('/ingredient/update', ingredient.id) %]" method="post"><input type="text" name="name" value="[% ingredient.name %]"><input type="submit" value="Rename"></form>
+	</li>
+[% END %]
+</ul>
+
+<form action="[% c.uri_for_action('/ingredient/create') %]" method="post">
+<input type="text" name="name" placeholder="name">
+<input type="submit" value="Create">
+</form>

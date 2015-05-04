@@ -9,6 +9,7 @@
 
 <nav>
 <ul>
+<li><a href="[% c.uri_for_action('/ingredient/index') %]">Ingredients</a></li>
 <li><a href="[% c.uri_for_action('/unit/index') %]">Units</a></li>
 </ul>
 </nav>
