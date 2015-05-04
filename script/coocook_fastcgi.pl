@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use Catalyst::ScriptRunner;
-Catalyst::ScriptRunner->run('Coocook', 'FastCGI');
+Catalyst::ScriptRunner->run( 'Coocook', 'FastCGI' );
 
 1;
 

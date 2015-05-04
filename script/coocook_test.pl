@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use Catalyst::ScriptRunner;
-Catalyst::ScriptRunner->run('Coocook', 'Test');
+Catalyst::ScriptRunner->run( 'Coocook', 'Test' );
 
 1;
 

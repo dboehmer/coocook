@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Catalyst::ScriptRunner;
-Catalyst::ScriptRunner->run('Coocook', 'Create');
+Catalyst::ScriptRunner->run( 'Coocook', 'Create' );
 
 1;
 
