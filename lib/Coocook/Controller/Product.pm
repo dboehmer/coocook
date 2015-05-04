@@ -1,4 +1,4 @@
-package Coocook::Controller::Ingredient;
+package Coocook::Controller::Product;
 use Moose;
 use namespace::autoclean;
 
@@ -6,7 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 =head1 NAME
 
-Coocook::Controller::Ingredient - Catalyst Controller
+Coocook::Controller::Product - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -24,32 +24,31 @@ sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        ingredients => $c->model('Schema::Ingredient'),
-        units       => [ $c->model('Schema::Unit')->all ],
+        products => $c->model('Schema::Product'),
+        units    => [ $c->model('Schema::Unit')->all ],
     );
 }
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Ingredient')
-      ->create( { name => $c->req->param('name') } );
-    $c->response->redirect( $c->uri_for('/ingredient') );
+    $c->model('Schema::Product')->create( { name => $c->req->param('name') } );
+    $c->response->redirect( $c->uri_for('/product') );
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Ingredient')->find($id)->delete;
-    $c->response->redirect( $c->uri_for('/ingredient') );
+    $c->model('Schema::Product')->find($id)->delete;
+    $c->response->redirect( $c->uri_for('/product') );
 }
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Ingredient')->find($id)->update(
+    $c->model('Schema::Product')->find($id)->update(
         {
             name => $c->req->param('name'),
         }
     );
-    $c->response->redirect( $c->uri_for('/ingredient') );
+    $c->response->redirect( $c->uri_for('/product') );
 }
 
 =encoding utf8

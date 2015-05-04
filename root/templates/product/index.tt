@@ -1,0 +1,30 @@
+<h2>Products</h2>
+
+<form action="[% c.uri_for_action('/product/create') %]" method="post">
+<fieldset>
+	<legend>Applicable Units</legend>
+[% FOR unit IN units %]
+	<input type="checkbox" id="u[% unit.id %]" value="unit[% unit.id %]">
+	<label for="u[% unit.id %]">[% unit.name %]</label>
+[% END %]
+</fieldset>
+<input type="text" name="name" placeholder="name">
+<input type="submit" value="Create">
+</form>
+<ul>
+
+[% FOR product IN products.all %]
+	<li>[% product.name %]
+		<form action="[% c.uri_for_action('/product/delete', product.id) %]" method="post"><input type="submit" value="Delete"></form>
+
+		<form action="[% c.uri_for_action('/product/update', product.id) %]" method="post">
+[% FOR unit IN units %]
+	<input type="checkbox" id="i[% product.id %]u[% unit.id %]" value="unit[% unit.id %]">
+	<label for="i[% product.id %]u[% unit.id %]">[% unit.name %]</label>
+[% END %]
+<input type="text" name="name" value="[% product.name %]">
+<input type="submit" value="Update"></form>
+	</li>
+[% END %]
+</ul>
+

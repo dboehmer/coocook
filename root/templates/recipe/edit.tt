@@ -8,11 +8,11 @@
 <input type="submit" value="Update">
 </form>
 
-<h2>Ingredients</h2>
+<h2>Products</h2>
 
 <table>
 <thead>
-<th>Ingredient</th>
+<th>Product</th>
 <th>Quantity</th>
 <th>Unit</th>
 </thead>
