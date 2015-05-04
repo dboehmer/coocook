@@ -23,12 +23,16 @@ Catalyst Controller.
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( ingredients => $c->model('Schema::Ingredient'), );
+    $c->stash(
+        ingredients => $c->model('Schema::Ingredient'),
+        units       => [ $c->model('Schema::Unit')->all ],
+    );
 }
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Ingredient')->create( { name => $c->req->param('name') } );
+    $c->model('Schema::Ingredient')
+      ->create( { name => $c->req->param('name') } );
     $c->response->redirect( $c->uri_for('/ingredient') );
 }
 

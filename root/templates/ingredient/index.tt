@@ -1,15 +1,30 @@
 <h2>Ingredients</h2>
 
+<form action="[% c.uri_for_action('/ingredient/create') %]" method="post">
+<fieldset>
+	<legend>Applicable Units</legend>
+[% FOR unit IN units %]
+	<input type="checkbox" id="u[% unit.id %]" value="unit[% unit.id %]">
+	<label for="u[% unit.id %]">[% unit.name %]</label>
+[% END %]
+</fieldset>
+<input type="text" name="name" placeholder="name">
+<input type="submit" value="Create">
+</form>
 <ul>
+
 [% FOR ingredient IN ingredients.all %]
 	<li>[% ingredient.name %]
 		<form action="[% c.uri_for_action('/ingredient/delete', ingredient.id) %]" method="post"><input type="submit" value="Delete"></form>
-		<form action="[% c.uri_for_action('/ingredient/update', ingredient.id) %]" method="post"><input type="text" name="name" value="[% ingredient.name %]"><input type="submit" value="Rename"></form>
+
+		<form action="[% c.uri_for_action('/ingredient/update', ingredient.id) %]" method="post">
+[% FOR unit IN units %]
+	<input type="checkbox" id="i[% ingredient.id %]u[% unit.id %]" value="unit[% unit.id %]">
+	<label for="i[% ingredient.id %]u[% unit.id %]">[% unit.name %]</label>
+[% END %]
+<input type="text" name="name" value="[% ingredient.name %]">
+<input type="submit" value="Update"></form>
 	</li>
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/ingredient/create') %]" method="post">
-<input type="text" name="name" placeholder="name">
-<input type="submit" value="Create">
-</form>
