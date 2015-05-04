@@ -10,5 +10,6 @@
 
 <form action="[% c.uri_for_action('/recipe/create') %]" method="post">
 <input type="text" name="name" placeholder="name">
+<p>Servings: <input type="text" name="servings" value="4"></p>
 <input type="submit" value="Create">
 </form>

@@ -32,12 +32,16 @@ sub edit : Local : Args(1) {
 }
 
 sub create : Local : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Recipe')->create( { 
-name => $c->req->param('name'),
-description => $c->req->param('description') // "",
- } );
-    $c->response->redirect( $c->uri_for_action( $self->action_for('edit')), $id );
+    my ( $self, $c ) = @_;
+    my $recipe = $c->model('Schema::Recipe')->create(
+        {
+            name        => $c->req->param('name'),
+            description => $c->req->param('description') // "",
+            servings    => $c->req->param('servings'),
+        }
+    );
+    $c->response->redirect(
+        $c->uri_for_action( $self->action_for('edit'), $recipe->id ) );
 }
 
 sub delete : Local : Args(1) : POST {
@@ -50,11 +54,12 @@ sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Recipe')->find($id)->update(
         {
-            name => $c->req->param('name'),
-	description => $c->req->param('description'),
+            name        => $c->req->param('name'),
+            description => $c->req->param('description'),
+            servings    => $c->req->param('servings'),
         }
     );
-    $c->response->redirect( $c->uri_for_action('/recipe/edit', $id) );
+    $c->response->redirect( $c->uri_for_action( '/recipe/edit', $id ) );
 }
 
 =encoding utf8
