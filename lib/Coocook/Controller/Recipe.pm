@@ -32,7 +32,7 @@ sub edit : Local : Args(1) {
     $c->stash(
         recipe      => $recipe,
         ingredients => [ $recipe->ingredients->all ],
-        products    => [ $c->model('Schema::Product')->all ],
+        articles    => [ $c->model('Schema::Article')->all ],
         units       => [ $c->model('Schema::Unit')->all ],
     );
 }
@@ -42,7 +42,7 @@ sub add : Local : Args(1) {
     $c->model('Schema::Ingredient')->create(
         {
             recipe   => $id,
-            product  => $c->req->param('product'),
+            article  => $c->req->param('article'),
             quantity => $c->req->param('quantity'),
             unit     => $c->req->param('unit'),
         }

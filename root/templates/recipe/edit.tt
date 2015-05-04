@@ -8,17 +8,17 @@
 <input type="submit" value="Update">
 </form>
 
-<h2>Products</h2>
+<h2>Ingredients</h2>
 
 <table>
 <thead>
-<th>Product</th>
+<th>Article</th>
 <th>Quantity</th>
 <th>Unit</th>
 </thead>
 [% FOR ingredient IN ingredients %]
 	<tr>
-	<td><select name="product[% ingredient.id %]">[% FOR product IN products %]<option value="[% product.id %]" [% 'selected' IF product.id == ingredient.unit %]>[% product.name %]</option>[% END %]</select></td>
+	<td><select name="article[% ingredient.id %]">[% FOR article IN articles %]<option value="[% article.id %]" [% 'selected' IF article.id == ingredient.unit %]>[% article.name %]</option>[% END %]</select></td>
 	<td><input type="text" name="quantity[% ingredient.id %]" value="[% ingredient.quantity %]"></td>
 	<td><select name="unit[% ingredient.id %]">[% FOR unit IN units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit %]>[% unit.name %]</option>[% END %]</select></td>
 	</tr>
@@ -26,9 +26,9 @@
 </table>
 
 <form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
-Product: <select name="product">
-[% FOR product IN products %]
-	<option value="[% product.id %]">[% product.name %]</option>
+Article: <select name="article">
+[% FOR article IN articles %]
+	<option value="[% article.id %]">[% article.name %]</option>
 [% END %]
 </select>
 Unit: <select name="unit">

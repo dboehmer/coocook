@@ -31,7 +31,7 @@ The root page (/)
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash->{products} = [qw<Mehl Zucker Wasser>];
+    $c->stash->{articles} = [qw<Mehl Zucker Wasser>];
 }
 
 =head2 default

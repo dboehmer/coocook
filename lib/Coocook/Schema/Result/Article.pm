@@ -1,11 +1,11 @@
-package Coocook::Schema::Result::Product;
+package Coocook::Schema::Result::Article;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->table("products");
+__PACKAGE__->table("articles");
 
 __PACKAGE__->add_columns(
     id   => { data_type => "integer", is_auto_increment => 1 },
