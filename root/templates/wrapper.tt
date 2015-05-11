@@ -1,6 +1,8 @@
 <html>
 <head>
-	<title>[% c.config.name %]</title>
+    <title>[% c.config.name %]</title>
+
+    <meta charset="UTF-8">
 </head>
 
 <body>
