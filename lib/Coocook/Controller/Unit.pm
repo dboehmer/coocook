@@ -20,7 +20,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path : Args(0) {
+sub index : Path('/units') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -40,19 +40,19 @@ sub create : Local : POST {
               || undef,
         }
     );
-    $c->response->redirect( $c->uri_for('/unit') );
+    $c->response->redirect( $c->uri_for_action('/unit/index') );
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->delete;
-    $c->response->redirect( $c->uri_for('/unit') );
+    $c->response->redirect( $c->uri_for_action('/unit/index') );
 }
 
 sub make_quantity_default : Local Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->make_quantity_default;
-    $c->response->redirect( $c->uri_for('/unit') );
+    $c->response->redirect( $c->uri_for_action('/unit/index') );
 }
 
 sub update : Local : Args(1) : POST {
@@ -63,7 +63,7 @@ sub update : Local : Args(1) : POST {
             long_name  => $c->req->param('long_name'),
         }
     );
-    $c->response->redirect( $c->uri_for('/unit') );
+    $c->response->redirect( $c->uri_for_action('/unit/index') );
 }
 
 =encoding utf8

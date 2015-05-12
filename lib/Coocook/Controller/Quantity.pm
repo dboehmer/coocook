@@ -20,7 +20,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path : Args(0) {
+sub index : Path('/quantities') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( quantities => $c->model('Schema::Quantity'), );
@@ -29,13 +29,13 @@ sub index : Path : Args(0) {
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Quantity')->create( { name => $c->req->param('name') } );
-    $c->response->redirect( $c->uri_for('/quantity') );
+    $c->response->redirect( $c->uri_for_action('/quantity/index') );
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Quantity')->find($id)->delete;
-    $c->response->redirect( $c->uri_for('/quantity') );
+    $c->response->redirect( $c->uri_for_action('/quantity/index') );
 }
 
 sub update : Local : Args(1) : POST {
@@ -45,7 +45,7 @@ sub update : Local : Args(1) : POST {
             name => $c->req->param('name'),
         }
     );
-    $c->response->redirect( $c->uri_for('/quantity') );
+    $c->response->redirect( $c->uri_for_action('/quantity/index') );
 }
 
 =encoding utf8
