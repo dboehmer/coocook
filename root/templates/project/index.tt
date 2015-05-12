@@ -1,0 +1,12 @@
+<h2>Projects</h2>
+
+<ul>
+[% FOR project IN projects.all %]
+    <li><a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a></li>
+[% END %]
+</ul>
+
+<form action="[% c.uri_for_action('/project/create') %]" method="post">
+<input type="text" name="name" placeholder="name">
+<input type="submit" value="Create">
+</form>

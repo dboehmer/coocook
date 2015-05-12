@@ -11,6 +11,7 @@
 
 <nav>
 <ul>
+<li><a href="[% c.uri_for_action('/project/index') %]">Projects</a></li>
 <li><a href="[% c.uri_for_action('/recipe/index') %]">Recipes</a></li>
 <li><a href="[% c.uri_for_action('/article/index') %]">Articles</a></li>
 <li><a href="[% c.uri_for_action('/quantity/index') %]">Quantities</a></li>

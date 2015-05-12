@@ -31,3 +31,5 @@ INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,2,4,50,"50
 INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,3,1,1,"1l Wasser");
 INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,4,4,5,"5g Pfeffer");
 INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,5,4,5,"5g Salz");
+
+INSERT INTO projects (name) VALUES ("SOLA");
