@@ -26,7 +26,7 @@ sub index : Path('/recipes') : Args(0) {
     $c->stash( recipes => $c->model('Schema::Recipe'), );
 }
 
-sub edit : Local : Args(1) {
+sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
     my $recipe = $c->model('Schema::Recipe')->find($id);
     $c->stash(
