@@ -33,3 +33,7 @@ INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,4,4,5,"5g 
 INSERT INTO ingredients (recipe,article,unit,value,comment) VALUES (1,5,4,5,"5g Salz");
 
 INSERT INTO projects (name) VALUES ("SOLA");
+
+INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Frühstück","in Gruppen");
+INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Mittagessen","");
+INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Abendbrot","Festessen");

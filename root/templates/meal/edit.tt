@@ -1,0 +1,1 @@
+<h2><a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a> [% meal.name %]</a></h2>

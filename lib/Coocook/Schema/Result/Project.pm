@@ -16,6 +16,8 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( ['name'] );
 
+__PACKAGE__->has_many( meals => 'Coocook::Schema::Result::Meal' );
+
 __PACKAGE__->meta->make_immutable;
 
 1;

@@ -1,1 +1,21 @@
-<h2>[% project.name %]
+<h2>[% project.name %]</h2>
+
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Comment</th>
+    </tr>
+
+[% FOREACH day IN days;
+    FOREACH meal IN day.meals %]
+    <tr>
+[% IF loop.first %]
+        <td rowspan="[% day.meals.size %]">[% day.date %]</td>
+[% END %]
+        <td><a href="[% c.uri_for_action('/meal/edit', meal.id) %]">[% meal.name %]</a></td>
+        <td>[% meal.comment %]</td>
+    </tr>
+    [% END;
+END %]
+</table>

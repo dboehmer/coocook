@@ -29,8 +29,24 @@ sub index : Path('/projects') : Args(0) {
 
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
+    my $project = $c->model('Schema::Project')->find($id);
 
-    $c->stash( project => $c->model('Schema::Project')->find($id), );
+    my $days = do {
+        my @meals = $project->meals->all;
+
+        my %days;
+
+        push @{ $days{ $_->date }{meals} }, $_ for @meals;
+
+        $days{$_}{date} = $_ for keys %days;
+
+        [ values %days ];
+    };
+
+    $c->stash(
+        project => $project,
+        days    => $days,
+    );
 }
 
 sub create : Local : POST {
