@@ -1,15 +1,50 @@
 <h2>Units</h2>
 
+<table>
+<tr>
+<th>Quantity</th>
+<th>Unit</th>
+<th colspan="2">Conversion</th>
+</tr>
+[% FOR unit IN units.all;
+ quantity = unit.quantity;
+ default_unit = quantity.default_unit;
+ default_unit_short_name = default_unit.short_name %]
+<tr>
+<td>[% quantity.name %]</td>
+<td>[% unit.short_name %] ([% unit.long_name %])</td>
+[% IF unit.to_quantity_default %]
+    <td>1 [% unit.short_name %] = [% unit.to_quantity_default %] [% default_unit_short_name %]</td>
+    <td>[% 1 / unit.to_quantity_default %] [% unit.short_name %] = 1 [% default_unit_short_name %]</td>
+[% ELSE; '<td></td><td></td>'; END %]
+</tr>
+[% END %]
+</table>
+
 <ul>
 [% FOR unit IN units.all %]
-	<li>[% unit.name %]
-		<form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="post"><input type="submit" value="Delete"></form>
-		<form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="post"><input type="text" name="name" value="[% unit.name %]"><input type="submit" value="Rename"></form>
-	</li>
+    <li><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr> ([% unit.quantity.name %]):
+        <form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="post">
+            <input type="text" name="short_name" value="[% unit.short_name %]">
+            <input type="text" name="long_name" value="[% unit.long_name %]">
+            <input type="submit" value="Rename"></form>
+[% IF unit.quantity AND NOT unit.is_quantity_default %]
+        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="post"><input type="submit" value="Make quantity's default"></form>
+[% END %]
+        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="post"><input type="submit" value="Delete"></form>
+    </li>
 [% END %]
 </ul>
 
 <form action="[% c.uri_for_action('/unit/create') %]" method="post">
-<input type="text" name="name" placeholder="name">
+<input type="text" name="short_name" placeholder="short name">
+<input type="text" name="long_name" placeholder="long name">
+Quantity: <select name="quantity">
+    <option value="">(none)</option>
+[% FOR quantity IN quantities %]
+    <option value="[% quantity.id %]">[% quantity.name; IF quantity.default_unit; ' (default: '; quantity.default_unit.long_name; ')'; END %]</option>
+[% END %]
+</select>
+Factor to quantity's default unit: <input type="text" name="to_quantity_default" value="1">
 <input type="submit" value="Create">
 </form>

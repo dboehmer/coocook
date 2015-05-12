@@ -2,9 +2,9 @@
 
 <ul>
 [% FOR recipe IN recipes.all %]
-	<li><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a>
-		<form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="post"><input type="submit" value="Delete"></form>
-	</li>
+    <li><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a>
+        <form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="post"><input type="submit" value="Delete"></form>
+    </li>
 [% END %]
 </ul>
 

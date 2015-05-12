@@ -5,37 +5,43 @@
 <p>Servings: <input type="text" name="servings" value="[% recipe.servings %]"></p>
 <p>Description:<br>
 <textarea name="description" style="width:60em;height:10em;">[% recipe.description %]</textarea></p>
-<input type="submit" value="Update">
-</form>
 
 <h2>Ingredients</h2>
 
 <table>
 <thead>
 <th>Article</th>
-<th>Quantity</th>
+<th>Value</th>
 <th>Unit</th>
+<th>Comment</th>
+<th>Delete?</th>
 </thead>
 [% FOR ingredient IN ingredients %]
-	<tr>
-	<td><select name="article[% ingredient.id %]">[% FOR article IN articles %]<option value="[% article.id %]" [% 'selected' IF article.id == ingredient.unit %]>[% article.name %]</option>[% END %]</select></td>
-	<td><input type="text" name="quantity[% ingredient.id %]" value="[% ingredient.quantity %]"></td>
-	<td><select name="unit[% ingredient.id %]">[% FOR unit IN units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit %]>[% unit.name %]</option>[% END %]</select></td>
-	</tr>
+    <tr>
+    <td>[% ingredient.article.name %]</td>
+    <td><input type="number" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
+    <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% unit.short_name %] ([% unit.long_name %])</option>[% END %]</select></td>
+    <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
+    <td><input type="checkbox" name="delete[% ingredient.id %]"></td>
+    </tr>
 [% END %]
 </table>
+
+<input type="submit" value="Update">
+</form>
 
 <form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
 Article: <select name="article">
 [% FOR article IN articles %]
-	<option value="[% article.id %]">[% article.name %]</option>
+    <option value="[% article.id %]">[% article.name %]</option>
 [% END %]
 </select>
 Unit: <select name="unit">
 [% FOR unit IN units %]
-	<option value="[% unit.id %]">[% unit.name %]</option>
+    <option value="[% unit.id %]">[% unit.short_name %] ([% unit.long_name %])</option>
 [% END %]
 </select>
-Quantity: <input type="text" name="quantity" value="1">
+Value: <input type="number" name="value" value="1">
+<input type="text" name="comment" placeholder="comment">
 <input type="submit" value="Add">
 </form>

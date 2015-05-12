@@ -41,10 +41,11 @@ sub add : Local : Args(1) {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Ingredient')->create(
         {
-            recipe   => $id,
-            article  => $c->req->param('article'),
-            quantity => $c->req->param('quantity'),
-            unit     => $c->req->param('unit'),
+            recipe  => $id,
+            article => $c->req->param('article'),
+            value   => $c->req->param('value'),
+            unit    => $c->req->param('unit'),
+            comment => $c->req->param('comment'),
         }
     );
     $c->response->redirect(
@@ -72,13 +73,35 @@ sub delete : Local : Args(1) : POST {
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Recipe')->find($id)->update(
-        {
-            name        => $c->req->param('name'),
-            description => $c->req->param('description'),
-            servings    => $c->req->param('servings'),
+    my $recipe = $c->model('Schema::Recipe')->find($id);
+
+    $c->model('Schema')->schema->txn_do(
+        sub {
+            $recipe->update(
+                {
+                    name        => $c->req->param('name'),
+                    description => $c->req->param('description'),
+                    servings    => $c->req->param('servings'),
+                }
+            );
+            for my $ingredient ( $recipe->ingredients ) {
+                if ( $c->req->param( 'delete' . $ingredient->id ) ) {
+                    $ingredient->delete;
+                    next;
+                }
+
+                $ingredient->update(
+                    {
+                        value => $c->req->param( 'value' . $ingredient->id ),
+                        unit  => $c->req->param( 'unit' . $ingredient->id ),
+                        comment =>
+                          $c->req->param( 'comment' . $ingredient->id ),
+                    }
+                );
+            }
         }
     );
+
     $c->response->redirect( $c->uri_for_action( '/recipe/edit', $id ) );
 }
 

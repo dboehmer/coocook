@@ -2,29 +2,34 @@
 
 <form action="[% c.uri_for_action('/article/create') %]" method="post">
 <fieldset>
-	<legend>Applicable Units</legend>
+    <legend>Applicable Units</legend>
 [% FOR unit IN units %]
-	<input type="checkbox" id="u[% unit.id %]" value="unit[% unit.id %]">
-	<label for="u[% unit.id %]">[% unit.name %]</label>
+    <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
+    <label for="u[% unit.id %]"><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr></label>
 [% END %]
 </fieldset>
 <input type="text" name="name" placeholder="name">
+<input type="text" name="comment" placeholder="comment">
 <input type="submit" value="Create">
 </form>
 <ul>
 
 [% FOR article IN articles.all %]
-	<li>[% article.name %]
-		<form action="[% c.uri_for_action('/article/delete', article.id) %]" method="post"><input type="submit" value="Delete"></form>
+    <li>[% article.name %]
+        <form action="[% c.uri_for_action('/article/delete', article.id) %]" method="post"><input type="submit" value="Delete"></form>
 
-		<form action="[% c.uri_for_action('/article/update', article.id) %]" method="post">
-[% FOR unit IN units %]
-	<input type="checkbox" id="i[% article.id %]u[% unit.id %]" value="unit[% unit.id %]">
-	<label for="i[% article.id %]u[% unit.id %]">[% unit.name %]</label>
+        <form action="[% c.uri_for_action('/article/update', article.id) %]" method="post">
+[% my_units = article.unit_ids;
+FOR unit IN units;
+    id = unit.id %]
+            <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
+            <label for="a[% article.id %]u[% unit.id %]"><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr></label>
 [% END %]
-<input type="text" name="name" value="[% article.name %]">
-<input type="submit" value="Update"></form>
-	</li>
+            <input type="text" name="name" value="[% article.name %]">
+            <input type="text" name="comment" value="[% article.comment %]">
+            <input type="submit" value="Update">
+        </form>
+    </li>
 [% END %]
 </ul>
 

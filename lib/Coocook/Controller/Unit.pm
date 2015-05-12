@@ -23,12 +23,23 @@ Catalyst Controller.
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( units => $c->model('Schema::Unit'), );
+    $c->stash(
+        units      => $c->model('Schema::Unit'),
+        quantities => [ $c->model('Schema::Quantity')->all ],
+    );
 }
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Unit')->create( { name => $c->req->param('name') } );
+    $c->model('Schema::Unit')->create(
+        {
+            short_name          => $c->req->param('short_name'),
+            long_name           => $c->req->param('long_name'),
+            quantity            => $c->req->param('quantity') || undef,
+            to_quantity_default => $c->req->param('to_quantity_default')
+              || undef,
+        }
+    );
     $c->response->redirect( $c->uri_for('/unit') );
 }
 
@@ -38,11 +49,18 @@ sub delete : Local : Args(1) : POST {
     $c->response->redirect( $c->uri_for('/unit') );
 }
 
+sub make_quantity_default : Local Args(1) : POST {
+    my ( $self, $c, $id ) = @_;
+    $c->model('Schema::Unit')->find($id)->make_quantity_default;
+    $c->response->redirect( $c->uri_for('/unit') );
+}
+
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->update(
         {
-            name => $c->req->param('name'),
+            short_name => $c->req->param('short_name'),
+            long_name  => $c->req->param('long_name'),
         }
     );
     $c->response->redirect( $c->uri_for('/unit') );

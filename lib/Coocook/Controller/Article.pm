@@ -31,7 +31,25 @@ sub index : Path : Args(0) {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Article')->create( { name => $c->req->param('name') } );
+
+    my $units = $c->model('Schema::Unit')->search(
+        {
+            id => { -in => [ $c->req->param('units') ] },
+        }
+    );
+
+    $c->model('Schema')->schema->txn_do(
+        sub {
+            my $article = $c->model('Schema::Article')->create(
+                {
+                    name    => $c->req->param('name'),
+                    comment => $c->req->param('comment'),
+                }
+            );
+
+            $article->set_units( [ $units->all ] );
+        }
+    );
     $c->response->redirect( $c->uri_for('/article') );
 }
 
@@ -43,11 +61,27 @@ sub delete : Local : Args(1) : POST {
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Article')->find($id)->update(
+
+    my $units = $c->model('Schema::Unit')->search(
         {
-            name => $c->req->param('name'),
+            id => { -in => [ $c->req->param('units') ] },
         }
     );
+
+    my $article = $c->model('Schema::Article')->find($id);
+
+    $c->model('Schema')->schema->txn_do(
+        sub {
+            $article->set_units( [ $units->all ] );
+            $article->update(
+                {
+                    name    => $c->req->param('name'),
+                    comment => $c->req->param('comment'),
+                }
+            );
+        }
+    );
+
     $c->response->redirect( $c->uri_for('/article') );
 }
 
