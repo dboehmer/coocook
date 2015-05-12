@@ -37,8 +37,13 @@ sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')
       ->create( { name => $c->req->param('name') } );
+    $c->detach( 'redirect', [ $project->id ] );
+}
+
+sub redirect : Private {
+    my ( $self, $c, $id ) = @_;
     $c->response->redirect(
-        $c->uri_for_action( '/project/edit', $project->id ) );
+        $c->uri_for_action( $self->action_for('edit'), $id ) );
 }
 
 =encoding utf8

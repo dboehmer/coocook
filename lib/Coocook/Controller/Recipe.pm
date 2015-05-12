@@ -48,8 +48,7 @@ sub add : Local : Args(1) {
             comment => $c->req->param('comment'),
         }
     );
-    $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $id ) );
+    $c->detach( 'redirect', [$id] );
 }
 
 sub create : Local : POST {
@@ -61,14 +60,13 @@ sub create : Local : POST {
             servings    => $c->req->param('servings'),
         }
     );
-    $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $recipe->id ) );
+    $c->detach( 'redirect', [ $recipe->id ] );
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Recipe')->find($id)->delete;
-    $c->response->redirect( $c->uri_for_action('/recipe/index') );
+    $c->detach( 'redirect', [] );
 }
 
 sub update : Local : Args(1) : POST {
@@ -102,7 +100,19 @@ sub update : Local : Args(1) : POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action( '/recipe/edit', $id ) );
+    $c->detach( 'redirect', [$id] );
+}
+
+sub redirect : Private {
+    my ( $self, $c, $id ) = @_;
+    if ($id) {
+        $c->response->redirect(
+            $c->uri_for_action( $self->action_for('edit'), $id ) );
+    }
+    else {
+        $c->response->redirect(
+            $c->uri_for_action( $self->action_for('index') ) );
+    }
 }
 
 =encoding utf8

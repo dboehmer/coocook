@@ -50,13 +50,13 @@ sub create : Local : POST {
             $article->set_units( [ $units->all ] );
         }
     );
-    $c->response->redirect( $c->uri_for_action('/article/index') );
+    $c->detach('redirect');
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Article')->find($id)->delete;
-    $c->response->redirect( $c->uri_for_action('/article/index') );
+    $c->detach('redirect');
 }
 
 sub update : Local : Args(1) : POST {
@@ -82,7 +82,13 @@ sub update : Local : Args(1) : POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action('/article/index') );
+    $c->detach('redirect');
+}
+
+sub redirect : Private {
+    my ( $self, $c ) = @_;
+
+    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
 }
 
 =encoding utf8

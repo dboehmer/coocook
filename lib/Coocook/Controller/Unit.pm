@@ -40,19 +40,19 @@ sub create : Local : POST {
               || undef,
         }
     );
-    $c->response->redirect( $c->uri_for_action('/unit/index') );
+    $c->detach('redirect');
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->delete;
-    $c->response->redirect( $c->uri_for_action('/unit/index') );
+    $c->detach('redirect');
 }
 
 sub make_quantity_default : Local Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->make_quantity_default;
-    $c->response->redirect( $c->uri_for_action('/unit/index') );
+    $c->detach('redirect');
 }
 
 sub update : Local : Args(1) : POST {
@@ -63,7 +63,13 @@ sub update : Local : Args(1) : POST {
             long_name  => $c->req->param('long_name'),
         }
     );
-    $c->response->redirect( $c->uri_for_action('/unit/index') );
+    $c->detach('redirect');
+}
+
+sub redirect : Private {
+    my ( $self, $c ) = @_;
+
+    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
 }
 
 =encoding utf8
