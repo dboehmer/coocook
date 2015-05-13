@@ -19,3 +19,11 @@
     [% END;
 END %]
 </table>
+
+<form action="[% c.uri_for_action('/meal/create') %]" method="POST">
+    <input type="hidden" name="project" value="[% project.id %]">
+    Date: <input type="date" name="date" placeholder="YYYY-MM-DD">
+    Name: <input type="text" name="name" placeholder="name">
+    Comment: <input type="text" name="comment" placeholder="comment">
+    <input type="submit" value="Add meal">
+</form>

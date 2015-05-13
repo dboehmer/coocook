@@ -37,3 +37,14 @@ INSERT INTO projects (name) VALUES ("SOLA");
 INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Frühstück","in Gruppen");
 INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Mittagessen","");
 INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Abendbrot","Festessen");
+
+INSERT INTO dishes (from_recipe,meal,servings,name,comment) VALUES (1,2,8,"Doppelte Kartoffelsuppe","");
+
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,1,3,1,"Kg Kartoffeln");
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,2,4,100,"50g Zwiebeln");
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,3,1,2,"1l Wasser");
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,4,4,10,"5g Pfeffer");
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,5,4,10,"5g Salz");
+
+INSERT INTO dishes (from_recipe,meal,servings,name,comment) VALUES (NULL,2,5,"Dessert","");
+INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (2,2,5,1,"1 Zwiebel:-)");

@@ -30,4 +30,28 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->meta->make_immutable;
 
+sub recalculate {
+    my ( $self, $servings ) = @_;
+
+    my $recipe = $self->recipe;
+
+    $self->result_source->schema->txn_do(
+        sub {
+            for my $ingredient ( $recipe->ingredients ) {
+                my $i = $self->find_or_new_related(
+                    ingredients => {
+                        article => $ingredient->article,
+                        unit    => $ingredient->unit,
+                    }
+                );
+                $i->value( $ingredient->value / $recipe->servings * $servings );
+                $i->in_storage or $i->comment("");
+                $i->update_or_insert;
+            }
+
+            $self->update( { servings => $servings } );
+        }
+    );
+}
+
 1;

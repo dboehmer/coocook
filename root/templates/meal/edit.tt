@@ -1,1 +1,38 @@
 <h2><a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a> [% meal.name %]</a></h2>
+
+<form action="[% c.uri_for_action('/meal/update', meal.id) %]" method="POST">
+    <p>Name:    <input type="text" name="name"    value="[% meal.name %]"></p>
+    <p>Comment: <input type="text" name="comment" value="[% meal.comment %]"></p>
+    <input type="submit" value="Update">
+</form>
+
+<table>
+    <tr>
+        <th>Dish</th>
+        <th>Servings</th>
+        <th>Ingredients</th>
+    </tr>
+[% FOREACH dish IN meal.dishes %]
+    <tr>
+        <td>[% dish.name; IF dish.from_recipe %] (from recipe <a href="[% c.uri_for_action('/recipe/edit', dish.from_recipe) %]">[% dish.recipe.name %]</a>)[% END %]</td>
+        <td>
+[% IF dish.from_recipe %]
+            <form action="[% c.uri_for_action('/dish/recalculate', dish.id) %]" method="post">
+
+            <input type="number" name="servings" value="[% dish.servings %]">
+            <input type="submit" value="Recalculate">
+            </form>
+[% ELSE;
+    dish.servings;
+END %]
+        </td>
+        <td>
+            <ul>
+[% FOREACH ingredient IN dish.ingredients %]
+                <li>[% ingredient.value %] <abbr title="[% ingredient.unit.long_name %]">[% ingredient.unit.short_name %]</abbr> [% ingredient.article.name %] ([% ingredient.comment %])</li>
+[% END %]
+            </ul>
+        </td>
+    </tr>
+[% END %]
+</table>
