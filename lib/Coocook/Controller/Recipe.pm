@@ -39,7 +39,7 @@ sub edit : Path : Args(1) {
 
 sub add : Local : Args(1) {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Ingredient')->create(
+    $c->model('Schema::RecipeIngredient')->create(
         {
             recipe  => $id,
             article => $c->req->param('article'),

@@ -21,6 +21,8 @@ __PACKAGE__->add_unique_constraints( [qw<project date name>] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
+__PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish' );
+
 __PACKAGE__->meta->make_immutable;
 
 1;

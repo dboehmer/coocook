@@ -18,7 +18,15 @@ __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
 __PACKAGE__->belongs_to( unit    => 'Coocook::Schema::Result::Unit' );
 
 __PACKAGE__->has_many(
-    ingredients => 'Coocook::Schema::Result::Ingredient',
+    dish_ingredients => 'Coocook::Schema::Result::DishIngredient',
+    {
+        'foreign.article' => 'self.article',
+        'foreign.unit'    => 'self.unit',
+    }
+);
+
+__PACKAGE__->has_many(
+    recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
     {
         'foreign.article' => 'self.article',
         'foreign.unit'    => 'self.unit',

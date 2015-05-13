@@ -1,11 +1,11 @@
-package Coocook::Schema::Result::Ingredient;
+package Coocook::Schema::Result::RecipeIngredient;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->table("ingredients");
+__PACKAGE__->table("recipe_ingredients");
 
 __PACKAGE__->add_columns(
     id      => { data_type => "int", is_auto_increment => 1 },
