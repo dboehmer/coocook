@@ -11,6 +11,7 @@
         <th>Dish</th>
         <th>Servings</th>
         <th>Ingredients</th>
+        <th>Delete</th>
     </tr>
 [% FOREACH dish IN meal.dishes %]
     <tr>
@@ -32,6 +33,11 @@ END %]
                 <li>[% ingredient.value %] <abbr title="[% ingredient.unit.long_name %]">[% ingredient.unit.short_name %]</abbr> [% ingredient.article.name %] ([% ingredient.comment %])</li>
 [% END %]
             </ul>
+        </td>
+        <td>
+            <form action="[% c.uri_for_action('/dish/delete', dish.id) %]" method="post">
+                <input type="submit" value="Delete">
+            </form>
         </td>
     </tr>
 [% END %]

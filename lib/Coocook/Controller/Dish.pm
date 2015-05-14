@@ -16,6 +16,17 @@ Catalyst Controller.
 
 =cut
 
+sub delete : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
+
+    my $dish = $c->model('Schema::Dish')->find($id);
+
+    $dish->delete;
+
+    $c->response->redirect(
+        $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
+}
+
 sub from_recipe : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
