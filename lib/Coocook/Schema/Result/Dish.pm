@@ -33,6 +33,8 @@ __PACKAGE__->meta->make_immutable;
 sub recalculate {
     my ( $self, $servings ) = @_;
 
+    $servings ||= $self->servings || die "servings undefined";
+
     my $recipe = $self->recipe;
 
     $self->result_source->schema->txn_do(

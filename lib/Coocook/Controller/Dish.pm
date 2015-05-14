@@ -16,6 +16,24 @@ Catalyst Controller.
 
 =cut
 
+sub from_recipe : Local Args(0) POST {
+    my ( $self, $c ) = @_;
+
+    my $meal = $c->model('Schema::Meal')->find( scalar $c->req->param('meal') );
+    my $recipe =
+      $c->model('Schema::Recipe')->find( scalar $c->req->param('recipe') );
+
+    $c->model('Schema::Dish')->from_recipe(
+        recipe   => $recipe->id,
+        meal     => $meal->id,
+        name     => $recipe->name,
+        servings => scalar $c->req->param('servings'),
+        comment  => scalar $c->req->param('comment'),
+    );
+
+    $c->response->redirect( $c->uri_for_action( '/meal/edit', $meal->id ) );
+}
+
 sub recalculate : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 

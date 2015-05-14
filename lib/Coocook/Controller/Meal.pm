@@ -20,8 +20,9 @@ sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
     my $meal = $c->model('Schema::Meal')->find($id);
     $c->stash(
-        project => $meal->project,
         meal    => $meal,
+        project => $meal->project,
+        recipes => [ $c->model('Schema::Recipe')->all ],
     );
 }
 
