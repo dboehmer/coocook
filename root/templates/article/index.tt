@@ -5,7 +5,7 @@
     <legend>Applicable Units</legend>
 [% FOR unit IN units %]
     <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
-    <label for="u[% unit.id %]"><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr></label>
+    <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
 [% END %]
 </fieldset>
 <input type="text" name="name" placeholder="name">
@@ -23,7 +23,7 @@
 FOR unit IN units;
     id = unit.id %]
             <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
-            <label for="a[% article.id %]u[% unit.id %]"><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr></label>
+            <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
 [% END %]
             <input type="text" name="name" value="[% article.name %]">
             <input type="text" name="comment" value="[% article.comment %]">

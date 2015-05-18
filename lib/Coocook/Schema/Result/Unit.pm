@@ -11,6 +11,7 @@ __PACKAGE__->add_columns(
     id                  => { data_type => "int",  is_auto_increment => 1 },
     quantity            => { data_type => "int",  is_nullable       => 1 },
     to_quantity_default => { data_type => "real", is_nullable       => 1 },
+    space               => { data_type => "bool" },
     short_name          => { data_type => "text" },
     long_name           => { data_type => "text" },
 );

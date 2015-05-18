@@ -3,13 +3,13 @@ INSERT INTO quantities (default_unit,name) VALUES (1,"Volumen");
 INSERT INTO quantities (default_unit,name) VALUES (3,"Masse");
 INSERT INTO quantities (default_unit,name) VALUES (5,"Anzahl");
 
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (1,NULL,"l","Liter");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (1,0.001,"ml","Milliliter");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (2,NULL,"kg","Kilogramm");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (2,0.001,"g","Gramm");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (3,NULL,"Stk","Stück");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (3,12,"Dtz","Dutzend");
-INSERT INTO units (quantity,to_quantity_default,short_name,long_name) VALUES (NULL,NULL,"Rollen","Doppelkeksrollen");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (1,NULL,0,"l","Liter");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (1,0.001,0,"ml","Milliliter");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (2,NULL,0,"kg","Kilogramm");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (2,0.001,0,"g","Gramm");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (3,NULL,1,"Stk","Stück");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (3,12,1,"Dtz","Dutzend");
+INSERT INTO units (quantity,to_quantity_default,space,short_name,long_name) VALUES (NULL,NULL,1,"Rollen","Doppelkeksrollen");
 
 INSERT INTO articles (name,comment) VALUES ("Kartoffeln","");
 INSERT INTO articles_units (article,unit) VALUES (1,3);

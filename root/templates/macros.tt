@@ -1,0 +1,7 @@
+[%~ MACRO display_unit(unit, opts) BLOCK;
+    IF NOT ( opts.defined AND opts.space.defined AND NOT opts.space );
+        space = "&nbsp;";
+        space.repeat(unit.space);
+    END ~%]
+    <abbr title="[% unit.long_name | html %]">[% unit.short_name | html %]</abbr>
+[%~ END ~%]

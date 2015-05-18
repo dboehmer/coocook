@@ -30,7 +30,7 @@ END %]
         <td>
             <ul>
 [% FOREACH ingredient IN dish.ingredients %]
-                <li>[% ingredient.value %] <abbr title="[% ingredient.unit.long_name %]">[% ingredient.unit.short_name %]</abbr> [% ingredient.article.name %] ([% ingredient.comment %])</li>
+                <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %] ([% ingredient.comment %])</li>
 [% END %]
             </ul>
         </td>
