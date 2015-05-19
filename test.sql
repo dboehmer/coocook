@@ -23,8 +23,10 @@ INSERT INTO articles (name,comment) VALUES ("Pfeffer","");
 INSERT INTO articles_units (article,unit) VALUES (4,4);
 INSERT INTO articles (name,comment) VALUES ("Salz","");
 INSERT INTO articles_units (article,unit) VALUES (5,4);
+INSERT INTO articles (name,comment) VALUES ("Äpfel","");
+INSERT INTO articles_units (article,unit) VALUES (6,5);
 
-INSERT INTO recipes (servings,name,description) VALUES (4,"Kartoffelsuppe","Lecker!");
+INSERT INTO recipes (servings,name,preparation,description) VALUES (4,"Kartoffelsuppe","Kartoffeln schälen","Lecker kochen!");
 
 INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,1,3,0.5,"halbes Kg Kartoffeln");
 INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,2,4,50,"50g Zwiebeln");
@@ -38,13 +40,13 @@ INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Frühstüc
 INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Mittagessen","");
 INSERT INTO meals (project,date,name,comment) VALUES (1,"2015-08-01","Abendbrot","Festessen");
 
-INSERT INTO dishes (from_recipe,meal,servings,name,comment) VALUES (1,2,8,"Doppelte Kartoffelsuppe","");
+INSERT INTO dishes (from_recipe,prepare_at_meal,meal,servings,name,preparation,description,comment) VALUES (1,1,2,8,"Doppelte Kartoffelsuppe",(SELECT preparation FROM recipes WHERE id = 1),(SELECT description FROM recipes WHERE id = 1),"stärkt für die 2TT");
 
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,1,3,1,"Kg Kartoffeln");
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,2,4,100,"50g Zwiebeln");
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,3,1,2,"1l Wasser");
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,4,4,10,"5g Pfeffer");
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (1,5,4,10,"5g Salz");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (1,1,1,3,1,"Kg Kartoffeln");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (1,1,2,4,100,"50g Zwiebeln");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (1,0,3,1,2,"1l Wasser");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (1,0,4,4,10,"5g Pfeffer");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (1,0,5,4,10,"5g Salz");
 
-INSERT INTO dishes (from_recipe,meal,servings,name,comment) VALUES (NULL,2,5,"Dessert","");
-INSERT INTO dish_ingredients (dish,article,unit,value,comment) VALUES (2,2,5,1,"1 Zwiebel:-)");
+INSERT INTO dishes (from_recipe,meal,servings,name,preparation,description,comment) VALUES (NULL,2,5,"Dessert","","Äpfel bereitstellen","gesund & lecker");
+INSERT INTO dish_ingredients (dish,prepare,article,unit,value,comment) VALUES (2,0,6,5,1,"1 Apfel");

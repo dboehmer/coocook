@@ -9,7 +9,9 @@ __PACKAGE__->table("dish_ingredients");
 
 __PACKAGE__->add_columns(
     id      => { data_type => "int", is_auto_increment => 1 },
+    order   => { data_type => "int", default_value     => 1 },
     dish    => { data_type => "int" },
+    prepare => { data_type => "bool" },
     article => { data_type => "int" },
     unit    => { data_type => "int" },
     value   => { data_type => "real" },

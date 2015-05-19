@@ -9,6 +9,7 @@ __PACKAGE__->table("recipe_ingredients");
 
 __PACKAGE__->add_columns(
     id      => { data_type => "int", is_auto_increment => 1 },
+    order   => { data_type => "int", default_value     => 1 },
     recipe  => { data_type => "int" },
     article => { data_type => "int" },
     unit    => { data_type => "int" },
