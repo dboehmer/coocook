@@ -20,10 +20,12 @@ __PACKAGE__->add_unique_constraints( ['name'] );
 __PACKAGE__->belongs_to( tag_group => 'Coocook::Schema::Result::TagGroup' );
 
 __PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
+__PACKAGE__->has_many( dishes_tags   => 'Coocook::Schema::Result::DishTag' );
+__PACKAGE__->has_many( recipes_tags  => 'Coocook::Schema::Result::RecipeTag' );
 
-__PACKAGE__->has_many( dishes_tags => 'Coocook::Schema::Result::DishTag' );
-
-__PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag' );
+__PACKAGE__->many_to_many( articles => articles_tags => 'article' );
+__PACKAGE__->many_to_many( dishes   => dishes_tags   => 'dish' );
+__PACKAGE__->many_to_many( recipes  => recipes_tags  => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
 

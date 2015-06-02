@@ -82,6 +82,8 @@ sub update : Local : Args(1) : POST {
                     servings    => $c->req->param('servings'),
                 }
             );
+
+            # ingredients
             for my $ingredient ( $recipe->ingredients ) {
                 if ( $c->req->param( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
@@ -97,6 +99,11 @@ sub update : Local : Args(1) : POST {
                     }
                 );
             }
+
+            # tags
+            my $tags = $c->model('Schema::Tag')
+              ->from_names( scalar $c->req->param('tags') );
+            $recipe->set_tags( [ $tags->all ] );
         }
     );
 

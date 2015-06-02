@@ -3,6 +3,7 @@
 <form action="[% c.uri_for_action('/recipe/update', recipe.id) %]" method="post">
 <p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
 <p>Servings: <input type="text" name="servings" value="[% recipe.servings %]"></p>
+<p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
 <p>Description:<br>
 <textarea name="description" style="width:60em;height:10em;">[% recipe.description %]</textarea></p>
 
