@@ -33,14 +33,14 @@
             <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
     [% END %]
             <input type="text" name="name" value="[% article.name %]">
-            <input type="text" name="comment" value="[% article.comment %]">
+            <input type="text" name="comment" value="[% article.comment %]" placeholder="comment">
             <select name="shop_section">
                 <option value="">(no shop section)</option>
     [% FOREACH section IN shop_sections %]
                 <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
     [% END %]
             </select>
-            <input type="text" name="tags" value="[% article.tags_rs.joined %]">
+            <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags">
             <input type="submit" value="Update">
         </form>
     </li>
