@@ -38,6 +38,9 @@ sub create : Local : POST {
         }
     );
 
+    my $tags =
+      $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+
     $c->model('Schema')->schema->txn_do(
         sub {
             my $article = $c->model('Schema::Article')->create(
@@ -47,6 +50,7 @@ sub create : Local : POST {
                 }
             );
 
+            $article->set_tags(  [ $tags->all ] );
             $article->set_units( [ $units->all ] );
         }
     );
@@ -68,10 +72,14 @@ sub update : Local : Args(1) : POST {
         }
     );
 
+    my $tags =
+      $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+
     my $article = $c->model('Schema::Article')->find($id);
 
     $c->model('Schema')->schema->txn_do(
         sub {
+            $article->set_tags(  [ $tags->all ] );
             $article->set_units( [ $units->all ] );
             $article->update(
                 {
