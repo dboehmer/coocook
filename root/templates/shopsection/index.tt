@@ -1,0 +1,12 @@
+<h2>Shop sections</h2>
+
+<ul>
+[% FOREACH section IN shop_sections.all %]
+    <li>[% section.name %]</li>
+[% END %]
+</ul>
+
+<form action="[% c.uri_for_action('/shopsection/create') %]" method="POST">
+    <input type="text" name="name" placeholder="name">
+    <input type="submit" value="Create">
+</form>

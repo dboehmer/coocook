@@ -11,6 +11,12 @@
 <input type="text" name="name" placeholder="name">
 <input type="text" name="comment" placeholder="comment">
 <input type="text" name="tags" placeholder="tags">
+<select name="shop_section">
+    <option value="">(no shop section)</option>
+[% FOREACH section IN shop_sections %]
+    <option value="[% section.id %]">[% section.name %]</option>
+[% END %]
+</select>
 <input type="submit" value="Create">
 </form>
 <ul>
@@ -20,14 +26,20 @@
         <form action="[% c.uri_for_action('/article/delete', article.id) %]" method="post"><input type="submit" value="Delete"></form>
 
         <form action="[% c.uri_for_action('/article/update', article.id) %]" method="post">
-[% my_units = article.unit_ids;
-FOR unit IN units;
-    id = unit.id %]
+    [% my_units = article.unit_ids;
+    FOR unit IN units;
+        id = unit.id %]
             <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
             <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
-[% END %]
+    [% END %]
             <input type="text" name="name" value="[% article.name %]">
             <input type="text" name="comment" value="[% article.comment %]">
+            <select name="shop_section">
+                <option value="">(no shop section)</option>
+    [% FOREACH section IN shop_sections %]
+                <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
+    [% END %]
+            </select>
             <input type="text" name="tags" value="[% article.tags_rs.joined %]">
             <input type="submit" value="Update">
         </form>

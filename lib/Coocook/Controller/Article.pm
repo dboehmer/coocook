@@ -24,8 +24,9 @@ sub index : Path('/articles') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        articles => $c->model('Schema::Article'),
-        units    => [ $c->model('Schema::Unit')->all ],
+        articles      => $c->model('Schema::Article'),
+        shop_sections => [ $c->model('Schema::ShopSection')->all ],
+        units         => [ $c->model('Schema::Unit')->all ],
     );
 }
 
@@ -45,8 +46,9 @@ sub create : Local : POST {
         sub {
             my $article = $c->model('Schema::Article')->create(
                 {
-                    name    => $c->req->param('name'),
-                    comment => $c->req->param('comment'),
+                    name         => $c->req->param('name'),
+                    comment      => $c->req->param('comment'),
+                    shop_section => scalar $c->req->param('shop_section'),
                 }
             );
 
@@ -83,8 +85,9 @@ sub update : Local : Args(1) : POST {
             $article->set_units( [ $units->all ] );
             $article->update(
                 {
-                    name    => $c->req->param('name'),
-                    comment => $c->req->param('comment'),
+                    name         => $c->req->param('name'),
+                    comment      => $c->req->param('comment'),
+                    shop_section => $c->req->param('shop_section'),
                 }
             );
         }
