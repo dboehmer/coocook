@@ -38,6 +38,15 @@ sub create : Local Args(0) POST {
     $c->response->redirect( $c->uri_for_action('/shopsection/index') );
 }
 
+sub update : Local Args(1) POST {
+	my ($self, $c, $id) = @_;
+	$c->model('Schema::ShopSection')->find($id)->update({
+		name => scalar $c->req->param('name'),
+	});
+
+    $c->response->redirect( $c->uri_for_action('/shopsection/index') );
+}
+
 =encoding utf8
 
 =head1 AUTHOR
