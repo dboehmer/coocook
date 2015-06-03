@@ -3,6 +3,8 @@
     <title>[% c.config.name %]</title>
 
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="[% c.uri_for('/static/css/style.css') %]">
 </head>
 
 <body>
