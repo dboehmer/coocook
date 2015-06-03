@@ -28,10 +28,19 @@ The root page (/)
 
 =cut
 
-sub index : Path : Args(0) {
+sub begin : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash->{articles} = [qw<Mehl Zucker Wasser>];
+    if ( my $id = $c->session->{project} ) {
+        $c->stash( my_project => $c->model('Schema::Project')->find($id) );
+    }
+    else {
+        $c->response->redirect( $c->uri_for_action('/project/index') );
+    }
+}
+
+sub index : Path : Args(0) {
+    my ( $self, $c ) = @_;
 }
 
 =head2 default

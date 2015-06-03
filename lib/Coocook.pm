@@ -19,6 +19,9 @@ use Catalyst::Runtime 5.80;
 use Catalyst qw/
   -Debug
   ConfigLoader
+  Session
+  Session::Store::FastMmap
+  Session::State::Cookie
   StackTrace
   Static::Simple
   /;

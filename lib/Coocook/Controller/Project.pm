@@ -21,6 +21,9 @@ Catalyst Controller.
 
 =cut
 
+# override begin() in Controller::Root
+sub begin : Private { }
+
 sub index : Path('/projects') : Args(0) {
     my ( $self, $c ) = @_;
 
@@ -54,6 +57,13 @@ sub create : Local : POST {
     my $project = $c->model('Schema::Project')
       ->create( { name => $c->req->param('name') } );
     $c->detach( 'redirect', [ $project->id ] );
+}
+
+sub select : Local Args(1) {
+    my ( $self, $c, $id ) = @_;
+    my $project = $c->model('Schema::Project')->find($id);
+    $c->session->{project} = $project->id;
+    $c->response->redirect('/');
 }
 
 sub redirect : Private {

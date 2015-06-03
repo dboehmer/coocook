@@ -2,7 +2,10 @@
 
 <ul>
 [% FOR project IN projects.all %]
-    <li><a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a></li>
+    <li>
+        <form action="[% c.uri_for_action('/project/select', project.id) %]"><input type="submit" value="Select"></form>
+        <a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
+    </li>
 [% END %]
 </ul>
 
