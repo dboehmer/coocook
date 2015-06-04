@@ -30,10 +30,9 @@ sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
     my $recipe = $c->model('Schema::Recipe')->find($id);
     $c->stash(
-        recipe      => $recipe,
-        ingredients => [ $recipe->ingredients->all ],
-        articles    => [ $c->model('Schema::Article')->all ],
-        units       => [ $c->model('Schema::Unit')->all ],
+        recipe   => $recipe,
+        articles => [ $c->model('Schema::Article')->all ],
+        units    => [ $c->model('Schema::Unit')->all ],
     );
 }
 
