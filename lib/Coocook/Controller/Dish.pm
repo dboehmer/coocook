@@ -16,6 +16,19 @@ Catalyst Controller.
 
 =cut
 
+sub edit : Path Args(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $dish = $c->model('Schema::Dish')->find($id);
+
+    $c->stash(
+        dish     => $dish,
+        articles => [ $c->model('Schema::Article')->all ],
+        units    => [ $c->model('Schema::Unit')->all ],
+
+    );
+}
+
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
@@ -55,6 +68,10 @@ sub recalculate : Local Args(1) POST {
 
     $c->response->redirect(
         $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
+}
+
+sub update : Local Args(1) POST {
+
 }
 
 =encoding utf8

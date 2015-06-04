@@ -1,0 +1,55 @@
+<h2>Dish [% dish.name %]</h2>
+
+<p>for Meal [% dish.meal.name %] on [% dish.meal.date %]</p>
+
+<form action="[% c.uri_for_action('/dish/update', dish.id) %]" method="post">
+<p>Name: <input type="text" name="name" value="[% dish.name %]"></p>
+<p>Servings: <input type="number" name="servings" value="[% dish.servings %]"></p>
+<p>Tags: <input type="text" name="tags" value="[% dish.tags_rs.joined %]"></p>
+<p>Preparation:<br>
+<textarea name="preparation" style="width:60em;height:10em;">[% dish.preparation %]</textarea></p>
+<p>Description:<br>
+<textarea name="description" style="width:60em;height:10em;">[% dish.description %]</textarea></p>
+
+<h2>Ingredients</h2>
+
+<table>
+<thead>
+<th>Article</th>
+<th>Part of<br>preparation?</th>
+<th>Value</th>
+<th>Unit</th>
+<th>Comment</th>
+<th>Delete?</th>
+</thead>
+[% ingredients = dish.ingredients_rs;
+WHILE(ingredient = ingredients.next) %]
+    <tr>
+    <td>[% ingredient.article.name %]</td>
+    <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
+    <td><input type="number" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
+    <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% unit.short_name %] ([% unit.long_name %])</option>[% END %]</select></td>
+    <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
+    <td><input type="checkbox" name="delete[% ingredient.id %]"></td>
+    </tr>
+[% END %]
+</table>
+
+<input type="submit" value="Update Recipe">
+</form>
+
+<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
+Article: <select name="article">
+[% FOR article IN articles %]
+    <option value="[% article.id %]">[% article.name %]</option>
+[% END %]
+</select>
+Unit: <select name="unit">
+[% FOR unit IN units %]
+    <option value="[% unit.id %]">[% unit.short_name %] ([% unit.long_name %])</option>
+[% END %]
+</select>
+Value: <input type="number" name="value" value="1">
+<input type="text" name="comment" placeholder="comment">
+<input type="submit" value="Add">
+</form>
