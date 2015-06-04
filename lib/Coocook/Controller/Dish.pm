@@ -35,11 +35,12 @@ sub from_recipe : Local Args(0) POST {
       $c->model('Schema::Recipe')->find( scalar $c->req->param('recipe') );
 
     $c->model('Schema::Dish')->from_recipe(
-        recipe   => $recipe->id,
-        meal     => $meal->id,
-        name     => $recipe->name,
-        servings => scalar $c->req->param('servings'),
-        comment  => scalar $c->req->param('comment'),
+        $recipe,
+        (
+            meal     => $meal->id,
+            servings => scalar $c->req->param('servings'),
+            comment  => scalar $c->req->param('comment'),
+        )
     );
 
     $c->response->redirect( $c->uri_for_action( '/meal/edit', $meal->id ) );

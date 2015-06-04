@@ -55,7 +55,13 @@ sub recalculate {
                     }
                 );
                 $i->value( $ingredient->value / $recipe->servings * $servings );
-                $i->in_storage or $i->comment("");
+                $i->in_storage
+                  or $i->set_columns(
+                    {
+                        comment => "",
+                        prepare => $ingredient->prepare,
+                    }
+                  );
                 $i->update_or_insert;
             }
 

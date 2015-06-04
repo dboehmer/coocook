@@ -57,6 +57,7 @@ sub create : Local : POST {
         {
             name        => $c->req->param('name'),
             description => $c->req->param('description') // "",
+            preparation => $c->req->param('preparation') // "",
             servings    => $c->req->param('servings'),
         }
     );

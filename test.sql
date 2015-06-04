@@ -28,11 +28,11 @@ INSERT INTO articles_units (article,unit) VALUES (6,5);
 
 INSERT INTO recipes (servings,name,preparation,description) VALUES (4,"Kartoffelsuppe","Kartoffeln schälen","Lecker kochen!");
 
-INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,1,3,0.5,"halbes Kg Kartoffeln");
-INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,2,4,50,"50g Zwiebeln");
-INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,3,1,1,"1l Wasser");
-INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,4,4,5,"5g Pfeffer");
-INSERT INTO recipe_ingredients (recipe,article,unit,value,comment) VALUES (1,5,4,5,"5g Salz");
+INSERT INTO recipe_ingredients (recipe,prepare,article,unit,value,comment) VALUES (1,1,1,3,0.5,"halbes Kg Kartoffeln");
+INSERT INTO recipe_ingredients (recipe,prepare,article,unit,value,comment) VALUES (1,1,2,4,50,"50g Zwiebeln");
+INSERT INTO recipe_ingredients (recipe,prepare,article,unit,value,comment) VALUES (1,0,3,1,1,"1l Wasser");
+INSERT INTO recipe_ingredients (recipe,prepare,article,unit,value,comment) VALUES (1,0,4,4,5,"5g Pfeffer");
+INSERT INTO recipe_ingredients (recipe,prepare,article,unit,value,comment) VALUES (1,0,5,4,5,"5g Salz");
 
 INSERT INTO projects (name) VALUES ("SOLA");
 

@@ -4,6 +4,8 @@
 <p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
 <p>Servings: <input type="text" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
+<p>Preparation:<br>
+<textarea name="preparation" style="width:60em;height:10em;">[% recipe.preparation %]</textarea></p>
 <p>Description:<br>
 <textarea name="description" style="width:60em;height:10em;">[% recipe.description %]</textarea></p>
 
@@ -12,6 +14,7 @@
 <table>
 <thead>
 <th>Article</th>
+<th>Part of<br>preparation?</th>
 <th>Value</th>
 <th>Unit</th>
 <th>Comment</th>
@@ -20,6 +23,7 @@
 [% FOR ingredient IN ingredients %]
     <tr>
     <td>[% ingredient.article.name %]</td>
+    <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
     <td><input type="number" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
     <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% unit.short_name %] ([% unit.long_name %])</option>[% END %]</select></td>
     <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
@@ -28,7 +32,7 @@
 [% END %]
 </table>
 
-<input type="submit" value="Update">
+<input type="submit" value="Update Recipe">
 </form>
 
 <form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
