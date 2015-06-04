@@ -21,4 +21,10 @@ __PACKAGE__->has_many( tags => 'Coocook::Schema::Result::Tag' => 'tag_group' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub deletable {
+    my $self = shift;
+
+    return ( $self->tags->count <= 0 );
+}
+
 1;

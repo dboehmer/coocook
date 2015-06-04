@@ -29,4 +29,14 @@ __PACKAGE__->many_to_many( recipes  => recipes_tags  => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub deletable {
+    my $self = shift;
+
+    $self->articles_tags->count and return;
+    $self->dishes_tags->count   and return;
+    $self->recipes_tags->count  and return;
+
+    return 1;
+}
+
 1;
