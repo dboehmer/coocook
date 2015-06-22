@@ -27,4 +27,10 @@ __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub duplicate {
+    my ( $self, $args ) = @_;
+
+    return $self->copy($args);
+}
+
 1;

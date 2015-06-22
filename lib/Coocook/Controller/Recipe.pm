@@ -63,6 +63,15 @@ sub create : Local : POST {
     $c->detach( 'redirect', [ $recipe->id ] );
 }
 
+sub duplicate : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
+
+    $c->model('Schema::Recipe')->find($id)
+      ->duplicate( { name => scalar $c->req->param('name') } );
+
+    $c->detach( 'redirect', [] );
+}
+
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Recipe')->find($id)->delete;
