@@ -10,9 +10,9 @@
 [% FOREACH day IN days;
     FOREACH meal IN day.meals %]
     <tr>
-[% IF loop.first %]
-        <td rowspan="[% day.meals.size %]">[% day.date %]</td>
-[% END %]
+    [% IF loop.first %]
+        <td rowspan="[% day.meals.size %]">[% day.date.ymd %]</td>
+    [% END %]
         <td><a href="[% c.uri_for_action('/meal/edit', meal.id) %]">[% meal.name %]</a></td>
         <td>[% meal.comment %]</td>
     </tr>
@@ -22,8 +22,8 @@ END %]
 
 <form action="[% c.uri_for_action('/meal/create') %]" method="POST">
     <input type="hidden" name="project" value="[% project.id %]">
-    Date: <input type="date" name="date" placeholder="YYYY-MM-DD">
-    Name: <input type="text" name="name" placeholder="name">
+    Date: <input type="date" name="date" placeholder="YYYY-MM-DD" value="[% default_date.ymd %]" required>
+    Name: <input type="text" name="name" placeholder="name" required>
     Comment: <input type="text" name="comment" placeholder="comment">
     <input type="submit" value="Add meal">
 </form>

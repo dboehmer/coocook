@@ -1,5 +1,6 @@
 package Coocook::Controller::Project;
 
+use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -34,21 +35,29 @@ sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')->find($id);
 
-    my $days = do {
-        my @meals = $project->meals->all;
+    my $default_date = DateTime->today;
 
+    my $days = do {
         my %days;
 
-        push @{ $days{ $_->date }{meals} }, $_ for @meals;
+        # group meals by date
+        for my $meal ( $project->meals->all ) {
+            $default_date < $meal->date and $default_date = $meal->date;
 
-        $days{$_}{date} = $_ for keys %days;
+            push @{ $days{ $meal->date }{meals} }, $meal;
+        }
 
-        [ values %days ];
+        # save DateTime object for table display
+        $_->{date} = $_->{meals}[0]->date for values %days;
+
+        # remove sort keys, save sorted list
+        [ map { $days{$_} } sort keys %days ];
     };
 
     $c->stash(
-        project => $project,
-        days    => $days,
+        default_date => $default_date,
+        project      => $project,
+        days         => $days,
     );
 }
 
