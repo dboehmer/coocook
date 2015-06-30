@@ -64,7 +64,7 @@ sub recalculate : Local Args(1) POST {
 
     my $dish = $c->model('Schema::Dish')->find($id);
 
-    $dish->recalculate( $c->req->param('servings') );
+    $dish->recalculate( scalar $c->req->param('servings') );
 
     $c->response->redirect(
         $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );

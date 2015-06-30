@@ -41,10 +41,10 @@ sub add : Local : Args(1) {
     $c->model('Schema::RecipeIngredient')->create(
         {
             recipe  => $id,
-            article => $c->req->param('article'),
-            value   => $c->req->param('value'),
-            unit    => $c->req->param('unit'),
-            comment => $c->req->param('comment'),
+            article => scalar $c->req->param('article'),
+            value   => scalar $c->req->param('value'),
+            unit    => scalar $c->req->param('unit'),
+            comment => scalar $c->req->param('comment'),
         }
     );
     $c->detach( 'redirect', [$id] );
@@ -54,10 +54,10 @@ sub create : Local : POST {
     my ( $self, $c ) = @_;
     my $recipe = $c->model('Schema::Recipe')->create(
         {
-            name        => $c->req->param('name'),
-            description => $c->req->param('description') // "",
-            preparation => $c->req->param('preparation') // "",
-            servings    => $c->req->param('servings'),
+            name        => scalar $c->req->param('name'),
+            description => scalar $c->req->param('description') // "",
+            preparation => scalar $c->req->param('preparation') // "",
+            servings    => scalar $c->req->param('servings'),
         }
     );
     $c->detach( 'redirect', [ $recipe->id ] );
@@ -86,25 +86,27 @@ sub update : Local : Args(1) : POST {
         sub {
             $recipe->update(
                 {
-                    name        => $c->req->param('name'),
-                    description => $c->req->param('description'),
-                    servings    => $c->req->param('servings'),
+                    name        => scalar $c->req->param('name'),
+                    description => scalar $c->req->param('description'),
+                    servings    => scalar $c->req->param('servings'),
                 }
             );
 
             # ingredients
             for my $ingredient ( $recipe->ingredients ) {
-                if ( $c->req->param( 'delete' . $ingredient->id ) ) {
+                if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
                     next;
                 }
 
                 $ingredient->update(
                     {
-                        value => $c->req->param( 'value' . $ingredient->id ),
-                        unit  => $c->req->param( 'unit' . $ingredient->id ),
+                        value =>
+                          scalar $c->req->param( 'value' . $ingredient->id ),
+                        unit =>
+                          scalar $c->req->param( 'unit' . $ingredient->id ),
                         comment =>
-                          $c->req->param( 'comment' . $ingredient->id ),
+                          scalar $c->req->param( 'comment' . $ingredient->id ),
                     }
                 );
             }

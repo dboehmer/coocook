@@ -28,7 +28,8 @@ sub index : Path('/quantities') : Args(0) {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Quantity')->create( { name => $c->req->param('name') } );
+    $c->model('Schema::Quantity')
+      ->create( { name => scalar $c->req->param('name') } );
     $c->detach('redirect');
 }
 
@@ -42,7 +43,7 @@ sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Quantity')->find($id)->update(
         {
-            name => $c->req->param('name'),
+            name => scalar $c->req->param('name'),
         }
     );
     $c->detach('redirect');

@@ -50,8 +50,8 @@ sub create : Local : POST {
         sub {
             my $article = $c->model('Schema::Article')->create(
                 {
-                    name         => $c->req->param('name'),
-                    comment      => $c->req->param('comment'),
+                    name         => scalar $c->req->param('name'),
+                    comment      => scalar $c->req->param('comment'),
                     shop_section => scalar $c->req->param('shop_section'),
                 }
             );
@@ -89,12 +89,12 @@ sub update : Local : Args(1) : POST {
             $article->set_units( [ $units->all ] );
             $article->set_columns(
                 {
-                    name         => $c->req->param('name'),
-                    comment      => $c->req->param('comment'),
-                    shop_section => $c->req->param('shop_section'),
+                    name         => scalar $c->req->param('name'),
+                    comment      => scalar $c->req->param('comment'),
+                    shop_section => scalar $c->req->param('shop_section'),
                 }
             );
-            if ( $c->req->param('shelf_life') ) {
+            if ( scalar $c->req->param('shelf_life') ) {
                 $article->set_columns(
                     {
                         shelf_life_days =>
@@ -105,7 +105,7 @@ sub update : Local : Args(1) : POST {
             else {
                 $article->set_columns( { shelf_life_days => undef } );
             }
-            if ( $c->req->param('preorder') ) {
+            if ( scalar $c->req->param('preorder') ) {
                 $article->set_columns(
                     {
                         preorder_servings =>

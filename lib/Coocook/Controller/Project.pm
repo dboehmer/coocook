@@ -64,7 +64,7 @@ sub edit : Path : Args(1) {
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')
-      ->create( { name => $c->req->param('name') } );
+      ->create( { name => scalar $c->req->param('name') } );
     $c->detach( 'redirect', [ $project->id ] );
 }
 

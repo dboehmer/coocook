@@ -33,10 +33,10 @@ sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->create(
         {
-            short_name          => $c->req->param('short_name'),
-            long_name           => $c->req->param('long_name'),
-            quantity            => $c->req->param('quantity') || undef,
-            to_quantity_default => $c->req->param('to_quantity_default')
+            short_name          => scalar $c->req->param('short_name'),
+            long_name           => scalar $c->req->param('long_name'),
+            quantity            => scalar $c->req->param('quantity') || undef,
+            to_quantity_default => scalar $c->req->param('to_quantity_default')
               || undef,
         }
     );
@@ -59,8 +59,8 @@ sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Unit')->find($id)->update(
         {
-            short_name => $c->req->param('short_name'),
-            long_name  => $c->req->param('long_name'),
+            short_name => scalar $c->req->param('short_name'),
+            long_name  => scalar $c->req->param('long_name'),
         }
     );
     $c->detach('redirect');
