@@ -21,6 +21,8 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
+# TODO __PACKAGE__->add_unique_constraints([qw<meal name>]);
+
 __PACKAGE__->belongs_to( meal => 'Coocook::Schema::Result::Meal' );
 
 __PACKAGE__->belongs_to( prepare_at_meal => 'Coocook::Schema::Result::Meal' );

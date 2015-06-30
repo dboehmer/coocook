@@ -1,6 +1,6 @@
 <h2>Dish [% dish.name %]</h2>
 
-<p>for Meal [% dish.meal.name %] on [% dish.meal.date %]</p>
+<p>for Meal [% dish.meal.name %] on [% dish.meal.date.ymd %]</p>
 
 [% IF dish.recipe %]
 <p>from recipe <a href="[% c.uri_for_action('/recipe/edit', dish.recipe.id) %]">[% dish.recipe.name %]</a></p>

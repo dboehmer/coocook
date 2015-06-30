@@ -46,7 +46,25 @@
         [% END %]
     <tr>
         <td></td>
-        <td>([% meal.dishes.size + 0 %] dishes)</td>
+        <td>
+            <form action="[% c.uri_for_action('/dish/create') %]" method="POST">
+                <input type="hidden" name="meal" value="[% meal.id %]">
+                <input type="text"   name="name" placeholder="name">
+                <input type="number" name="servings" value="4">
+                <input type="submit" value="Create dish">
+            </form>
+            <form action="[% c.uri_for_action('/dish/from_recipe') %]" method="POST">
+                <input type="hidden" name="meal" value="[% meal.id %]">
+                <select name="recipe">
+        [% FOREACH recipe IN recipes %]
+                    <option value="[% recipe.id %]">[% recipe.name %]</option>
+        [% END %]
+                </select>
+                <input type="number" name="servings" value="4">
+                <input type="submit" value="Import recipe">
+            </form>
+	    <p>([% meal.dishes.size + 0 %] dishes)</p>
+	</td>
     </tr>
     [% END %]
     <tr>

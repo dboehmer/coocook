@@ -62,6 +62,7 @@ sub edit : Path : Args(1) {
     $c->stash(
         default_date => $default_date,
         project      => $project,
+        recipes      => [ $c->model('Schema::Recipe')->all ],
         days         => $days,
     );
 }

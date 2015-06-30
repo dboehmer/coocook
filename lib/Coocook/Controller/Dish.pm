@@ -40,6 +40,23 @@ sub delete : Local Args(1) POST {
         $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
 }
 
+sub create : Local Args(0) POST {
+    my ( $self, $c ) = @_;
+
+    my $dish = $c->model('Schema::Dish')->create(
+        {
+            meal        => scalar $c->req->param('meal'),
+            servings    => scalar $c->req->param('servings'),
+            name        => scalar $c->req->param('name'),
+            description => scalar $c->req->param('description') // "",
+            comment     => scalar $c->req->param('comment') // "",
+            preparation => scalar $c->req->param('preparation') // "",
+        }
+    );
+
+    $c->response->redirect( $c->uri_for_action( '/dish/edit', $dish->id ) );
+}
+
 sub from_recipe : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
@@ -52,11 +69,12 @@ sub from_recipe : Local Args(0) POST {
         (
             meal     => $meal->id,
             servings => scalar $c->req->param('servings'),
-            comment  => scalar $c->req->param('comment'),
+            comment  => scalar $c->req->param('comment') // "",
         )
     );
 
-    $c->response->redirect( $c->uri_for_action( '/meal/edit', $meal->id ) );
+    $c->response->redirect(
+        $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
 }
 
 sub recalculate : Local Args(1) POST {
