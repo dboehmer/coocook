@@ -36,24 +36,26 @@ sub create : Local Args(0) POST {
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->detach( 'redirect', [ $meal->id ] );
+    $c->detach( redirect => [$meal] );
 }
 
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Meal')->find($id)->update(
+    my $meal = $c->model('Schema::Meal')->find($id);
+
+    $meal->update(
         {
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->detach( 'redirect', [$id] );
+    $c->detach( redirect => [$meal] );
 }
 
 sub redirect : Private {
-    my ( $self, $c, $id ) = @_;
+    my ( $self, $c, $meal ) = @_;
     $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $id ) );
+        $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
 }
 
 =encoding utf8
