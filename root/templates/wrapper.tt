@@ -4,7 +4,9 @@
 
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="[% c.uri_for('/static/css/style.css') %]">
+[% FOREACH path IN css %]
+    <link rel="stylesheet" href="[% c.uri_for('/static/css/' _ path) %]">
+[% END %]
 </head>
 
 <body>
