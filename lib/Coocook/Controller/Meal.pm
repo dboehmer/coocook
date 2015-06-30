@@ -16,16 +16,6 @@ Catalyst Controller.
 
 =cut
 
-sub edit : Path : Args(1) {
-    my ( $self, $c, $id ) = @_;
-    my $meal = $c->model('Schema::Meal')->find($id);
-    $c->stash(
-        meal    => $meal,
-        project => $meal->project,
-        recipes => [ $c->model('Schema::Recipe')->all ],
-    );
-}
-
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
