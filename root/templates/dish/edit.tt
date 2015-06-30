@@ -2,8 +2,13 @@
 
 <p>for Meal [% dish.meal.name %] on [% dish.meal.date %]</p>
 
+[% IF dish.recipe %]
+<p>from recipe <a href="[% c.uri_for_action('/recipe/edit', dish.recipe.id) %]">[% dish.recipe.name %]</a></p>
+[% END %]
+
 <form action="[% c.uri_for_action('/dish/update', dish.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% dish.name %]"></p>
+<p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% dish.tags_rs.joined %]"></p>
 <p>Preparation:<br>
@@ -35,7 +40,7 @@ WHILE(ingredient = ingredients.next) %]
 [% END %]
 </table>
 
-<input type="submit" value="Update Recipe">
+<input type="submit" value="Update Dish">
 </form>
 
 <form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">

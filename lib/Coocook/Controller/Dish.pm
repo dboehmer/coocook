@@ -71,7 +71,53 @@ sub recalculate : Local Args(1) POST {
 }
 
 sub update : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
 
+    my $dish = $c->model('Schema::Dish')->find($id);
+
+    $c->model('Schema')->schema->txn_do(
+        sub {
+            $dish->update(
+                {
+                    name        => scalar $c->req->param('name'),
+                    comment     => scalar $c->req->param('comment'),
+                    servings    => scalar $c->req->param('servings'),
+                    preparation => scalar $c->req->param('preparation'),
+                    description => scalar $c->req->param('description'),
+
+                }
+            );
+
+            my $tags = $c->model('Schema::Tag')
+              ->from_names( scalar $c->req->param('tags') );
+            $dish->set_tags( [ $tags->all ] );
+
+            for my $ingredient ( $dish->ingredients ) {
+                if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
+                    $ingredient->delete;
+                    next;
+                }
+
+                $ingredient->update(
+                    {
+                        prepare => (
+                            scalar $c->req->param( 'prepare' . $ingredient->id )
+                            ? '1'
+                            : '0'
+                        ),
+                        value =>
+                          scalar $c->req->param( 'value' . $ingredient->id ),
+                        unit =>
+                          scalar $c->req->param( 'unit' . $ingredient->id ),
+                        comment =>
+                          scalar $c->req->param( 'comment' . $ingredient->id ),
+                    }
+                );
+            }
+        }
+    );
+
+    $c->response->redirect( $c->uri_for_action( '/dish/edit', $id ) );
 }
 
 =encoding utf8
