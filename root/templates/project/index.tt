@@ -9,7 +9,7 @@
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/project/create') %]" method="post">
+<form action="[% c.uri_for_action('/project/create') %]" method="POST">
 <input type="text" name="name" placeholder="name">
 <input type="submit" value="Create">
 </form>

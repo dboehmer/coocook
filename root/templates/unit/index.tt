@@ -23,19 +23,19 @@
 <ul>
 [% FOR unit IN units.all %]
     <li><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr> ([% unit.quantity.name %]):
-        <form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="post">
+        <form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="POST">
             <input type="text" name="short_name" value="[% unit.short_name %]">
             <input type="text" name="long_name" value="[% unit.long_name %]">
             <input type="submit" value="Rename"></form>
 [% IF unit.quantity AND NOT unit.is_quantity_default %]
-        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="post"><input type="submit" value="Make quantity's default"></form>
+        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="POST"><input type="submit" value="Make quantity's default"></form>
 [% END %]
-        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="post"><input type="submit" value="Delete"></form>
+        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="POST"><input type="submit" value="Delete"></form>
     </li>
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/unit/create') %]" method="post">
+<form action="[% c.uri_for_action('/unit/create') %]" method="POST">
 <input type="text" name="short_name" placeholder="short name">
 <input type="text" name="long_name" placeholder="long name">
 Quantity: <select name="quantity">

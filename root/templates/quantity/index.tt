@@ -3,13 +3,13 @@
 <ul>
 [% FOR quantity IN quantities.all %]
     <li>[% quantity.name %]
-    	<form action="[% c.uri_for_action('/quantity/delete', quantity.id) %]" method="post"><input type="submit" value="Delete"></form>
-    	<form action="[% c.uri_for_action('/quantity/update', quantity.id) %]" method="post"><input type="text" name="name" value="[% quantity.name %]"><input type="submit" value="Rename"></form>
+    	<form action="[% c.uri_for_action('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
+    	<form action="[% c.uri_for_action('/quantity/update', quantity.id) %]" method="POST"><input type="text" name="name" value="[% quantity.name %]"><input type="submit" value="Rename"></form>
     </li>
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/quantity/create') %]" method="post">
+<form action="[% c.uri_for_action('/quantity/create') %]" method="POST">
 <input type="text" name="name" placeholder="name">
 <input type="submit" value="Create">
 </form>

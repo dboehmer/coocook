@@ -1,6 +1,6 @@
 <h2>Recipe [% recipe.name %]</h2>
 
-<form action="[% c.uri_for_action('/recipe/update', recipe.id) %]" method="post">
+<form action="[% c.uri_for_action('/recipe/update', recipe.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
@@ -36,7 +36,7 @@ WHILE(ingredient = ingredients.next) %]
 <input type="submit" value="Update Recipe">
 </form>
 
-<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
+<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">
 Article: <select name="article">
 [% FOR article IN articles %]
     <option value="[% article.id %]">[% article.name %]</option>

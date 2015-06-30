@@ -2,7 +2,7 @@
 
 <p>for Meal [% dish.meal.name %] on [% dish.meal.date %]</p>
 
-<form action="[% c.uri_for_action('/dish/update', dish.id) %]" method="post">
+<form action="[% c.uri_for_action('/dish/update', dish.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% dish.name %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% dish.tags_rs.joined %]"></p>
@@ -38,7 +38,7 @@ WHILE(ingredient = ingredients.next) %]
 <input type="submit" value="Update Recipe">
 </form>
 
-<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="post">
+<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">
 Article: <select name="article">
 [% FOR article IN articles %]
     <option value="[% article.id %]">[% article.name %]</option>

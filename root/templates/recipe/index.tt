@@ -7,12 +7,12 @@
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name %]">
             <input type="submit" value="Duplicate">
         </form>
-        <form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="post"><input type="submit" value="Delete"></form>
+        <form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="POST"><input type="submit" value="Delete"></form>
     </li>
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/recipe/create') %]" method="post">
+<form action="[% c.uri_for_action('/recipe/create') %]" method="POST">
 <input type="text" name="name" placeholder="name">
 <p>Servings: <input type="text" name="servings" value="4"></p>
 <input type="submit" value="Create">

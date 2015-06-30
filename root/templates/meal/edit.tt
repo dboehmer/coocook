@@ -18,7 +18,7 @@
         <td>[% dish.name; IF dish.from_recipe %] (from recipe <a href="[% c.uri_for_action('/recipe/edit', dish.from_recipe) %]">[% dish.recipe.name %]</a>)[% END %]</td>
         <td>
 [% IF dish.from_recipe %]
-            <form action="[% c.uri_for_action('/dish/recalculate', dish.id) %]" method="post">
+            <form action="[% c.uri_for_action('/dish/recalculate', dish.id) %]" method="POST">
 
             <input type="number" name="servings" value="[% dish.servings %]">
             <input type="submit" value="Recalculate">
@@ -35,7 +35,7 @@ END %]
             </ul>
         </td>
         <td>
-            <form action="[% c.uri_for_action('/dish/delete', dish.id) %]" method="post">
+            <form action="[% c.uri_for_action('/dish/delete', dish.id) %]" method="POST">
                 <input type="submit" value="Delete">
             </form>
         </td>
