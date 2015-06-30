@@ -5,6 +5,7 @@
         <th>Date</th>
         <th>Name</th>
         <th>Comment</th>
+        <th>Dishes</th>
     </tr>
 
 [% FOREACH day IN days;
@@ -13,8 +14,20 @@
     [% IF loop.first %]
         <td rowspan="[% day.meals.size %]">[% day.date.ymd %]</td>
     [% END %]
-        <td><a href="[% c.uri_for_action('/meal/edit', meal.id) %]">[% meal.name %]</a></td>
-        <td>[% meal.comment %]</td>
+        <form action="[% c.uri_for_action('/meal/update', meal.id) %]" method="POST">
+        <td><input type="text" name="name"    value="[% meal.name %]"></td>
+        <td>
+            <input type="text" name="comment" value="[% meal.comment %]" placeholder="comment">
+            <input type="submit" value="Update meal">
+        </td>
+        </form>
+        <td>
+            <ul>
+    [% FOR dish IN meal.dishes %]
+        <li><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a></li>
+    [% END %]
+            </ul>
+        </td>
     </tr>
     [% END;
 END %]
