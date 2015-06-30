@@ -24,6 +24,10 @@ sub index : Path('/articles') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
+        default_shelf_life_days   => 7,
+        default_preorder_servings => 10,
+        default_preorder_workdays => 3,
+
         articles      => $c->model('Schema::Article'),
         shop_sections => [ $c->model('Schema::ShopSection')->all ],
         units         => [ $c->model('Schema::Unit')->all ],
@@ -83,13 +87,40 @@ sub update : Local : Args(1) : POST {
         sub {
             $article->set_tags(  [ $tags->all ] );
             $article->set_units( [ $units->all ] );
-            $article->update(
+            $article->set_columns(
                 {
                     name         => $c->req->param('name'),
                     comment      => $c->req->param('comment'),
                     shop_section => $c->req->param('shop_section'),
                 }
             );
+            if ( $c->req->param('shelf_life') ) {
+                $article->set_columns(
+                    {
+                        shelf_life_days =>
+                          scalar $c->req->param('shelf_life_days')
+                    }
+                );
+            }
+            else {
+                $article->set_columns( { shelf_life_days => undef } );
+            }
+            if ( $c->req->param('preorder') ) {
+                $article->set_columns(
+                    {
+                        preorder_servings =>
+                          scalar $c->req->param('preorder_servings'),
+                        preorder_workdays =>
+                          scalar $c->req->param('preorder_workdays'),
+                    }
+                );
+            }
+            else {
+                $article->set_columns(
+                    { preorder_servings => undef, preorder_workdays => undef, }
+                );
+            }
+            $article->update;
         }
     );
 

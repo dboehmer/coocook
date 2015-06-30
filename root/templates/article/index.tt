@@ -8,6 +8,17 @@
     <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
 [% END %]
 </fieldset>
+<fieldset>
+    <legend>Preorder</legend>
+    <input type="checkbox" name="preorder" id="preorder"><label for="preorder">preorder</label>
+    <input type="number" name="preorder_workdays" value="[% default_preorder_workdays %]"> business days in advance
+    if <input type="number" name="preorder_servings" value="[% default_preorder_servings %]"> servings or more
+</fieldset>
+<fieldset>
+    <legend>Shelf Life</legend>
+    <input type="checkbox" name="shelf_life" id="shelf_life"> <label for="shelf_life">known shelf life</label>
+    of <input type="number" name="shelf_life_days" value="[% default_shelf_life_days %]"> days
+</fieldset>
 <input type="text" name="name" placeholder="name">
 <input type="text" name="comment" placeholder="comment">
 <input type="text" name="tags" placeholder="tags">
@@ -26,22 +37,36 @@
         <form action="[% c.uri_for_action('/article/delete', article.id) %]" method="post"><input type="submit" value="Delete"></form>
 
         <form action="[% c.uri_for_action('/article/update', article.id) %]" method="post">
+            <fieldset>
+                <legend>Update</legend>
+                <p>Applicable units:
     [% my_units = article.unit_ids;
     FOR unit IN units;
         id = unit.id %]
-            <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
-            <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
+                    <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
+                    <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
     [% END %]
-            <input type="text" name="name" value="[% article.name %]">
-            <input type="text" name="comment" value="[% article.comment %]" placeholder="comment">
-            <select name="shop_section">
-                <option value="">(no shop section)</option>
+                </p>
+                <p>Preorder:
+                    <input type="checkbox" name="preorder" id="preorder[% article.id %]" [% 'checked' IF article.preorder_workdays.defined %]><label for="preorder[% article.id %]">preorder</label>
+                    <input type="number" name="preorder_workdays" value="[% article.preorder_workdays OR default_preorder_workdays %]"> business days in advance
+                    if <input type="number" name="preorder_servings" value="[% article.preorder_servings OR default_preorder_servings %]"> servings or more
+                </p>
+                <p>Shelf life:
+                    <input type="checkbox" name="shelf_life" id="shelf_life[% article.id %]" [% 'checked' IF article.shelf_life_days.defined %]>
+                    <label for="shelf_life[% article.id %]">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days OR default_shelf_life_days %]"> days
+                </p>
+                <p>Name: <input type="text" name="name" value="[% article.name %]"></p>
+                <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
+                <p>Shop section: <select name="shop_section">
+                    <option value="">(no shop section)</option>
     [% FOREACH section IN shop_sections %]
-                <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
+                    <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
     [% END %]
-            </select>
-            <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags">
-            <input type="submit" value="Update">
+                </select></p>
+                <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>
+                <input type="submit" value="Update">
+            </fieldset>
         </form>
     </li>
 [% END %]

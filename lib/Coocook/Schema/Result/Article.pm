@@ -8,10 +8,13 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("articles");
 
 __PACKAGE__->add_columns(
-    id           => { data_type => "int", is_auto_increment => 1 },
-    shop_section => { data_type => "int", is_nullable       => 1 },
-    name         => { data_type => "text" },
-    comment      => { data_type => "text" },
+    id                => { data_type => "int", is_auto_increment => 1 },
+    shop_section      => { data_type => "int", is_nullable       => 1 },
+    shelf_life_days   => { data_type => "int", is_nullable       => 1 },
+    preorder_servings => { data_type => "int", is_nullable       => 1 },
+    preorder_workdays => { data_type => "int", is_nullable       => 1 },
+    name              => { data_type => "text" },
+    comment           => { data_type => "text" },
 );
 
 __PACKAGE__->set_primary_key("id");
