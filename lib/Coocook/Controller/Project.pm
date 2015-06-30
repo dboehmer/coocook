@@ -67,6 +67,26 @@ sub edit : Path : Args(1) {
     );
 }
 
+sub edit_dishes : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
+
+    my $project = $c->model('Schema::Project')->find($id);
+
+    my @dish_ids = grep { $c->req->param("dish$_") }
+      $project->meals->dishes->get_column('id')->all;
+    my %update;
+
+    scalar $c->req->param('edit_comment')
+      and $update{comment} = scalar $c->req->param('new_comment');
+    scalar $c->req->param('edit_servings')
+      and $update{servings} = scalar $c->req->param('new_servings');
+
+    $c->model('Schema::Dish')->search( { id => { -in => \@dish_ids } } )
+      ->update( \%update );
+
+    $c->detach( redirect => [ $project->id ] );
+}
+
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')

@@ -1,5 +1,7 @@
 <h2>[% project.name %]</h2>
 
+<form action="[% c.uri_for_action('/project/edit_dishes', project.id) %]" method="POST">
+
 <table>
     <thead>
         <tr>
@@ -84,6 +86,26 @@
     </tr>
 [% END %]
 </table>
+
+<fieldset>
+    <legend>Edit selected dishes</legend>
+    <p>Edit selected dishes and update their properties selected below with the respective value:</p>
+
+    <p>
+	<input type="checkbox" name="edit_servings" id="edit_servings">
+	<label for="edit_servings">servings:</label>
+	<input type="number" name="new_servings" value="4">
+    </p>
+
+    <p>
+	<input type="checkbox" name="edit_comment" id="edit_comment">
+	<label for="edit_comment">comment:</label>
+	<input type="text" name="new_comment" placeholder="comment">
+    </p>
+
+    <input type="submit" value="Update selected dishes">
+</fieldset>
+</form>
 
 <form action="[% c.uri_for_action('/meal/create') %]" method="POST">
     <input type="hidden" name="project" value="[% project.id %]">
