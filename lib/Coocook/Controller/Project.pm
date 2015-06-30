@@ -47,8 +47,13 @@ sub edit : Path : Args(1) {
             push @{ $days{ $meal->date }{meals} }, $meal;
         }
 
-        # save DateTime object for table display
-        $_->{date} = $_->{meals}[0]->date for values %days;
+        for my $day ( values %days ) {
+            $day->{dishes} = 0;
+            $day->{dishes} += $_->dishes->count for @{ $day->{meals} };
+
+            # save DateTime object for table display
+            $day->{date} = $day->{meals}[0]->date;
+        }
 
         # remove sort keys, save sorted list
         [ map { $days{$_} } sort keys %days ];

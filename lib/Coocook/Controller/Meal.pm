@@ -26,6 +26,14 @@ sub edit : Path : Args(1) {
     );
 }
 
+sub delete : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
+
+    my $meal = $c->model('Schema::Meal')->find($id);
+    $meal->delete;
+    $c->detach( redirect => [$meal] );
+}
+
 sub create : Local Args(0) POST {
     my ( $self, $c ) = @_;
     my $meal = $c->model('Schema::Meal')->create(

@@ -9,6 +9,10 @@ nav ul li {
     display: inline;
 }
 
+.inline {
+    display: inline;
+}
+
 table td input[type=checkbox] {
     /* center checkbox in table column */
     display: block;

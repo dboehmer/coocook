@@ -1,42 +1,79 @@
 <h2>[% project.name %]</h2>
 
 <table>
-    <tr>
-        <th>Date</th>
-        <th>Name</th>
-        <th>Comment</th>
-        <th>Dishes</th>
-    </tr>
-
+    <thead>
+        <tr>
+            <th>Day</th>
+            <th id="mass-selector"></th>
+            <th>Meals and Dishes</th>
+        </tr>
+    </thead>
 [% FOREACH day IN days;
     FOREACH meal IN day.meals %]
     <tr>
-    [% IF loop.first %]
-        <td rowspan="[% day.meals.size %]">[% day.date.ymd %]</td>
-    [% END %]
-        <form action="[% c.uri_for_action('/meal/update', meal.id) %]" method="POST">
-        <td><input type="text" name="name"    value="[% meal.name %]"></td>
+        [% IF loop.first  %]
+        <th rowspan="[% day.dishes + day.meals.size * 4 + 1 %]" style="vertical-align:top">[% day.date.ymd %]</th>
+        [% END %]
+        <td></td>
+        <th colspan="1" style="text-align:left">
+            [% meal.name %]
+        [% IF meal.dishes_rs.count == 0 %]
+            <form action="[% c.uri_for_action('/meal/delete', meal.id) %]" method="POST" class="inline">
+                <input type="submit" value="Delete meal">
+            </form>
+        [% END %]
+        </th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>[% meal.comment %]</th>
+    </tr>
+    <tr>
+        <td></td>
         <td>
-            <input type="text" name="comment" value="[% meal.comment %]" placeholder="comment">
-            <input type="submit" value="Update meal">
-        </td>
-        </form>
-        <td>
-            <ul>
-    [% FOR dish IN meal.dishes %]
-        <li><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a></li>
-    [% END %]
-            </ul>
+            <form action="[% c.uri_for_action('/meal/update', meal.id) %]" method="POST">
+                <input type="text" name="name"    value="[% meal.name %]">
+                <input type="text" name="comment" value="[% meal.comment %]" placeholder="comment">
+                <input type="submit" value="Update meal">
+            </form>
         </td>
     </tr>
-    [% END;
-END %]
+        [% FOREACH dish IN meal.dishes %]
+    <tr>
+        <td><input type="checkbox" name="dish[% dish.id %]"></td>
+        <td><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings): [% dish.comment %]</td>
+    </tr>
+        [% END %]
+    <tr>
+        <td></td>
+        <td>([% meal.dishes.size + 0 %] dishes)</td>
+    </tr>
+    [% END %]
+    <tr>
+        <td></td>
+        <td>
+            <form action="[% c.uri_for_action('/meal/create') %]" method="POST">
+		<input type="hidden" name="project" value="[% project.id %]">
+		<input type="hidden" name="date"    value="[% meal.date.ymd %]">
+                <fieldset>
+                    <legend>Add meal</legend>
+		    Name:    <input type="text" name="name"    placeholder="name" required>
+		    Comment: <input type="text" name="comment" placeholder="comment">
+		    <input type="submit" value="Add meal">
+                </fieldset>
+            </form>
+        </td>
+    </tr>
+[% END %]
 </table>
 
 <form action="[% c.uri_for_action('/meal/create') %]" method="POST">
     <input type="hidden" name="project" value="[% project.id %]">
-    Date: <input type="date" name="date" placeholder="YYYY-MM-DD" value="[% default_date.ymd %]" required>
-    Name: <input type="text" name="name" placeholder="name" required>
-    Comment: <input type="text" name="comment" placeholder="comment">
-    <input type="submit" value="Add meal">
+    <fieldset>
+        <legend>Add meal</legend>
+        Date:    <input type="date" name="date"    placeholder="YYYY-MM-DD" required value="[% default_date.ymd %]">
+        Name:    <input type="text" name="name"    placeholder="name"       required>
+        Comment: <input type="text" name="comment" placeholder="comment">
+        <input type="submit" value="Add meal">
+    </fieldset>
 </form>
