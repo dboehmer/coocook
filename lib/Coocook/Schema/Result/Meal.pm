@@ -23,6 +23,11 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish' );
 
+__PACKAGE__->has_many(
+    prepared_dishes => 'Coocook::Schema::Result::Dish',
+    'prepare_at_meal'
+);
+
 __PACKAGE__->meta->make_immutable;
 
 1;

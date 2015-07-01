@@ -29,7 +29,41 @@ sub auto : Private {
     push @{ $c->stash->{css} }, 'print.css';
 }
 
-sub index : Path Args(0) { }
+sub index : Path Args(0) {
+    my ( $self, $c ) = @_;
+
+    my @projects = $c->model('Schema::Project')->all;
+    my @days =
+      map { $_->date }
+      $c->model('Schema::Meal')
+      ->search( undef, { columns => 'date', distinct => 1 } )->all;
+
+    $c->stash(
+        days     => \@days,
+        projects => \@projects,
+    );
+}
+
+sub day : Local Args(3) {
+    my ( $self, $c, $year, $month, $day ) = @_;
+
+    my $dt = DateTime->new(
+        year  => $year,
+        month => $month,
+        day   => $day,
+    );
+
+    my $meals = $c->model('Schema::Meal')->search(
+        {
+            date => $dt->ymd,
+        }
+    );
+
+    $c->stash(
+        day   => $dt,
+        meals => $meals,
+    );
+}
 
 sub project : Local Args(1) {
     my ( $self, $c, $id ) = @_;

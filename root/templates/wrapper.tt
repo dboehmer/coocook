@@ -29,7 +29,7 @@
 </nav>
 
 <nav>
-Print:
+<a href="[% c.uri_for_action('/print/index') %]">Print:</a>
 <ul>
     <li><a href="[% c.uri_for_action('/print/project', 1) %]">Project</a></li>
     <li><a href="[% c.uri_for_action('/print/shopping_list', 1) %]">Shopping List</a></li>
