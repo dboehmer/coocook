@@ -88,7 +88,7 @@
 </table>
 
 <fieldset>
-    <legend>Edit selected dishes</legend>
+    <legend>Manipulate selected dishes</legend>
     <p>Edit selected dishes and update their properties selected below with the respective value:</p>
 
     <p>
@@ -116,4 +116,20 @@
         Comment: <input type="text" name="comment" placeholder="comment">
         <input type="submit" value="Add meal">
     </fieldset>
+</form>
+
+<form>
+<fieldset>
+<input type="date" name="from">
+<input type="date" name="until">
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<p><input type="text" name="meal1" placeholder="meal"></p>
+<input type="submit" value="Autocreate">
+</fieldset>
 </form>
