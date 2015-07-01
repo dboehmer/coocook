@@ -1,0 +1,33 @@
+<h2>Purchase Lists</h2>
+
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+[% WHILE(list = lists.next) %]
+    <tr>
+        <td>[% list.date.ymd %]</td>
+        <td><a href="[% c.uri_for_action('/purchase_list/edit', list.id) %]">[% list.name %]</a></td>
+        <td>
+            <form action="[% c.uri_for_action('/purchase_list/update', list.id) %]" method="POST">
+                <input type="text" name="name" value="[% list.name %]">
+                <input type="submit" value="Rename list">
+            </form>
+            <form action="[% c.uri_for_action('/purchase_list/delete', list.id) %]" method="POST">
+                <input type="submit" value="Delete list">
+            </form>
+        </td>
+    </tr>
+[% END %]
+</table>
+
+<form action="[% c.uri_for_action('/purchase_list/create') %]" method="POST">
+    <input type="hidden" name="project" value="[% my_project.id %]">
+    <fieldset>
+        <legend>Create purchase list</legend>
+        <input type="date" name="date" value="[% default_date.ymd %]">
+        <input type="text" name="name" placeholder="name">
+        <input type="submit" value="Create purchase list">
+</form>
