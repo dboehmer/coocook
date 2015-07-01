@@ -8,8 +8,8 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("recipes_tags");
 
 __PACKAGE__->add_columns(
-    recipe => { data_type => "int" },
-    tag    => { data_type => "int" },
+    recipe => { data_type => 'int' },
+    tag    => { data_type => 'int' },
 );
 
 __PACKAGE__->set_primary_key(qw<recipe tag>);

@@ -8,10 +8,10 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("purchase_lists");
 
 __PACKAGE__->add_columns(
-    id      => { data_type => "int", is_auto_increment => 1 },
+    id      => { data_type => 'int', is_auto_increment => 1 },
     project => { data_type => 'int' },
-    name    => { data_type => "text" },
-    date    => { data_type => "date" },
+    name    => { data_type => 'text' },
+    date    => { data_type => 'date' },
 );
 
 __PACKAGE__->set_primary_key("id");

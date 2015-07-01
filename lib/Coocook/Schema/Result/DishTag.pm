@@ -8,8 +8,8 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("dishes_tags");
 
 __PACKAGE__->add_columns(
-    dish => { data_type => "int" },
-    tag  => { data_type => "int" },
+    dish => { data_type => 'int' },
+    tag  => { data_type => 'int' },
 );
 
 __PACKAGE__->set_primary_key(qw<dish tag>);

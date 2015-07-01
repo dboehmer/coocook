@@ -8,8 +8,8 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("articles_units");
 
 __PACKAGE__->add_columns(
-    article => { data_type => "int" },
-    unit    => { data_type => "int" },
+    article => { data_type => 'int' },
+    unit    => { data_type => 'int' },
 );
 
 __PACKAGE__->set_primary_key(qw<article unit>);

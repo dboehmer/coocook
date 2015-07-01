@@ -8,7 +8,7 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("items");
 
 __PACKAGE__->add_columns(
-    id            => { data_type => "int",  is_auto_increment => 1 },
+    id            => { data_type => 'int',  is_auto_increment => 1 },
     purchase_list => { data_type => 'int' },
     value         => { data_type => 'real' },
     offset        => { data_type => 'real' },

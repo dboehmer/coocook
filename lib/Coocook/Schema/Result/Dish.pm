@@ -8,15 +8,15 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("dishes");
 
 __PACKAGE__->add_columns(
-    id              => { data_type => "int", is_auto_increment => 1 },
-    meal            => { data_type => "int" },
-    from_recipe     => { data_type => "int", is_nullable       => 1 },
-    name            => { data_type => "text" },
-    servings        => { data_type => "int" },
-    prepare_at_meal => { data_type => "int", is_nullable       => 1 },
-    preparation     => { data_type => "text" },
-    description     => { data_type => "text" },
-    comment         => { data_type => "text" },
+    id              => { data_type => 'int', is_auto_increment => 1 },
+    meal            => { data_type => 'int' },
+    from_recipe     => { data_type => 'int', is_nullable       => 1 },
+    name            => { data_type => 'text' },
+    servings        => { data_type => 'int' },
+    prepare_at_meal => { data_type => 'int', is_nullable       => 1 },
+    preparation     => { data_type => 'text' },
+    description     => { data_type => 'text' },
+    comment         => { data_type => 'text' },
 );
 
 __PACKAGE__->set_primary_key("id");
