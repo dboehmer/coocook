@@ -26,6 +26,14 @@ __PACKAGE__->has_many(
 );
 
 __PACKAGE__->has_many(
+    items => 'Coocook::Schema::Result::Item',
+    {
+        'foreign.article' => 'self.article',
+        'foreign.unit'    => 'self.unit',
+    }
+);
+
+__PACKAGE__->has_many(
     recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
     {
         'foreign.article' => 'self.article',

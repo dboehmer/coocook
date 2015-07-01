@@ -34,6 +34,10 @@ __PACKAGE__->belongs_to(
     }
 );
 
+__PACKAGE__->has_many(
+    ingredients_items => 'Coocook::Schema::Result::IngredientItem' );
+__PACKAGE__->many_to_many( items => ingredients_items => 'item' );
+
 __PACKAGE__->meta->make_immutable;
 
 1;

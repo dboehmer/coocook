@@ -18,6 +18,9 @@ __PACKAGE__->add_unique_constraints( ['name'] );
 
 __PACKAGE__->has_many( meals => 'Coocook::Schema::Result::Meal' );
 
+__PACKAGE__->has_many(
+    purchase_lists => 'Coocook::Schema::Result::PurchaseList' );
+
 __PACKAGE__->meta->make_immutable;
 
 1;
