@@ -101,7 +101,7 @@ sub project : Local Args(1) {
     );
 }
 
-sub shopping_list : Local Args(1) {
+sub purchase_list : Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
     my $sections = [

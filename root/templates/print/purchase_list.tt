@@ -1,4 +1,4 @@
-<h2>Shopping List</h2>
+<h2>Purchase List</h2>
 
 
 [% FOREACH section IN sections %]
