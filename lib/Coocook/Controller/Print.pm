@@ -1,6 +1,9 @@
 package Coocook::Controller::Print;
+
+use DateTime;
 use Moose;
 use namespace::autoclean;
+use utf8;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -20,7 +23,49 @@ Catalyst Controller.
 
 =cut
 
+sub auto : Private {
+    my ( $self, $c ) = @_;
+
+    push @{ $c->stash->{css} }, 'print.css';
+}
+
 sub index : Path Args(0) { }
+
+sub project : Local Args(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $project = $c->model('Schema::Project')->find($id);
+
+    my @days = (
+        {
+            date  => DateTime->today,
+            meals => [
+                {
+                    name   => "Frühstück",
+                    dishes => [qw<Eier Brötchen>],
+                },
+                {
+                    name   => "Mittagessen",
+                    dishes => [qw<Käsespätzle Pudding>],
+                },
+            ],
+        },
+        {
+            date  => DateTime->today->add( days => 1 ),
+            meals => [
+                {
+                    name   => "Abschluss-Brunch",
+                    dishes => ["Reste"],
+                }
+            ],
+        },
+    );
+
+    $c->stash(
+        project => $project,
+        days    => \@days,
+    );
+}
 
 sub shopping_list : Local Args(1) {
     my ( $self, $c, $id ) = @_;
@@ -85,8 +130,6 @@ sub shopping_list : Local Args(1) {
     $sections = [ sort { $a->{name} cmp $b->{name} } @$sections ];
 
     $c->stash( sections => $sections );
-
-    push @{ $c->stash->{css} }, 'print.css';
 }
 
 =encoding utf8

@@ -31,6 +31,7 @@
 <nav>
 Print:
 <ul>
+    <li><a href="[% c.uri_for_action('/print/project', 1) %]">Project</a></li>
     <li><a href="[% c.uri_for_action('/print/shopping_list', 1) %]">Shopping List</a></li>
 </ul>
 </nav>

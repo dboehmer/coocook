@@ -1,0 +1,23 @@
+<h2>Project [% project.name %]</h2>
+
+<table>
+    <tr>
+        <th>Day</th>
+        <th>Meal</th>
+        <th>Dishes</td>
+    </tr>
+[% FOREACH day IN days;
+    FOREACH meal IN day.meals %]
+    <tr>
+        [% IF loop.first %]
+        <td rowspan="[% day.meals.size %]">[% day.date.ymd %]</td>
+        [% END %]
+        <td>[% meal.name %]</td>
+        <td><ul>
+        [% FOREACH dish IN meal.dishes %]
+            <li>[% dish %]</li>
+        [% END %]
+        </ul></td>
+    </tr>
+    [% END;
+END %]
