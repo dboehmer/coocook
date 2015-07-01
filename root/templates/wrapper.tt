@@ -22,7 +22,7 @@
 <li><a href="[% c.uri_for_action('/recipe/index') %]">Recipes</a></li>
 <li><a href="[% c.uri_for_action('/article/index') %]">Articles</a></li>
 <li><a href="[% c.uri_for_action('/tag/index') %]">Tags</a></li>
-<li><a href="[% c.uri_for_action('/purchase_list/index') %]">Purchase Lists</a></li>
+<li><a href="[% c.uri_for_action('/purchase_list/index', my_project.id) %]">Purchase Lists</a></li>
 <li><a href="[% c.uri_for_action('/shop_section/index') %]">Shop sections</a></li>
 <li><a href="[% c.uri_for_action('/quantity/index') %]">Quantities</a></li>
 <li><a href="[% c.uri_for_action('/unit/index') %]">Units</a></li>

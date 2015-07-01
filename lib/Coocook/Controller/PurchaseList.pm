@@ -24,10 +24,11 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/purchase_lists') {
-    my ( $self, $c ) = @_;
+sub index : Path('/purchase_lists') Args(1) {
+    my ( $self, $c, $project ) = @_;
 
-    my $lists = $c->model('Schema::PurchaseList');
+    my $lists =
+      $c->model('Schema::PurchaseList')->search( { project => $project } );
 
     my $max_date = do {
         my $list = $lists->search( undef,
