@@ -1,6 +1,7 @@
 package Coocook::Model::Schema;
 
 use Moose;
+use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Catalyst::Model::DBIC::Schema';
 

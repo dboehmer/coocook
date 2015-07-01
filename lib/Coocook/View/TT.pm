@@ -1,6 +1,7 @@
 package Coocook::View::TT;
+
 use Moose;
-use namespace::autoclean;
+use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Catalyst::View::TT';
 

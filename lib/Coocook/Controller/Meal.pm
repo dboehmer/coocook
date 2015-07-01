@@ -1,6 +1,7 @@
 package Coocook::Controller::Meal;
+
 use Moose;
-use namespace::autoclean;
+use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
