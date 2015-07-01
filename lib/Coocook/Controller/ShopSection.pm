@@ -6,7 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 =head1 NAME
 
-Coocook::Controller::Quantity - Catalyst Controller
+Coocook::Controller::ShopSection - Catalyst Controller
 
 =head1 DESCRIPTION
 
