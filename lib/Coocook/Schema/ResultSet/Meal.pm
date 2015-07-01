@@ -9,10 +9,10 @@ extends 'Coocook::Schema::ResultSet';
 sub dishes {
     my $self = shift;
 
-    my @ids = $self->get_column('id')->all;
+    my $ids = $self->get_column('id')->as_query;
 
     return $self->result_source->schema->resultset('Dish')
-      ->search( { meal => { -in => \@ids } } );
+      ->search( { meal => { -in => $ids } } );
 }
 
 __PACKAGE__->meta->make_immutable;
