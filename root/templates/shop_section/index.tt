@@ -2,7 +2,7 @@
 
 <ul>
     <li>
-        <form action="[% c.uri_for_action('/shopsection/create') %]" method="POST">
+        <form action="[% c.uri_for_action('/shop_section/create') %]" method="POST">
             <input type="text" name="name" placeholder="name">
             <input type="submit" value="Create">
         </form>
@@ -10,7 +10,7 @@
 
 [% FOREACH section IN shop_sections.all %]
     <li>
-        <form action="[% c.uri_for_action('/shopsection/update', section.id) %]" method="POST">
+        <form action="[% c.uri_for_action('/shop_section/update', section.id) %]" method="POST">
             <input type="text" name="name" value="[% section.name %]">
             <input type="submit" value="Rename">
         </form>

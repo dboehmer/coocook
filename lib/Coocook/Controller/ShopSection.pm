@@ -5,6 +5,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
+__PACKAGE__->config( namespace => 'shop_section' );
+
 =head1 NAME
 
 Coocook::Controller::ShopSection - Catalyst Controller
@@ -36,18 +38,25 @@ sub create : Local Args(0) POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action('/shopsection/index') );
+    $c->detach('redirect');
 }
 
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
+
     $c->model('Schema::ShopSection')->find($id)->update(
         {
             name => scalar $c->req->param('name'),
         }
     );
 
-    $c->response->redirect( $c->uri_for_action('/shopsection/index') );
+    $c->detach('redirect');
+}
+
+sub redirect : Private {
+    my ( $self, $c ) = @_;
+
+    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
 }
 
 =encoding utf8
