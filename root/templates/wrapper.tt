@@ -28,6 +28,13 @@
 </ul>
 </nav>
 
+<nav>
+Print:
+<ul>
+    <li><a href="[% c.uri_for_action('/print/shopping_list', 1) %]">Shopping List</a></li>
+</ul>
+</nav>
+
 [% content %]
 
 </body>

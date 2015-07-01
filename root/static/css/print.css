@@ -1,0 +1,12 @@
+table {
+    border-collapse: collapse;
+}
+
+table td, table th {
+    border: 1px solid black;
+    vertical-align: top;
+}
+
+.small-font {
+    font-size: 0.8em;
+}

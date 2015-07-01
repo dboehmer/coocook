@@ -1,0 +1,40 @@
+<h2>Shopping List</h2>
+
+
+[% FOREACH section IN sections %]
+<h3>[% section.name %]</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Article</th>
+            <th>Dishes</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    [% FOREACH item IN section.items %]
+    <tr>
+        <td>
+            [% IF item.offset;
+                item.value;
+                ' - ';
+                0 - item.offset;
+                ' = ';
+                item.value + item.offset;
+            ELSE;
+                item.value;
+            END;
+            display_unit(item.unit) %]
+        </td>
+        <td>[% item.article.name %]</td>
+        <td class="small-font"><ul>
+        [% FOREACH ingredient IN item.ingredients %]
+            <li>[% ingredient.value; ingredient.unit %] [% ingredient.date %] [% ingredient.dish %] [% IF ingredient.comment; '('; ingredient.comment; ')'; END %]</li>
+        [% END %]
+        </ul></td>
+        <td>[% item.comment %]</td>
+    <tr>
+    [% END %]
+</table>
+[% END %]
