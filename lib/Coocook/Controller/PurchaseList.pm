@@ -38,7 +38,7 @@ sub index : Path('/purchase_lists') {
 
     $c->stash(
         default_date => $max_date || DateTime->today,
-        lists        => $c->model('Schema::PurchaseList'),
+        lists => $lists->search_rs( undef, { order_by => 'date' } ),
     );
 }
 
