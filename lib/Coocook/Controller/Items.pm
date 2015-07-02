@@ -24,7 +24,12 @@ sub unassigned : Local Args(0) {
     my $project = $c->stash->{my_project};
     my $ingredients =
       $c->model('Schema::Meal')->search( { project => $project->id } )
-      ->dishes->ingredients->unassigned;
+      ->dishes->ingredients->unassigned->search(
+        undef,
+        {
+            prefetch => [qw<unit article>],
+        }
+      );
 
     my $lists = $c->model('Schema::PurchaseList')
       ->search( undef, { order_by => 'date' } );

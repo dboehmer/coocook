@@ -8,7 +8,7 @@
     </tr>
 [% WHILE(ingredient = ingredients.next) %]
     <tr>
-        <td>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %] ([% ingredient.items_rs.count %])</td>
+        <td>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %]</td>
         <td>
             <input type="radio" name="assign[% ingredient.id %]" value="" id="a[% ingredient.id %]none" checked>
             <label for="a[% ingredient.id %]none" style="font-style:italic">keep unassigned</label>
