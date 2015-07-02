@@ -5,6 +5,16 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
+# retrieves all ingredients from all selected dishes
+sub ingredients {
+    my $self = shift;
+
+    my $ids = $self->get_column('id')->as_query;
+
+    return $self->result_source->schema->resultset('DishIngredient')
+      ->search( { dish => { -in => $ids } } );
+}
+
 sub from_recipe {
     my ( $self, $recipe, %args ) = @_;
 

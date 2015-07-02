@@ -11,6 +11,21 @@ sub prepared {
     return $self->search( { prepare => 1 } );
 }
 
+sub unassigned {
+    my $self = shift;
+
+    return $self->search(
+        undef,
+        {
+            join     => 'ingredients_items',
+            distinct => 1,
+            '+select' =>
+              { count => 'ingredients_items.item', -as => 'count_items' },
+            having => { count_items => { '=' => \'0' } },
+        }
+    );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

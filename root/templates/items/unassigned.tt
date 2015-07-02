@@ -1,0 +1,27 @@
+<h2>Assign Ingredients to Purchase Lists</h2>
+
+<form action="[% c.uri_for_action('/items/assign') %]" method="POST">
+<table>
+    <tr>
+        <th>Ingredient</th>
+        <th colspan="[% lists.size + 1 %]">Assign to purchase list</th>
+    </tr>
+[% WHILE(ingredient = ingredients.next) %]
+    <tr>
+        <td>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %] ([% ingredient.items_rs.count %])</td>
+        <td>
+            <input type="radio" name="assign[% ingredient.id %]" value="" id="a[% ingredient.id %]none" checked>
+            <label for="a[% ingredient.id %]none" style="font-style:italic">keep unassigned</label>
+        </td>
+    [% FOREACH list IN lists %]
+        <td>
+            <input type="radio" name="assign[% ingredient.id %]" value="[% list.id %]" id="a[% ingredient.id %]l[% list.id %]">
+            <label for="a[% ingredient.id %]l[% list.id %]">[% list.name %]</label>
+        </td>
+    [% END %]
+    </tr>
+[% END %]
+</table>
+
+<input type="submit" value="Assign to purchase lists">
+</form>
