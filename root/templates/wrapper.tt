@@ -24,17 +24,10 @@
 <li><a href="[% c.uri_for_action('/tag/index') %]">Tags</a></li>
 <li><a href="[% c.uri_for_action('/items/unassigned') %]">Unassigned Items</a></li>
 <li><a href="[% c.uri_for_action('/purchase_list/index') %]">Purchase Lists</a></li>
+<li><a href="[% c.uri_for_action('/print/index') %]">Printing</a></li>
 <li><a href="[% c.uri_for_action('/shop_section/index') %]">Shop sections</a></li>
 <li><a href="[% c.uri_for_action('/quantity/index') %]">Quantities</a></li>
 <li><a href="[% c.uri_for_action('/unit/index') %]">Units</a></li>
-</ul>
-</nav>
-
-<nav>
-<a href="[% c.uri_for_action('/print/index') %]">Print:</a>
-<ul>
-    <li><a href="[% c.uri_for_action('/print/project', my_project.id) %]">Project</a></li>
-    <li><a href="[% c.uri_for_action('/print/purchase_list', 1) %]">Purchase List</a></li>
 </ul>
 </nav>
 

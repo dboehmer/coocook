@@ -32,14 +32,21 @@ sub auto : Private {
 sub index : Path Args(0) {
     my ( $self, $c ) = @_;
 
-    my @projects = $c->model('Schema::Project')->all;
+    my $project = $c->stash->{my_project};
+
     my @days =
       map { $_->date }
-      $c->model('Schema::Meal')
-      ->search( undef, { columns => 'date', distinct => 1 } )->all;
+      $project->meals->search( undef, { columns => 'date', distinct => 1 } )
+      ->all;
+
+    my $lists =
+      $project->purchase_lists->search( undef, { order_by => 'date' } );
+
+    my @projects = $c->model('Schema::Project')->all;
 
     $c->stash(
         days     => \@days,
+        lists    => $lists,
         projects => \@projects,
     );
 }

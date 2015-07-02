@@ -1,8 +1,11 @@
 <h2>Printing</h2>
 
 <ul>
-    <li><a href="[% c.uri_for_action('/print/project', 1) %]">Project</a></li>
+    <li><a href="[% c.uri_for_action('/print/project', 1) %]">Project overview</a></li>
 [% FOREACH day IN days %]
     <li><a href="[% c.uri_for_action('/print/day', day.year, day.month, day.day)  %]">Plan for day [% day.ymd %]</a></li>
+[% END %]
+[% WHILE(list = lists.next) %]
+    <li><a href="[% c.uri_for_action('/print/purchase_list', list.id) %]">Shopping list [% list.name %] on [% list.date.ymd %]</a></li>
 [% END %]
 </ul>
