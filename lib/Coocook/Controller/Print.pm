@@ -111,60 +111,8 @@ sub project : Local Args(1) {
 sub purchase_list : Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $list = $c->model('Schema::PurchaseList')->find($id);
-
-    my @items = $list->items->all;
-
-    my %units = map { $_->id => $_ } $c->model('Schema::Unit')->all;
-
-    # collect distinct article IDs (hash may contain duplicates)
-    my @article_ids =
-      keys %{ { map { $_->get_column('article') => undef } @items } };
-
-    my @articles = $c->model('Schema::Article')
-      ->search( { id => { -in => \@article_ids } } );
-
-    my %articles = map { $_->id => $_ } @articles;
-    my %article_to_section =
-      map { $_->id => $_->get_column('shop_section') } @articles;
-
-    my @section_ids =
-      keys %{ { map { $_ => undef } values %article_to_section } };
-
-    my @sections = $c->model('Schema::ShopSection')
-      ->search( { id => { -in => \@section_ids } } );
-
-    my %sections =
-      map { $_->id => { name => $_->name, items => [] } } @sections;
-
-    for my $item (@items) {
-        my $article = $item->get_column('article');
-        my $unit    = $item->get_column('unit');
-
-        my $section = $article_to_section{$article};
-
-        push @{ $sections{$section}{items} },
-          {
-            value       => $item->value,
-            offset      => $item->offset,
-            article     => $articles{$article},
-            unit        => $units{$unit},
-            comment     => $item->comment,
-            ingredients => [ $item->ingredients ],
-          };
-    }
-
-    # sort products alphabetically
-    for my $section ( values %sections ) {
-        $section->{items} =
-          [ sort { $a->{article}->name cmp $b->{article}->name }
-              @{ $section->{items} } ];
-    }
-
-    # sort sections
-    my $sections = [ sort { $a->{name} cmp $b->{name} } values %sections ];
-
-    $c->stash( sections => $sections );
+    # get data from purchase list editor
+    $c->forward( '/purchase_list/edit', [$id] );
 }
 
 =encoding utf8

@@ -55,9 +55,58 @@ sub edit : Path Args(1) {
 
     my $list = $c->model('Schema::PurchaseList')->find($id);
 
-    my $items = $list->items->search( undef, { order_by => 'article' } );
+    my @items = $list->items->all;
 
-    $c->stash( list => $list, items => $items );
+    my %units = map { $_->id => $_ } $c->model('Schema::Unit')->all;
+
+    # collect distinct article IDs (hash may contain duplicates)
+    my @article_ids =
+      keys %{ { map { $_->get_column('article') => undef } @items } };
+
+    my @articles = $c->model('Schema::Article')
+      ->search( { id => { -in => \@article_ids } } );
+
+    my %articles = map { $_->id => $_ } @articles;
+    my %article_to_section =
+      map { $_->id => $_->get_column('shop_section') } @articles;
+
+    my @section_ids =
+      keys %{ { map { $_ => undef } values %article_to_section } };
+
+    my @sections = $c->model('Schema::ShopSection')
+      ->search( { id => { -in => \@section_ids } } );
+
+    my %sections =
+      map { $_->id => { name => $_->name, items => [] } } @sections;
+
+    for my $item (@items) {
+        my $article = $item->get_column('article');
+        my $unit    = $item->get_column('unit');
+
+        my $section = $article_to_section{$article};
+
+        push @{ $sections{$section}{items} },
+          {
+            value       => $item->value,
+            offset      => $item->offset,
+            article     => $articles{$article},
+            unit        => $units{$unit},
+            comment     => $item->comment,
+            ingredients => [ $item->ingredients ],
+          };
+    }
+
+    # sort products alphabetically
+    for my $section ( values %sections ) {
+        $section->{items} =
+          [ sort { $a->{article}->name cmp $b->{article}->name }
+              @{ $section->{items} } ];
+    }
+
+    # sort sections
+    my $sections = [ sort { $a->{name} cmp $b->{name} } values %sections ];
+
+    $c->stash( sections => $sections );
 }
 
 sub create : Local POST {

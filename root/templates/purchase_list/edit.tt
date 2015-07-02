@@ -1,7 +1,40 @@
-<h2>Purchase List [% list.name %]</h2>
+<h2>Purchase List</h2>
 
-<ul>
-[% WHILE(item = items.next) %]
-    <li>[% item.value; display_unit(item.unit) %] [% item.article.name %]</li>
+
+[% FOREACH section IN sections %]
+<h3>[% section.name %]</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Article</th>
+            <th>Dishes</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    [% FOREACH item IN section.items %]
+    <tr>
+        <td>
+            [% IF item.offset;
+                item.value;
+                ' - ';
+                0 - item.offset;
+                ' = ';
+                item.value + item.offset;
+            ELSE;
+                item.value;
+            END;
+            display_unit(item.unit) %]
+        </td>
+        <td>[% item.article.name %]</td>
+        <td class="small-font"><ul>
+        [% FOREACH ingredient IN item.ingredients %]
+            <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name %] [% IF ingredient.comment; '('; ingredient.comment; ')'; END %]</li>
+        [% END %]
+        </ul></td>
+        <td>[% item.comment %]</td>
+    <tr>
+    [% END %]
+</table>
 [% END %]
-</ul>
