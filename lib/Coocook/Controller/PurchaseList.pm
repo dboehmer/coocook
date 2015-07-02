@@ -37,9 +37,14 @@ sub index : Path('/purchase_lists') Args(1) {
         $list ? $list->date : undef;
     };
 
+    my $default_date =
+        $max_date
+      ? $max_date->add( days => 1 )
+      : DateTime->today;
+
     $c->stash(
-        default_date => $max_date || DateTime->today,
-        lists => $lists->search_rs( undef, { order_by => 'date' } ),
+        default_date => $default_date,
+        lists        => $lists->search_rs( undef, { order_by => 'date' } ),
     );
 }
 
