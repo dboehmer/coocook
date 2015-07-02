@@ -55,7 +55,9 @@ sub edit : Path Args(1) {
 
     my $list = $c->model('Schema::PurchaseList')->find($id);
 
-    $c->stash( list => $list );
+    my $items = $list->items->search( undef, { order_by => 'article' } );
+
+    $c->stash( list => $list, items => $items );
 }
 
 sub create : Local POST {

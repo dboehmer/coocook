@@ -45,20 +45,33 @@ sub assign : Local Args(0) POST {
     $c->model('Schema')->schema->txn_do(
         sub {
             while ( my $ingredient = $c->stash->{ingredients}->next ) {
-                if ( my $id =
-                    scalar $c->req->param( 'assign' . $ingredient->id ) )
-                {
-                    $c->model('Schema::Item')->create(
+                my $id = $ingredient->id;
+
+                if ( my $list = scalar $c->req->param("assign$id") ) {
+                    my $item = $c->model('Schema::Item')->find_or_new(
                         {
-                            purchase_list => $id,
-                            value         => $ingredient->value,
+                            purchase_list => $list,
                             unit          => $ingredient->unit,
                             article       => $ingredient->article,
-                            comment       => "",
-                            ingredients_items =>
-                              [ { ingredient => $ingredient->id }, ],
                         }
                     );
+
+                    if ( $item->in_storage ) {
+                        $item->set_column(
+                            value => $item->value + $ingredient->value );
+                    }
+                    else {
+                        $item->set_columns(
+                            {
+                                value   => $ingredient->value,
+                                comment => "",
+                            }
+                        );
+                    }
+
+                    $item->update_or_insert;
+
+                    $ingredient->add_to_items($item);
                 }
             }
         }

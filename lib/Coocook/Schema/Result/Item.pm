@@ -20,6 +20,8 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
+__PACKAGE__->add_unique_constraints( [qw<purchase_list article unit>] );
+
 __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
 __PACKAGE__->belongs_to(
     purchase_list => 'Coocook::Schema::Result::PurchaseList' );

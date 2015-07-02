@@ -1,1 +1,7 @@
 <h2>Purchase List [% list.name %]</h2>
+
+<ul>
+[% WHILE(item = items.next) %]
+    <li>[% item.value; display_unit(item.unit) %] [% item.article.name %]</li>
+[% END %]
+</ul>
