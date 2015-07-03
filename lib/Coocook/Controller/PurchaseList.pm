@@ -87,6 +87,7 @@ sub edit : Path Args(1) {
 
         push @{ $sections{$section}{items} },
           {
+            id          => $item->id,
             value       => $item->value,
             offset      => $item->offset,
             article     => $articles{$article},

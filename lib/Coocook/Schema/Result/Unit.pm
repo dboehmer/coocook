@@ -22,6 +22,22 @@ __PACKAGE__->add_unique_constraints( ['short_name'], ['long_name'], );
 
 __PACKAGE__->belongs_to( quantity => 'Coocook::Schema::Result::Quantity' );
 
+# returns other units of same quantity but not $self,
+# for doc see https://metacpan.org/pod/DBIx::Class::Relationship::Base#Custom-join-conditions
+__PACKAGE__->has_many(
+    convertable_into => 'Coocook::Schema::Result::Unit',
+    sub {
+        my $args = shift;
+
+        return {
+            "$args->{foreign_alias}.id" =>
+              { '!=' => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" =>
+              { -ident => "$args->{self_alias}.quantity" },
+        };
+    }
+);
+
 __PACKAGE__->has_many(
     articles_units => 'Coocook::Schema::Result::ArticleUnit' );
 
@@ -60,6 +76,9 @@ sub make_quantity_default {
 
     $orig->id == $self->id and return 1;    # already default
 
+    $orig->to_quantity_default == 1
+      or die "Original default unit needs factor 1";
+
     # collect convertable units of this quantity except $self and $orig
     my @others = $quantity->units->search(
         {
@@ -80,7 +99,7 @@ sub make_quantity_default {
             }
 
             $orig->update( { to_quantity_default => 1 / $factor } );
-            $self->update( { to_quantity_default => undef } );
+            $self->update( { to_quantity_default => 1 } );
 
             $quantity->update( { default_unit => $self->id } );
         }

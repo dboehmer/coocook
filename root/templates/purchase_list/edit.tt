@@ -11,6 +11,7 @@
             <th>Article</th>
             <th>Dishes</th>
             <th>Comment</th>
+            <th>Convert to &hellip;</th>
         </tr>
     </thead>
     [% FOREACH item IN section.items %]
@@ -34,6 +35,13 @@
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>
+        <td>
+        [% FOREACH unit IN item.unit.convertable_into %]
+            <form action="[% c.uri_for_action('/items/convert', item.id, unit.id) %]" method="POST" class="inline">
+                <input type="submit" value="[% unit.short_name %]" title="[% unit.long_name %]">
+            </form>
+        [% END %]
+        </td>
     <tr>
     [% END %]
 </table>

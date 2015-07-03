@@ -47,43 +47,36 @@ sub assign : Local Args(0) POST {
 
     my %lists = map { $_->id => $_ } @{ $c->stash->{lists} };
 
-    $c->model('Schema')->schema->txn_do(
+    $c->model('Schema')
+      ->schema->txn_do(    # TODO txn useful if single assignment fails?
         sub {
             while ( my $ingredient = $c->stash->{ingredients}->next ) {
                 my $id = $ingredient->id;
 
                 if ( my $list = scalar $c->req->param("assign$id") ) {
-                    my $item = $c->model('Schema::Item')->find_or_new(
-                        {
-                            purchase_list => $list,
-                            unit          => $ingredient->unit,
-                            article       => $ingredient->article,
-                        }
-                    );
-
-                    if ( $item->in_storage ) {
-                        $item->set_column(
-                            value => $item->value + $ingredient->value );
-                    }
-                    else {
-                        $item->set_columns(
-                            {
-                                value   => $ingredient->value,
-                                comment => "",
-                            }
-                        );
-                    }
-
-                    $item->update_or_insert;
-
-                    $ingredient->add_to_items($item);
+                    $ingredient->assign_to_purchase_list($list);
                 }
             }
         }
-    );
+      );
 
     $c->response->redirect(
         $c->uri_for_action( $self->action_for('unassigned') ) );
+}
+
+sub convert : Local POST Args(2) {
+    my ( $self, $c, $item_id => $unit_id ) = @_;
+
+    my $item = $c->model('Schema::Item')->find($item_id);
+    my $unit = $c->model('Schema::Unit')->find($unit_id);
+
+    $item->convert($unit);
+
+    $c->response->redirect(
+        $c->uri_for_action(
+            '/purchase_list/edit', $item->get_column('purchase_list')
+        )
+    );
 }
 
 =encoding utf8

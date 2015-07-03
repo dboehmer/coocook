@@ -41,4 +41,24 @@ __PACKAGE__->many_to_many( items => ingredients_items => 'item' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub assign_to_purchase_list {
+    my ( $self, $list ) = @_;
+
+    $self->result_source->schema->txn_do(
+        sub {
+            my $item =
+              $self->result_source->schema->resultset('Item')->add_or_create(
+                {
+                    purchase_list => $list,
+                    article       => $self->get_column('article'),
+                    unit          => $self->get_column('unit'),
+                    value         => $self->value,
+                }
+              );
+
+            $self->add_to_items($item);
+        }
+    );
+}
+
 1;
