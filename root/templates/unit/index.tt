@@ -38,6 +38,8 @@
 <form action="[% c.uri_for_action('/unit/create') %]" method="POST">
 <input type="text" name="short_name" placeholder="short name">
 <input type="text" name="long_name" placeholder="long name">
+<input type="checkbox" name="space" id="space">
+<label for="space">prepend space</label>
 Quantity: <select name="quantity">
     <option value="">(none)</option>
 [% FOR quantity IN quantities %]

@@ -39,6 +39,7 @@ sub create : Local : POST {
             quantity            => scalar $c->req->param('quantity') || undef,
             to_quantity_default => scalar $c->req->param('to_quantity_default')
               || undef,
+            space => scalar $c->req->param('space') ? '1' : '0',
         }
     );
     $c->detach('redirect');
