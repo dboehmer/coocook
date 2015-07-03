@@ -43,7 +43,7 @@ WHILE(ingredient = ingredients.next) %]
 <input type="submit" value="Update Dish">
 </form>
 
-<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">
+<form action="[% c.uri_for_action('/dish/add', dish.id) %]" method="POST">
 Article: <select name="article">
 [% FOR article IN articles %]
     <option value="[% article.id %]">[% article.name %]</option>
@@ -55,6 +55,8 @@ Unit: <select name="unit">
 [% END %]
 </select>
 Value: <input type="number" name="value" value="1">
+<input type="checkbox" name="prepare" id="prepare">
+<label for="prepare">prepare</label>
 <input type="text" name="comment" placeholder="comment">
 <input type="submit" value="Add">
 </form>

@@ -89,6 +89,23 @@ sub recalculate : Local Args(1) POST {
         $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
 }
 
+sub add : Local Args(1) POST {
+    my ( $self, $c, $id ) = @_;
+
+    $c->model('Schema::DishIngredient')->create(
+        {
+            dish    => $id,
+            article => scalar $c->req->param('article'),
+            value   => scalar $c->req->param('value'),
+            unit    => scalar $c->req->param('unit'),
+            comment => scalar $c->req->param('comment'),
+            prepare => scalar $c->req->param('prepare') ? '1' : '0',
+        }
+    );
+
+    $c->detach( redirect => [$id] );
+}
+
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
@@ -136,7 +153,14 @@ sub update : Local Args(1) POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action( '/dish/edit', $id ) );
+    $c->detach( redirect => [$id] );
+}
+
+sub redirect : Private {
+    my ( $self, $c, $id ) = @_;
+
+    $c->response->redirect(
+        $c->uri_for_action( $self->action_for('edit'), $id ) );
 }
 
 =encoding utf8
