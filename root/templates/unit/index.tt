@@ -14,7 +14,7 @@
 <td>[% unit.short_name %] ([% unit.long_name %])</td>
 [% IF unit.to_quantity_default %]
     <td>1[% display_unit(unit) %] = [% unit.to_quantity_default %][% display_unit(default_unit) %]</td>
-    <td>[% 1 / unit.to_quantity_default %][% display_unit(unit) %] = 1[% display_unit(default) %]</td>
+    <td>[% 1 / unit.to_quantity_default %][% display_unit(unit) %] = 1[% display_unit(default_unit) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
 </tr>
 [% END %]
