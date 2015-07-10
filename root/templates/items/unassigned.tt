@@ -11,12 +11,12 @@
         <td>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %]</td>
         <td>
             <input type="radio" name="assign[% ingredient.id %]" value="" id="a[% ingredient.id %]none" checked>
-            <label for="a[% ingredient.id %]none" style="font-style:italic">keep unassigned</label>
+            <label for="a[% ingredient.id %]none">keep unassigned</label>
         </td>
     [% FOREACH list IN lists %]
         <td>
             <input type="radio" name="assign[% ingredient.id %]" value="[% list.id %]" id="a[% ingredient.id %]l[% list.id %]">
-            <label for="a[% ingredient.id %]l[% list.id %]">[% list.name %]</label>
+            <label for="a[% ingredient.id %]l[% list.id %]">list <em>[% list.name %]</em></label>
         </td>
     [% END %]
     </tr>
