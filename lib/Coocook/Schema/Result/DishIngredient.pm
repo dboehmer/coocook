@@ -20,9 +20,6 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-# allow 100g of potato and 1 piece of potato per dish
-__PACKAGE__->add_unique_constraint( [qw<dish article unit>] );
-
 __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
 __PACKAGE__->belongs_to( dish    => 'Coocook::Schema::Result::Dish' );
 __PACKAGE__->belongs_to( unit    => 'Coocook::Schema::Result::Unit' );
