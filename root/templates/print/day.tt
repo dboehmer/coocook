@@ -11,7 +11,7 @@
 
 <ul>
         [% FOREACH ingredient IN dish.ingredients %]
-    <li>[% ingredient.value; display_unit(ingredient.unit); ingredient.article.name %]</li>
+    <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %]</li>
         [% END %]
 </ul>
     [% END;
@@ -22,7 +22,7 @@
 
 <ul>
         [% FOR ingredient IN dish.ingredients_rs.prepared %]
-    <li>[% ingredient.value; display_unit(ingredient.unit); ingredient.article.name %]</li>
+    <li>[% ingredient.value; display_unit(ingredient.unit); ' '; ingredient.article.name %]</li>
         [% END %]
 </ul>
     [% END;
