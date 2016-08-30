@@ -25,8 +25,8 @@ sub index : Path('/tags') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        groups     => scalar $c->model('Schema::TagGroup')->sorted,
-        other_tags => scalar $c->model('Schema::Tag')->ungrouped->sorted,
+        groups     => $c->model('Schema::TagGroup')->sorted_rs,
+        other_tags => $c->model('Schema::Tag')->ungrouped->sorted_rs,
     );
 }
 
@@ -34,7 +34,7 @@ sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
     $c->stash(
         tag    => $c->model('Schema::Tag')->find($id),
-        groups => scalar $c->model('Schema::TagGroup')->sorted,
+        groups => $c->model('Schema::TagGroup')->sorted_rs,
     );
 }
 

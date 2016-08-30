@@ -5,6 +5,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
+__PACKAGE__->load_components('+Coocook::Schema::Component::SortByName');
+
 sub joined {
     my $self = shift;
 
@@ -22,8 +24,6 @@ sub from_names {
         }
     );
 }
-
-sub sorted { shift->search( undef, { order_by => 'name' } ) }
 
 sub ungrouped { shift->search( { tag_group => undef } ) }
 
