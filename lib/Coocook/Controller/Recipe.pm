@@ -34,7 +34,8 @@ sub edit : Path : Args(1) {
         undef,
         {
             prefetch => [qw< article unit >],
-            order_by => [qw< article.name unit.short_name>],
+            order_by =>
+              [ { -desc => 'prepare' }, qw< article.name unit.short_name > ],
         }
     );
     $c->stash(
@@ -50,6 +51,7 @@ sub add : Local : Args(1) {
     $c->model('Schema::RecipeIngredient')->create(
         {
             recipe  => $id,
+            prepare => scalar $c->req->param('prepare'),
             article => scalar $c->req->param('article'),
             value   => scalar $c->req->param('value'),
             unit    => scalar $c->req->param('unit'),
@@ -110,6 +112,8 @@ sub update : Local : Args(1) : POST {
 
                 $ingredient->update(
                     {
+                        prepare =>
+                          scalar $c->req->param( 'prepare' . $ingredient->id ),
                         value =>
                           scalar $c->req->param( 'value' . $ingredient->id ),
                         unit =>

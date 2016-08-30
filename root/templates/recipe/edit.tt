@@ -13,8 +13,8 @@
 
 <table>
 <thead>
-<th>Article</th>
 <th>Part of<br>preparation?</th>
+<th>Article</th>
 <th>Value</th>
 <th>Unit</th>
 <th>Comment</th>
@@ -22,8 +22,8 @@
 </thead>
 [% WHILE(ingredient = ingredients.next) %]
     <tr>
-    <td>[% ingredient.article.name %]</td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
+    <td>[% ingredient.article.name %]</td>
     <td><input type="number" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
     <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% unit.short_name %] ([% unit.long_name %])</option>[% END %]</select></td>
     <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
@@ -41,12 +41,13 @@ Article: <select name="article">
     <option value="[% article.id %]">[% article.name %]</option>
 [% END %]
 </select>
+<input type="checkbox" name="prepare" id="prepare"><label for="prepare">prepare</label>
+Value: <input type="number" name="value" value="1">
 Unit: <select name="unit">
 [% FOR unit IN units %]
     <option value="[% unit.id %]">[% unit.short_name %] ([% unit.long_name %])</option>
 [% END %]
 </select>
-Value: <input type="number" name="value" value="1">
 <input type="text" name="comment" placeholder="comment">
 <input type="submit" value="Add">
 </form>

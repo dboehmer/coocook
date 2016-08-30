@@ -7,9 +7,10 @@ use MooseX::NonMoose;
 extends 'DBIx::Class::Core';
 
 __PACKAGE__->load_components(
-    qw/
+    qw<
       InflateColumn::DateTime
-      /
+      +Coocook::Schema::Component::Boolify
+      >
 );
 
 __PACKAGE__->meta->make_immutable;
