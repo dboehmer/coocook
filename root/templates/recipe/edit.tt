@@ -20,8 +20,7 @@
 <th>Comment</th>
 <th>Delete?</th>
 </thead>
-[% ingredients = recipe.ingredients_rs;
-WHILE(ingredient = ingredients.next) %]
+[% WHILE(ingredient = ingredients.next) %]
     <tr>
     <td>[% ingredient.article.name %]</td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>

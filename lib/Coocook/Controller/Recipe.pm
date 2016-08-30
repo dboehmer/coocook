@@ -24,16 +24,24 @@ Catalyst Controller.
 sub index : Path('/recipes') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recipes => $c->model('Schema::Recipe'), );
+    $c->stash( recipes => scalar $c->model('Schema::Recipe')->sorted );
 }
 
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
-    my $recipe = $c->model('Schema::Recipe')->find($id);
+    my $recipe      = $c->model('Schema::Recipe')->find($id);
+    my $ingredients = $recipe->ingredients->search(
+        undef,
+        {
+            prefetch => [qw< article unit >],
+            order_by => [qw< article.name unit.short_name>],
+        }
+    );
     $c->stash(
-        recipe   => $recipe,
-        articles => [ $c->model('Schema::Article')->all ],
-        units    => [ $c->model('Schema::Unit')->all ],
+        recipe      => $recipe,
+        ingredients => $ingredients,
+        articles    => [ $c->model('Schema::Article')->sorted ],
+        units       => [ $c->model('Schema::Unit')->sorted ],
     );
 }
 
