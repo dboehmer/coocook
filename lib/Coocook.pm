@@ -1,4 +1,8 @@
 package Coocook;
+
+# ABSTRACT: Web application for collecting recipes and making food plans
+# VERSION
+
 use Moose;
 use namespace::autoclean;
 
@@ -28,8 +32,6 @@ use Catalyst qw/
 
 extends 'Catalyst';
 
-our $VERSION = '0.01';
-
 # Configure the application.
 #
 # Note that settings in coocook.conf (or other external
@@ -52,10 +54,6 @@ __PACKAGE__->setup();
 
 =encoding utf8
 
-=head1 NAME
-
-Coocook - Catalyst based application
-
 =head1 SYNOPSIS
 
     script/coocook_server.pl
@@ -67,15 +65,6 @@ Coocook - Catalyst based application
 =head1 SEE ALSO
 
 L<Coocook::Controller::Root>, L<Catalyst>
-
-=head1 AUTHOR
-
-Daniel Böhmer,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut
 

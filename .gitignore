@@ -1,1 +1,9 @@
 coocook.sqlite
+
+# distribution files
+/.build/
+/Coocook-*/
+/Coocook-*.tar.gz
+
+# Devel::Cover output
+/cover_db/
