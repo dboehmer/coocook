@@ -28,6 +28,13 @@ sub unassigned : Local Args(0) {
         undef,
         {
             prefetch => [qw<unit article>],
+            order_by => [
+                qw<
+                  article.name
+                  unit.short_name
+                  value
+                  >
+            ],
         }
       );
 

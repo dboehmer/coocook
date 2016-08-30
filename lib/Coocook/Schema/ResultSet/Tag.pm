@@ -23,6 +23,10 @@ sub from_names {
     );
 }
 
+sub sorted { shift->search( undef, { order_by => 'name' } ) }
+
+sub ungrouped { shift->search( { tag_group => undef } ) }
+
 __PACKAGE__->meta->make_immutable;
 
 1;

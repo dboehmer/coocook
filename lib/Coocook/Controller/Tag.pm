@@ -25,9 +25,8 @@ sub index : Path('/tags') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        groups => $c->model('Schema::TagGroup'),
-        other_tags =>
-          $c->model('Schema::Tag')->search_rs( { tag_group => undef } ),
+        groups     => scalar $c->model('Schema::TagGroup')->sorted,
+        other_tags => scalar $c->model('Schema::Tag')->ungrouped->sorted,
     );
 }
 

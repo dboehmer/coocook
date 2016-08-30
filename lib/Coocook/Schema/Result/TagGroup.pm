@@ -19,6 +19,11 @@ __PACKAGE__->add_unique_constraints( ['name'] );
 
 __PACKAGE__->has_many( tags => 'Coocook::Schema::Result::Tag' => 'tag_group' );
 
+__PACKAGE__->has_many(
+    tags_sorted => 'Coocook::Schema::Result::Tag' => 'tag_group',
+    { order_by => 'name' }
+);
+
 __PACKAGE__->meta->make_immutable;
 
 sub deletable {

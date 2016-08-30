@@ -24,7 +24,7 @@ Catalyst Controller.
 sub index : Path('/quantities') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( quantities => $c->model('Schema::Quantity'), );
+    $c->stash( quantities => scalar $c->model('Schema::Quantity')->sorted );
 }
 
 sub create : Local : POST {

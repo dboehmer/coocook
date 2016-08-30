@@ -9,7 +9,7 @@
 </form>
 
 [% WHILE(group = groups.next);
-    tags = group.tags_rs %]
+    tags = group.tags_sorted_rs %]
 <h3>Tag Group [% group.name %]</h3>
 
 [% IF group.deletable %]
