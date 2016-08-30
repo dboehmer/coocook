@@ -77,30 +77,32 @@ sub project : Local Args(1) {
 
     my $project = $c->model('Schema::Project')->find($id);
 
-    my @days = (
+    my %days;
+
+    my $meals = $project->meals->search(
+        undef,
         {
-            date  => DateTime->today,
-            meals => [
-                {
-                    name   => "Frühstück",
-                    dishes => [qw<Eier Brötchen>],
-                },
-                {
-                    name   => "Mittagessen",
-                    dishes => [qw<Käsespätzle Pudding>],
-                },
-            ],
-        },
-        {
-            date  => DateTime->today->add( days => 1 ),
-            meals => [
-                {
-                    name   => "Abschluss-Brunch",
-                    dishes => ["Reste"],
-                }
-            ],
-        },
+            prefetch => 'dishes',
+        }
     );
+
+    while ( my $meal = $meals->next ) {
+        my @dishes = map { $_->name } $meal->dishes;
+
+        my $day = $days{ $meal->date } ||= {
+            date  => $meal->date,
+            meals => [],
+        };
+
+        push @{ $day->{meals} },
+          {
+            name   => $meal->name,
+            dishes => \@dishes,
+          };
+
+    }
+
+    my @days = @days{ sort keys %days };
 
     $c->stash(
         project => $project,
