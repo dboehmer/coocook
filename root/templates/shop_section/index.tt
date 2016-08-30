@@ -14,6 +14,11 @@
             <input type="text" name="name" value="[% section.name %]">
             <input type="submit" value="Rename">
         </form>
+    [% IF section.get_column('article_count') == 0 %]
+        <form action="[% c.uri_for_action('/shop_section/delete', section.id) %]" method="POST">
+            <input type="submit" value="Delete">
+        </form>
+    [% END %]
     </li>
 [% END %]
 </ul>
