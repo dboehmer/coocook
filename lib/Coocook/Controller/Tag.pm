@@ -34,7 +34,7 @@ sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
     $c->stash(
         tag    => $c->model('Schema::Tag')->find($id),
-        groups => $c->model('Schema::TagGroup'),
+        groups => scalar $c->model('Schema::TagGroup')->sorted,
     );
 }
 
