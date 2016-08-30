@@ -6,6 +6,6 @@
     <li><a href="[% c.uri_for_action('/print/day', day.year, day.month, day.day)  %]">Plan for day [% day.ymd %]</a></li>
 [% END %]
 [% WHILE(list = lists.next) %]
-    <li><a href="[% c.uri_for_action('/print/purchase_list', list.id) %]">Shopping list [% list.name %] on [% list.date.ymd %]</a></li>
+    <li><a href="[% c.uri_for_action('/print/purchase_list', list.id) %]">Purchase list <em>[% list.name %]</em> on [% list.date.ymd %]</a></li>
 [% END %]
 </ul>
