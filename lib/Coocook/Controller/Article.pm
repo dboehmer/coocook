@@ -29,9 +29,9 @@ sub index : Path('/articles') : Args(0) {
         default_preorder_servings => 10,
         default_preorder_workdays => 3,
 
-        articles      => $c->model('Schema::Article'),
-        shop_sections => [ $c->model('Schema::ShopSection')->all ],
-        units         => [ $c->model('Schema::Unit')->all ],
+        articles      => $c->model('Schema::Article')->sorted_rs,
+        shop_sections => [ $c->model('Schema::ShopSection')->sorted ],
+        units         => [ $c->model('Schema::Unit')->sorted ],
     );
 }
 
