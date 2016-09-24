@@ -3,7 +3,8 @@
 use strict;
 use warnings;
 
-use Catalyst::ScriptRunner;
-Catalyst::ScriptRunner->run( 'Coocook', 'Deploy' );
+use FindBin '$Bin';
+use lib "$Bin/../lib";
 
-1;
+use Coocook::Schema::DeploymentHandler;
+Coocook::Schema::DeploymentHandler->new_with_options->run;
