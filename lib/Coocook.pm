@@ -4,7 +4,7 @@ package Coocook;
 # VERSION
 
 use Moose;
-use namespace::autoclean;
+use MooseX::MarkAsMethods autoclean => 1;
 
 use Catalyst::Runtime 5.80;
 
