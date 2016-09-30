@@ -1,3 +1,10 @@
 ---
 development:
   dsn: dbi:SQLite:coocook.sqlite
+  user:     ~
+  password: ~
+
+  # for enabling UTF-8
+#  mysql_enable_utf8: 1
+#  pg_enable_utf8:    1
+  sqlite_unicode:    1
