@@ -1,6 +1,7 @@
 package Coocook::Schema::DeploymentHandler;
 
 use Moose;
+use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'App::DH';
 
