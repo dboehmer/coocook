@@ -1,2 +1,3 @@
+---
 development:
   dsn: dbi:SQLite:coocook.sqlite
