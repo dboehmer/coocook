@@ -12,7 +12,7 @@ sub ingredients {
     my $ids = $self->get_column('id')->as_query;
 
     return $self->result_source->schema->resultset('DishIngredient')
-      ->search( { dish => { -in => $ids } } );
+      ->search( { $self->me('dish') => { -in => $ids } } );
 }
 
 sub from_recipe {

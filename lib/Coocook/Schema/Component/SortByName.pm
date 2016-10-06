@@ -11,7 +11,7 @@ sub sorted {
     return $self->search(
         undef,
         {
-            order_by => $self->current_source_alias . '.name',
+            order_by => $self->me('name'),
         }
     );
 }

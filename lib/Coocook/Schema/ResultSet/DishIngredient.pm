@@ -8,7 +8,7 @@ extends 'Coocook::Schema::ResultSet';
 sub prepared {
     my $self = shift;
 
-    return $self->search( { prepare => 1 } );
+    return $self->search( { $self->me('prepare') => 1 } );
 }
 
 sub unassigned {

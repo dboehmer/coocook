@@ -20,12 +20,15 @@ sub from_names {
 
     return $self->search(
         {
-            name => { -in => \@names },
+            $self->me('name') => { -in => \@names },
         }
     );
 }
 
-sub ungrouped { shift->search( { tag_group => undef } ) }
+sub ungrouped {
+    my $self = shift;
+    return $self->search( { $self->me('tag_group') => undef } );
+}
 
 __PACKAGE__->meta->make_immutable;
 

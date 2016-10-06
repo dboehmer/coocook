@@ -11,8 +11,8 @@ sub dishes {
 
     my $ids = $self->get_column('id')->as_query;
 
-    return $self->result_source->schema->resultset('Dish')
-      ->search( { meal => { -in => $ids } } );
+    my $dishes = $self->result_source->schema->resultset('Dish');
+    return $dishes->search( { $dishes->me('meal') => { -in => $ids } } );
 }
 
 __PACKAGE__->meta->make_immutable;
