@@ -1,3 +1,2 @@
 development:
   dsn: dbi:SQLite:coocook.sqlite
-  quote_names: 1

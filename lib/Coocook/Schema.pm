@@ -7,6 +7,12 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'DBIx::Class::Schema::Config';
 
+__PACKAGE__->load_components(
+    qw<
+      Helper::Schema::QuoteNames
+      >
+);
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->load_namespaces;
