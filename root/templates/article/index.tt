@@ -2,6 +2,8 @@
 
 <form action="[% c.uri_for_action('/article/create') %]" method="POST">
 <fieldset>
+    <legend>Create</legend>
+<fieldset>
     <legend>Applicable Units</legend>
 [% FOR unit IN units %]
     <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
@@ -28,8 +30,11 @@
     <option value="[% section.id %]">[% section.name %]</option>
 [% END %]
 </select>
-<input type="submit" value="Create">
+<p><input type="submit" value="Create"></p>
+</fieldset>
 </form>
+
+
 <ul>
 
 [% FOR article IN articles.all %]
