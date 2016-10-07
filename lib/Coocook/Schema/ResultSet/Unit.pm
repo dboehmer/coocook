@@ -5,16 +5,9 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
-sub sorted {
-    my $self = shift;
+sub sorted_by_column { 'short_name' }
 
-    $self->search(
-        undef,
-        {
-            order_by => $self->me('short_name'),
-        }
-    );
-}
+__PACKAGE__->load_components('+Coocook::Schema::Component::SortByName');
 
 __PACKAGE__->meta->make_immutable;
 
