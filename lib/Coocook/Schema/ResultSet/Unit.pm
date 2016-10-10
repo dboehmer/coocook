@@ -7,7 +7,7 @@ extends 'Coocook::Schema::ResultSet';
 
 sub sorted_by_column { 'short_name' }
 
-__PACKAGE__->load_components('+Coocook::Schema::Component::SortByName');
+__PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::SortByName');
 
 __PACKAGE__->meta->make_immutable;
 

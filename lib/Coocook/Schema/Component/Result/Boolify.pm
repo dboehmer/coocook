@@ -1,4 +1,4 @@
-package Coocook::Schema::Component::Boolify;
+package Coocook::Schema::Component::Result::Boolify;
 
 use Moose;
 

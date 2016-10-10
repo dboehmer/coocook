@@ -9,7 +9,7 @@ extends 'DBIx::Class::Core';
 __PACKAGE__->load_components(
     qw<
       InflateColumn::DateTime
-      +Coocook::Schema::Component::Boolify
+      +Coocook::Schema::Component::Result::Boolify
       >
 );
 
