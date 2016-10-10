@@ -18,8 +18,6 @@ __PACKAGE__->add_columns(
     comment => { data_type => 'text' },
 );
 
-__PACKAGE__->boolify('prepare');
-
 __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );

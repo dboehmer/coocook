@@ -1,5 +1,8 @@
 package Coocook::Schema::Component::ResultSet::SortByName;
 
+use strict;
+use warnings;
+
 sub sorted_by_column { 'name' }
 
 sub sorted {
