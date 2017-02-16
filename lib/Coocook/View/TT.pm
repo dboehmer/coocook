@@ -1,5 +1,6 @@
 package Coocook::View::TT;
 
+use Coocook;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
