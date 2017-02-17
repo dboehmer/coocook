@@ -90,7 +90,8 @@ sub update_group : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::TagGroup')->find($id)->update(
         {
-            name => scalar $c->req->param('name'),
+            name    => scalar $c->req->param('name'),
+            comment => scalar $c->req->param('comment'),
         }
     );
     $c->response->redirect( $c->uri_for_action('/tag/index') );

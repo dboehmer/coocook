@@ -21,7 +21,14 @@
 <form action="[% c.uri_for_action('/tag/update_group', group.id) %]" method="POST">
     <fieldset>
         <legend>Edit Tag Group</legend>
-        <input type="text" name="name" value="[% group.name %]">
+        <p>
+            <label for="group[% group.id %]name">Name:</label>
+            <input  id="group[% group.id %]name" type="text" name="name" value="[% group.name %]">
+        </p>
+        <p>
+            <label for="group[% group.id %]comment">Comment:</label>
+            <input  id="group[% group.id %]comment" type="text" name="comment" value="[% group.comment %]">
+        </p>
         <input type="submit" value="Edit">
     </fieldset>
 </form>
