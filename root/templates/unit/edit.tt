@@ -13,10 +13,7 @@
 				[% END %]
 			</select>
 			<input type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
-            <input type="submit" value="Save"></form>
-[% IF unit.quantity AND NOT unit.is_quantity_default %]
-        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="POST"><input type="submit" value="Make quantity's default"></form>
-[% END %]
-        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="POST"><input type="submit" value="Delete"></form>
+            <input type="submit" value="Save">
+        </form>
     </li>
 </ul>

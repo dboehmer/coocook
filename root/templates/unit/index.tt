@@ -5,6 +5,7 @@
 <th>Quantity</th>
 <th>Unit</th>
 <th colspan="2">Conversion</th>
+<th colspan="3">Actions</th>
 </tr>
 [% FOR unit IN units.all;
     quantity = unit.quantity;
@@ -16,10 +17,22 @@
     <td>1[% display_unit(unit) %] = [% unit.to_quantity_default %][% display_unit(default_unit) %]</td>
     <td>[% 1 / unit.to_quantity_default %][% display_unit(unit) %] = 1[% display_unit(default_unit) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
-<td><form action="[% c.uri_for_action('/unit/edit', unit.id) %]" method="GET" class="inline">
+    <td><form action="[% c.uri_for_action('/unit/edit', unit.id) %]" method="GET" class="inline">
 		<input type="submit" value="Edit">
 	</form>
-</td>
+    </td>
+    <td>
+[% IF unit.quantity AND NOT unit.is_quantity_default %]
+        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="POST" class="inline">
+            <input type="submit" value="Make quantity's default">
+        </form>
+[% END %]
+    </td>
+    <td>
+        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="POST" class="inline">
+            <input type="submit" value="Delete">
+        </form>
+    </td>
 </tr>
 [% END %]
 </table>
