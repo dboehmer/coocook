@@ -89,9 +89,14 @@ sub edit_dishes : Local Args(1) POST {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    my $project = $c->model('Schema::Project')
+	my $name = $c->req->param('name');
+	if (length($name) > 0){
+		my $project = $c->model('Schema::Project')
       ->create( { name => scalar $c->req->param('name') } );
-    $c->detach( 'redirect', [ $project->id ] );
+	  $c->detach( 'redirect', [ $project->id ] );
+	} else{
+		$c->response->redirect('/projects');
+	} 
 }
 
 sub select : Local Args(1) {
