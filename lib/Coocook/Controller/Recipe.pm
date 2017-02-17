@@ -98,6 +98,7 @@ sub update : Local : Args(1) : POST {
             $recipe->update(
                 {
                     name        => scalar $c->req->param('name'),
+                    preparation => scalar $c->req->param('preparation'),
                     description => scalar $c->req->param('description'),
                     servings    => scalar $c->req->param('servings'),
                 }
