@@ -69,7 +69,8 @@ sub create_group : Local Args(0) POST {
     my ( $self, $c ) = @_;
     $c->model('Schema::TagGroup')->create(
         {
-            name => scalar $c->req->param('name'),
+            name    => scalar $c->req->param('name'),
+            comment => scalar $c->req->param('comment'),
         }
     );
     $c->response->redirect( $c->uri_for_action('/tag/index') );

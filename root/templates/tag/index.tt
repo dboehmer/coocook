@@ -3,7 +3,14 @@
 <form action="[% c.uri_for_action('/tag/create_group') %]" method="POST">
     <fieldset>
         <legend>New Tag Group</legend>
-        <input type="text" name="name" placeholder="name">
+        <p>
+            <label for="new_group_name">Name:</label>
+            <input  id="new_group_name" type="text" name="name" placeholder="name">
+        </p>
+        <p>
+            <label for="new_group_comment">Comment:</label>
+            <input  id="new_group_comment" type="text" name="comment" placeholder="comment">
+        </p>
         <input type="submit" value="Create">
     </fieldset>
 </form>
