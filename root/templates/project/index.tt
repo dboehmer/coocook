@@ -3,7 +3,10 @@
 <ul>
 [% FOR project IN projects.all %]
     <li>
-        <form action="[% c.uri_for_action('/project/select', project.id) %]"><input type="submit" value="Select"></form>
+        <form action="[% c.uri_for_action('/project/select', project.id) %]" method="GET"><input type="submit" value="Select"></form>
+		<form action="[% c.uri_for_action('/project/delete', project.id) %]" method="POST" onsubmit="return confirm('Are you sure to delete the whole project?')">
+			<input type="submit" value="Delete">	
+		</form>
         <a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
     </li>
 [% END %]

@@ -89,12 +89,17 @@ sub edit_dishes : Local Args(1) POST {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    my $project = $c->model('Schema::Project')
+	my $name = $c->req->param('name');
+	if (length($name) > 0){
+		my $project = $c->model('Schema::Project')
       ->create( { name => scalar $c->req->param('name') } );
-    $c->detach( 'redirect', [ $project->id ] );
+	  $c->detach( 'redirect', [ $project->id ] );
+	} else{
+		$c->response->redirect('/projects');
+	} 
 }
 
-sub select : Local Args(1) {
+sub select : Local Args(1) GET {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')->find($id);
     $c->session->{project} = $project->id;
@@ -105,6 +110,13 @@ sub redirect : Private {
     my ( $self, $c, $id ) = @_;
     $c->response->redirect(
         $c->uri_for_action( $self->action_for('edit'), $id ) );
+}
+
+#TODO: enable deletion of big projects?
+sub delete : Local Args(1) : POST {
+    my ( $self, $c, $id ) = @_;
+    $c->model('Schema::Project')->find($id)->delete;
+    $c->response->redirect('/projects');
 }
 
 =encoding utf8

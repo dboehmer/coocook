@@ -1,0 +1,22 @@
+<h2>Edit Unit</h2>
+
+<ul>
+    <li><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr> ([% unit.quantity.name %]):
+        <form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="POST">
+            <input type="text" name="short_name" value="[% unit.short_name %]">
+            <input type="text" name="long_name" value="[% unit.long_name %]">
+			<input type="checkbox" name="space" id="space">
+			<label for="space">prepend space</label>
+			<select name="quantity">
+				[% FOR quantity IN quantities %]
+					<option value="[% quantity.id %]" [% 'selected' IF quantity.id==unit.quantity.id %]>[% quantity.name; IF quantity.default_unit; ' (default: '; quantity.default_unit.long_name; ')'; END %]</option>
+				[% END %]
+			</select>
+			<input type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
+            <input type="submit" value="Save"></form>
+[% IF unit.quantity AND NOT unit.is_quantity_default %]
+        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="POST"><input type="submit" value="Make quantity's default"></form>
+[% END %]
+        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="POST"><input type="submit" value="Delete"></form>
+    </li>
+</ul>
