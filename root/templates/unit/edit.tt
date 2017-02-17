@@ -7,11 +7,6 @@
             <input type="text" name="long_name" value="[% unit.long_name %]">
 			<input type="checkbox" name="space" id="space">
 			<label for="space">prepend space</label>
-			<select name="quantity">
-				[% FOR quantity IN quantities %]
-					<option value="[% quantity.id %]" [% 'selected' IF quantity.id==unit.quantity.id %]>[% quantity.name; IF quantity.default_unit; ' (default: '; quantity.default_unit.long_name; ')'; END %]</option>
-				[% END %]
-			</select>
 			<input type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
             <input type="submit" value="Save">
         </form>
