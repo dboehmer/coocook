@@ -51,7 +51,7 @@ sub add : Local : Args(1) {
     $c->model('Schema::RecipeIngredient')->create(
         {
             recipe  => $id,
-            prepare => scalar $c->req->param('prepare'),
+            prepare => ($c->req->param('prepare') ? 1 : 0),
             article => scalar $c->req->param('article'),
             value   => scalar $c->req->param('value'),
             unit    => scalar $c->req->param('unit'),
