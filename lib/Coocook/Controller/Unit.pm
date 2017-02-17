@@ -69,9 +69,22 @@ sub update : Local : Args(1) : POST {
         {
             short_name => scalar $c->req->param('short_name'),
             long_name  => scalar $c->req->param('long_name'),
+			quantity            => scalar $c->req->param('quantity') || undef,
+            to_quantity_default => scalar $c->req->param('to_quantity_default')
+              || undef,
+            space => scalar $c->req->param('space') ? '1' : '0',
         }
     );
     $c->detach('redirect');
+}
+
+sub edit : Path: Args(1) : GET {
+	my ( $self, $c, $id ) = @_;
+	my $unit = $c->model('Schema::Unit')->find($id);
+	$c->stash(
+        unit => $unit,
+		quantities => [ $c->model('Schema::Quantity')->sorted ],
+	);
 }
 
 sub redirect : Private {
