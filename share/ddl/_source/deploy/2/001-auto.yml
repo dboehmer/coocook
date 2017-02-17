@@ -1,0 +1,1939 @@
+---
+schema:
+  procedures: {}
+  tables:
+    articles:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: articles_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - shop_section
+          match_type: ''
+          name: articles_fk_shop_section
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: shop_sections
+          type: FOREIGN KEY
+      fields:
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 7
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 6
+          size:
+            - 0
+        preorder_servings:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: preorder_servings
+          order: 4
+          size:
+            - 0
+        preorder_workdays:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: preorder_workdays
+          order: 5
+          size:
+            - 0
+        shelf_life_days:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: shelf_life_days
+          order: 3
+          size:
+            - 0
+        shop_section:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: shop_section
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - shop_section
+          name: articles_idx_shop_section
+          options: []
+          type: NORMAL
+      name: articles
+      options: []
+      order: 5
+    articles_tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+            - tag
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+          match_type: ''
+          name: articles_tags_fk_article
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: articles
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag
+          match_type: ''
+          name: articles_tags_fk_tag
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: tags
+          type: FOREIGN KEY
+      fields:
+        article:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: article
+          order: 1
+          size:
+            - 0
+        tag:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: tag
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - article
+          name: articles_tags_idx_article
+          options: []
+          type: NORMAL
+        - fields:
+            - tag
+          name: articles_tags_idx_tag
+          options: []
+          type: NORMAL
+      name: articles_tags
+      options: []
+      order: 13
+    articles_units:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+            - unit
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+          match_type: ''
+          name: articles_units_fk_article
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: articles
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - unit
+          match_type: ''
+          name: articles_units_fk_unit
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: units
+          type: FOREIGN KEY
+      fields:
+        article:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: article
+          order: 1
+          size:
+            - 0
+        unit:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: unit
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - article
+          name: articles_units_idx_article
+          options: []
+          type: NORMAL
+        - fields:
+            - unit
+          name: articles_units_idx_unit
+          options: []
+          type: NORMAL
+      name: articles_units
+      options: []
+      order: 14
+    dish_ingredients:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+          match_type: ''
+          name: dish_ingredients_fk_article
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: articles
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+            - unit
+          match_type: ''
+          name: dish_ingredients_fk_article_unit
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - article
+            - unit
+          reference_table: articles_units
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - dish
+          match_type: ''
+          name: dish_ingredients_fk_dish
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: dishes
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - unit
+          match_type: ''
+          name: dish_ingredients_fk_unit
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: units
+          type: FOREIGN KEY
+      fields:
+        article:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: article
+          order: 5
+          size:
+            - 0
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 8
+          size:
+            - 0
+        dish:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: dish
+          order: 3
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        order:
+          data_type: int
+          default_value: 1
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: order
+          order: 2
+          size:
+            - 0
+        prepare:
+          data_type: bool
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: prepare
+          order: 4
+          size:
+            - 0
+        unit:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: unit
+          order: 6
+          size:
+            - 0
+        value:
+          data_type: real
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: value
+          order: 7
+          size:
+            - 0
+      indices:
+        - fields:
+            - article
+          name: dish_ingredients_idx_article
+          options: []
+          type: NORMAL
+        - fields:
+            - article
+            - unit
+          name: dish_ingredients_idx_article_unit
+          options: []
+          type: NORMAL
+        - fields:
+            - dish
+          name: dish_ingredients_idx_dish
+          options: []
+          type: NORMAL
+        - fields:
+            - unit
+          name: dish_ingredients_idx_unit
+          options: []
+          type: NORMAL
+      name: dish_ingredients
+      options: []
+      order: 18
+    dishes:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - meal
+          match_type: ''
+          name: dishes_fk_meal
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: meals
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - prepare_at_meal
+          match_type: ''
+          name: dishes_fk_prepare_at_meal
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: meals
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - from_recipe
+          match_type: ''
+          name: dishes_fk_from_recipe
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: recipes
+          type: FOREIGN KEY
+      fields:
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 9
+          size:
+            - 0
+        description:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: description
+          order: 8
+          size:
+            - 0
+        from_recipe:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: from_recipe
+          order: 3
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        meal:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: meal
+          order: 2
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 4
+          size:
+            - 0
+        preparation:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: preparation
+          order: 7
+          size:
+            - 0
+        prepare_at_meal:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: prepare_at_meal
+          order: 6
+          size:
+            - 0
+        servings:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: servings
+          order: 5
+          size:
+            - 0
+      indices:
+        - fields:
+            - meal
+          name: dishes_idx_meal
+          options: []
+          type: NORMAL
+        - fields:
+            - prepare_at_meal
+          name: dishes_idx_prepare_at_meal
+          options: []
+          type: NORMAL
+        - fields:
+            - from_recipe
+          name: dishes_idx_from_recipe
+          options: []
+          type: NORMAL
+      name: dishes
+      options: []
+      order: 11
+    dishes_tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - dish
+            - tag
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - dish
+          match_type: ''
+          name: dishes_tags_fk_dish
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: dishes
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag
+          match_type: ''
+          name: dishes_tags_fk_tag
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: tags
+          type: FOREIGN KEY
+      fields:
+        dish:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: dish
+          order: 1
+          size:
+            - 0
+        tag:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: tag
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - dish
+          name: dishes_tags_idx_dish
+          options: []
+          type: NORMAL
+        - fields:
+            - tag
+          name: dishes_tags_idx_tag
+          options: []
+          type: NORMAL
+      name: dishes_tags
+      options: []
+      order: 15
+    ingredients_items:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - ingredient
+            - item
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - ingredient
+          match_type: ''
+          name: ingredients_items_fk_ingredient
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: dish_ingredients
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - item
+          match_type: ''
+          name: ingredients_items_fk_item
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: items
+          type: FOREIGN KEY
+      fields:
+        ingredient:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: ingredient
+          order: 1
+          size:
+            - 0
+        item:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: item
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - ingredient
+          name: ingredients_items_idx_ingredient
+          options: []
+          type: NORMAL
+        - fields:
+            - item
+          name: ingredients_items_idx_item
+          options: []
+          type: NORMAL
+      name: ingredients_items
+      options: []
+      order: 19
+    items:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - purchase_list
+            - article
+            - unit
+          match_type: ''
+          name: items_purchase_list_article_unit
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+          match_type: ''
+          name: items_fk_article
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: articles
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+            - unit
+          match_type: ''
+          name: items_fk_article_unit
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - article
+            - unit
+          reference_table: articles_units
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - purchase_list
+          match_type: ''
+          name: items_fk_purchase_list
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: purchase_lists
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - unit
+          match_type: ''
+          name: items_fk_unit
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: units
+          type: FOREIGN KEY
+      fields:
+        article:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: article
+          order: 6
+          size:
+            - 0
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 8
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        offset:
+          data_type: real
+          default_value: 0
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: offset
+          order: 4
+          size:
+            - 0
+        purchase_list:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: purchase_list
+          order: 2
+          size:
+            - 0
+        purchased:
+          data_type: bool
+          default_value: 0
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: purchased
+          order: 7
+          size:
+            - 0
+        unit:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: unit
+          order: 5
+          size:
+            - 0
+        value:
+          data_type: real
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: value
+          order: 3
+          size:
+            - 0
+      indices:
+        - fields:
+            - article
+          name: items_idx_article
+          options: []
+          type: NORMAL
+        - fields:
+            - article
+            - unit
+          name: items_idx_article_unit
+          options: []
+          type: NORMAL
+        - fields:
+            - purchase_list
+          name: items_idx_purchase_list
+          options: []
+          type: NORMAL
+        - fields:
+            - unit
+          name: items_idx_unit
+          options: []
+          type: NORMAL
+      name: items
+      options: []
+      order: 17
+    meals:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - project
+            - date
+            - name
+          match_type: ''
+          name: meals_project_date_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - project
+          match_type: ''
+          name: meals_fk_project
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: projects
+          type: FOREIGN KEY
+      fields:
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 5
+          size:
+            - 0
+        date:
+          data_type: date
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: date
+          order: 3
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 4
+          size:
+            - 0
+        project:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: project
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - project
+          name: meals_idx_project
+          options: []
+          type: NORMAL
+      name: meals
+      options: []
+      order: 6
+    projects:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: projects_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: projects
+      options: []
+      order: 1
+    purchase_lists:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - project
+            - name
+          match_type: ''
+          name: purchase_lists_project_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - project
+          match_type: ''
+          name: purchase_lists_fk_project
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: projects
+          type: FOREIGN KEY
+      fields:
+        date:
+          data_type: date
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: date
+          order: 4
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 3
+          size:
+            - 0
+        project:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: project
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - project
+          name: purchase_lists_idx_project
+          options: []
+          type: NORMAL
+      name: purchase_lists
+      options: []
+      order: 7
+    quantities:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - default_unit
+          match_type: ''
+          name: quantities_fk_default_unit
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: units
+          type: FOREIGN KEY
+      fields:
+        default_unit:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: default_unit
+          order: 3
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - default_unit
+          name: quantities_idx_default_unit
+          options: []
+          type: NORMAL
+      name: quantities
+      options: []
+      order: 8
+    recipe_ingredients:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+          match_type: ''
+          name: recipe_ingredients_fk_article
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: articles
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - article
+            - unit
+          match_type: ''
+          name: recipe_ingredients_fk_article_unit
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - article
+            - unit
+          reference_table: articles_units
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - recipe
+          match_type: ''
+          name: recipe_ingredients_fk_recipe
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: recipes
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - unit
+          match_type: ''
+          name: recipe_ingredients_fk_unit
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: units
+          type: FOREIGN KEY
+      fields:
+        article:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: article
+          order: 5
+          size:
+            - 0
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 8
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        order:
+          data_type: int
+          default_value: 1
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: order
+          order: 2
+          size:
+            - 0
+        prepare:
+          data_type: bool
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: prepare
+          order: 4
+          size:
+            - 0
+        recipe:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: recipe
+          order: 3
+          size:
+            - 0
+        unit:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: unit
+          order: 6
+          size:
+            - 0
+        value:
+          data_type: real
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: value
+          order: 7
+          size:
+            - 0
+      indices:
+        - fields:
+            - article
+          name: recipe_ingredients_idx_article
+          options: []
+          type: NORMAL
+        - fields:
+            - article
+            - unit
+          name: recipe_ingredients_idx_article_unit
+          options: []
+          type: NORMAL
+        - fields:
+            - recipe
+          name: recipe_ingredients_idx_recipe
+          options: []
+          type: NORMAL
+        - fields:
+            - unit
+          name: recipe_ingredients_idx_unit
+          options: []
+          type: NORMAL
+      name: recipe_ingredients
+      options: []
+      order: 16
+    recipes:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: recipes_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        description:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: description
+          order: 4
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 2
+          size:
+            - 0
+        preparation:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: preparation
+          order: 3
+          size:
+            - 0
+        servings:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: servings
+          order: 5
+          size:
+            - 0
+      indices: []
+      name: recipes
+      options: []
+      order: 2
+    recipes_tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - recipe
+            - tag
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - recipe
+          match_type: ''
+          name: recipes_tags_fk_recipe
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: recipes
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag
+          match_type: ''
+          name: recipes_tags_fk_tag
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: tags
+          type: FOREIGN KEY
+      fields:
+        recipe:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: recipe
+          order: 1
+          size:
+            - 0
+        tag:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: tag
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - recipe
+          name: recipes_tags_idx_recipe
+          options: []
+          type: NORMAL
+        - fields:
+            - tag
+          name: recipes_tags_idx_tag
+          options: []
+          type: NORMAL
+      name: recipes_tags
+      options: []
+      order: 12
+    shop_sections:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: shop_sections_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: shop_sections
+      options: []
+      order: 3
+    tag_groups:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: tag_groups_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        color:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: color
+          order: 2
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 3
+          size:
+            - 0
+      indices: []
+      name: tag_groups
+      options: []
+      order: 4
+    tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: tags_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag_group
+          match_type: ''
+          name: tags_fk_tag_group
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: tag_groups
+          type: FOREIGN KEY
+      fields:
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 3
+          size:
+            - 0
+        tag_group:
+          data_type: int
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: tag_group
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - tag_group
+          name: tags_idx_tag_group
+          options: []
+          type: NORMAL
+      name: tags
+      options: []
+      order: 9
+    units:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - long_name
+          match_type: ''
+          name: units_long_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - quantity
+          match_type: ''
+          name: units_fk_quantity
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: quantities
+          type: FOREIGN KEY
+      fields:
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        long_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: long_name
+          order: 6
+          size:
+            - 0
+        quantity:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: quantity
+          order: 2
+          size:
+            - 0
+        short_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: short_name
+          order: 5
+          size:
+            - 0
+        space:
+          data_type: bool
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: space
+          order: 4
+          size:
+            - 0
+        to_quantity_default:
+          data_type: real
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: to_quantity_default
+          order: 3
+          size:
+            - 0
+      indices:
+        - fields:
+            - quantity
+          name: units_idx_quantity
+          options: []
+          type: NORMAL
+      name: units
+      options: []
+      order: 10
+  triggers: {}
+  views: {}
+translator:
+  add_drop_table: 0
+  filename: ~
+  no_comments: 0
+  parser_args:
+    sources:
+      - Article
+      - ArticleTag
+      - ArticleUnit
+      - Dish
+      - DishIngredient
+      - DishTag
+      - IngredientItem
+      - Item
+      - Meal
+      - Project
+      - PurchaseList
+      - Quantity
+      - Recipe
+      - RecipeIngredient
+      - RecipeTag
+      - ShopSection
+      - Tag
+      - TagGroup
+      - Unit
+  parser_type: SQL::Translator::Parser::DBIx::Class
+  producer_args: {}
+  producer_type: SQL::Translator::Producer::YAML
+  show_warnings: 0
+  trace: 0
+  version: 0.11021
