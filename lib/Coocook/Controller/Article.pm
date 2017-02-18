@@ -47,13 +47,20 @@ sub create : Local : POST {
     my $tags =
       $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
 
+    my $shelf_life_days = undef;
+
+    if ( $c->req->param('shelf_life') and my $days = $c->req->param('shelf_life_days') ) {
+        $shelf_life_days = $days;
+    }
+
     $c->model('Schema')->schema->txn_do(
         sub {
             my $article = $c->model('Schema::Article')->create(
                 {
-                    name         => scalar $c->req->param('name'),
-                    comment      => scalar $c->req->param('comment'),
-                    shop_section => scalar $c->req->param('shop_section'),
+                    name              => scalar $c->req->param('name'),
+                      comment         => scalar $c->req->param('comment'),
+                      shop_section    => scalar $c->req->param('shop_section'),
+                      shelf_life_days => $shelf_life_days,
                 }
             );
 
