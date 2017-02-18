@@ -38,7 +38,7 @@
     <legend>Create</legend>
 <fieldset>
     <legend>Applicable Units</legend>
-    <table style="margin-left: 2em">
+    <table>
 [% FOR quantity IN quantities %]
         <tr>
             <th>[% quantity.name %]</th>
