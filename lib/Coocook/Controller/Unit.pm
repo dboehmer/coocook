@@ -2,6 +2,7 @@ package Coocook::Controller::Unit;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use Scalar::Util qw(looks_like_number);
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -40,12 +41,16 @@ sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
 	my $short_name = scalar $c->req->param('short_name');
 	my $long_name = scalar $c->req->param('long_name');
+	my $to_quantity_default = scalar $c->req->param('to_quantity_default');
 	if (length($short_name) <= 0){
 		$c->response->redirect(
                 $c->uri_for( '/units', { error => "Cannot create unit with empty short name!" } ) );
 	} elsif (length($long_name) <= 0){
 		$c->response->redirect(
                $c->uri_for( '/units', { error => "Cannot create unit with empty long name!" } ) );
+	} elsif (!(looks_like_number( $to_quantity_default ))) {
+		$c->response->redirect(
+               $c->uri_for( '/units', { error => "Please supply a valid number in 'Factor to quantity's default unit'.\n E.g.: 1.33" } ) );
 	} else {
 		$c->model('Schema::Unit')->create(
         {
