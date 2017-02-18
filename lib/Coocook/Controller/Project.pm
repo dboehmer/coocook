@@ -94,9 +94,11 @@ sub create : Local : POST {
 		my $project = $c->model('Schema::Project')
       ->create( { name => scalar $c->req->param('name') } );
 	  $c->detach( 'redirect', [ $project->id ] );
-	} else{
-		$c->response->redirect('/projects');
-	} 
+	}
+        else {
+            $c->response->redirect(
+                $c->uri_for( '/projects', { error => "Cannot create project with empty name!" } ) );
+        }
 }
 
 sub select : Local Args(1) GET {

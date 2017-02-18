@@ -47,6 +47,12 @@ sub auto : Private {
         css => ['style.css'],
         js  => ['script.js'],
     );
+
+    my $errors = $c->req->query_params->{error};
+    if ( defined $errors ) {
+        ref $errors or $errors = [$errors];
+    }
+    $c->stash( errors => $errors );
 }
 
 sub index : Path : Args(0) {

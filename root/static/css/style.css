@@ -9,6 +9,14 @@ nav ul li {
     display: inline;
 }
 
+.error {
+    border: 1px solid red;
+    border-radius: 0.5em;
+    padding:       0.5em;
+    background-color: OldLace;
+    color: Red;
+}
+
 .inline {
     display: inline;
 }

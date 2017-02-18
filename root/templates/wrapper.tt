@@ -16,6 +16,10 @@
     <a href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
 </h1>
 
+[% FOREACH error IN errors %]
+    <p class="error">[% error | xml %]</p>
+[% END %]
+
 <nav>
 <ul>
 <li><a href="[% c.uri_for_action('/project/index') %]">Projects</a></li>
