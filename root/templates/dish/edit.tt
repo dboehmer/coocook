@@ -18,10 +18,11 @@
 
 <input type="submit" value="Update Dish">
 
-<h2>Ingredients</h2>
+<h2><a name="ingredients">Ingredients</a></h2>
 
 <table>
 <thead>
+<th colspan="2">Sort</th>
 <th>Article</th>
 <th>Part of<br>preparation?</th>
 <th>Value</th>
@@ -29,9 +30,16 @@
 <th>Comment</th>
 <th>Delete?</th>
 </thead>
-[% ingredients = dish.ingredients_rs;
-WHILE(ingredient = ingredients.next) %]
+[% FOR ingredient IN ingredients %]
     <tr>
+    <td>
+        <form method="POST" action="[% c.uri_for_action('/dish/reposition', [ingredient.id]) %]" class="inline">
+            [% '<input type="submit" name="up"   value="↑">' UNLESS loop.first %]
+    </td>
+    <td>
+            [% '<input type="submit" name="down" value="↓">' UNLESS loop.last %]
+        </form>
+    </td>
     <td>[% ingredient.article.name %]</td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
     <td><input type="number" step="0.001" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>

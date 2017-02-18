@@ -22,11 +22,19 @@ sub edit : Path Args(1) {
 
     my $dish = $c->model('Schema::Dish')->find($id);
 
-    $c->stash(
-        dish     => $dish,
-        articles => [ $c->model('Schema::Article')->all ],
-        units    => [ $c->model('Schema::Unit')->all ],
+    my $ingredients = $dish->ingredients;
+    $ingredients = $ingredients->search(
+        undef,
+        {
+            order_by => $ingredients->me('position'),
+        }
+    );
 
+    $c->stash(
+        dish        => $dish,
+        ingredients => [ $ingredients->all ],
+        articles    => [ $c->model('Schema::Article')->all ],
+        units       => [ $c->model('Schema::Unit')->all ],
     );
 }
 
@@ -155,11 +163,29 @@ sub update : Local Args(1) POST {
     $c->detach( redirect => [$id] );
 }
 
-sub redirect : Private {
+sub reposition : POST Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
+    my $ingredient = $c->model('Schema::DishIngredient')->find($id);
+
+    if ( $c->req->param('up') ) {
+        $ingredient->move_previous();
+    }
+    elsif ( $c->req->param('down') ) {
+        $ingredient->move_next();
+    }
+    else {
+        die "No valid movement";
+    }
+
+    $c->detach( redirect => [ $ingredient->get_column('dish'), '#ingredients' ] );
+}
+
+sub redirect : Private {
+    my ( $self, $c, $id, $fragment ) = @_;
+
     $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $id ) );
+        $c->uri_for_action( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
 }
 
 =encoding utf8
