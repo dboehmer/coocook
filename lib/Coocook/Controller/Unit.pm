@@ -38,7 +38,16 @@ sub index : Path('/units') : Args(0) {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Unit')->create(
+	my $short_name = scalar $c->req->param('short_name');
+	my $long_name = scalar $c->req->param('long_name');
+	if (length($short_name) <= 0){
+		$c->response->redirect(
+                $c->uri_for( '/units', { error => "Cannot create unit with empty short name!" } ) );
+	} elsif (length($long_name) <= 0){
+		$c->response->redirect(
+               $c->uri_for( '/units', { error => "Cannot create unit with empty long name!" } ) );
+	} else {
+		$c->model('Schema::Unit')->create(
         {
             short_name          => scalar $c->req->param('short_name'),
             long_name           => scalar $c->req->param('long_name'),
@@ -47,8 +56,9 @@ sub create : Local : POST {
               || undef,
             space => scalar $c->req->param('space') ? '1' : '0',
         }
-    );
-    $c->detach('redirect');
+		);
+		$c->detach('redirect');
+	}
 }
 
 sub delete : Local : Args(1) : POST {
