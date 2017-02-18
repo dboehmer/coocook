@@ -86,6 +86,7 @@ sub edit : GET Path Args(1) {
     $c->stash(
         article       => $article,
         shop_sections => [ $c->model('Schema::ShopSection')->all ],
+        units         => [ $c->model('Schema::Unit')->all ],
     );
 }
 
