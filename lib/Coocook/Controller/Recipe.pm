@@ -29,18 +29,21 @@ sub index : Path('/recipes') : Args(0) {
 
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
-    my $recipe      = $c->model('Schema::Recipe')->find($id);
-    my $ingredients = $recipe->ingredients->search(
+
+    my $recipe = $c->model('Schema::Recipe')->find($id);
+
+    my $ingredients = $recipe->ingredients;
+    $ingredients = $ingredients->search(
         undef,
         {
             prefetch => [qw< article unit >],
-            order_by =>
-              [ { -desc => 'prepare' }, qw< article.name unit.short_name > ],
+            order_by => $ingredients->me('position'),
         }
     );
+
     $c->stash(
         recipe      => $recipe,
-        ingredients => $ingredients,
+        ingredients => [ $ingredients->all ],
         articles    => [ $c->model('Schema::Article')->sorted ],
         units       => [ $c->model('Schema::Unit')->sorted ],
     );
@@ -113,14 +116,10 @@ sub update : Local : Args(1) : POST {
 
                 $ingredient->update(
                     {
-                        prepare =>
-                          scalar $c->req->param( 'prepare' . $ingredient->id ),
-                        value =>
-                          scalar $c->req->param( 'value' . $ingredient->id ),
-                        unit =>
-                          scalar $c->req->param( 'unit' . $ingredient->id ),
-                        comment =>
-                          scalar $c->req->param( 'comment' . $ingredient->id ),
+                        prepare => ( $c->req->param( 'prepare' . $ingredient->id ) ? 1 : 0 ),
+                        value   => scalar $c->req->param( 'value' . $ingredient->id ),
+                        unit    => scalar $c->req->param( 'unit' . $ingredient->id ),
+                        comment => scalar $c->req->param( 'comment' . $ingredient->id ),
                     }
                 );
             }
@@ -135,11 +134,30 @@ sub update : Local : Args(1) : POST {
     $c->detach( 'redirect', [$id] );
 }
 
-sub redirect : Private {
+sub reposition : POST Local Args(1) {
     my ( $self, $c, $id ) = @_;
+
+    my $ingredient = $c->model('Schema::RecipeIngredient')->find($id);
+
+    if ( $c->req->param('up') ) {
+        $ingredient->move_previous();
+    }
+    elsif ( $c->req->param('down') ) {
+        $ingredient->move_next();
+    }
+    else {
+        die "No valid movement";
+    }
+
+    $c->detach( redirect => [ $ingredient->get_column('recipe'), '#ingredients' ] );
+}
+
+sub redirect : Private {
+    my ( $self, $c, $id, $fragment ) = @_;
+
     if ($id) {
         $c->response->redirect(
-            $c->uri_for_action( $self->action_for('edit'), $id ) );
+            $c->uri_for_action( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
     }
     else {
         $c->response->redirect(
