@@ -59,7 +59,7 @@
                 </p>
                 <p>Shelf life:
                     <input type="checkbox" name="shelf_life" id="shelf_life[% article.id %]" [% 'checked' IF article.shelf_life_days.defined %]>
-                    <label for="shelf_life[% article.id %]">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days OR default_shelf_life_days %]"> days
+                    <label for="shelf_life[% article.id %]">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
                 </p>
                 <p>Name: <input type="text" name="name" value="[% article.name %]"></p>
                 <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
