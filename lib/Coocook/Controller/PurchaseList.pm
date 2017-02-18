@@ -107,7 +107,10 @@ sub edit : Path Args(1) {
     # sort sections
     my $sections = [ sort { $a->{name} cmp $b->{name} } values %sections ];
 
-    $c->stash( sections => $sections );
+    $c->stash(
+        list     => $list,
+        sections => $sections,
+    );
 }
 
 sub create : Local POST {

@@ -1,4 +1,4 @@
-<h2>Purchase List</h2>
+<h2>Purchase List <em>[% list.name | xml %]</em></h2>
 
 
 [% FOREACH section IN sections %]
