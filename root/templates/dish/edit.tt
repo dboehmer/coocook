@@ -33,12 +33,20 @@
 [% FOR ingredient IN ingredients %]
     <tr>
     <td>
+    [% IF loop.first;
+        '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
+    ELSE %]
         <form method="POST" action="[% c.uri_for_action('/dish/reposition', [ingredient.id]) %]" class="inline">
-            [% '<input type="submit" name="up"   value="↑">' UNLESS loop.first %]
+            <input type="submit" name="up" value="↑">
+        </form>
+    [% END %]
     </td>
     <td>
-            [% '<input type="submit" name="down" value="↓">' UNLESS loop.last %]
+    [% UNLESS loop.last %]
+        <form method="POST" action="[% c.uri_for_action('/dish/reposition', [ingredient.id]) %]" class="inline">
+            <input type="submit" name="down" value="↓">
         </form>
+    [% END %]
     </td>
     <td>[% ingredient.article.name %]</td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
