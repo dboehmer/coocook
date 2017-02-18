@@ -72,17 +72,21 @@ sub edit_dishes : Local Args(1) POST {
 
     my $project = $c->model('Schema::Project')->find($id);
 
-    my @dish_ids = grep { $c->req->param("dish$_") }
-      $project->meals->dishes->get_column('id')->all;
-    my %update;
+    my @dish_ids = grep { $c->req->param("dish$_") } $project->meals->dishes->get_column('id')->all;
 
-    scalar $c->req->param('edit_comment')
-      and $update{comment} = scalar $c->req->param('new_comment');
-    scalar $c->req->param('edit_servings')
-      and $update{servings} = scalar $c->req->param('new_servings');
+    my $dishes = $c->model('Schema::Dish')->search( { id => { -in => \@dish_ids } } );
 
-    $c->model('Schema::Dish')->search( { id => { -in => \@dish_ids } } )
-      ->update( \%update );
+    if ( $c->req->param('update') ) {
+        my %update;
+
+        $c->req->param('edit_comment')  and $update{comment}  = $c->req->param('new_comment');
+        $c->req->param('edit_servings') and $update{servings} = $c->req->param('new_servings');
+
+        $dishes->update( \%update );
+    }
+    elsif ( $c->req->param('delete') ) {
+        $dishes->delete();
+    }
 
     $c->detach( redirect => [ $project->id ] );
 }
