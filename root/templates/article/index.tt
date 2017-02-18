@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody>
-[% FOR a IN articles.all %]
+[% WHILE(a = articles.next) %]
         <tr>
             <td><a href="[% c.uri_for_action('/article/edit', [a.id]) %]">[% a.name | xml %]</a></td>
             <td>[% a.comment | xml %]</td>

@@ -34,11 +34,9 @@ sub auto : Private {
 sub index : Path('/articles') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash(
-        articles      => $c->model('Schema::Article')->sorted_rs,
-        shop_sections => [ $c->model('Schema::ShopSection')->sorted ],
-        units         => [ $c->model('Schema::Unit')->sorted ],
-    );
+    my $articles = $c->model('Schema::Article')->sorted;
+
+    $c->stash( articles => $articles );
 }
 
 sub create : Local : POST {
@@ -85,8 +83,8 @@ sub edit : GET Path Args(1) {
 
     $c->stash(
         article       => $article,
-        shop_sections => [ $c->model('Schema::ShopSection')->all ],
-        units         => [ $c->model('Schema::Unit')->all ],
+        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
+        units         => [ $c->model('Schema::Unit')->sorted->all ],
     );
 }
 
