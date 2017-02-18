@@ -29,6 +29,20 @@ sub auto : Private {
         default_preorder_servings => 10,
         default_preorder_workdays => 3,
     );
+
+    my $quantities = $c->model('Schema::Quantity');
+    $quantities = $quantities->search(
+        undef,
+        {
+            prefetch => 'units',
+            order_by => [ $quantities->me('name'), 'units.short_name', ],
+        }
+    );
+
+    $c->stash(
+        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
+        quantities    => [ $quantities->all ],
+    );
 }
 
 sub index : Path('/articles') : Args(0) {
@@ -45,20 +59,7 @@ sub edit : GET Path Args(1) {
     my $article = $c->model('Schema::Article')->find($id)
       or die "Can't find article";    # TODO serious error message
 
-    my $quantities = $c->model('Schema::Quantity');
-    $quantities = $quantities->search(
-        undef,
-        {
-            prefetch => 'units',
-            order_by => [ $quantities->me('name'), 'units.short_name', ],
-        }
-    );
-
-    $c->stash(
-        article       => $article,
-        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
-        quantities    => [ $quantities->all ],
-    );
+    $c->stash( article => $article );
 }
 
 sub create : Local : POST {

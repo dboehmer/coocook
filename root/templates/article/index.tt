@@ -38,6 +38,19 @@
     <legend>Create</legend>
 <fieldset>
     <legend>Applicable Units</legend>
+    <table style="margin-left: 2em">
+[% FOR quantity IN quantities %]
+        <tr>
+            <th>[% quantity.name %]</th>
+            <td>
+    [% FOR unit IN quantity.units %]
+        <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
+        <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
+    [% END %]
+            </td>
+        </tr>
+[% END %]
+    </table>
 [% FOR unit IN units %]
     <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
     <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
