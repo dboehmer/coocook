@@ -81,10 +81,19 @@ sub edit : GET Path Args(1) {
     my $article = $c->model('Schema::Article')->find($id)
       or die "Can't find article";    # TODO serious error message
 
+    my $quantities = $c->model('Schema::Quantity');
+    $quantities = $quantities->search(
+        undef,
+        {
+            prefetch => 'units',
+            order_by => [ $quantities->me('name'), 'units.short_name', ],
+        }
+    );
+
     $c->stash(
         article       => $article,
         shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
-        units         => [ $c->model('Schema::Unit')->sorted->all ],
+        quantities    => [ $quantities->all ],
     );
 }
 

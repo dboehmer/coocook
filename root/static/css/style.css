@@ -21,8 +21,8 @@ nav ul li {
     display: inline;
 }
 
-table td input[type=checkbox] {
-    /* center checkbox in table column */
+table td input[type=checkbox]:first-child:last-child {
+    /* center single checkbox in table column */
     display: block;
     margin-left: auto;
     margin-right: auto;
