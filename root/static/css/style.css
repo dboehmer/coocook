@@ -30,6 +30,14 @@ nav ul li {
     display: inline-table;
     padding-left: 0.5em;
     padding-right: 0.5em;
+    background: #333333;
+    min-width: 3em;
+    text-align: center;
+    line-height: 2em;
+}
+
+nav ul li:hover{
+    background-color:#ebebe0;
 }
 
 .error {
@@ -60,7 +68,12 @@ header nav a {
     color: #ebebe0;
 }
 
+/*obsolete?*/
 header nav li:hover a{
+    color:black;
+}
+
+header nav a li:hover{
     color:black;
 }
 
@@ -72,16 +85,6 @@ h1 {
     margin-top: 0.5em;
     padding-left: 15px;
     
-}
-
-.basic {
-    background: #333333;
-    min-width: 3em;
-    text-align: center;
-    line-height: 2em;
-}
-.basic:hover{
-        background-color:#ebebe0;
 }
 
 input[type="number"] {
