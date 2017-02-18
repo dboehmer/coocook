@@ -85,8 +85,7 @@ sub recalculate : Local Args(1) POST {
 
     $dish->recalculate( scalar $c->req->param('servings') );
 
-    $c->response->redirect(
-        $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
+    $c->detach( redirect => [$id] );
 }
 
 sub add : Local Args(1) POST {

@@ -77,12 +77,15 @@ sub edit_dishes : Local Args(1) POST {
     my $dishes = $c->model('Schema::Dish')->search( { id => { -in => \@dish_ids } } );
 
     if ( $c->req->param('update') ) {
-        my %update;
+        if ( $c->req->param('edit_comment') ) {
+            $dishes->update( { comment => scalar $c->req->param('new_comment') } );
+        }
 
-        $c->req->param('edit_comment')  and $update{comment}  = $c->req->param('new_comment');
-        $c->req->param('edit_servings') and $update{servings} = $c->req->param('new_servings');
-
-        $dishes->update( \%update );
+        if ( $c->req->param('edit_servings') ) {
+            for my $dish ( $dishes->all ) {
+                $dish->recalculate( scalar $c->req->param('new_servings') );
+            }
+        }
     }
     elsif ( $c->req->param('delete') ) {
         $dishes->delete();
