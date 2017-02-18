@@ -1,0 +1,31 @@
+<h2>Edit article <em>[% article.name | xml %]</em></h2>
+
+<form action="[% c.uri_for_action('/article/update', article.id) %]" method="POST">
+    <p>Applicable units:
+[% my_units = article.unit_ids;
+FOR unit IN units;
+id = unit.id %]
+        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
+        <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
+[% END %]
+    </p>
+    <p>Preorder:
+        <input type="checkbox" name="preorder" id="preorder[% article.id %]" [% 'checked' IF article.preorder_workdays.defined %]><label for="preorder[% article.id %]">preorder</label>
+        <input type="number" name="preorder_workdays" value="[% article.preorder_workdays OR default_preorder_workdays %]"> business days in advance
+        if <input type="number" name="preorder_servings" value="[% article.preorder_servings OR default_preorder_servings %]"> servings or more
+    </p>
+    <p>Shelf life:
+        <input type="checkbox" name="shelf_life" id="shelf_life[% article.id %]" [% 'checked' IF article.shelf_life_days.defined %]>
+        <label for="shelf_life[% article.id %]">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
+    </p>
+    <p>Name: <input type="text" name="name" value="[% article.name | xml %]"></p>
+    <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
+    <p>Shop section: <select name="shop_section">
+        <option value="">(no shop section)</option>
+[% FOREACH section IN shop_sections %]
+        <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
+[% END %]
+    </select></p>
+    <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>
+    <input type="submit" value="Update">
+</form>

@@ -21,14 +21,20 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/articles') : Args(0) {
+sub auto : Private {
     my ( $self, $c ) = @_;
 
     $c->stash(
         default_shelf_life_days   => 7,
         default_preorder_servings => 10,
         default_preorder_workdays => 3,
+    );
+}
 
+sub index : Path('/articles') : Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
         articles      => $c->model('Schema::Article')->sorted_rs,
         shop_sections => [ $c->model('Schema::ShopSection')->sorted ],
         units         => [ $c->model('Schema::Unit')->sorted ],
@@ -71,13 +77,25 @@ sub create : Local : POST {
     $c->detach('redirect');
 }
 
+sub edit : GET Path Args(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $article = $c->model('Schema::Article')->find($id)
+      or die "Can't find article";    # TODO serious error message
+
+    $c->stash(
+        article       => $article,
+        shop_sections => [ $c->model('Schema::ShopSection')->all ],
+    );
+}
+
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     $c->model('Schema::Article')->find($id)->delete;
     $c->detach('redirect');
 }
 
-sub update : Local : Args(1) : POST {
+sub update : POST Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
     my $units = $c->model('Schema::Unit')->search(
