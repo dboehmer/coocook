@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 <head>
     <title>[% c.config.name %]</title>
 
@@ -11,6 +11,7 @@
 
 <body>
 
+<header class="navbar">
 <h1>
     <a href="[% c.uri_for('/') %]">[% c.config.name %]</a>
     <a href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
@@ -22,20 +23,23 @@
 
 <nav>
 <ul>
-<li><a href="[% c.uri_for_action('/project/index') %]">Projects</a></li>
-<li><a href="[% c.uri_for_action('/recipe/index') %]">Recipes</a></li>
-<li><a href="[% c.uri_for_action('/article/index') %]">Articles</a></li>
-<li><a href="[% c.uri_for_action('/tag/index') %]">Tags</a></li>
-<li><a href="[% c.uri_for_action('/items/unassigned') %]">Unassigned Items</a></li>
-<li><a href="[% c.uri_for_action('/purchase_list/index') %]">Purchase Lists</a></li>
-<li><a href="[% c.uri_for_action('/print/index') %]">Printing</a></li>
-<li><a href="[% c.uri_for_action('/shop_section/index') %]">Shop sections</a></li>
-<li><a href="[% c.uri_for_action('/quantity/index') %]">Quantities</a></li>
-<li><a href="[% c.uri_for_action('/unit/index') %]">Units</a></li>
+<a href="[% c.uri_for_action('/project/index') %]"><li>Projects</li></a>
+<a href="[% c.uri_for_action('/recipe/index') %]"><li>Recipes</li></a>
+<a href="[% c.uri_for_action('/article/index') %]"><li>Articles</li></a>
+<a href="[% c.uri_for_action('/tag/index') %]"><li>Tags</li></a>
+<a href="[% c.uri_for_action('/items/unassigned') %]"><li>Unassigned Items</li></a>
+<a href="[% c.uri_for_action('/purchase_list/index') %]"><li>Purchase Lists</li></a>
+<a href="[% c.uri_for_action('/print/index') %]"><li>Printing</li></a>
+<a href="[% c.uri_for_action('/shop_section/index') %]"><li>Shop sections</li></a>
+<a href="[% c.uri_for_action('/quantity/index') %]"><li>Quantities</li></a>
+<a href="[% c.uri_for_action('/unit/index') %]"><li>Units</li></a>
 </ul>
 </nav>
+</header>
 
 [% content %]
 
+<footer>
+</footer>
 </body>
 </html>
