@@ -2,6 +2,9 @@ package Coocook::Controller::Recipe;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use Scalar::Util qw(looks_like_number);
+
+# Chrissi sperrt ihren Bildschirm nicht!!!!11111
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -63,15 +66,20 @@ sub add : Local : Args(1) {
 
 sub create : Local : POST {
     my ( $self, $c ) = @_;
-    my $recipe = $c->model('Schema::Recipe')->create(
+    my $name = scalar $c->req->param('name');
+    my $input_okay = my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipes"});
+    if ($input_okay){
+        my $recipe = $c->model('Schema::Recipe')->create(
         {
-            name        => scalar $c->req->param('name'),
+            name        => $name,
             description => scalar $c->req->param('description') // "",
             preparation => scalar $c->req->param('preparation') // "",
             servings    => scalar $c->req->param('servings'),
         }
     );
     $c->detach( 'redirect', [ $recipe->id ] );
+    }
+    
 }
 
 sub duplicate : Local Args(1) POST {
@@ -92,12 +100,14 @@ sub delete : Local : Args(1) : POST {
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
     my $recipe = $c->model('Schema::Recipe')->find($id);
-
-    $c->model('Schema')->schema->txn_do(
+    my $name = scalar $c->req->param('name');
+    my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipe/$id"});
+    if($input_okay){
+        $c->model('Schema')->schema->txn_do(
         sub {
             $recipe->update(
                 {
-                    name        => scalar $c->req->param('name'),
+                    name        => $name,
                     preparation => scalar $c->req->param('preparation'),
                     description => scalar $c->req->param('description'),
                     servings    => scalar $c->req->param('servings'),
@@ -115,7 +125,7 @@ sub update : Local : Args(1) : POST {
                     {
                         prepare =>
                           scalar $c->req->param( 'prepare' . $ingredient->id ),
-                        value =>
+                        value => 
                           scalar $c->req->param( 'value' . $ingredient->id ),
                         unit =>
                           scalar $c->req->param( 'unit' . $ingredient->id ),
@@ -133,6 +143,9 @@ sub update : Local : Args(1) : POST {
     );
 
     $c->detach( 'redirect', [$id] );
+    
+    }
+    
 }
 
 sub redirect : Private {
@@ -145,6 +158,24 @@ sub redirect : Private {
         $c->response->redirect(
             $c->uri_for_action( $self->action_for('index') ) );
     }
+}
+
+sub check_name : Private {
+    my ( $self, $c, $args) = @_;
+    my $name = $args->{name};
+    $c->log->info("name$name");
+    my $current_page = $args->{current_page};
+    my $result = 1;
+    if (length($name) <= 0){
+		$c->response->redirect(
+                $c->uri_for( $current_page, { error => "Cannot create recipe with empty name!" } ) );
+        $result = 0;
+    }
+    return $result;
+}
+
+sub check_value : Private {
+    my ( $self, $c, ) = @_;
 }
 
 =encoding utf8
