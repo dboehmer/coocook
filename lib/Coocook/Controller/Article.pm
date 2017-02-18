@@ -39,6 +39,28 @@ sub index : Path('/articles') : Args(0) {
     $c->stash( articles => $articles );
 }
 
+sub edit : GET Path Args(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $article = $c->model('Schema::Article')->find($id)
+      or die "Can't find article";    # TODO serious error message
+
+    my $quantities = $c->model('Schema::Quantity');
+    $quantities = $quantities->search(
+        undef,
+        {
+            prefetch => 'units',
+            order_by => [ $quantities->me('name'), 'units.short_name', ],
+        }
+    );
+
+    $c->stash(
+        article       => $article,
+        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
+        quantities    => [ $quantities->all ],
+    );
+}
+
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
 
@@ -73,28 +95,6 @@ sub create : Local : POST {
         }
     );
     $c->detach('redirect');
-}
-
-sub edit : GET Path Args(1) {
-    my ( $self, $c, $id ) = @_;
-
-    my $article = $c->model('Schema::Article')->find($id)
-      or die "Can't find article";    # TODO serious error message
-
-    my $quantities = $c->model('Schema::Quantity');
-    $quantities = $quantities->search(
-        undef,
-        {
-            prefetch => 'units',
-            order_by => [ $quantities->me('name'), 'units.short_name', ],
-        }
-    );
-
-    $c->stash(
-        article       => $article,
-        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
-        quantities    => [ $quantities->all ],
-    );
 }
 
 sub delete : Local : Args(1) : POST {
