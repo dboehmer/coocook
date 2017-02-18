@@ -12,8 +12,8 @@
     default_unit = quantity.default_unit %]
 <tr>
 <td>[% quantity.name %]</td>
-<td>[% unit.short_name %] ([% unit.long_name %])</td>
-[% IF unit.to_quantity_default %]
+<td>[% '<strong>' IF unit.is_quantity_default; unit.short_name %] ([% unit.long_name %])[% '</strong>' IF unit.is_quantity_default %]</td>
+[% IF unit.to_quantity_default AND NOT unit.is_quantity_default %]
     <td>1[% display_unit(unit) %] = [% unit.to_quantity_default %][% display_unit(default_unit) %]</td>
     <td>[% 1 / unit.to_quantity_default %][% display_unit(unit) %] = 1[% display_unit(default_unit) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
@@ -36,6 +36,8 @@
 </tr>
 [% END %]
 </table>
+
+<p><strong>strong</strong> = default for quantity</p>
 
 <form action="[% c.uri_for_action('/unit/create') %]" method="POST">
 <fieldset>
