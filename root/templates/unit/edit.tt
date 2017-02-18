@@ -1,14 +1,29 @@
-<h2>Edit Unit</h2>
+<h2>Edit Unit <em>[% unit.long_name %]</em> (<em>[% unit.short_name %]</em>)</h2>
 
-<ul>
-    <li><abbr title="[% unit.long_name %]">[% unit.short_name %]</abbr> ([% unit.quantity.name %]):
-        <form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="POST">
-            <input type="text" name="short_name" value="[% unit.short_name %]">
-            <input type="text" name="long_name" value="[% unit.long_name %]">
-			<input type="checkbox" name="space" id="space">
-			<label for="space">prepend space</label>
-			<input type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
-            <input type="submit" value="Save">
-        </form>
-    </li>
-</ul>
+<form action="[% c.uri_for_action('/unit/update', unit.id) %]" method="POST">
+    <p>
+        <label for="short_name">Short name:</label>
+        <input  id="short_name" type="text" name="short_name" value="[% unit.short_name %]">
+    </p>
+
+    <p>
+        <label for="long_name">Long name:</label>
+        <input  id="long_name" type="text" name="long_name" value="[% unit.long_name %]">
+    </p>
+
+    <p>
+        <label for="to_quantity_default">Factor to quantity's default unit:</label>
+        1 [% unit.short_name %] =
+        <input  id="to_quantity_default" type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
+        [% unit.quantity.default_unit.short_name %]
+    </p>
+
+    <p>
+        <input type="checkbox" name="space" id="space">
+        <label for="space">prepend space (example: <quote>1␣[% unit.short_name %]</quote>)</label>
+    </p>
+
+    <p>
+        <input type="submit" value="Save">
+    </p>
+</form>
