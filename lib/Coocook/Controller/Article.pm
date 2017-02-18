@@ -49,7 +49,7 @@ sub create : Local : POST {
 
     my $shelf_life_days = undef;
 
-    if ( $c->req->param('shelf_life') and my $days = $c->req->param('shelf_life_days') ) {
+    if ( $c->req->param('shelf_life') and defined( my $days = $c->req->param('shelf_life_days') ) ) {
         $shelf_life_days = $days;
     }
 
