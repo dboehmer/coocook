@@ -3,6 +3,15 @@
 <form action="[% c.uri_for_action('/article/create') %]" method="POST">
 <fieldset>
     <legend>Create</legend>
+    <input type="text" name="name" placeholder="name">
+    <input type="text" name="comment" placeholder="comment">
+    <input type="text" name="tags" placeholder="tags">
+    <select name="shop_section">
+        <option value="" style="font-style:italic">(no shop section)</option>
+    [% FOREACH section IN shop_sections %]
+        <option value="[% section.id %]">[% section.name %]</option>
+    [% END %]
+    </select>
 <fieldset>
     <legend>Applicable Units</legend>
     <table>
@@ -43,15 +52,6 @@
     <input  id="shelf_life_days" type="number" name="shelf_life_days" value="[% default_shelf_life_days %]">
     <label for="shelf_life_days">days</label>
 </fieldset>
-<input type="text" name="name" placeholder="name">
-<input type="text" name="comment" placeholder="comment">
-<input type="text" name="tags" placeholder="tags">
-<select name="shop_section">
-    <option value="" style="font-style:italic">(no shop section)</option>
-[% FOREACH section IN shop_sections %]
-    <option value="[% section.id %]">[% section.name %]</option>
-[% END %]
-</select>
 <p><input type="submit" value="Create"></p>
 </fieldset>
 </form>
