@@ -6,5 +6,5 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 
-use Coocook::Schema::DeploymentHandler;
-Coocook::Schema::DeploymentHandler->new_with_options->run;
+use Coocook::Script::Deploy;
+Coocook::Script::Deploy->new_with_options->run;

@@ -1,4 +1,4 @@
-package Coocook::Schema::DeploymentHandler;
+package Coocook::Script::Deploy;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
