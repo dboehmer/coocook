@@ -25,20 +25,29 @@
 </fieldset>
 <fieldset>
     <legend>Preorder</legend>
-    <input type="checkbox" name="preorder" id="preorder"><label for="preorder">preorder</label>
-    <input type="number" name="preorder_workdays" value="[% default_preorder_workdays %]"> business days in advance
-    if <input type="number" name="preorder_servings" value="[% default_preorder_servings %]"> servings or more
+
+    <input type="checkbox" name="preorder" id="preorder">
+    <label for="preorder">preorder</label>
+
+    <input  id="preorder_workdays" type="number" name="preorder_workdays" value="[% default_preorder_workdays %]">
+    <label for="preorder_workdays">business days in advance</label>
+
+    if
+    <input  id="preorder_servings" type="number" name="preorder_servings" value="[% default_preorder_servings %]">
+    <label for="preorder_servings">servings or more</label>
 </fieldset>
 <fieldset>
     <legend>Shelf Life</legend>
     <input type="checkbox" name="shelf_life" id="shelf_life"> <label for="shelf_life">known shelf life</label>
-    of <input type="number" name="shelf_life_days" value="[% default_shelf_life_days %]"> days
+    of
+    <input  id="shelf_life_days" type="number" name="shelf_life_days" value="[% default_shelf_life_days %]">
+    <label for="shelf_life_days">days</label>
 </fieldset>
 <input type="text" name="name" placeholder="name">
 <input type="text" name="comment" placeholder="comment">
 <input type="text" name="tags" placeholder="tags">
 <select name="shop_section">
-    <option value="">(no shop section)</option>
+    <option value="" style="font-style:italic">(no shop section)</option>
 [% FOREACH section IN shop_sections %]
     <option value="[% section.id %]">[% section.name %]</option>
 [% END %]
