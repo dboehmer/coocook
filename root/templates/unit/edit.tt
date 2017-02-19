@@ -13,14 +13,14 @@
 
     <p>
         <label for="to_quantity_default">Factor to quantity's default unit:</label>
-        1 [% unit.short_name %] =
+        [% display_value_unit(1, unit, {html=>1}) %] =
         <input  id="to_quantity_default" type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">
-        [% unit.quantity.default_unit.short_name %]
+        [% display_unit(unit.quantity.default_unit, {html=>1}) %]
     </p>
 
     <p>
         <input type="checkbox" name="space" id="space" [% 'checked' IF unit.space %]>
-        <label for="space">prepend space (example: <quote>1␣[% unit.short_name %]</quote>)</label>
+        <label for="space">prepend space (example: <quote>1␣[% unit.short_name | html %]</quote>)</label>
     </p>
 
     <p>

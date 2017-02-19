@@ -21,16 +21,12 @@
             <td>
     [% FOR unit IN quantity.units %]
         <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
-        <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
+        <label for="u[% unit.id %]">[% display_unit(unit, {html => 1}) %]</label>
     [% END %]
             </td>
         </tr>
 [% END %]
     </table>
-[% FOR unit IN units %]
-    <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
-    <label for="u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
-[% END %]
 </fieldset>
 <fieldset>
     <legend>Preorder</legend>
@@ -77,7 +73,7 @@
             <td>[% IF a.preorder_workdays.defined AND a.preorder_servings.defined; a.preorder_workdays %] days if ≥[% a.preorder_servings %] servings[% END %]</td>
             <td>[% IF a.shelf_life_days.defined; a.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
             <td>[% a.shop_section.name %]</td>
-            <td>[% FOR u IN a.units %]<abbr title="[% u.long_name %]">[% u.short_name %]</abbr> [% END %]</td>
+            <td>[% FOR u IN a.units; display_unit(u, {html=>1}); ' '; END %]</td>
             <td>[% a.tags_rs.joined %]</td>
             <td>
                 <form method="POST" action="[% c.uri_for_action('/article/delete', a.id) %]" class="inline">

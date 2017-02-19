@@ -9,6 +9,7 @@ extends 'Catalyst::View::TT';
 __PACKAGE__->config(
     ENCODING           => 'utf-8',
     INCLUDE_PATH       => Coocook->path_to(qw<root templates>),
+    PLUGIN_BASE        => 'Coocook::Filter',
     PRE_PROCESS        => 'macros.tt',
     WRAPPER            => 'wrapper.tt',
     TEMPLATE_EXTENSION => '.tt',

@@ -12,7 +12,7 @@ FOR quantity IN quantities %]
     [% FOR unit IN quantity.units;
         id = unit.id %]
         <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
-        <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {space => 0}) %]</label>
+        <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {html=>1}) %]</label>
     [% END %]
             </td>
         </tr>

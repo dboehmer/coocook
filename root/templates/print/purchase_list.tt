@@ -1,4 +1,4 @@
-<h2>Purchase List</h2>
+<h2>Purchase List <em>[% list.name | html %]</em></h2>
 
 
 [% FOREACH section IN sections %]
@@ -16,21 +16,23 @@
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            [% IF item.offset;
-                item.value;
-                ' - ';
-                0 - item.offset;
-                ' = ';
-                item.value + item.offset;
-            ELSE;
-                item.value;
+            [% value = BLOCK;
+                IF item.offset;
+                    item.value;
+                    ' - ';
+                    0 - item.offset;
+                    ' = ';
+                    item.value + item.offset;
+                ELSE;
+                    item.value;
+                END;
             END;
-            display_unit(item.unit) %]
+            display_value_unit(value, item.unit, {print=>1}) %]
         </td>
         <td>[% item.article.name %]</td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
-            <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name %] [% IF ingredient.comment; '('; ingredient.comment; ')'; END %]</li>
+            <li>[% display_value_unit(ingredient.value, ingredient.unit, {print=>1}) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name | html %] [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</li>
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>
