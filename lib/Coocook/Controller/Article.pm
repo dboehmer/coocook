@@ -82,11 +82,9 @@ sub create : Local : POST {
 
     my ( $preorder_servings, $preorder_workdays );
 
-    if ( my $s = $c->req->param('preorder_servings')
-        and defined( my $wd = $c->req->param('preorder_workdays') ) )
-    {
-        $preorder_servings = $s;
-        $preorder_workdays = $wd;
+    if ( $c->req->param('preorder') ) {
+        $preorder_servings = $c->req->param('preorder_servings');
+        $preorder_workdays = $c->req->param('preorder_workdays');
     }
 
     $c->model('Schema')->schema->txn_do(
