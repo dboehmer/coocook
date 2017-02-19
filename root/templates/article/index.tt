@@ -1,38 +1,5 @@
 <h2>Articles</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Comment</th>
-            <th>Preorder in advance</th>
-            <th>Shelf Life</th>
-            <th>Shop Section</th>
-            <th>Units</th>
-            <th>Tags</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-[% WHILE(a = articles.next) %]
-        <tr>
-            <td><a href="[% c.uri_for_action('/article/edit', [a.id]) %]">[% a.name | xml %]</a></td>
-            <td>[% a.comment | xml %]</td>
-            <td>[% IF a.preorder_workdays.defined AND a.preorder_servings.defined; a.preorder_workdays %] days if ≥[% a.preorder_servings %] servings[% END %]</td>
-            <td>[% IF a.shelf_life_days.defined; a.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
-            <td>[% a.shop_section.name %]</td>
-            <td>[% FOR u IN a.units %]<abbr title="[% u.long_name %]">[% u.short_name %]</abbr> [% END %]</td>
-            <td>[% a.tags_rs.joined %]</td>
-            <td>
-                <form method="POST" action="[% c.uri_for_action('/article/delete', a.id) %]" class="inline">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr>
-[% END %]
-    </tbody>
-</table>
-
 <form action="[% c.uri_for_action('/article/create') %]" method="POST">
 <fieldset>
     <legend>Create</legend>
@@ -79,3 +46,36 @@
 <p><input type="submit" value="Create"></p>
 </fieldset>
 </form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Comment</th>
+            <th>Preorder in advance</th>
+            <th>Shelf Life</th>
+            <th>Shop Section</th>
+            <th>Units</th>
+            <th>Tags</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+[% WHILE(a = articles.next) %]
+        <tr>
+            <td><a href="[% c.uri_for_action('/article/edit', [a.id]) %]">[% a.name | xml %]</a></td>
+            <td>[% a.comment | xml %]</td>
+            <td>[% IF a.preorder_workdays.defined AND a.preorder_servings.defined; a.preorder_workdays %] days if ≥[% a.preorder_servings %] servings[% END %]</td>
+            <td>[% IF a.shelf_life_days.defined; a.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
+            <td>[% a.shop_section.name %]</td>
+            <td>[% FOR u IN a.units %]<abbr title="[% u.long_name %]">[% u.short_name %]</abbr> [% END %]</td>
+            <td>[% a.tags_rs.joined %]</td>
+            <td>
+                <form method="POST" action="[% c.uri_for_action('/article/delete', a.id) %]" class="inline">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+[% END %]
+    </tbody>
+</table>
