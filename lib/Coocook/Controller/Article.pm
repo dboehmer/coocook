@@ -80,14 +80,25 @@ sub create : Local : POST {
         $shelf_life_days = $days;
     }
 
+    my ( $preorder_servings, $preorder_workdays );
+
+    if ( my $s = $c->req->param('preorder_servings')
+        and defined( my $wd = $c->req->param('preorder_workdays') ) )
+    {
+        $preorder_servings = $s;
+        $preorder_workdays = $wd;
+    }
+
     $c->model('Schema')->schema->txn_do(
         sub {
             my $article = $c->model('Schema::Article')->create(
                 {
                     name              => scalar $c->req->param('name'),
-                      comment         => scalar $c->req->param('comment'),
-                      shop_section    => scalar $c->req->param('shop_section'),
-                      shelf_life_days => $shelf_life_days,
+                    comment           => scalar $c->req->param('comment'),
+                    shop_section      => scalar $c->req->param('shop_section'),
+                    shelf_life_days   => $shelf_life_days,
+                    preorder_servings => $preorder_servings,
+                    preorder_workdays => $preorder_workdays,
                 }
             );
 
