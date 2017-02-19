@@ -1,5 +1,23 @@
 <h2>Recipes</h2>
 
+<form action="[% c.uri_for_action('/recipe/create') %]" method="POST">
+<fieldset>
+    <legend>Create new recipe</legend>
+
+    <p>
+        <label for="name">Name:</label>
+        <input  id="name" type="text" name="name" placeholder="name">
+    </p>
+
+    <p>
+        <label for="servings">Servings:</label>
+        <input  id="servings" type="number" name="servings" value="4">
+    </p>
+
+    <input type="submit" value="Create">
+</fieldset>
+</form>
+
 <ul>
 [% FOR recipe IN recipes.all %]
     <li><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a>
@@ -11,9 +29,3 @@
     </li>
 [% END %]
 </ul>
-
-<form action="[% c.uri_for_action('/recipe/create') %]" method="POST">
-<input type="text" name="name" placeholder="name">
-<p>Servings: <input type="text" name="servings" value="4"></p>
-<input type="submit" value="Create">
-</form>
