@@ -23,10 +23,12 @@ sub from_recipe {
             my $dish = $self->create(
                 {
                     from_recipe => $recipe->id,
-                    meal        => $args{meal},
-                    comment     => $args{comment},
+                    servings    => $recipe->servings,    # begin with original servings
+
+                    meal    => $args{meal},
+                    comment => $args{comment},
+
                     name        => $args{name}        || $recipe->name,
-                    servings    => $args{servings}    || $recipe->servings,
                     description => $args{description} || $recipe->description,
                     preparation => $args{preparation} || $recipe->preparation,
                 }
@@ -34,7 +36,16 @@ sub from_recipe {
 
             $dish->set_tags( [ $recipe->tags->all ] );
 
-            $dish->recalculate;
+            # copy ingredients
+            for my $ingredient ( $recipe->ingredients ) {
+                $dish->create_related(
+                    ingredients => { map { $_ => $ingredient->$_ } qw<position prepare article unit value comment> } );
+            }
+
+            # adjust values of dish ingredients to new servings
+            if ( my $servings = $args{servings} ) {
+                $dish->recalculate($servings);
+            }
         }
     );
 }

@@ -32,8 +32,7 @@ __PACKAGE__->belongs_to(
     'from_recipe'
 );
 
-__PACKAGE__->has_many(
-    ingredients => 'Coocook::Schema::Result::DishIngredient' );
+__PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::DishIngredient' );
 
 __PACKAGE__->has_many( dishes_tags => 'Coocook::Schema::Result::DishTag' );
 __PACKAGE__->many_to_many( tags => dishes_tags => 'tag' );
@@ -41,33 +40,20 @@ __PACKAGE__->many_to_many( tags => dishes_tags => 'tag' );
 __PACKAGE__->meta->make_immutable;
 
 sub recalculate {
-    my ( $self, $servings ) = @_;
+    my $self = shift;
 
-    $servings ||= $self->servings || die "servings undefined";
-
-    my $recipe = $self->recipe;
+    my $servings1 = $self->servings;
+    my $servings2 = shift || die "servings undefined";
 
     $self->result_source->schema->txn_do(
         sub {
-            for my $ingredient ( $recipe->ingredients ) {
-                my $i = $self->find_or_new_related(
-                    ingredients => {
-                        article => $ingredient->article,
-                        unit    => $ingredient->unit,
-                    }
-                );
-                $i->value( $ingredient->value / $recipe->servings * $servings );
-                $i->in_storage
-                  or $i->set_columns(
-                    {
-                        comment => "",
-                        prepare => $ingredient->prepare,
-                    }
-                  );
-                $i->update_or_insert;
+            for my $ingredient ( $self->ingredients ) {
+                my $value1 = $ingredient->value;
+                my $value2 = $value1 / $servings1 * $servings2;
+                $ingredient->update( { value => $value2 } );
             }
 
-            $self->update( { servings => $servings } );
+            $self->update( { servings => $servings2 } );
         }
     );
 }
