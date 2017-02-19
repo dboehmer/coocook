@@ -1,5 +1,24 @@
 <h2>Purchase Lists</h2>
 
+<form action="[% c.uri_for_action('/purchase_list/create') %]" method="POST">
+    <input type="hidden" name="project" value="[% my_project.id %]">
+    <fieldset>
+        <legend>Create purchase list</legend>
+
+        <p>
+            <label for="date">Date:</label>
+            <input  id="date" type="date" name="date" value="[% default_date.ymd %]">
+        </p>
+
+        <p>
+            <label for="name">Name:</name>
+            <input  id="name" type="text" name="name" placeholder="name">
+        </p>
+
+        <input type="submit" value="Create purchase list">
+    </fieldset>
+</form>
+
 <table>
     <tr>
         <th>Date</th>
@@ -24,12 +43,3 @@
     </tr>
 [% END %]
 </table>
-
-<form action="[% c.uri_for_action('/purchase_list/create') %]" method="POST">
-    <input type="hidden" name="project" value="[% my_project.id %]">
-    <fieldset>
-        <legend>Create purchase list</legend>
-        <input type="date" name="date" value="[% default_date.ymd %]">
-        <input type="text" name="name" placeholder="name">
-        <input type="submit" value="Create purchase list">
-</form>
