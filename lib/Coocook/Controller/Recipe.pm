@@ -70,7 +70,7 @@ sub add : Local : Args(1) {
 sub create : Local : POST {
     my ( $self, $c ) = @_;
     my $name = scalar $c->req->param('name');
-    my $input_okay = my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipes"});
+    my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipes"});
     if ($input_okay){
         my $recipe = $c->model('Schema::Recipe')->create(
         {
