@@ -11,7 +11,7 @@
 
 <body>
 
-<header class="navbar">
+<header>
 <h1>
     <a href="[% c.uri_for('/') %]">[% c.config.name %]</a>
     <a href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
@@ -37,9 +37,13 @@
     <p class="error">[% error | xml %]</p>
 [% END %]
 
+<div>
 [% content %]
+</div>
 
 <footer>
+Coocook - Web application for collecting recipes and making food plans<br>
+This software is copyright (c) 2016 by Daniel Böhmer. No license is granted to other entities.
 </footer>
 </body>
 </html>

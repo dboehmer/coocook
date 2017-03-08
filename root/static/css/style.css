@@ -1,7 +1,21 @@
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 body {
     background-color: #ebebe0;
     margin: 0;
     font-family: Georgia, 'Times New Roman', serif;
+    position: relative;
+    padding-bottom: 6rem;
+    min-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -9,12 +23,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 header+*{
-    padding: 1em;
+    padding: 15px;
 }
 
 header {
     margin: 0;
-    padding: 0.5em 0em 0em 0em;
+    padding-top: 15px;
+    background-color: #4CAF50;
 }
 
 nav {
@@ -23,7 +38,7 @@ nav {
 
 nav ul {
     list-style-type: none;
-    padding-left: 15px;
+    padding-left: 10px;
 }
 
 nav ul li {
@@ -47,10 +62,6 @@ nav ul li:hover{
     color: Red;
 }
 
-.inline {
-    display: inline;
-}
-
 table td input[type=checkbox]:first-child:last-child {
     /* center single checkbox in table column */
     display: block;
@@ -58,12 +69,13 @@ table td input[type=checkbox]:first-child:last-child {
     margin-right: auto;
 }
 
-header a {
+a {
     text-decoration:none;
-    color: black;
+    color: #333333;
 }
 
 header nav a {
+    text-decoration:none;
     color: #ebebe0;
 }
 
@@ -71,16 +83,22 @@ header nav a li:hover{
     color:black;
 }
 
-.navbar {
-    background-color: #4CAF50;
-}
-
 h1 {
-    margin-top: 0.5em;
     padding-left: 15px;
-    
 }
 
 input[type="number"] {
     text-align: right;
+}
+
+footer {
+    background-color: #333333;
+    color: #ebebe0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 3em;
+    padding: 0.5em 15px 0.5em 15px;
+    margin: 0 auto;
 }
