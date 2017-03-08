@@ -13,8 +13,8 @@
 
 <header>
 <h1>
-    <a href="[% c.uri_for('/') %]">[% c.config.name %]</a>
-    <a href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
+    <a class="mainlinks" href="[% c.uri_for('/') %]">[% c.config.name %]</a>
+    <a class="mainlinks" href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
 </h1>
 
 <nav>

@@ -18,6 +18,7 @@ body {
     position: relative;
     padding-bottom: 6rem;
     min-height: 100%;
+    color: #333333;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -27,8 +28,19 @@ h1, h2, h3, h4, h5, h6 {
 /******** header part ********/
 
 /* padding for Coocook headline, not put to header to avoid space between header and navbar */
-h1 {
+.mainlinks {
     padding-left: 15px;
+}
+
+.mainlinks:hover {
+    display: inline-table;
+    padding: 2px 2px 2px 2px;
+    min-width: 2em;
+    text-align: center;
+    line-height: 1em;
+    /* keep link on its place when hovering and showing box */
+    margin: -4px -4px -4px 11px;
+    border: 2px solid #333333;
 }
 
 header {
@@ -38,7 +50,7 @@ header {
 }
 
 nav {
-   background: #333333;
+    background: #333333;
 }
 
 nav ul {
