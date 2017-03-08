@@ -25,6 +25,9 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
 }
 
+
+
+
 /******** header part ********/
 
 /* padding for Coocook headline, not put to header to avoid space between header and navbar */
@@ -44,6 +47,9 @@ header {
 
 nav {
     background: #333333;
+    -webkit-box-shadow: 2px 2px 3px grey;
+    -moz-box-shadow: 2px 2px 3px grey;
+    box-shadow: 2px 2px 3px grey;
 }
 
 nav ul {
@@ -74,6 +80,9 @@ header nav a li:hover{
     color: #333333;
 }
 
+
+
+
 /******** content part ********/
 
 .content{
@@ -102,15 +111,33 @@ a {
     color: Red;
 }
 
+input {
+    -webkit-box-shadow: 2px 2px 3px grey;
+    -moz-box-shadow: 2px 2px 3px grey;
+    box-shadow: 2px 2px 3px grey;
+}
+
 input[type="number"] {
     text-align: right;
 }
 
-table td input[type=checkbox]:first-child:last-child {
+input[type="submit"] {
+    margin: 15px 15px 0 0;
+    background-color: #ebebe0;
+    border: 1px solid #333333;
+}
+
+table td input[type="checkbox"]:first-child:last-child {
     /* center single checkbox in table column */
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+select {
+    -webkit-box-shadow: 2px 2px 3px grey;
+    -moz-box-shadow: 2px 2px 3px grey;
+    box-shadow: 2px 2px 3px grey;
 }
 
 ul {
@@ -126,9 +153,8 @@ ul {
     display: table-cell;
 }
 
-.button {
-    margin: 15px 15px 0 0;
-}
+
+
 
 /******** footer part ********/
 

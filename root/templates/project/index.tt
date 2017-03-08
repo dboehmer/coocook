@@ -5,10 +5,10 @@
     <li class="ul_table">
         <a class="ul_table-cell" href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
         <form class="ul_table-cell" action="[% c.uri_for_action('/project/select', project.id) %]" method="GET">
-            <input class="button" type="submit" value="Select">
+            <input type="submit" value="Select">
         </form>
 		<form class="ul_table-cell" action="[% c.uri_for_action('/project/delete', project.id) %]" method="POST" onsubmit="return confirm('Are you sure you want to delete the whole project?')">
-			<input class="button" type="submit" value="Delete">	
+			<input type="submit" value="Delete">	
 		</form>
     </li>
 [% END %]
@@ -16,5 +16,5 @@
 
 <form action="[% c.uri_for_action('/project/create') %]" method="POST">
     <input type="text" name="name" placeholder="name">
-    <input class="button" type="submit" value="Create">
+    <input type="submit" value="Create">
 </form>
