@@ -1,3 +1,5 @@
+/******** general settings ********/
+
 html {
   height: 100%;
   box-sizing: border-box;
@@ -22,8 +24,11 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
 }
 
-header+*{
-    padding: 15px;
+/******** header part ********/
+
+/* padding for Coocook headline, not put to header to avoid space between header and navbar */
+h1 {
+    padding-left: 15px;
 }
 
 header {
@@ -55,25 +60,6 @@ nav ul li:hover{
     background-color:#ebebe0;
 }
 
-.error {
-    border: 2px solid red;
-    padding: 0.5em;
-    background-color: #ebebe0;
-    color: Red;
-}
-
-table td input[type=checkbox]:first-child:last-child {
-    /* center single checkbox in table column */
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-a {
-    text-decoration:none;
-    color: #333333;
-}
-
 header nav a {
     text-decoration:none;
     color: #ebebe0;
@@ -83,13 +69,36 @@ header nav a li:hover{
     color:black;
 }
 
-h1 {
-    padding-left: 15px;
+/******** content part ********/
+
+.content{
+    padding: 15px;
+}
+
+a {
+    text-decoration:none;
+    color: #333333;
+}
+
+.error {
+    border: 2px solid red;
+    padding: 0.5em;
+    background-color: #ebebe0;
+    color: Red;
 }
 
 input[type="number"] {
     text-align: right;
 }
+
+table td input[type=checkbox]:first-child:last-child {
+    /* center single checkbox in table column */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/******** footer part ********/
 
 footer {
     background-color: #333333;

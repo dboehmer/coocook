@@ -33,11 +33,12 @@
 </nav>
 </header>
 
+<div class="content">
 [% FOREACH error IN errors %]
     <p class="error">[% error | xml %]</p>
 [% END %]
 
-<div>
+
 [% content %]
 </div>
 
