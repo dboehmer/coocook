@@ -12,7 +12,7 @@ html {
 }
 
 body {
-    background-color: #ebebe0;
+    background-color: #f5f5ef;
     margin: 0;
     font-family: Georgia, 'Times New Roman', serif;
     position: relative;
@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .mainlinks:hover, .mainlinks:active {
-    color: #ebebe0;
+    color: #f5f5ef;
 }
 
 header {
@@ -65,7 +65,7 @@ nav ul li {
 }
 
 nav ul li:hover{
-    background-color:#ebebe0;
+    background-color:#f5f5ef;
     -webkit-box-shadow: 0px 2px 3px grey;
     -moz-box-shadow: 0px 2px 3px grey;
     box-shadow: 0px 2px 3px grey;
@@ -73,7 +73,7 @@ nav ul li:hover{
 
 header nav a {
     text-decoration:none;
-    color: #ebebe0;
+    color: #f5f5ef;
 }
 
 header nav a li:hover{
@@ -107,7 +107,7 @@ a {
 .error {
     border: 2px solid red;
     padding: 0.5em;
-    background-color: #ebebe0;
+    background-color: #f5f5ef;
     color: Red;
 }
 
@@ -126,7 +126,7 @@ input[type="number"] {
 }
 
 input[type="submit"] {
-    background-color: #ebebe0;
+    background-color: #f5f5ef;
     border: 1px solid #333333;
 }
 
@@ -167,7 +167,6 @@ fieldset{
 legend {
   color: #4CAF50;
   font-size: 1.5em;
-  /*border: 1px solid #333333;*/
   }
   
 fieldset > fieldset{
@@ -183,7 +182,7 @@ fieldset > fieldset > legend {
 
 footer {
     background-color: #333333;
-    color: #ebebe0;
+    color: #f5f5ef;
     position: absolute;
     right: 0;
     bottom: 0;
