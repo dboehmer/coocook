@@ -80,7 +80,13 @@ header nav a li:hover{
     color: #333333;
 }
 
+input[type="submit"].helpbutton {
+    background-color: #4CAF50;
+}
 
+.helpbutton input:hover {
+    display: block;
+} 
 
 
 /******** content part ********/
