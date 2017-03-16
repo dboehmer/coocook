@@ -47,9 +47,6 @@ header {
 
 nav {
     background: #333333;
-    -webkit-box-shadow: 2px 2px 3px grey;
-    -moz-box-shadow: 2px 2px 3px grey;
-    box-shadow: 2px 2px 3px grey;
 }
 
 nav ul {
@@ -69,6 +66,9 @@ nav ul li {
 
 nav ul li:hover{
     background-color:#ebebe0;
+    -webkit-box-shadow: 0px 2px 3px grey;
+    -moz-box-shadow: 0px 2px 3px grey;
+    box-shadow: 0px 2px 3px grey;
 }
 
 header nav a {
@@ -111,10 +111,14 @@ a {
     color: Red;
 }
 
-input:hover, input:active {
+input:hover, input:focus {
     -webkit-box-shadow: 2px 2px 3px grey;
     -moz-box-shadow: 2px 2px 3px grey;
     box-shadow: 2px 2px 3px grey;
+}
+
+input{
+    margin: 15px 15px 0 0;
 }
 
 input[type="number"] {
@@ -122,9 +126,12 @@ input[type="number"] {
 }
 
 input[type="submit"] {
-    margin: 15px 15px 0 0;
     background-color: #ebebe0;
     border: 1px solid #333333;
+}
+
+input[type="submit"]:hover, input[type="submit"]:active{
+    background-color: #4CAF50;
 }
 
 table td input[type="checkbox"]:first-child:last-child {
@@ -153,7 +160,23 @@ ul {
     display: table-cell;
 }
 
+fieldset{
+    border: 1px solid #333333;
+}
 
+legend {
+  color: #4CAF50;
+  font-size: 1.5em;
+  /*border: 1px solid #333333;*/
+  }
+  
+fieldset > fieldset{
+  margin: 1em 0 1em 0;
+}
+
+fieldset > fieldset > legend {
+    font-size: 1em;
+}
 
 
 /******** footer part ********/
