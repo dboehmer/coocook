@@ -111,7 +111,7 @@ a {
     color: Red;
 }
 
-input {
+input:hover, input:active {
     -webkit-box-shadow: 2px 2px 3px grey;
     -moz-box-shadow: 2px 2px 3px grey;
     box-shadow: 2px 2px 3px grey;
@@ -134,7 +134,7 @@ table td input[type="checkbox"]:first-child:last-child {
     margin-right: auto;
 }
 
-select {
+select:hover, select:active {
     -webkit-box-shadow: 2px 2px 3px grey;
     -moz-box-shadow: 2px 2px 3px grey;
     box-shadow: 2px 2px 3px grey;
