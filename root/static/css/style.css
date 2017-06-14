@@ -80,15 +80,6 @@ header nav a li:hover{
     color: #333333;
 }
 
-input[type="submit"].helpbutton {
-    background-color: #4CAF50;
-}
-
-.helpbutton input:hover {
-    display: block;
-} 
-
-
 /******** content part ********/
 
 .content{
@@ -183,6 +174,41 @@ fieldset > fieldset > legend {
     font-size: 1em;
 }
 
+.tooltip {
+    position: relative;
+    background-color: #4CAF50;
+    border: 1px solid black;
+    width: 1em;
+    display: inline-block;
+    text-align: center;
+}
+
+.tooltip:hover {
+    -webkit-box-shadow: 2px 2px 3px grey;
+    -moz-box-shadow: 2px 2px 3px grey;
+    box-shadow: 2px 2px 3px grey;
+} 
+
+/* text for the tooltip*/
+.tooltip span {
+    visibility: hidden;
+    width: auto;
+    background-color: white;
+    color: black;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid black;
+    position: absolute;
+    z-index: 1;
+    left: 110%;
+    top: -5px;
+    font-size: smaller;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover span {
+    visibility: visible;
+}
 
 /******** footer part ********/
 
