@@ -64,4 +64,15 @@ sub assign_to_purchase_list {
     );
 }
 
+sub convertible_into {
+    my $self = shift;
+
+    return $self->article->units->search(
+        {
+            id       => { '!=' => $self->unit->id },
+            quantity => $self->unit->quantity->id,
+        }
+    );
+}
+
 1;
