@@ -1,6 +1,6 @@
-<h2>Dish [% dish.name %]</h2>
+<h2>Dish [% dish.name | xml %]</h2>
 
-<p>for Meal [% dish.meal.name %] on [% dish.meal.date.ymd %]</p>
+<p>for meal <em>[% dish.meal.name | xml %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
 
 [% IF dish.recipe %]
 <p>from recipe <a href="[% c.uri_for_action('/recipe/edit', dish.recipe.id) %]">[% dish.recipe.name %]</a></p>
@@ -82,6 +82,12 @@ Value: <input type="number" step="0.001" name="value" value="1">
 <form method="POST" action="[% c.uri_for_action('/dish/recalculate', dish.id) %]">
 <fieldset>
     <legend>Recalculate values</legend>
+
+    <p>Adjust the values in the table above by <strong>changing the number of servings</strong>
+        (currently [% dish.servings %])
+        and <strong>automatically de-/increasing the numbers</strong> in the same ratio.</p>
+
+
     <label for="recalculate_servings">Servings:</label>
     <input  id="recalculate_servings" type="number" name="servings" value="[% dish.servings %]">
     <input type="submit" value="Recalculate values">
