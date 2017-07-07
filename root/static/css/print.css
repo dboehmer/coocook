@@ -1,3 +1,9 @@
+@media print {
+
+nav, footer {
+    display: none;
+}
+
 table {
     border-collapse: collapse;
 }
@@ -9,4 +15,6 @@ table td, table th {
 
 .small-font {
     font-size: 0.8em;
+}
+
 }
