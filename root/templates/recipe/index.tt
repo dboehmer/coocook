@@ -24,6 +24,9 @@
         <form action="[% c.uri_for_action('/recipe/duplicate', recipe.id) %]" method="POST">
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name %]">
             <input type="submit" value="Duplicate">
+            <div class="tooltip">?
+                <span>Click "Duplicate" to duplicate your article.</span>
+            </div>
         </form>
         <form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="POST"><input type="submit" value="Delete"></form>
     </li>
