@@ -1,4 +1,4 @@
-<h2>[% project.name %]</h2>
+<h2>Project [% project.name %]</h2>
 
 <form action="[% c.uri_for_action('/project/edit_dishes', project.id) %]" method="POST">
 
