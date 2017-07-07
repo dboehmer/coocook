@@ -56,7 +56,7 @@
         </form>
     [% END %]
     </td>
-    <td>[% ingredient.article.name %]</td>
+    <td>[% ingredient.article.name; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
     <td><input type="number" step="0.001" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
     <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% display_unit(unit) %]</option>[% END %]</select></td>
