@@ -137,6 +137,8 @@ table td input[type="checkbox"]:first-child:last-child {
     margin-right: auto;
 }
 
+table td.right-align { text-align: right }
+
 select:hover, select:active {
     -webkit-box-shadow: 2px 2px 3px grey;
     -moz-box-shadow: 2px 2px 3px grey;

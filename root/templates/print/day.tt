@@ -1,19 +1,31 @@
-<h2>Meals on [% day.ymd %]</h2>
+<h2>Meals on [% display_date(day) %]</h2>
 
 [% WHILE(meal = meals.next) %]
 <h3>[% meal.name %]</h3>
 
     [% dishes = meal.dishes_rs;
     WHILE(dish = dishes.next) %]
-<h4>[% dish.name %]</h4>
+<h4>[% dish.name %] ([% dish.servings %] servings)</h4>
 
 <p>[% dish.description %]</p>
 
-<ul>
+<table>
+    <tr>
+        <th colspan="2">Amount</th>
+        <th>Article</th>
+    </tr>
         [% FOREACH ingredient IN dish.ingredients %]
-    <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.article.name %]</li>
+    <tr>
+        <td class="right-align">[% ingredient.value %]</td>
+        <td>[% ingredient.unit.long_name %]</td>
+        </td><td>[% ingredient.article.name ~%]
+        [%~ IF ingredient.comment.length;
+            ': ';
+            ingredient.comment;
+        END %]</td>
+    </tr>
         [% END %]
-</ul>
+</table>
     [% END;
     FOR dish IN meal.prepared_dishes %]
 <h4>Prepare for [% dish.meal.name %] on [% dish.meal.date.ymd %]: [% dish.name %]</h4>
