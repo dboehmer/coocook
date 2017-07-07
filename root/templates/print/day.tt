@@ -10,6 +10,32 @@
 
 <h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
+[% PROCESS table %]
+
+<div class="description">
+[% USE Markdown; dish.description | $Markdown %]
+</div>
+
+</div>
+
+    [% END;
+
+    FOR dish IN meal.prepared_dishes %]
+<h4>Prepare for [% dish.meal.name %] on [% dish.meal.date.ymd %]: [% dish.name %]</h4>
+
+[% PROCESS table %]
+
+<p>[% USE Markdown; dish.preparation | $Markdown %]</p>
+
+<ul>
+        [% FOR ingredient IN dish.ingredients_rs.prepared %]
+    <li>[% ingredient.value; display_unit(ingredient.unit); ' '; ingredient.article.name %]</li>
+        [% END %]
+</ul>
+    [% END;
+END;
+
+BLOCK table %]
 <table class="ingredients">
     <tr>
         <th colspan="2">Amount</th>
@@ -27,27 +53,7 @@
     </tr>
         [% END %]
 </table>
-
-<div class="description">
-[% USE Markdown; dish.description | $Markdown %]
-</div>
-
-</div>
-
-    [% END;
-
-    FOR dish IN meal.prepared_dishes %]
-<h4>Prepare for [% dish.meal.name %] on [% dish.meal.date.ymd %]: [% dish.name %]</h4>
-
-<p>[% USE Markdown; dish.preparation | $Markdown %]</p>
-
-<ul>
-        [% FOR ingredient IN dish.ingredients_rs.prepared %]
-    <li>[% ingredient.value; display_unit(ingredient.unit); ' '; ingredient.article.name %]</li>
-        [% END %]
-</ul>
-    [% END;
-END %]
+[% END %]
 
 <style>
 .ingredients {
