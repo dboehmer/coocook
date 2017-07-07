@@ -4,7 +4,7 @@
 [% FOREACH section IN sections %]
 <h3>[% section.name %]</h3>
 
-<table>
+<table class="purchase-items">
     <thead>
         <tr>
             <th>Amount</th>
@@ -26,7 +26,7 @@
             ELSE;
                 item.value;
             END;
-            display_unit(item.unit) %]
+            display_unit(item.unit, {html=>1}) %]
         </td>
         <td>[% item.article.name %]</td>
         <td class="small-font"><ul>
@@ -36,7 +36,7 @@
         </ul></td>
         <td>[% item.comment %]</td>
         <td>
-        [% FOREACH unit IN ingredient.convertible_into %]
+        [% FOREACH unit IN item.convertible_into %]
             <form action="[% c.uri_for_action('/items/convert', item.id, unit.id) %]" method="POST" class="inline">
                 <input type="submit" value="[% unit.short_name %]" title="[% unit.long_name %]">
             </form>
@@ -46,3 +46,9 @@
     [% END %]
 </table>
 [% END %]
+
+<style>
+table.purchase-items {
+    width: 100%; /* there are several tables with many columns and they should have identical width */
+}
+</style>

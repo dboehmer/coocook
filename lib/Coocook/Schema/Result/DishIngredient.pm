@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->load_components('Ordered');
+__PACKAGE__->load_components(qw< +Coocook::Schema::Component::Result::Convertible Ordered >);
 
 __PACKAGE__->table("dish_ingredients");
 
@@ -49,28 +49,16 @@ sub assign_to_purchase_list {
 
     $self->result_source->schema->txn_do(
         sub {
-            my $item =
-              $self->result_source->schema->resultset('Item')->add_or_create(
+            my $item = $self->result_source->schema->resultset('Item')->add_or_create(
                 {
                     purchase_list => $list,
                     article       => $self->get_column('article'),
                     unit          => $self->get_column('unit'),
                     value         => $self->value,
                 }
-              );
+            );
 
             $self->add_to_items($item);
-        }
-    );
-}
-
-sub convertible_into {
-    my $self = shift;
-
-    return $self->article->units->search(
-        {
-            id       => { '!=' => $self->unit->id },
-            quantity => $self->unit->quantity->id,
         }
     );
 }

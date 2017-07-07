@@ -87,13 +87,14 @@ sub edit : Path Args(1) {
 
         push @{ $sections{$section}{items} },
           {
-            id          => $item->id,
-            value       => $item->value,
-            offset      => $item->offset,
-            article     => $articles{$article},
-            unit        => $units{$unit},
-            comment     => $item->comment,
-            ingredients => [ $item->ingredients ],
+            id               => $item->id,
+            value            => $item->value,
+            offset           => $item->offset,
+            article          => $articles{$article},
+            unit             => $units{$unit},
+            comment          => $item->comment,
+            ingredients      => [ $item->ingredients ],
+            convertible_into => [ $item->convertible_into ],
           };
     }
 

@@ -14,6 +14,7 @@ my ( $g, $kg, $pcs ) = my @units = $schema->resultset('Unit')->populate(
         [qw<quantity space short_name long_name>],
         [ $mass->id,   0, "g",   "grams" ],
         [ $mass->id,   0, "kg",  "kilograms" ],
+        [ $mass->id,   0, "t",   "tons" ],
         [ $number->id, 0, "pcs", "pieces" ],      # not a mass!
     ]
 );
@@ -40,8 +41,9 @@ my $ingredient = $schema->resultset('DishIngredient')->create(
 
 my @other_units = $ingredient->convertible_into();
 
-is scalar @other_units => 1;
+is scalar @other_units => 2;
 
 is $other_units[0]->short_name => "kg";    # not current unit, not unit of other quantity
+is $other_units[1]->short_name => "t";
 
 done_testing;

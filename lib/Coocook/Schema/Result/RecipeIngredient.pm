@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->load_components('Ordered');
+__PACKAGE__->load_components(qw< +Coocook::Schema::Component::Result::Convertible Ordered >);
 
 __PACKAGE__->table("recipe_ingredients");
 
