@@ -7,7 +7,7 @@
     WHILE(dish = dishes.next) %]
 <h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
-<p>[% dish.description %]</p>
+<p>[% USE Markdown; dish.description | $Markdown %]</p>
 
 <table>
     <tr>
