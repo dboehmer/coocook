@@ -12,9 +12,18 @@
 
 [% PROCESS table %]
 
-<div class="description">
+[% IF dish.preparation.length %]
+    <h5>Preparation
+        [% IF dish.prepare_at_meal %]
+            (scheduled for [% dish.prepare_at_meal.name | xml %] on [% display_date(dish.prepare_at_meal.date) %])
+        [% END %]
+    </h5>
+
+    [% USE Markdown; dish.preparation | $Markdown;
+END %]
+
+<h5>Description</h5>
 [% USE Markdown; dish.description | $Markdown %]
-</div>
 
 </div>
 
