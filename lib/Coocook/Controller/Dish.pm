@@ -20,11 +20,12 @@ Catalyst Controller.
 sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->find($id);
+    my $dish = $c->model('Schema::Dish')->search( undef, { prefetch => 'meal' } )->find($id);
 
     # candidate meals for preparing this dish: same day or earlier
     my $prepare_meals = $c->model('Schema::Meal')->search(
         {
+            id   => { '!=' => $dish->meal->id },
             date => { '<=' => $dish->meal->date },
         },
         {
