@@ -25,7 +25,7 @@ __PACKAGE__->belongs_to( quantity => 'Coocook::Schema::Result::Quantity' );
 # returns other units of same quantity but not $self,
 # for doc see https://metacpan.org/pod/DBIx::Class::Relationship::Base#Custom-join-conditions
 __PACKAGE__->has_many(
-    convertable_into => 'Coocook::Schema::Result::Unit',
+    convertible_into => 'Coocook::Schema::Result::Unit',
     sub {
         my $args = shift;
 
@@ -79,7 +79,7 @@ sub make_quantity_default {
     $orig->to_quantity_default == 1
       or die "Original default unit needs factor 1";
 
-    # collect convertable units of this quantity except $self and $orig
+    # collect convertible units of this quantity except $self and $orig
     my @others = $quantity->units->search(
         {
             id                  => { -not_in => [ $self->id, $orig->id ] },
