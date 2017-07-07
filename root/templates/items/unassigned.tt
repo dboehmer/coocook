@@ -8,7 +8,21 @@
     </tr>
 [% WHILE(ingredient = ingredients.next) %]
     <tr>
-        <td>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name %]</td>
+        <td>
+            <strong>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name %]</strong>
+            <br>
+            <a href="[% c.uri_for_action('/dish/edit', ingredient.dish.id) %]">[% ingredient.dish.name %]</a>, [% display_date(ingredient.dish.meal.date, {html=>1}) %]
+            [% IF ingredient.comment.length;
+                '<br><span class="comment">ingredient: ';
+                ingredient.comment | xml;
+                '</span>';
+            END;
+            IF ingredient.article.comment.length;
+                '<br><span class="comment">article: ';
+                ingredient.article.comment | xml;
+                '</span>';
+            END %]
+        </td>
         <td>
             <input type="radio" name="assign[% ingredient.id %]" value="" id="a[% ingredient.id %]none" checked>
             <label for="a[% ingredient.id %]none">keep unassigned</label>
@@ -25,3 +39,9 @@
 
 <input type="submit" value="Assign to purchase lists">
 </form>
+
+<style>
+.comment {
+    color: grey;
+}
+</style>

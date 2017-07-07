@@ -1,4 +1,13 @@
-[%~ MACRO display_unit(unit, opts) BLOCK;
+[%~ MACRO display_date(date, opts) BLOCK;
+    format = opts.format || '%a, %d.%m.';
+    IF opts.html ~%]
+        <abbr title="[% date %]">[% date.strftime(format) %]</abbr>
+    [%~ ELSE;
+        date.strftime(format);
+    END;
+END;
+
+MACRO display_unit(unit, opts) BLOCK;
     IF opts.html ~%]
         <abbr title="[% unit.long_name | html %]">[% unit.short_name | html %]</abbr>
     [%~ ELSIF opts.print;
