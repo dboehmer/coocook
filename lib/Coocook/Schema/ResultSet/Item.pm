@@ -23,9 +23,8 @@ sub add_or_create {
     else {
         $item->set_columns(
             {
-                value => $args->{value},
-                comment =>
-                  "",    # no argument because existing items have comments
+                value   => $args->{value},
+                comment => "",               # no argument because existing items have comments
             }
         );
     }

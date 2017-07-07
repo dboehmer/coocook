@@ -16,8 +16,7 @@ sub add_columns {
     for (@_) {
         if ( ref eq 'HASH' ) {
             if ( $_->{data_type} =~ $BOOL_RE ) {
-                push @bool_columns,
-                  $column_name || die "hashref as first argument";
+                push @bool_columns, $column_name || die "hashref as first argument";
             }
         }
         else {
@@ -27,8 +26,7 @@ sub add_columns {
 
     my @ret = $class->next::method(@_);
 
-    $class->filter_column( $_ => { filter_to_storage => 'to_bool' } )
-      for @bool_columns;
+    $class->filter_column( $_ => { filter_to_storage => 'to_bool' } ) for @bool_columns;
 
     return @ret;
 }

@@ -96,16 +96,15 @@ sub edit_dishes : Local Args(1) POST {
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-	my $name = $c->req->param('name');
-	if (length($name) > 0){
-		my $project = $c->model('Schema::Project')
-      ->create( { name => scalar $c->req->param('name') } );
-	  $c->detach( 'redirect', [ $project->id ] );
-	}
-        else {
-            $c->response->redirect(
-                $c->uri_for( '/projects', { error => "Cannot create project with empty name!" } ) );
-        }
+    my $name = $c->req->param('name');
+    if ( length($name) > 0 ) {
+        my $project = $c->model('Schema::Project')->create( { name => scalar $c->req->param('name') } );
+        $c->detach( 'redirect', [ $project->id ] );
+    }
+    else {
+        $c->response->redirect(
+            $c->uri_for( '/projects', { error => "Cannot create project with empty name!" } ) );
+    }
 }
 
 sub select : Local Args(1) GET {
@@ -117,8 +116,7 @@ sub select : Local Args(1) GET {
 
 sub redirect : Private {
     my ( $self, $c, $id ) = @_;
-    $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $id ) );
+    $c->response->redirect( $c->uri_for_action( $self->action_for('edit'), $id ) );
 }
 
 #TODO: enable deletion of big projects?

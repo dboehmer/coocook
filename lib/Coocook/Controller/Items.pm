@@ -38,8 +38,7 @@ sub unassigned : Local Args(0) {
         }
       );
 
-    my $lists = $c->model('Schema::PurchaseList')
-      ->search( undef, { order_by => 'date' } );
+    my $lists = $c->model('Schema::PurchaseList')->search( undef, { order_by => 'date' } );
 
     $c->stash(
         ingredients => $ingredients,
@@ -54,8 +53,7 @@ sub assign : Local Args(0) POST {
 
     my %lists = map { $_->id => $_ } @{ $c->stash->{lists} };
 
-    $c->model('Schema')
-      ->schema->txn_do(    # TODO txn useful if single assignment fails?
+    $c->model('Schema')->schema->txn_do(    # TODO txn useful if single assignment fails?
         sub {
             while ( my $ingredient = $c->stash->{ingredients}->next ) {
                 my $id = $ingredient->id;
@@ -65,10 +63,9 @@ sub assign : Local Args(0) POST {
                 }
             }
         }
-      );
+    );
 
-    $c->response->redirect(
-        $c->uri_for_action( $self->action_for('unassigned') ) );
+    $c->response->redirect( $c->uri_for_action( $self->action_for('unassigned') ) );
 }
 
 sub convert : Local POST Args(2) {
@@ -80,10 +77,7 @@ sub convert : Local POST Args(2) {
     $item->convert($unit);
 
     $c->response->redirect(
-        $c->uri_for_action(
-            '/purchase_list/edit', $item->get_column('purchase_list')
-        )
-    );
+        $c->uri_for_action( '/purchase_list/edit', $item->get_column('purchase_list') ) );
 }
 
 =encoding utf8

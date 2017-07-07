@@ -141,8 +141,7 @@ sub update : POST Path Args(1) {
             if ( scalar $c->req->param('shelf_life') ) {
                 $article->set_columns(
                     {
-                        shelf_life_days =>
-                          scalar $c->req->param('shelf_life_days')
+                        shelf_life_days => scalar $c->req->param('shelf_life_days')
                     }
                 );
             }
@@ -152,17 +151,13 @@ sub update : POST Path Args(1) {
             if ( scalar $c->req->param('preorder') ) {
                 $article->set_columns(
                     {
-                        preorder_servings =>
-                          scalar $c->req->param('preorder_servings'),
-                        preorder_workdays =>
-                          scalar $c->req->param('preorder_workdays'),
+                        preorder_servings => scalar $c->req->param('preorder_servings'),
+                        preorder_workdays => scalar $c->req->param('preorder_workdays'),
                     }
                 );
             }
             else {
-                $article->set_columns(
-                    { preorder_servings => undef, preorder_workdays => undef, }
-                );
+                $article->set_columns( { preorder_servings => undef, preorder_workdays => undef, } );
             }
             $article->update;
         }

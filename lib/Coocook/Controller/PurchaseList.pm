@@ -33,8 +33,7 @@ sub index : Path('/purchase_lists') Args(0) {
       $c->model('Schema::PurchaseList')->search( { project => $project->id } );
 
     my $max_date = do {
-        my $list = $lists->search( undef,
-            { columns => 'date', order_by => { -desc => 'date' } } )->first;
+        my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->first;
 
         $list ? $list->date : undef;
     };
@@ -63,8 +62,7 @@ sub edit : Path Args(1) {
     my @article_ids =
       keys %{ { map { $_->get_column('article') => undef } @items } };
 
-    my @articles = $c->model('Schema::Article')
-      ->search( { id => { -in => \@article_ids } } );
+    my @articles = $c->model('Schema::Article')->search( { id => { -in => \@article_ids } } );
 
     my %articles = map { $_->id => $_ } @articles;
     my %article_to_section =
@@ -73,8 +71,7 @@ sub edit : Path Args(1) {
     my @section_ids =
       keys %{ { map { $_ => undef } values %article_to_section } };
 
-    my @sections = $c->model('Schema::ShopSection')
-      ->search( { id => { -in => \@section_ids } } );
+    my @sections = $c->model('Schema::ShopSection')->search( { id => { -in => \@section_ids } } );
 
     my %sections =
       map { $_->id => { name => $_->name, items => [] } } @sections;
@@ -100,9 +97,7 @@ sub edit : Path Args(1) {
 
     # sort products alphabetically
     for my $section ( values %sections ) {
-        $section->{items} =
-          [ sort { $a->{article}->name cmp $b->{article}->name }
-              @{ $section->{items} } ];
+        $section->{items} = [ sort { $a->{article}->name cmp $b->{article}->name } @{ $section->{items} } ];
     }
 
     # sort sections

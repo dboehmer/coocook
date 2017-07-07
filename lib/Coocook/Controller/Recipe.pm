@@ -57,7 +57,7 @@ sub add : Local : Args(1) {
     $c->model('Schema::RecipeIngredient')->create(
         {
             recipe  => $id,
-            prepare => ($c->req->param('prepare') ? 1 : 0),
+            prepare => ( $c->req->param('prepare') ? 1 : 0 ),
             article => scalar $c->req->param('article'),
             value   => scalar $c->req->param('value'),
             unit    => scalar $c->req->param('unit'),
@@ -70,26 +70,25 @@ sub add : Local : Args(1) {
 sub create : Local : POST {
     my ( $self, $c ) = @_;
     my $name = scalar $c->req->param('name');
-    my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipes"});
-    if ($input_okay){
+    my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipes" } );
+    if ($input_okay) {
         my $recipe = $c->model('Schema::Recipe')->create(
-        {
-            name        => $name,
-            description => scalar $c->req->param('description') // "",
-            preparation => scalar $c->req->param('preparation') // "",
-            servings    => scalar $c->req->param('servings'),
-        }
-    );
-    $c->detach( 'redirect', [ $recipe->id ] );
+            {
+                name        => $name,
+                description => scalar $c->req->param('description') // "",
+                preparation => scalar $c->req->param('preparation') // "",
+                servings    => scalar $c->req->param('servings'),
+            }
+        );
+        $c->detach( 'redirect', [ $recipe->id ] );
     }
-    
+
 }
 
 sub duplicate : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::Recipe')->find($id)
-      ->duplicate( { name => scalar $c->req->param('name') } );
+    $c->model('Schema::Recipe')->find($id)->duplicate( { name => scalar $c->req->param('name') } );
 
     $c->detach( 'redirect', [] );
 }
@@ -102,49 +101,48 @@ sub delete : Local : Args(1) : POST {
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    my $recipe = $c->model('Schema::Recipe')->find($id);
-    my $name = scalar $c->req->param('name');
-    my $input_okay = $self->check_name($c, {name => $name, current_page => "/recipe/$id"});
-    if($input_okay){
+    my $recipe     = $c->model('Schema::Recipe')->find($id);
+    my $name       = scalar $c->req->param('name');
+    my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipe/$id" } );
+    if ($input_okay) {
         $c->model('Schema')->schema->txn_do(
-        sub {
-            $recipe->update(
-                {
-                    name        => $name,
-                    preparation => scalar $c->req->param('preparation'),
-                    description => scalar $c->req->param('description'),
-                    servings    => scalar $c->req->param('servings'),
-                }
-            );
-
-            # ingredients
-            for my $ingredient ( $recipe->ingredients ) {
-                if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
-                    $ingredient->delete;
-                    next;
-                }
-
-                $ingredient->update(
+            sub {
+                $recipe->update(
                     {
-                        prepare => ( $c->req->param( 'prepare' . $ingredient->id ) ? 1 : 0 ),
-                        value   => scalar $c->req->param( 'value' . $ingredient->id ),
-                        unit    => scalar $c->req->param( 'unit' . $ingredient->id ),
-                        comment => scalar $c->req->param( 'comment' . $ingredient->id ),
+                        name        => $name,
+                        preparation => scalar $c->req->param('preparation'),
+                        description => scalar $c->req->param('description'),
+                        servings    => scalar $c->req->param('servings'),
                     }
                 );
+
+                # ingredients
+                for my $ingredient ( $recipe->ingredients ) {
+                    if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
+                        $ingredient->delete;
+                        next;
+                    }
+
+                    $ingredient->update(
+                        {
+                            prepare => ( $c->req->param( 'prepare' . $ingredient->id ) ? 1 : 0 ),
+                            value   => scalar $c->req->param( 'value' . $ingredient->id ),
+                            unit    => scalar $c->req->param( 'unit' . $ingredient->id ),
+                            comment => scalar $c->req->param( 'comment' . $ingredient->id ),
+                        }
+                    );
+                }
+
+                # tags
+                my $tags = $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+                $recipe->set_tags( [ $tags->all ] );
             }
+        );
 
-            # tags
-            my $tags = $c->model('Schema::Tag')
-              ->from_names( scalar $c->req->param('tags') );
-            $recipe->set_tags( [ $tags->all ] );
-        }
-    );
+        $c->detach( 'redirect', [$id] );
 
-    $c->detach( 'redirect', [$id] );
-    
     }
-    
+
 }
 
 sub reposition : POST Local Args(1) {
@@ -173,20 +171,19 @@ sub redirect : Private {
             $c->uri_for_action( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
     }
     else {
-        $c->response->redirect(
-            $c->uri_for_action( $self->action_for('index') ) );
+        $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
     }
 }
 
 sub check_name : Private {
-    my ( $self, $c, $args) = @_;
+    my ( $self, $c, $args ) = @_;
     my $name = $args->{name};
     $c->log->info("name$name");
     my $current_page = $args->{current_page};
-    my $result = 1;
-    if (length($name) <= 0){
-		$c->response->redirect(
-                $c->uri_for( $current_page, { error => "Cannot create recipe with empty name!" } ) );
+    my $result       = 1;
+    if ( length($name) <= 0 ) {
+        $c->response->redirect(
+            $c->uri_for( $current_page, { error => "Cannot create recipe with empty name!" } ) );
         $result = 0;
     }
     return $result;

@@ -24,10 +24,9 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( [qw<purchase_list article unit>] );
 
-__PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
-__PACKAGE__->belongs_to(
-    purchase_list => 'Coocook::Schema::Result::PurchaseList' );
-__PACKAGE__->belongs_to( unit => 'Coocook::Schema::Result::Unit' );
+__PACKAGE__->belongs_to( article       => 'Coocook::Schema::Result::Article' );
+__PACKAGE__->belongs_to( purchase_list => 'Coocook::Schema::Result::PurchaseList' );
+__PACKAGE__->belongs_to( unit          => 'Coocook::Schema::Result::Unit' );
 __PACKAGE__->belongs_to(
     article_unit => 'Coocook::Schema::Result::ArticleUnit',
     {
@@ -36,8 +35,7 @@ __PACKAGE__->belongs_to(
     }
 );
 
-__PACKAGE__->has_many(
-    ingredients_items => 'Coocook::Schema::Result::IngredientItem' );
+__PACKAGE__->has_many( ingredients_items => 'Coocook::Schema::Result::IngredientItem' );
 __PACKAGE__->many_to_many( ingredients => ingredients_items => 'ingredient' );
 
 __PACKAGE__->meta->make_immutable;
@@ -60,7 +58,7 @@ sub convert {
                     article       => $self->get_column('article'),
                     unit          => $unit2->id,
 
-       # checking if unit is quantity default involved fetching the quantity ...
+                    # checking if unit is quantity default involved fetching the quantity ...
                     value  => $self->value * $factor,
                     offset => $self->offset * $factor,
                 }

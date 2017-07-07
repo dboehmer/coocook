@@ -19,8 +19,7 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( ['name'] );
 
-__PACKAGE__->has_many(
-    ingredients => 'Coocook::Schema::Result::RecipeIngredient' );
+__PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::RecipeIngredient' );
 
 __PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag' );
 __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );

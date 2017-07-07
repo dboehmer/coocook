@@ -21,14 +21,12 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraint( ['name'] );
 
-__PACKAGE__->belongs_to(
-    shop_section => 'Coocook::Schema::Result::ShopSection' );
+__PACKAGE__->belongs_to( shop_section => 'Coocook::Schema::Result::ShopSection' );
 
 __PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
 __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
 
-__PACKAGE__->has_many(
-    articles_units => 'Coocook::Schema::Result::ArticleUnit' );
+__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
 __PACKAGE__->many_to_many( units => articles_units => 'unit' );
 
 __PACKAGE__->meta->make_immutable;

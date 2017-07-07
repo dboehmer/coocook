@@ -45,8 +45,7 @@ sub delete : Local Args(1) POST {
 
     $dish->delete;
 
-    $c->response->redirect(
-        $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
+    $c->response->redirect( $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
 }
 
 sub create : Local Args(0) POST {
@@ -82,8 +81,7 @@ sub from_recipe : Local Args(0) POST {
         )
     );
 
-    $c->response->redirect(
-        $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
+    $c->response->redirect( $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
 }
 
 sub recalculate : Local Args(1) POST {
@@ -131,8 +129,7 @@ sub update : Local Args(1) POST {
                 }
             );
 
-            my $tags = $c->model('Schema::Tag')
-              ->from_names( scalar $c->req->param('tags') );
+            my $tags = $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
             $dish->set_tags( [ $tags->all ] );
 
             for my $ingredient ( $dish->ingredients ) {
@@ -148,12 +145,9 @@ sub update : Local Args(1) POST {
                             ? '1'
                             : '0'
                         ),
-                        value =>
-                          scalar $c->req->param( 'value' . $ingredient->id ),
-                        unit =>
-                          scalar $c->req->param( 'unit' . $ingredient->id ),
-                        comment =>
-                          scalar $c->req->param( 'comment' . $ingredient->id ),
+                        value   => scalar $c->req->param( 'value' . $ingredient->id ),
+                        unit    => scalar $c->req->param( 'unit' . $ingredient->id ),
+                        comment => scalar $c->req->param( 'comment' . $ingredient->id ),
                     }
                 );
             }

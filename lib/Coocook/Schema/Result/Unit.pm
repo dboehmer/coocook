@@ -30,16 +30,13 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.id" =>
-              { '!=' => { -ident => "$args->{self_alias}.id" } },
-            "$args->{foreign_alias}.quantity" =>
-              { -ident => "$args->{self_alias}.quantity" },
+            "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
         };
     }
 );
 
-__PACKAGE__->has_many(
-    articles_units => 'Coocook::Schema::Result::ArticleUnit' );
+__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
 
 __PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
@@ -92,8 +89,7 @@ sub make_quantity_default {
             for my $unit (@others) {
                 $unit->update(
                     {
-                        to_quantity_default => $unit->to_quantity_default /
-                          $factor
+                        to_quantity_default => $unit->to_quantity_default / $factor
                     }
                 );
             }

@@ -35,12 +35,9 @@ sub index : Path Args(0) {
     my $project = $c->stash->{my_project};
 
     my @days =
-      map { $_->date }
-      $project->meals->search( undef, { columns => 'date', distinct => 1 } )
-      ->all;
+      map { $_->date } $project->meals->search( undef, { columns => 'date', distinct => 1 } )->all;
 
-    my $lists =
-      $project->purchase_lists->search( undef, { order_by => 'date' } );
+    my $lists = $project->purchase_lists->search( undef, { order_by => 'date' } );
 
     my @projects = $c->model('Schema::Project')->all;
 

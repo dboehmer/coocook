@@ -14,9 +14,8 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key(qw<ingredient item>);
 
-__PACKAGE__->belongs_to(
-    ingredient => 'Coocook::Schema::Result::DishIngredient' );
-__PACKAGE__->belongs_to( item => 'Coocook::Schema::Result::Item' );
+__PACKAGE__->belongs_to( ingredient => 'Coocook::Schema::Result::DishIngredient' );
+__PACKAGE__->belongs_to( item       => 'Coocook::Schema::Result::Item' );
 
 __PACKAGE__->meta->make_immutable;
 

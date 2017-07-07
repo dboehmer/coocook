@@ -53,8 +53,7 @@ sub update : Local Args(1) POST {
 
 sub redirect : Private {
     my ( $self, $c, $meal ) = @_;
-    $c->response->redirect(
-        $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
+    $c->response->redirect( $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
 }
 
 =encoding utf8

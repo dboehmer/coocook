@@ -17,10 +17,9 @@ sub unassigned {
     return $self->search(
         undef,
         {
-            join     => 'ingredients_items',
-            distinct => 1,
-            '+select' =>
-              { count => 'ingredients_items.item', -as => 'count_items' },
+            join      => 'ingredients_items',
+            distinct  => 1,
+            '+select' => { count => 'ingredients_items.item', -as => 'count_items' },
             having => { count_items => { '=' => \'0' } },
         }
     );
