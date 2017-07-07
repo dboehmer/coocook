@@ -94,7 +94,6 @@ a {
 .content a {
     text-decoration:none;
     color: #4CAF50;
-    padding-right: 15px;
 }
 
 .content a:hover, .content a:active {
