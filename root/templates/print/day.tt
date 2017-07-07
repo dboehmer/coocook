@@ -5,7 +5,7 @@
 
     [% dishes = meal.dishes_rs;
     WHILE(dish = dishes.next) %]
-<h4>[% dish.name %] ([% dish.servings %] servings)</h4>
+<h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
 <p>[% dish.description %]</p>
 

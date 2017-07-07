@@ -1,7 +1,17 @@
 @media print {
 
-nav, footer {
-    display: none;
+    /* hide browser navigation elements */
+    nav, footer {
+        display: none;
+    }
+}
+
+.content a {
+    color: inherit !important;
+}
+
+.content a:hover {
+    text-decoration: underline;
 }
 
 table {
@@ -15,6 +25,4 @@ table td, table th {
 
 .small-font {
     font-size: 0.8em;
-}
-
 }
