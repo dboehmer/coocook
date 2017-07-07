@@ -22,6 +22,16 @@ sub edit : Path Args(1) {
 
     my $dish = $c->model('Schema::Dish')->find($id);
 
+    # candidate meals for preparing this dish: same day or earlier
+    my $prepare_meals = $c->model('Schema::Meal')->search(
+        {
+            date => { '<=' => $dish->meal->date },
+        },
+        {
+            order_by => 'date',
+        }
+    );
+
     my $ingredients = $dish->ingredients;
     $ingredients = $ingredients->search(
         undef,
@@ -31,10 +41,11 @@ sub edit : Path Args(1) {
     );
 
     $c->stash(
-        dish        => $dish,
-        ingredients => [ $ingredients->all ],
-        articles    => [ $c->model('Schema::Article')->all ],
-        units       => [ $c->model('Schema::Unit')->all ],
+        dish          => $dish,
+        ingredients   => [ $ingredients->all ],
+        articles      => [ $c->model('Schema::Article')->all ],
+        units         => [ $c->model('Schema::Unit')->all ],
+        prepare_meals => [ $prepare_meals->all ],
     );
 }
 
@@ -53,12 +64,13 @@ sub create : Local Args(0) POST {
 
     my $dish = $c->model('Schema::Dish')->create(
         {
-            meal        => scalar $c->req->param('meal'),
-            servings    => scalar $c->req->param('servings'),
-            name        => scalar $c->req->param('name'),
-            description => scalar $c->req->param('description') // "",
-            comment     => scalar $c->req->param('comment') // "",
-            preparation => scalar $c->req->param('preparation') // "",
+            meal            => scalar $c->req->param('meal'),
+            servings        => scalar $c->req->param('servings'),
+            name            => scalar $c->req->param('name'),
+            description     => scalar $c->req->param('description') // "",
+            comment         => scalar $c->req->param('comment') // "",
+            preparation     => scalar $c->req->param('preparation') // "",
+            prepare_at_meal => scalar $c->req->param('prepare_at_meal') || undef,
         }
     );
 
@@ -120,11 +132,12 @@ sub update : Local Args(1) POST {
         sub {
             $dish->update(
                 {
-                    name        => scalar $c->req->param('name'),
-                    comment     => scalar $c->req->param('comment'),
-                    servings    => scalar $c->req->param('servings'),
-                    preparation => scalar $c->req->param('preparation'),
-                    description => scalar $c->req->param('description'),
+                    name            => scalar $c->req->param('name'),
+                    comment         => scalar $c->req->param('comment'),
+                    servings        => scalar $c->req->param('servings'),
+                    preparation     => scalar $c->req->param('preparation'),
+                    description     => scalar $c->req->param('description'),
+                    prepare_at_meal => scalar $c->req->param('prepare_at_meal') || undef,
 
                 }
             );

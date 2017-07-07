@@ -11,6 +11,14 @@
 <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn't recalculate values!</em></p>
 <p>Tags: <input type="text" name="tags" value="[% dish.tags_rs.joined %]"></p>
+<p><label for="prepare_at_meal">Prepare at meal:</label>
+    <select id="prepare_at_meal" name="prepare_at_meal">
+        <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
+[% FOR meal IN prepare_meals %]
+        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | xml %]</option>
+[% END %]
+    </select>
+</p>
 <p>Preparation:<br>
 <textarea name="preparation" style="width:60em;height:10em;">[% dish.preparation %]</textarea></p>
 <p>Description:<br>
