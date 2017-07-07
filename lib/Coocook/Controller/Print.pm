@@ -32,6 +32,10 @@ sub auto : Private {
 sub index : Path Args(0) {
     my ( $self, $c ) = @_;
 
+    # TODO find a way to exclude this method when adding 'print.css' (5 lines above)
+    my $css = $c->stash->{css};
+    @$css = grep { $_ ne 'print.css' } @$css;    # remove 'print.css' again :-/
+
     my $project = $c->stash->{my_project};
 
     my @days =
