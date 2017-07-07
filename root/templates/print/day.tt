@@ -5,11 +5,12 @@
 
     [% dishes = meal.dishes_rs;
     WHILE(dish = dishes.next) %]
+
+<div class="dish">
+
 <h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
-<p>[% USE Markdown; dish.description | $Markdown %]</p>
-
-<table>
+<table class="ingredients">
     <tr>
         <th colspan="2">Amount</th>
         <th>Article</th>
@@ -26,11 +27,19 @@
     </tr>
         [% END %]
 </table>
+
+<div class="description">
+[% USE Markdown; dish.description | $Markdown %]
+</div>
+
+</div>
+
     [% END;
+
     FOR dish IN meal.prepared_dishes %]
 <h4>Prepare for [% dish.meal.name %] on [% dish.meal.date.ymd %]: [% dish.name %]</h4>
 
-<p>[% dish.preparation %]</p>
+<p>[% USE Markdown; dish.preparation | $Markdown %]</p>
 
 <ul>
         [% FOR ingredient IN dish.ingredients_rs.prepared %]
@@ -39,3 +48,13 @@
 </ul>
     [% END;
 END %]
+
+<style>
+.ingredients {
+    float: left;
+    margin-right:  1em;
+    margin-bottom: 1em;
+}
+
+div.dish + * { clear: left }
+</style>
