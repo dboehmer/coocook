@@ -107,14 +107,14 @@ a {
     color: Red;
 }
 
-input:hover, input:focus {
-    -webkit-box-shadow: 2px 2px 3px grey;
-    -moz-box-shadow: 2px 2px 3px grey;
-    box-shadow: 2px 2px 3px grey;
+.inline {
+    display: inline;
 }
 
-input{
-    margin: 15px 15px 0 0;
+input:hover, input:focus {
+    -webkit-box-shadow: 2px 2px 3px grey;
+    -moz-box-shadow:    2px 2px 3px grey;
+    box-shadow:         2px 2px 3px grey;
 }
 
 input[type="number"] {
@@ -143,19 +143,6 @@ select:hover, select:active {
     -webkit-box-shadow: 2px 2px 3px grey;
     -moz-box-shadow: 2px 2px 3px grey;
     box-shadow: 2px 2px 3px grey;
-}
-
-ul {
-    padding: 0;
-    list-style-type: none;
-}
-
-.ul_table {
-    display: table;
-}
-
-.ul_table-cell {
-    display: table-cell;
 }
 
 fieldset{

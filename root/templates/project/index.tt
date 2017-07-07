@@ -2,14 +2,14 @@
 
 <ul>
 [% FOR project IN projects.all %]
-    <li class="ul_table">
-        <a class="ul_table-cell" href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
-        <form class="ul_table-cell" action="[% c.uri_for_action('/project/select', project.id) %]" method="GET">
+    <li>
+        <a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
+        <form class="inline" action="[% c.uri_for_action('/project/select', project.id) %]" method="GET">
             <input type="submit" value="Select">
         </form>
-		<form class="ul_table-cell" action="[% c.uri_for_action('/project/delete', project.id) %]" method="POST" onsubmit="return confirm('Are you sure you want to delete the whole project?')">
-			<input type="submit" value="Delete">	
-		</form>
+        <form class="inline" action="[% c.uri_for_action('/project/delete', project.id) %]" method="POST" onsubmit="return confirm('Are you sure you want to delete the whole project?')">
+            <input type="submit" value="Delete">	
+        </form>
     </li>
 [% END %]
 </ul>
