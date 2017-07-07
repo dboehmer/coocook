@@ -59,7 +59,31 @@ sub edit : GET Path Args(1) {
     my $article = $c->model('Schema::Article')->find($id)
       or die "Can't find article";    # TODO serious error message
 
-    $c->stash( article => $article );
+    # collect related recipes linked to dishes and independent dishes
+    my $dishes = $article->dishes;
+    $dishes = $dishes->search( undef, { order_by => $dishes->me('name'), prefetch => 'meal' } );
+    my $recipes = $article->recipes->search( undef, { order_by => 'name' } );
+
+    my @dishes;
+    my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
+    my %recipes = map { $$_{recipe}->id => $_ } @recipes;                # by ID
+
+    while ( my $dish = $dishes->next ) {
+        my $recipe = $dish->from_recipe;
+
+        if ( defined $recipe and exists $recipes{$recipe} ) {
+            push @{ $recipes{$recipe}{dishes} }, $dish;
+        }
+        else {
+            push @dishes, $dish;
+        }
+    }
+
+    $c->stash(
+        article => $article,
+        dishes  => \@dishes,
+        recipes => \@recipes,
+    );
 }
 
 sub create : Local : POST {

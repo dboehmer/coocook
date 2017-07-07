@@ -29,6 +29,12 @@ __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
 __PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
 __PACKAGE__->many_to_many( units => articles_units => 'unit' );
 
+__PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient' );
+__PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
+
+__PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient' );
+__PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
+
 __PACKAGE__->meta->make_immutable;
 
 sub unit_ids {

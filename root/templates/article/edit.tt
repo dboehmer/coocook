@@ -38,3 +38,21 @@ FOR quantity IN quantities %]
     <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>
     <input type="submit" value="Update">
 </form>
+
+<h2>Where <em>[% article.name | xml %]</em> is used</h2>
+
+<ul>
+[% FOR r IN recipes %]
+    <li>recipe <a href="[% c.uri_for_action('/recipe/edit', r.recipe.id) %]">[% r.recipe.name | xml %]</a>
+    <ul>
+    [% FOR dish IN r.dishes %]
+        <li>dish <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
+    [% END %]
+    </ul>
+    </li>
+[% END %]
+
+[% FOR dish IN dishes %]
+    <li>dish <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
+[% END %]
+</ul>
