@@ -11,12 +11,14 @@
 <table>
     <tr>
         <th>Name</th>
+        <th>Number of Articles</th>
         <th colspan="2">Actions</th>
     </tr>
 
 [% FOREACH section IN shop_sections.all %]
     <tr>
         <td>[% section.name | html %]</td>
+        <td class="right-align">[% section.get_column('article_count') %]</td>
         <td>
         <form method="POST" action="[% c.uri_for_action('/shop_section/update', section.id) %]" class="inline">
             <input type="text" name="name" value="[% section.name | html %]">

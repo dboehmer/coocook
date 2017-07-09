@@ -6,7 +6,12 @@ use MooseX::NonMoose;
 
 extends 'DBIx::Class::ResultSet';
 
-__PACKAGE__->load_components('Helper::ResultSet::Me');
+__PACKAGE__->load_components(
+    qw<
+      Helper::ResultSet::CorrelateRelationship
+      Helper::ResultSet::Me
+      >
+);
 
 __PACKAGE__->meta->make_immutable;
 

@@ -26,16 +26,7 @@ Catalyst Controller.
 sub index : Path('/shop_sections') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash(
-        shop_sections => $c->model('Schema::ShopSection')->sorted->search_rs(
-            undef,
-            {
-                join       => 'articles',
-                distinct   => 1,
-                '+columns' => { article_count => { count => 'articles.id' } },
-            }
-        )
-    );
+    $c->stash( shop_sections => scalar $c->model('Schema::ShopSection')->with_article_count->sorted );
 }
 
 sub create : Local Args(0) POST {
