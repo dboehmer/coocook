@@ -52,7 +52,7 @@ sub recalculate {
 
     $self->result_source->schema->txn_do(
         sub {
-            for my $ingredient ( $self->ingredients ) {
+            for my $ingredient ( $self->ingredients->all ) {
                 my $value1 = $ingredient->value;
                 my $value2 = $value1 / $servings1 * $servings2;
                 $ingredient->update( { value => $value2 } );
