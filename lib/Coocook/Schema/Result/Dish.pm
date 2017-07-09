@@ -40,6 +40,12 @@ __PACKAGE__->has_many(
     }
 );
 
+before delete => sub {         # TODO remove workaround!
+    my $self = shift;
+
+    $self->ingredients->delete();
+};
+
 __PACKAGE__->has_many(
     ingredients_ordered => 'Coocook::Schema::Result::DishIngredient',
     undef, { order_by => 'position' }
