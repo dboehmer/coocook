@@ -14,8 +14,9 @@
 
 [% IF dish.preparation.length %]
     <h5>Preparation
-        [% IF dish.prepare_at_meal %]
-            (scheduled for [% dish.prepare_at_meal.name | xml %] on [% display_date(dish.prepare_at_meal.date) %])
+        [% IF dish.prepare_at_meal;
+            meal = dish.prepare_at_meal%]
+            (scheduled for [% meal.name | xml %] on <a href="[% c.uri_for_action('/print/day', meal.date.year, meal.date.month, meal.date.day) %]">[% display_date(dish.prepare_at_meal.date) %]</a>)
         [% END %]
     </h5>
 
@@ -30,7 +31,7 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes %]
-<h4>Prepare for [% dish.meal.name %] on [% dish.meal.date.ymd %]: [% dish.name %]</h4>
+<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% dish.meal.date.ymd %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a></h4>
 
 [% PROCESS table %]
 
@@ -51,7 +52,7 @@ BLOCK table %]
         <th>Article</th>
     </tr>
         [% FOREACH ingredient IN dish.ingredients_ordered %]
-    <tr>
+    <tr class="[% 'prepare' IF ingredient.prepare %]">
         <td class="right-align">[% ingredient.value %]</td>
         <td>[% ingredient.unit.long_name %]</td>
         </td><td>[% ingredient.article.name ~%]
@@ -72,4 +73,9 @@ BLOCK table %]
 }
 
 div.dish + * { clear: left }
+
+tr.prepare th,
+tr.prepare td {
+    background-color: LightGrey;
+}
 </style>
