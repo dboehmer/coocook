@@ -14,7 +14,7 @@
     FOREACH meal IN day.meals %]
     <tr>
         [% IF loop.first  %]
-        <th rowspan="[% day.dishes + day.meals.size * 4 + 1 %]" style="vertical-align:top">[% day.date.ymd %]</th>
+        <th rowspan="[% day.dishes + day.meals.size * 4 + 1 %]" style="vertical-align:top">[% display_date(day.date, {html=>1}) %]</th>
         [% END %]
         <td></td>
         <th colspan="1" style="text-align:left">

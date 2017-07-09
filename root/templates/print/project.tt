@@ -10,7 +10,7 @@
     FOREACH meal IN day.meals %]
     <tr>
         [% IF loop.first %]
-        <td rowspan="[% day.meals.size %]">[% day.date.ymd %]</td>
+        <td rowspan="[% day.meals.size %]">[% display_date(day.date, {html=>1}) %]</td>
         [% END %]
         <td>[% meal.name %]</td>
         <td><ul>
