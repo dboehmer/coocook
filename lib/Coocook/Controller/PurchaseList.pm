@@ -62,7 +62,7 @@ sub edit : Path Args(1) {
     my @article_ids =
       keys %{ { map { $_->get_column('article') => undef } @items } };
 
-    my @articles = $c->model('Schema::Article')->search( { id => { -in => \@article_ids } } );
+    my @articles = $c->model('Schema::Article')->search( { id => { -in => \@article_ids } } )->all;
 
     my %articles = map { $_->id => $_ } @articles;
     my %article_to_section =
@@ -71,7 +71,7 @@ sub edit : Path Args(1) {
     my @section_ids =
       keys %{ { map { $_ => undef } values %article_to_section } };
 
-    my @sections = $c->model('Schema::ShopSection')->search( { id => { -in => \@section_ids } } );
+    my @sections = $c->model('Schema::ShopSection')->search( { id => { -in => \@section_ids } } )->all;
 
     my %sections =
       map { $_->id => { name => $_->name, items => [] } } @sections;
