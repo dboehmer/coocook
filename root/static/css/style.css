@@ -193,6 +193,11 @@ fieldset > fieldset > legend {
     visibility: visible;
 }
 
+ul {
+    overflow: hidden; /* fix position of bullet points at the side of floating blocks
+                       * see https://stackoverflow.com/a/710264/498634 */
+}
+
 /******** footer part ********/
 
 footer {
