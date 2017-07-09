@@ -20,6 +20,7 @@ table {
 
 table td, table th {
     border: 1px solid black;
+    padding: 0.1em 0.25em;
     vertical-align: top;
 }
 
