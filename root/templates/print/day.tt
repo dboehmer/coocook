@@ -10,13 +10,13 @@
 
 <h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
-[% PROCESS table %]
+[% PROCESS table prepare = 0 %]
 
 [% IF dish.preparation.length %]
     <h5>Preparation
         [% IF dish.prepare_at_meal;
-            meal = dish.prepare_at_meal%]
-            (scheduled for [% meal.name | xml %] on <a href="[% c.uri_for_action('/print/day', meal.date.year, meal.date.month, meal.date.day) %]">[% display_date(dish.prepare_at_meal.date) %]</a>)
+            prep_meal = dish.prepare_at_meal%]
+            (scheduled for [% prep_meal.name | xml %] on <a href="[% c.uri_for_action('/print/day', prep_meal.date.year, prep_meal.date.month, prep_meal.date.day) %]">[% display_date(prep_meal.date) %]</a>)
         [% END %]
     </h5>
 
@@ -31,17 +31,11 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes %]
-<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date, {html=>1}) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a></h4>
+<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date, {html=>1}) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
-[% PROCESS table %]
+[% PROCESS table prepare = 1 %]
 
 <p>[% USE Markdown; dish.preparation | $Markdown %]</p>
-
-<ul>
-        [% FOR ingredient IN dish.ingredients_rs.prepared %]
-    <li>[% ingredient.value; display_unit(ingredient.unit); ' '; ingredient.article.name %]</li>
-        [% END %]
-</ul>
     [% END;
 END;
 
@@ -51,8 +45,9 @@ BLOCK table %]
         <th colspan="2">Amount</th>
         <th>Article</th>
     </tr>
-        [% FOREACH ingredient IN dish.ingredients_ordered %]
-    <tr class="[% 'prepare' IF ingredient.prepare %]">
+        [% FOREACH ingredient IN dish.ingredients_ordered;
+            NEXT IF prepare AND NOT ingredient.prepare %]
+    <tr class="[% 'prepare' IF ingredient.prepare AND NOT prepare %]">
         <td class="right-align">[% ingredient.value %]</td>
         <td>[% ingredient.unit.long_name %]</td>
         </td><td>[% ingredient.article.name ~%]
