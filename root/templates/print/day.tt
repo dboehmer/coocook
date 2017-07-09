@@ -44,6 +44,7 @@ BLOCK table %]
     <tr>
         <th colspan="2">Amount</th>
         <th>Article</th>
+        <th>Comment</th>
     </tr>
         [% FOREACH ingredient IN dish.ingredients_ordered;
             NEXT IF prepare AND NOT ingredient.prepare %]
@@ -51,10 +52,11 @@ BLOCK table %]
         <td class="right-align">[% ingredient.value %]</td>
         <td>[% ingredient.unit.long_name %]</td>
         </td><td>[% ingredient.article.name ~%]
-        [%~ IF ingredient.comment.length;
+        [%~ IF ingredient.article.comment.length;
             ': ';
-            ingredient.comment;
+            ingredient.article.comment;
         END %]</td>
+        <td>[% ingredient.comment %]</td>
     </tr>
         [% END %]
 </table>
