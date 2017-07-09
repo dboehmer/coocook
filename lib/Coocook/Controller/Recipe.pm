@@ -117,7 +117,7 @@ sub update : Local : Args(1) : POST {
                 );
 
                 # ingredients
-                for my $ingredient ( $recipe->ingredients ) {
+                for my $ingredient ( $recipe->ingredients->all ) {
                     if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
                         $ingredient->delete;
                         next;
