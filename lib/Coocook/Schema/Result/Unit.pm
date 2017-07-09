@@ -77,7 +77,7 @@ sub make_quantity_default {
       or die "Original default unit needs factor 1";
 
     # collect convertible units of this quantity except $self and $orig
-    my @others = $quantity->units->search(
+    my $others = $quantity->units->search(
         {
             id                  => { -not_in => [ $self->id, $orig->id ] },
             to_quantity_default => { '!='    => undef },     # IS NOT NULL
@@ -86,7 +86,7 @@ sub make_quantity_default {
 
     $self->result_source->schema->txn_do(
         sub {
-            for my $unit (@others) {
+            for my $unit ( $others->all ) {
                 $unit->update(
                     {
                         to_quantity_default => $unit->to_quantity_default / $factor

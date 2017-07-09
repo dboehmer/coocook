@@ -88,7 +88,7 @@ sub project : Local Args(1) {
     );
 
     while ( my $meal = $meals->next ) {
-        my @dishes = map { $_->name } $meal->dishes;
+        my @dishes = map { $_->name } $meal->dishes->all;
 
         my $day = $days{ $meal->date } ||= {
             date  => $meal->date,

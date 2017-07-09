@@ -37,7 +37,7 @@ sub from_recipe {
             $dish->set_tags( [ $recipe->tags->all ] );
 
             # copy ingredients
-            for my $ingredient ( $recipe->ingredients ) {
+            for my $ingredient ( $recipe->ingredients->all ) {
                 $dish->create_related(
                     ingredients => { map { $_ => $ingredient->$_ } qw<position prepare article unit value comment> } );
             }
