@@ -34,6 +34,11 @@ __PACKAGE__->belongs_to(
 
 __PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::DishIngredient' );
 
+__PACKAGE__->has_many(
+    ingredients_ordered => 'Coocook::Schema::Result::DishIngredient',
+    undef, { order_by => 'position' }
+);
+
 __PACKAGE__->has_many( dishes_tags => 'Coocook::Schema::Result::DishTag' );
 __PACKAGE__->many_to_many( tags => dishes_tags => 'tag' );
 

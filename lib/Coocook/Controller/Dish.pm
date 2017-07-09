@@ -33,17 +33,9 @@ sub edit : Path Args(1) {
         }
     );
 
-    my $ingredients = $dish->ingredients;
-    $ingredients = $ingredients->search(
-        undef,
-        {
-            order_by => $ingredients->me('position'),
-        }
-    );
-
     $c->stash(
         dish          => $dish,
-        ingredients   => [ $ingredients->all ],
+        ingredients   => [ $dish->ingredients_ordered ],
         articles      => [ $c->model('Schema::Article')->all ],
         units         => [ $c->model('Schema::Unit')->all ],
         prepare_meals => [ $prepare_meals->all ],

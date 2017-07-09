@@ -50,7 +50,7 @@ BLOCK table %]
         <th colspan="2">Amount</th>
         <th>Article</th>
     </tr>
-        [% FOREACH ingredient IN dish.ingredients %]
+        [% FOREACH ingredient IN dish.ingredients_ordered %]
     <tr>
         <td class="right-align">[% ingredient.value %]</td>
         <td>[% ingredient.unit.long_name %]</td>
