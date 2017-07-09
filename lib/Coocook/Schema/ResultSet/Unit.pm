@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
-sub sorted_by_column { 'short_name' }
+sub sorted_by_column { 'long_name' }
 
 __PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::SortByName');
 

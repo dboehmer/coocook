@@ -40,7 +40,7 @@
             </form>
         </td>
     </tr>
-        [% FOREACH dish IN meal.dishes %]
+        [% FOREACH dish IN meal.dishes.all %]
     <tr>
         <td><input type="checkbox" name="dish[% dish.id %]"></td>
         <td><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings): [% dish.comment %]</td>

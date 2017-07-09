@@ -9,6 +9,7 @@ extends 'DBIx::Class::ResultSet';
 __PACKAGE__->load_components(
     qw<
       Helper::ResultSet::CorrelateRelationship
+      Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
       >
 );

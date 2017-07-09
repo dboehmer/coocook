@@ -26,14 +26,14 @@ sub index : Path('/units') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        units => $c->model('Schema::Unit')->search_rs(
+        units => $c->model('Schema::Unit')->search(
             undef,
             {
                 join     => 'quantity',
                 order_by => [qw< quantity.name short_name >]
             }
         ),
-        quantities => [ $c->model('Schema::Quantity')->sorted ],
+        quantities => [ $c->model('Schema::Quantity')->sorted->all ],
     );
 }
 

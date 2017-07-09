@@ -19,7 +19,7 @@
         <tr>
             <th>[% quantity.name %]</th>
             <td>
-    [% FOR unit IN quantity.units %]
+    [% FOR unit IN quantity.units.all %]
         <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
         <label for="u[% unit.id %]">[% display_unit(unit, {html => 1}) %]</label>
     [% END %]

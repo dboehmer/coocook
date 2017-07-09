@@ -27,7 +27,7 @@ Catalyst Controller.
 sub index : Path('/recipes') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recipes => $c->model('Schema::Recipe')->sorted_rs );
+    $c->stash( recipes => $c->model('Schema::Recipe')->sorted );
 }
 
 sub edit : Path : Args(1) {
@@ -47,8 +47,8 @@ sub edit : Path : Args(1) {
     $c->stash(
         recipe      => $recipe,
         ingredients => [ $ingredients->all ],
-        articles    => [ $c->model('Schema::Article')->sorted ],
-        units       => [ $c->model('Schema::Unit')->sorted ],
+        articles    => [ $c->model('Schema::Article')->sorted->all ],
+        units       => [ $c->model('Schema::Unit')->sorted->all ],
     );
 }
 

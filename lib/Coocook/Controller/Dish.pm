@@ -35,9 +35,9 @@ sub edit : Path Args(1) {
 
     $c->stash(
         dish          => $dish,
-        ingredients   => [ $dish->ingredients_ordered ],
+        ingredients   => [ $dish->ingredients_ordered->all ],
         articles      => [ $c->model('Schema::Article')->all ],
-        units         => [ $c->model('Schema::Unit')->all ],
+        units         => [ $c->model('Schema::Unit')->sorted->all ],
         prepare_meals => [ $prepare_meals->all ],
     );
 }
@@ -138,7 +138,7 @@ sub update : Local Args(1) POST {
             my $tags = $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
             $dish->set_tags( [ $tags->all ] );
 
-            for my $ingredient ( $dish->ingredients ) {
+            for my $ingredient ( $dish->ingredients->all ) {
                 if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
                     next;

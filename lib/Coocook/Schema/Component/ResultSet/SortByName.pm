@@ -16,6 +16,4 @@ sub sorted {
     );
 }
 
-sub sorted_rs { scalar shift->sorted(@_) }
-
 1;

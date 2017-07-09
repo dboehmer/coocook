@@ -12,7 +12,7 @@ __PACKAGE__->meta->make_immutable;
 sub with_article_count {
     my $self = shift;
 
-    return $self->search_rs(
+    return $self->search(
         undef,
         {
             '+columns' => { article_count => $self->correlate('articles')->count_rs->as_query },

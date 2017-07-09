@@ -45,7 +45,7 @@ sub index : Path('/purchase_lists') Args(0) {
 
     $c->stash(
         default_date => $default_date,
-        lists        => $lists->search_rs( undef, { order_by => 'date' } ),
+        lists        => $lists->search( undef, { order_by => 'date' } ),
     );
 }
 
@@ -90,8 +90,8 @@ sub edit : Path Args(1) {
             article          => $articles{$article},
             unit             => $units{$unit},
             comment          => $item->comment,
-            ingredients      => [ $item->ingredients ],
-            convertible_into => [ $item->convertible_into ],
+            ingredients      => [ $item->ingredients->all ],
+            convertible_into => [ $item->convertible_into->all ],
           };
     }
 
