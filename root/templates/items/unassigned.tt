@@ -1,7 +1,7 @@
 <h2>Assign Ingredients to Purchase Lists</h2>
 
 <form action="[% c.uri_for_action('/items/assign') %]" method="POST">
-<table>
+<table id="items">
     <tr>
         <th>Ingredient</th>
         <th colspan="[% lists.size + 1 %]">Assign to purchase list</th>
@@ -43,5 +43,13 @@
 <style>
 .comment {
     color: grey;
+}
+
+table#items {
+    border-collapse: collapse; /* TODO maybe for all tables? */
+}
+
+tr:hover {
+    background-color: LightGray;
 }
 </style>
