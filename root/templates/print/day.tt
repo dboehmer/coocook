@@ -31,7 +31,7 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes.all %]
-<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date, {html=>1}) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
+<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 1 %]
 
