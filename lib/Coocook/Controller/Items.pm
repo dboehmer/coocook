@@ -38,7 +38,14 @@ sub unassigned : Local Args(0) {
         }
       );
 
-    my $lists = $c->model('Schema::PurchaseList')->search( undef, { order_by => 'date' } );
+    my $lists = $c->model('Schema::PurchaseList')->search(
+        {
+            project => $c->stash->{my_project}->id,
+        },
+        {
+            order_by => 'date',
+        }
+    );
 
     $c->stash(
         ingredients => $ingredients,
