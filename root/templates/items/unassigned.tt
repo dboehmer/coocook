@@ -1,4 +1,4 @@
-<h2>Assign Ingredients to Purchase Lists</h2>
+<h2>Assign Ingredients to Purchase Lists ([% ingredients.size %] items)</h2>
 
 <form action="[% c.uri_for_action('/items/assign') %]" method="POST">
 <table id="items">
@@ -6,7 +6,7 @@
         <th>Ingredient</th>
         <th colspan="[% lists.size + 1 %]">Assign to purchase list</th>
     </tr>
-[% WHILE(ingredient = ingredients.next) %]
+[% FOR ingredient IN ingredients %]
     <tr>
         <td>
             <strong>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name %]</strong>

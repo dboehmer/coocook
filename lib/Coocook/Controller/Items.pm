@@ -22,9 +22,8 @@ sub unassigned : Local Args(0) {
     my ( $self, $c ) = @_;
 
     my $project = $c->stash->{my_project};
-    my $ingredients =
-      $c->model('Schema::Meal')->search( { project => $project->id } )
-      ->dishes->ingredients->unassigned->search(
+
+    my $ingredients = $project->meals->dishes->ingredients->unassigned->search(
         undef,
         {
             prefetch => [ 'article', { 'dish' => 'meal' }, 'unit' ],
@@ -36,19 +35,17 @@ sub unassigned : Local Args(0) {
                   >
             ],
         }
-      );
+    );
 
-    my $lists = $c->model('Schema::PurchaseList')->search(
-        {
-            project => $c->stash->{my_project}->id,
-        },
+    my $lists = $project->purchase_lists->search(
+        undef,
         {
             order_by => 'date',
         }
     );
 
     $c->stash(
-        ingredients => $ingredients,
+        ingredients => [ $ingredients->all ],
         lists       => [ $lists->all ],
     );
 }

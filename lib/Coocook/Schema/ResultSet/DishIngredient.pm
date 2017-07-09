@@ -5,6 +5,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
+__PACKAGE__->meta->make_immutable;
+
 sub prepared {
     my $self = shift;
 
@@ -24,7 +26,5 @@ sub unassigned {
         }
     );
 }
-
-__PACKAGE__->meta->make_immutable;
 
 1;
