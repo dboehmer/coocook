@@ -30,11 +30,9 @@ sub unassigned : Local Args(0) {
             prefetch => [ 'article', { 'dish' => 'meal' }, 'unit' ],
             order_by => [
                 qw<
-                  meal.date
                   article.shop_section
                   article.name
-                  unit.long_name
-                  value
+                  meal.date
                   >
             ],
         }
