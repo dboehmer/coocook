@@ -27,3 +27,11 @@
         <input type="submit" value="Save">
     </p>
 </form>
+
+<h2>Where Unit <em>[% unit.long_name %]</em> is used ([% articles.size %] articles)</h2>
+
+<ul>
+[% FOR article IN articles %]
+    <li><a href="[% c.uri_for_action('/article/edit', article.id) %]">[% article.name | xml %]</a></li>
+[% END %]
+</ul>

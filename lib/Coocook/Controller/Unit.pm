@@ -108,8 +108,13 @@ sub update : Local : Args(1) : POST {
 
 sub edit : Path : Args(1) : GET {
     my ( $self, $c, $id ) = @_;
+
     my $unit = $c->model('Schema::Unit')->find($id);
-    $c->stash( unit => $unit, );
+
+    $c->stash(
+        unit     => $unit,
+        articles => [ $unit->articles->sorted->all ],
+    );
 }
 
 sub redirect : Private {
