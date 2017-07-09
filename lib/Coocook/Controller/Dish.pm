@@ -73,9 +73,8 @@ sub create : Local Args(0) POST {
 sub from_recipe : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
-    my $meal = $c->model('Schema::Meal')->find( scalar $c->req->param('meal') );
-    my $recipe =
-      $c->model('Schema::Recipe')->find( scalar $c->req->param('recipe') );
+    my $meal   = $c->model('Schema::Meal')->find( scalar $c->req->param('meal') );
+    my $recipe = $c->model('Schema::Recipe')->find( scalar $c->req->param('recipe') );
 
     $c->model('Schema::Dish')->from_recipe(
         $recipe,
