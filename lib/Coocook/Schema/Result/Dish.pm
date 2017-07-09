@@ -32,7 +32,13 @@ __PACKAGE__->belongs_to(
     'from_recipe'
 );
 
-__PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::DishIngredient' );
+__PACKAGE__->has_many(
+    ingredients => 'Coocook::Schema::Result::DishIngredient',
+    undef,
+    {
+        cascade_delete => 1    # TODO this is default. but why does it not work?
+    }
+);
 
 __PACKAGE__->has_many(
     ingredients_ordered => 'Coocook::Schema::Result::DishIngredient',
