@@ -38,6 +38,7 @@ sub index : Path Args(0) {
 
     my $project = $c->stash->{my_project};
 
+    # can't use get_column(date) here because $meal->date() inflates DateTime object
     my @days =
       map { $_->date } $project->meals->search( undef, { columns => 'date', distinct => 1 } )->all;
 
