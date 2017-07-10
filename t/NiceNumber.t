@@ -11,6 +11,11 @@ my $filter = new_ok 'Coocook::Filter::NiceNumber';
 
 isa_ok $filter, 'Template::Plugin::Filter';
 
+throws_ok { $filter->filter("foo") } qr/isn't numeric/, "exception for non-numeric string";
+
+t( undef() => undef, "undef" );
+t( ""      => "",    "empty string" );
+
 # 3 significant digits
 t( 123        => "123" );
 t( 1.23       => "1.23" );
@@ -27,5 +32,5 @@ sub t {
 
     my $output = $filter->filter($input);
 
-    cmp_ok $output => eq => $expected, $name || "$input eq '$expected'";
+    is $output => $expected, $name || "$input = '$expected'";
 }
