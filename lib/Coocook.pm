@@ -31,6 +31,9 @@ use Catalyst qw/
 
 extends 'Catalyst';
 
+$ENV{CATALYST_DEBUG}
+  and with 'CatalystX::LeakChecker';    # TODO add as dependency or check if module is installed?
+
 # Configure the application.
 #
 # Note that settings in coocook.conf (or other external
