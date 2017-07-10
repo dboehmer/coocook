@@ -1,10 +1,9 @@
 <h2>Meals on [% display_date(day) %]</h2>
 
-[% WHILE(meal = meals.next) %]
+[% FOR meal IN meals %]
 <h3>[% meal.name %]</h3>
 
-    [% dishes = meal.dishes_rs;
-    WHILE(dish = dishes.next) %]
+    [% FOR dish IN meal.dishes %]
 
 <div class="dish">
 
@@ -15,7 +14,7 @@
 [% IF dish.preparation.length %]
     <h5>Preparation
         [% IF dish.prepare_at_meal;
-            prep_meal = dish.prepare_at_meal%]
+            prep_meal = dish.prepare_at_meal %]
             (scheduled for [% prep_meal.name | xml %] on <a href="[% c.uri_for_action('/print/day', prep_meal.date.year, prep_meal.date.month, prep_meal.date.day) %]">[% display_date(prep_meal.date) %]</a>)
         [% END %]
     </h5>
@@ -30,7 +29,7 @@ END %]
 
     [% END;
 
-    FOR dish IN meal.prepared_dishes.all %]
+    FOR dish IN meal.prepared_dishes %]
 <h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 1 %]
@@ -46,7 +45,7 @@ BLOCK table %]
         <th>Article</th>
         <th>Comment</th>
     </tr>
-        [% FOREACH ingredient IN dish.ingredients_ordered.all;
+        [% FOREACH ingredient IN dish.ingredients;
             NEXT IF prepare AND NOT ingredient.prepare %]
     <tr class="[% 'prepare' IF ingredient.prepare AND NOT prepare %]">
         <td class="right-align">[% ingredient.value %]</td>

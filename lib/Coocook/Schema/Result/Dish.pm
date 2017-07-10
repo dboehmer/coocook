@@ -25,7 +25,10 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->belongs_to( meal => 'Coocook::Schema::Result::Meal' );
 
-__PACKAGE__->belongs_to( prepare_at_meal => 'Coocook::Schema::Result::Meal' );
+__PACKAGE__->belongs_to(
+    prepare_at_meal => 'Coocook::Schema::Result::Meal',
+    undef, { join_type => 'left' }
+);
 
 __PACKAGE__->belongs_to(
     recipe => 'Coocook::Schema::Result::Recipe',
