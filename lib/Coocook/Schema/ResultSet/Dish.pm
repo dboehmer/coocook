@@ -46,6 +46,8 @@ sub from_recipe {
             if ( my $servings = $args{servings} ) {
                 $dish->recalculate($servings);
             }
+
+            return $dish;
         }
     );
 }

@@ -24,17 +24,16 @@ my $meal = $project->create_related(
     }
 );
 
-my $dish = $meal->create_related(
-    dishes => {
+my $recipe = $schema->resultset('Recipe')->create(
+    {
         name        => "Bratwurst & Sauerkraut",
         servings    => 2,
         preparation => "",
         description => "",
-        comment     => "Yummie!"
     }
 );
 
-$dish->create_related(
+$recipe->create_related(
     ingredients => {
         prepare => 0,
         article => $article,
@@ -44,10 +43,28 @@ $dish->create_related(
     }
 );
 
-is $schema->resultset('DishIngredient')->count => 1, "has dish_ingredients";
+my $dish = $schema->resultset('Dish')->from_recipe(
+    $recipe,
+    (
+        meal    => $meal,
+        comment => "Yummie!",
+    )
+);
 
-$dish->delete;
+subtest "Dish->delete" => sub {
+    is $schema->resultset('DishIngredient')->count => 1, "has dish_ingredients";
 
-is $schema->resultset('DishIngredient')->count => 0, "deleted all dish_ingredients";
+    $dish->delete;
+
+    is $schema->resultset('DishIngredient')->count => 0, "deleted all dish_ingredients";
+};
+
+subtest "Recipe->delete" => sub {
+    is $schema->resultset('RecipeIngredient')->count => 1, "has recipe_ingredients";
+
+    $recipe->delete;
+
+    is $schema->resultset('RecipeIngredient')->count => 0, "deleted all recipe_ingredients";
+};
 
 done_testing;
