@@ -59,7 +59,7 @@ sub assign : Local Args(0) POST {
 
     $c->model('Schema')->schema->txn_do(    # TODO txn useful if single assignment fails?
         sub {
-            while ( my $ingredient = $c->stash->{ingredients}->next ) {
+            for my $ingredient ( @{ $c->stash->{ingredients} } ) {
                 my $id = $ingredient->id;
 
                 if ( my $list = scalar $c->req->param("assign$id") ) {
