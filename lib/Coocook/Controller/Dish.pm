@@ -23,10 +23,11 @@ sub edit : Path Args(1) {
     my $dish = $c->model('Schema::Dish')->search( undef, { prefetch => 'meal' } )->find($id);
 
     # candidate meals for preparing this dish: same day or earlier
-    my $prepare_meals = $c->model('Schema::Meal')->search(
+    my $meals         = $c->model('Schema::Meal');
+    my $prepare_meals = $meals->search(
         {
             id   => { '!=' => $dish->meal->id },
-            date => { '<=' => $dish->meal->date },
+            date => { '<=' => $meals->format_date( $dish->meal->date ) },
         },
         {
             order_by => 'date',
