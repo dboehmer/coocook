@@ -1,49 +1,26 @@
 use strict;
 use warnings;
 
-use DBICx::TestDatabase;
+use TestDB;
 use Test::Most;
 
-my $schema = DBICx::TestDatabase->new('Coocook::Schema');
+my $db = TestDB->new;
 
-my ( $mass, $number ) =
-  $schema->resultset('Quantity')->populate( [ { name => 'Mass' }, { name => 'Number' } ] );
+my $ingredient = $db->resultset('RecipeIngredient')->find(1);
 
-my ( $g, $kg, $pcs ) = my @units = $schema->resultset('Unit')->populate(
-    [
-        [qw<quantity space short_name long_name>],
-        [ $mass->id,   0, "g",   "grams" ],
-        [ $mass->id,   0, "kg",  "kilograms" ],
-        [ $mass->id,   0, "t",   "tons" ],
-        [ $number->id, 0, "pcs", "pieces" ],      # not a mass!
-    ]
-);
+my @other_units = $ingredient->convertible_into->all;
 
-my $apple = $schema->resultset('Article')->create(
-    {
-        name    => "Apple",
-        comment => "healthy!",
-    }
-);
+my @article_units = $ingredient->article->units->all;
 
-$apple->add_to_units($_) for @units;              # apple supports different quantities
+my @quantity_units = $ingredient->unit->quantity->units->all;
 
-my $ingredient = $schema->resultset('DishIngredient')->create(
-    {
-        dish    => 42,                            # doesn't exist, nobody cares
-        prepare => 0,
-        article => $apple->id,
-        unit    => $g->id,
-        value   => 42,
-        comment => "more apples!",
-    }
-);
+note "ingredient.unit: " . $ingredient->unit->short_name;
+note "article_units: " . join ", " => map { $_->short_name } @article_units;
+note "quantity_units: " . join "," => map { $_->short_name } @quantity_units;
+note "other_units: " . join ","    => map { $_->short_name } @other_units;
 
-my @other_units = $ingredient->convertible_into();
+ok @other_units + 1 == @article_units;
 
-is scalar @other_units => 2;
-
-is $other_units[0]->short_name => "kg";    # not current unit, not unit of other quantity
-is $other_units[1]->short_name => "t";
+ok @article_units < @quantity_units;
 
 done_testing;
