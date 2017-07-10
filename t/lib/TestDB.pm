@@ -52,3 +52,7 @@ INSERT INTO "dish_ingredients" VALUES(7,1,3,1,1,2,1.0,'');
 INSERT INTO "dish_ingredients" VALUES(8,2,3,1,2,1,25.0,'');
 INSERT INTO "dish_ingredients" VALUES(9,3,3,1,3,3,1.0,'');
 INSERT INTO "dish_ingredients" VALUES(10,4,3,0,4,1,500.0,'');
+INSERT INTO "recipes" VALUES(1,'pizza','','',4);
+INSERT INTO "recipe_ingredients" VALUES(1,1,1,0,1,2,1.0,'');
+INSERT INTO "recipe_ingredients" VALUES(2,2,1,0,3,1,0.5,'');
+INSERT INTO "recipe_ingredients" VALUES(3,3,1,0,2,1,25.0,'');
