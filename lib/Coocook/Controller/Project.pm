@@ -40,8 +40,10 @@ sub edit : Path : Args(1) {
     my $days = do {
         my %days;
 
+        my $meals = $project->meals->search( undef, { prefetch => 'dishes' } );
+
         # group meals by date
-        for my $meal ( $project->meals->all ) {
+        while ( my $meal = $meals->next ) {
             $default_date < $meal->date and $default_date = $meal->date;
 
             push @{ $days{ $meal->date }{meals} }, $meal;

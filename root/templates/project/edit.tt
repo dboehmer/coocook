@@ -19,7 +19,7 @@
         <td></td>
         <th colspan="1" style="text-align:left">
             [% meal.name %]
-        [% IF meal.dishes_rs.count == 0 %]
+        [% IF meal.dishes.all.size == 0 %]
             <form action="[% c.uri_for_action('/meal/delete', meal.id) %]" method="POST" class="inline">
                 <input type="submit" value="Delete meal">
             </form>
@@ -65,7 +65,7 @@
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Import recipe">
             </form>
-	    <p>([% meal.dishes_rs.count %] dishes)</p>
+	    <p>([% meal.dishes.all.size %] dishes)</p>
 	</td>
     </tr>
     [% END %]
