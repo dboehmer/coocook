@@ -5,6 +5,6 @@ use Test::More;
 
 use Catalyst::Test 'Coocook';
 
-ok( request('/')->is_success, 'Request should succeed' );
+ok( !request('/')->is_error, 'Request should succeed' );
 
 done_testing();
