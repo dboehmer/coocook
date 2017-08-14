@@ -1,14 +1,15 @@
 package Coocook::View::TT;
 
-use Coocook;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use MooseX::NonMoose;
 
 extends 'Catalyst::View::TT';
 
+__PACKAGE__->meta->make_immutable;
+
 __PACKAGE__->config(
     ENCODING           => 'utf-8',
-    INCLUDE_PATH       => Coocook->path_to(qw<root templates>),
     PLUGIN_BASE        => 'Coocook::Filter',
     PRE_PROCESS        => 'macros.tt',
     WRAPPER            => 'wrapper.tt',
