@@ -18,17 +18,28 @@
 </fieldset>
 </form>
 
-<ul>
+<table>
+    <tr>
+        <th>Recipe</th>
+        <th colspan="2">Actions</th>
+    </tr>
 [% FOR recipe IN recipes.all %]
-    <li><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a>
-        <form action="[% c.uri_for_action('/recipe/duplicate', recipe.id) %]" method="POST">
+    <tr>
+    <td><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a></td>
+    <td>
+        <form class="inline" action="[% c.uri_for_action('/recipe/duplicate', recipe.id) %]" method="POST">
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name %]">
             <input type="submit" value="Duplicate">
             <div class="tooltip">?
                 <span>Click "Duplicate" to duplicate your article.</span>
             </div>
         </form>
-        <form action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="POST"><input type="submit" value="Delete"></form>
+    </td>
+    <td>
+        <form class="inline" action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="POST">
+            <input type="submit" value="Delete">
+        </form>
+    </td>
     </li>
 [% END %]
-</ul>
+</table>
