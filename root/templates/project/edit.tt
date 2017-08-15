@@ -125,16 +125,18 @@
 
 <form>
 <fieldset>
-<input type="date" name="from">
-<input type="date" name="until">
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<p><input type="text" name="meal1" placeholder="meal"></p>
-<input type="submit" value="Autocreate">
+    <legend>Mass create meals</legend>
+    <p>Create each meal entered below for all dates between <em>from date</em> and <em>until date</em> inclusively.</p>
+    <input type="date" name="from"  placeholder="from date">
+    <input type="date" name="until" placeholder="until date">
+    <p><input type="text" name="meal1" placeholder="meal"></p>
+    <p><input type="text" name="meal2" placeholder="meal"></p>
+    <p><input type="text" name="meal3" placeholder="meal"></p>
+    <p><input type="text" name="meal4" placeholder="meal"></p>
+    <p><input type="text" name="meal5" placeholder="meal"></p>
+    <p><input type="text" name="meal6" placeholder="meal"></p>
+    <p><input type="text" name="meal7" placeholder="meal"></p>
+    <p><input type="text" name="meal8" placeholder="meal"></p>
+    <input type="submit" value="Mass create">
 </fieldset>
 </form>
