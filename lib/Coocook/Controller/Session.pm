@@ -17,9 +17,8 @@ sub post_login : POST Path('/login') Args(0) {
     my $username = $c->req->param('username');
     my $password = $c->req->param('password');
 
-    if ( $username eq 'coocook' ) {
-        $c->session( username => $username );
-        $c->response->redirect( $c->uri_for('/') );
+    if ( $c->authenticate( { username => $username, password => $password } ) ) {
+        $c->response->redirect( $c->uri_for_action('/dashboard') );
     }
     else {
         $c->detach('logout');
@@ -29,7 +28,7 @@ sub post_login : POST Path('/login') Args(0) {
 sub logout : POST Local Args(0) {
     my ( $self, $c ) = @_;
 
-    delete $c->session->{username};
+    $c->logout();
 
     $c->response->redirect( $c->uri_for_action('/login') );
 }

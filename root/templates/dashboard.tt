@@ -1,0 +1,13 @@
+<p>Logged in as [% user.name %].</p>
+
+<form method="POST" action="[% c.uri_for_action('/logout') %]">
+    <input type="submit" value="Logout">
+</form>
+
+<h2>My projects</h2>
+
+<ul>
+[% FOR project IN projects %]
+    <li><a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name | html %]</a></li>
+[% END %]
+</ul>

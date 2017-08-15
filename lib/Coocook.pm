@@ -25,6 +25,7 @@ use Catalyst qw/
   Session
   Session::Store::FastMmap
   Session::State::Cookie
+  Authentication
   StackTrace
   Static::Simple
   /;
@@ -49,6 +50,22 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header
+
+    'Plugin::Authentication' => {
+        default => {
+            credential => {
+                class          => 'Password',
+                password_field => 'password',
+                password_type  => 'clear',
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    coocook => { password => "coocook" }
+                },
+            },
+        }
+    },
 
     'View::TT' => {
         INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),

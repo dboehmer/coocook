@@ -32,6 +32,10 @@ The root page (/)
 sub begin : Private {
     my ( $self, $c ) = @_;
 
+    if ( my $user = $c->user ) {
+        $c->stash( user => { name => $user->id } );
+    }
+
     if ( my $id = $c->session->{project} ) {
         $c->stash( my_project => $c->model('DB::Project')->find($id) );
     }
@@ -56,6 +60,10 @@ sub auto : Private {
 }
 
 sub index : Path : Args(0) {
+    my ( $self, $c ) = @_;
+}
+
+sub dashboard : Local Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( projects => [ $c->model('DB::Project')->all ] );

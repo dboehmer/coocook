@@ -19,6 +19,11 @@
 
 <nav>
 <ul>
+[% IF user %]
+<a href="[% c.uri_for_action('/dashboard') %]"><li>Dashboard</li></a>
+[% ELSE %]
+<a href="[% c.uri_for_action('/login') %]"><li>Login</li></a>
+[% END %]
 <a href="[% c.uri_for_action('/project/index') %]"><li>Projects</li></a>
 <a href="[% c.uri_for_action('/recipe/index') %]"><li>Recipes</li></a>
 <a href="[% c.uri_for_action('/article/index') %]"><li>Articles</li></a>
