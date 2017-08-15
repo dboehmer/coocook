@@ -63,8 +63,8 @@ sub day : Local Args(3) {
     );
 
     $c->stash(
-        day   => $dt,
-        meals => $c->model('Plan')->day($dt),
+        day => $dt,
+        meals => $c->model('Plan')->day( $c->stash->{my_project}->id, $dt ),
     );
 }
 

@@ -21,6 +21,7 @@ sub new {
 
 __DATA__
 INSERT INTO "projects" VALUES(1,'Test');
+INSERT INTO "projects" VALUES(2,'Other Project');
 INSERT INTO "articles" VALUES(1,'',NULL,NULL,NULL,'flour','');
 INSERT INTO "articles" VALUES(2,'',NULL,NULL,NULL,'salt','');
 INSERT INTO "articles" VALUES(3,'',NULL,NULL,NULL,'water','');
@@ -28,6 +29,7 @@ INSERT INTO "articles" VALUES(4,'',NULL,NULL,NULL,'cheese','');
 INSERT INTO "meals" VALUES(1,1,'2000-01-01','breakfast','');
 INSERT INTO "meals" VALUES(2,1,'2000-01-02','lunch','');
 INSERT INTO "meals" VALUES(3,1,'2000-01-03','dinner','');
+INSERT INTO "meals" VALUES(9,2,'2000-01-01','other meal','');
 INSERT INTO "quantities" VALUES(1,'Mass',2);
 INSERT INTO "quantities" VALUES(2,'Volume',3);
 INSERT INTO "units" VALUES(1,1,0.001,0,'g','grams');

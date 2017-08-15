@@ -17,7 +17,7 @@ my $plan = new_ok 'Coocook::Model::Plan', [ schema => $db ];
 
 # TODO test COMPONENT()
 
-my $day = $plan->day( DateTime->new( year => 2000, month => 1, day => 1 ) );
+my $day = $plan->day( 1, DateTime->new( year => 2000, month => 1, day => 1 ) );
 is_deeply $day => [
     {
         'dishes' => [

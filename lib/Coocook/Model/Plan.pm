@@ -24,7 +24,7 @@ sub COMPONENT {
 }
 
 sub day {
-    my ( $self, $dt ) = @_;
+    my ( $self, $project, $dt ) = @_;
 
     my %meals;
     my @meals;
@@ -32,7 +32,8 @@ sub day {
     {
         my $meals = $self->schema->resultset('Meal')->search(
             {
-                date => $dt->ymd,
+                date    => $dt->ymd,
+                project => $project,
             },
             {
                 columns  => [ 'id', 'name' ],
