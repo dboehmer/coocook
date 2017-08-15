@@ -109,6 +109,18 @@ sub create : Local : POST {
     }
 }
 
+sub rename : Local POST {
+    my ( $self, $c, $id ) = @_;
+
+    my $name = $c->req->param('name');
+
+    my $project = $c->model('Schema::Project')->find($id);
+
+    $project->update( { name => $name } );
+
+    $c->detach( redirect => [ $project->id ] );
+}
+
 sub select : Local Args(1) GET {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('Schema::Project')->find($id);

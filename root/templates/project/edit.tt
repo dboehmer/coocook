@@ -140,3 +140,11 @@
     <input type="submit" value="Mass create">
 </fieldset>
 </form>
+
+<form action="[% c.uri_for_action('/project/rename', project.id) %]" method="POST">
+    <fieldset>
+        <legend>Rename project <em>[% project.name | html %]</em></legend>
+        <input type="text" name="name" value="[% project.name | html %]">
+        <input type="submit" value="Rename project">
+    </fieldset>
+</form>
