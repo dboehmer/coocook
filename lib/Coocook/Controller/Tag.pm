@@ -25,22 +25,22 @@ sub index : Path('/tags') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        groups     => $c->model('Schema::TagGroup')->sorted,
-        other_tags => $c->model('Schema::Tag')->ungrouped->sorted,
+        groups     => $c->model('DB::TagGroup')->sorted,
+        other_tags => $c->model('DB::Tag')->ungrouped->sorted,
     );
 }
 
 sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
     $c->stash(
-        tag    => $c->model('Schema::Tag')->find($id),
-        groups => $c->model('Schema::TagGroup')->sorted,
+        tag    => $c->model('DB::Tag')->find($id),
+        groups => $c->model('DB::TagGroup')->sorted,
     );
 }
 
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    my $tag = $c->model('Schema::Tag')->find($id);
+    my $tag = $c->model('DB::Tag')->find($id);
     $tag->deletable or die "Not deletable";
     $tag->delete;
     $c->response->redirect( $c->uri_for_action('/tag/index') );
@@ -48,7 +48,7 @@ sub delete : Local Args(1) POST {
 
 sub delete_group : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    my $group = $c->model('Schema::TagGroup')->find($id);
+    my $group = $c->model('DB::TagGroup')->find($id);
     $group->deletable or die "Not deletable";
     $group->delete;
     $c->response->redirect( $c->uri_for_action('/tag/index') );
@@ -56,7 +56,7 @@ sub delete_group : Local Args(1) POST {
 
 sub create : Local Args(0) POST {
     my ( $self, $c ) = @_;
-    $c->model('Schema::Tag')->create(
+    $c->model('DB::Tag')->create(
         {
             tag_group => scalar $c->req->param('tag_group'),
             name      => scalar $c->req->param('name'),
@@ -67,7 +67,7 @@ sub create : Local Args(0) POST {
 
 sub create_group : Local Args(0) POST {
     my ( $self, $c ) = @_;
-    $c->model('Schema::TagGroup')->create(
+    $c->model('DB::TagGroup')->create(
         {
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),
@@ -78,7 +78,7 @@ sub create_group : Local Args(0) POST {
 
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Tag')->find($id)->update(
+    $c->model('DB::Tag')->find($id)->update(
         {
             name      => scalar $c->req->param('name'),
             tag_group => scalar $c->req->param('tag_group'),
@@ -89,7 +89,7 @@ sub update : Local Args(1) POST {
 
 sub update_group : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::TagGroup')->find($id)->update(
+    $c->model('DB::TagGroup')->find($id)->update(
         {
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),

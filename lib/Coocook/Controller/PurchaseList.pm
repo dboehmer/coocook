@@ -30,7 +30,7 @@ sub index : Path('/purchase_lists') Args(0) {
     my $project = $c->stash->{my_project};
 
     my $lists =
-      $c->model('Schema::PurchaseList')->search( { project => $project->id } );
+      $c->model('DB::PurchaseList')->search( { project => $project->id } );
 
     my $max_date = do {
         my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->first;
@@ -52,17 +52,17 @@ sub index : Path('/purchase_lists') Args(0) {
 sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $list = $c->model('Schema::PurchaseList')->find($id);
+    my $list = $c->model('DB::PurchaseList')->find($id);
 
     my @items = $list->items->all;
 
-    my %units = map { $_->id => $_ } $c->model('Schema::Unit')->all;
+    my %units = map { $_->id => $_ } $c->model('DB::Unit')->all;
 
     # collect distinct article IDs (hash may contain duplicates)
     my @article_ids =
       keys %{ { map { $_->get_column('article') => undef } @items } };
 
-    my @articles = $c->model('Schema::Article')->search( { id => { -in => \@article_ids } } )->all;
+    my @articles = $c->model('DB::Article')->search( { id => { -in => \@article_ids } } )->all;
 
     my %articles = map { $_->id => $_ } @articles;
     my %article_to_section =
@@ -71,7 +71,7 @@ sub edit : Path Args(1) {
     my @section_ids =
       keys %{ { map { $_ => undef } values %article_to_section } };
 
-    my @sections = $c->model('Schema::ShopSection')->search( { id => { -in => \@section_ids } } )->all;
+    my @sections = $c->model('DB::ShopSection')->search( { id => { -in => \@section_ids } } )->all;
 
     my %sections =
       map { $_->id => { name => $_->name, items => [] } } @sections;
@@ -112,7 +112,7 @@ sub edit : Path Args(1) {
 sub create : Local POST {
     my ( $self, $c ) = @_;
 
-    $c->model('Schema::PurchaseList')->create(
+    $c->model('DB::PurchaseList')->create(
         {
             date    => scalar $c->req->param('date'),
             name    => scalar $c->req->param('name'),
@@ -126,7 +126,7 @@ sub create : Local POST {
 sub update : Args(1) Local POST {
     my ( $self, $c, $id ) = @_;
 
-    my $list = $c->model('Schema::PurchaseList')->find($id);
+    my $list = $c->model('DB::PurchaseList')->find($id);
 
     $list->update(
         {
@@ -140,7 +140,7 @@ sub update : Args(1) Local POST {
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::PurchaseList')->find($id)->delete;
+    $c->model('DB::PurchaseList')->find($id)->delete;
 
     $c->detach('redirect');
 }

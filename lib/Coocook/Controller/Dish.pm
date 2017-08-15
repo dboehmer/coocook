@@ -20,10 +20,10 @@ Catalyst Controller.
 sub edit : Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->search( undef, { prefetch => 'meal' } )->find($id);
+    my $dish = $c->model('DB::Dish')->search( undef, { prefetch => 'meal' } )->find($id);
 
     # candidate meals for preparing this dish: same day or earlier
-    my $meals         = $c->model('Schema::Meal');
+    my $meals         = $c->model('DB::Meal');
     my $prepare_meals = $meals->search(
         {
             id   => { '!=' => $dish->meal->id },
@@ -37,8 +37,8 @@ sub edit : Path Args(1) {
     $c->stash(
         dish          => $dish,
         ingredients   => [ $dish->ingredients_ordered->all ],
-        articles      => [ $c->model('Schema::Article')->all ],
-        units         => [ $c->model('Schema::Unit')->sorted->all ],
+        articles      => [ $c->model('DB::Article')->all ],
+        units         => [ $c->model('DB::Unit')->sorted->all ],
         prepare_meals => [ $prepare_meals->all ],
     );
 }
@@ -46,7 +46,7 @@ sub edit : Path Args(1) {
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->find($id);
+    my $dish = $c->model('DB::Dish')->find($id);
 
     $dish->delete;
 
@@ -56,7 +56,7 @@ sub delete : Local Args(1) POST {
 sub create : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->create(
+    my $dish = $c->model('DB::Dish')->create(
         {
             meal            => scalar $c->req->param('meal'),
             servings        => scalar $c->req->param('servings'),
@@ -74,10 +74,10 @@ sub create : Local Args(0) POST {
 sub from_recipe : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
-    my $meal   = $c->model('Schema::Meal')->find( scalar $c->req->param('meal') );
-    my $recipe = $c->model('Schema::Recipe')->find( scalar $c->req->param('recipe') );
+    my $meal   = $c->model('DB::Meal')->find( scalar $c->req->param('meal') );
+    my $recipe = $c->model('DB::Recipe')->find( scalar $c->req->param('recipe') );
 
-    $c->model('Schema::Dish')->from_recipe(
+    $c->model('DB::Dish')->from_recipe(
         $recipe,
         (
             meal     => $meal->id,
@@ -92,7 +92,7 @@ sub from_recipe : Local Args(0) POST {
 sub recalculate : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->find($id);
+    my $dish = $c->model('DB::Dish')->find($id);
 
     $dish->recalculate( scalar $c->req->param('servings') );
 
@@ -102,7 +102,7 @@ sub recalculate : Local Args(1) POST {
 sub add : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::DishIngredient')->create(
+    $c->model('DB::DishIngredient')->create(
         {
             dish    => $id,
             article => scalar $c->req->param('article'),
@@ -119,7 +119,7 @@ sub add : Local Args(1) POST {
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('Schema::Dish')->find($id);
+    my $dish = $c->model('DB::Dish')->find($id);
 
     $c->model('Schema')->schema->txn_do(
         sub {
@@ -135,7 +135,7 @@ sub update : Local Args(1) POST {
                 }
             );
 
-            my $tags = $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+            my $tags = $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
             $dish->set_tags( [ $tags->all ] );
 
             for my $ingredient ( $dish->ingredients->all ) {
@@ -166,7 +166,7 @@ sub update : Local Args(1) POST {
 sub reposition : POST Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $ingredient = $c->model('Schema::DishIngredient')->find($id);
+    my $ingredient = $c->model('DB::DishIngredient')->find($id);
 
     if ( $c->req->param('up') ) {
         $ingredient->move_previous();

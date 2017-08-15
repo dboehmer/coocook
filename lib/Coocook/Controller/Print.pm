@@ -44,7 +44,7 @@ sub index : Path Args(0) {
 
     my $lists = $project->purchase_lists->search( undef, { order_by => 'date' } );
 
-    my @projects = $c->model('Schema::Project')->all;
+    my @projects = $c->model('DB::Project')->all;
 
     $c->stash(
         days     => \@days,
@@ -71,7 +71,7 @@ sub day : Local Args(3) {
 sub project : Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $project = $c->model('Schema::Project')->find($id);
+    my $project = $c->model('DB::Project')->find($id);
 
     my %days;
 

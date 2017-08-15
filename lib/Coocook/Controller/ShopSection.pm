@@ -26,13 +26,13 @@ Catalyst Controller.
 sub index : Path('/shop_sections') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( shop_sections => $c->model('Schema::ShopSection')->with_article_count->sorted );
+    $c->stash( shop_sections => $c->model('DB::ShopSection')->with_article_count->sorted );
 }
 
 sub create : Local Args(0) POST {
     my ( $self, $c ) = @_;
 
-    $c->model('Schema::ShopSection')->create(
+    $c->model('DB::ShopSection')->create(
         {
             name => scalar $c->req->param('name'),
         }
@@ -44,7 +44,7 @@ sub create : Local Args(0) POST {
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::ShopSection')->find($id)->update(
+    $c->model('DB::ShopSection')->find($id)->update(
         {
             name => scalar $c->req->param('name'),
         }
@@ -56,7 +56,7 @@ sub update : Local Args(1) POST {
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::ShopSection')->find($id)->delete;
+    $c->model('DB::ShopSection')->find($id)->delete;
     $c->detach('redirect');
 }
 

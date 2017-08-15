@@ -26,14 +26,14 @@ sub index : Path('/units') : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        units => $c->model('Schema::Unit')->search(
+        units => $c->model('DB::Unit')->search(
             undef,
             {
                 join     => 'quantity',
                 order_by => [qw< quantity.name short_name >]
             }
         ),
-        quantities => [ $c->model('Schema::Quantity')->sorted->all ],
+        quantities => [ $c->model('DB::Quantity')->sorted->all ],
     );
 }
 
@@ -52,7 +52,7 @@ sub create : Local : POST {
         }
     );
     if ($input_okay) {
-        $c->model('Schema::Unit')->create(
+        $c->model('DB::Unit')->create(
             {
                 short_name          => $short_name,
                 long_name           => $long_name,
@@ -68,19 +68,19 @@ sub create : Local : POST {
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Unit')->find($id)->delete;
+    $c->model('DB::Unit')->find($id)->delete;
     $c->detach('redirect');
 }
 
 sub make_quantity_default : Local Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Unit')->find($id)->make_quantity_default;
+    $c->model('DB::Unit')->find($id)->make_quantity_default;
     $c->detach('redirect');
 }
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    my $unit                = $c->model('Schema::Unit')->find($id);
+    my $unit                = $c->model('DB::Unit')->find($id);
     my $short_name          = scalar $c->req->param('short_name');
     my $long_name           = scalar $c->req->param('long_name');
     my $to_quantity_default = scalar $c->req->param('to_quantity_default');
@@ -109,7 +109,7 @@ sub update : Local : Args(1) : POST {
 sub edit : Path : Args(1) : GET {
     my ( $self, $c, $id ) = @_;
 
-    my $unit = $c->model('Schema::Unit')->find($id);
+    my $unit = $c->model('DB::Unit')->find($id);
 
     $c->stash(
         unit     => $unit,

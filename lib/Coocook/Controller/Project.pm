@@ -28,12 +28,12 @@ sub begin : Private { }
 sub index : Path('/projects') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( projects => $c->model('Schema::Project'), );
+    $c->stash( projects => $c->model('DB::Project'), );
 }
 
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
-    my $project = $c->model('Schema::Project')->find($id);
+    my $project = $c->model('DB::Project')->find($id);
 
     my $default_date = DateTime->today;
 
@@ -64,7 +64,7 @@ sub edit : Path : Args(1) {
     $c->stash(
         default_date => $default_date,
         project      => $project,
-        recipes      => [ $c->model('Schema::Recipe')->search( undef, { order_by => 'name' } )->all ],
+        recipes      => [ $c->model('DB::Recipe')->search( undef, { order_by => 'name' } )->all ],
         days         => $days,
     );
 }
@@ -72,11 +72,11 @@ sub edit : Path : Args(1) {
 sub edit_dishes : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    my $project = $c->model('Schema::Project')->find($id);
+    my $project = $c->model('DB::Project')->find($id);
 
     my @dish_ids = grep { $c->req->param("dish$_") } $project->meals->dishes->get_column('id')->all;
 
-    my $dishes = $c->model('Schema::Dish')->search( { id => { -in => \@dish_ids } } );
+    my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );
 
     if ( $c->req->param('update') ) {
         if ( $c->req->param('edit_comment') ) {
@@ -100,7 +100,7 @@ sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
     my $name = $c->req->param('name');
     if ( length($name) > 0 ) {
-        my $project = $c->model('Schema::Project')->create( { name => scalar $c->req->param('name') } );
+        my $project = $c->model('DB::Project')->create( { name => scalar $c->req->param('name') } );
         $c->detach( 'redirect', [ $project->id ] );
     }
     else {
@@ -114,7 +114,7 @@ sub rename : Local POST {
 
     my $name = $c->req->param('name');
 
-    my $project = $c->model('Schema::Project')->find($id);
+    my $project = $c->model('DB::Project')->find($id);
 
     $project->update( { name => $name } );
 
@@ -123,7 +123,7 @@ sub rename : Local POST {
 
 sub select : Local Args(1) GET {
     my ( $self, $c, $id ) = @_;
-    my $project = $c->model('Schema::Project')->find($id);
+    my $project = $c->model('DB::Project')->find($id);
     $c->session->{project} = $project->id;
     $c->response->redirect('/');
 }
@@ -136,7 +136,7 @@ sub redirect : Private {
 #TODO: enable deletion of big projects?
 sub delete : Local Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Project')->find($id)->delete;
+    $c->model('DB::Project')->find($id)->delete;
     $c->response->redirect('/projects');
 }
 

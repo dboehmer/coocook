@@ -30,7 +30,7 @@ sub auto : Private {
         default_preorder_workdays => 3,
     );
 
-    my $quantities = $c->model('Schema::Quantity');
+    my $quantities = $c->model('DB::Quantity');
     $quantities = $quantities->search(
         undef,
         {
@@ -40,7 +40,7 @@ sub auto : Private {
     );
 
     $c->stash(
-        shop_sections => [ $c->model('Schema::ShopSection')->sorted->all ],
+        shop_sections => [ $c->model('DB::ShopSection')->sorted->all ],
         quantities    => [ $quantities->all ],
     );
 }
@@ -48,7 +48,7 @@ sub auto : Private {
 sub index : Path('/articles') : Args(0) {
     my ( $self, $c ) = @_;
 
-    my $articles = $c->model('Schema::Article')->sorted;
+    my $articles = $c->model('DB::Article')->sorted;
 
     $c->stash( articles => $articles );
 }
@@ -56,7 +56,7 @@ sub index : Path('/articles') : Args(0) {
 sub edit : GET Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $article = $c->model('Schema::Article')->find($id)
+    my $article = $c->model('DB::Article')->find($id)
       or die "Can't find article";    # TODO serious error message
 
     # collect related recipes linked to dishes and independent dishes
@@ -89,14 +89,14 @@ sub edit : GET Path Args(1) {
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
 
-    my $units = $c->model('Schema::Unit')->search(
+    my $units = $c->model('DB::Unit')->search(
         {
             id => { -in => [ $c->req->param('units') ] },
         }
     );
 
     my $tags =
-      $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+      $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
 
     my $shelf_life_days = undef;
 
@@ -113,7 +113,7 @@ sub create : Local : POST {
 
     $c->model('Schema')->schema->txn_do(
         sub {
-            my $article = $c->model('Schema::Article')->create(
+            my $article = $c->model('DB::Article')->create(
                 {
                     name              => scalar $c->req->param('name'),
                     comment           => scalar $c->req->param('comment'),
@@ -133,23 +133,23 @@ sub create : Local : POST {
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Article')->find($id)->delete;
+    $c->model('DB::Article')->find($id)->delete;
     $c->detach('redirect');
 }
 
 sub update : POST Path Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $units = $c->model('Schema::Unit')->search(
+    my $units = $c->model('DB::Unit')->search(
         {
             id => { -in => [ $c->req->param('units') ] },
         }
     );
 
     my $tags =
-      $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+      $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
 
-    my $article = $c->model('Schema::Article')->find($id);
+    my $article = $c->model('DB::Article')->find($id);
 
     $c->model('Schema')->schema->txn_do(
         sub {

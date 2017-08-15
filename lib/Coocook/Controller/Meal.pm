@@ -20,14 +20,14 @@ Catalyst Controller.
 sub delete : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    my $meal = $c->model('Schema::Meal')->find($id);
+    my $meal = $c->model('DB::Meal')->find($id);
     $meal->delete;
     $c->detach( redirect => [$meal] );
 }
 
 sub create : Local Args(0) POST {
     my ( $self, $c ) = @_;
-    my $meal = $c->model('Schema::Meal')->create(
+    my $meal = $c->model('DB::Meal')->create(
         {
             project => scalar $c->req->param('project'),
             date    => scalar $c->req->param('date'),
@@ -40,7 +40,7 @@ sub create : Local Args(0) POST {
 
 sub update : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
-    my $meal = $c->model('Schema::Meal')->find($id);
+    my $meal = $c->model('DB::Meal')->find($id);
 
     $meal->update(
         {

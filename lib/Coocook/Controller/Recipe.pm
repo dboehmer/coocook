@@ -27,13 +27,13 @@ Catalyst Controller.
 sub index : Path('/recipes') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recipes => $c->model('Schema::Recipe')->sorted );
+    $c->stash( recipes => $c->model('DB::Recipe')->sorted );
 }
 
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $recipe = $c->model('Schema::Recipe')->find($id);
+    my $recipe = $c->model('DB::Recipe')->find($id);
 
     my $ingredients = $recipe->ingredients;
     $ingredients = $ingredients->search(
@@ -47,14 +47,14 @@ sub edit : Path : Args(1) {
     $c->stash(
         recipe      => $recipe,
         ingredients => [ $ingredients->all ],
-        articles    => [ $c->model('Schema::Article')->sorted->all ],
-        units       => [ $c->model('Schema::Unit')->sorted->all ],
+        articles    => [ $c->model('DB::Article')->sorted->all ],
+        units       => [ $c->model('DB::Unit')->sorted->all ],
     );
 }
 
 sub add : Local : Args(1) {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::RecipeIngredient')->create(
+    $c->model('DB::RecipeIngredient')->create(
         {
             recipe  => $id,
             prepare => ( $c->req->param('prepare') ? 1 : 0 ),
@@ -72,7 +72,7 @@ sub create : Local : POST {
     my $name = scalar $c->req->param('name');
     my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipes" } );
     if ($input_okay) {
-        my $recipe = $c->model('Schema::Recipe')->create(
+        my $recipe = $c->model('DB::Recipe')->create(
             {
                 name        => $name,
                 description => scalar $c->req->param('description') // "",
@@ -88,20 +88,20 @@ sub create : Local : POST {
 sub duplicate : Local Args(1) POST {
     my ( $self, $c, $id ) = @_;
 
-    $c->model('Schema::Recipe')->find($id)->duplicate( { name => scalar $c->req->param('name') } );
+    $c->model('DB::Recipe')->find($id)->duplicate( { name => scalar $c->req->param('name') } );
 
     $c->detach( 'redirect', [] );
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Recipe')->find($id)->delete;
+    $c->model('DB::Recipe')->find($id)->delete;
     $c->detach( 'redirect', [] );
 }
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    my $recipe     = $c->model('Schema::Recipe')->find($id);
+    my $recipe     = $c->model('DB::Recipe')->find($id);
     my $name       = scalar $c->req->param('name');
     my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipe/$id" } );
     if ($input_okay) {
@@ -134,7 +134,7 @@ sub update : Local : Args(1) : POST {
                 }
 
                 # tags
-                my $tags = $c->model('Schema::Tag')->from_names( scalar $c->req->param('tags') );
+                my $tags = $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
                 $recipe->set_tags( [ $tags->all ] );
             }
         );
@@ -148,7 +148,7 @@ sub update : Local : Args(1) : POST {
 sub reposition : POST Local Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $ingredient = $c->model('Schema::RecipeIngredient')->find($id);
+    my $ingredient = $c->model('DB::RecipeIngredient')->find($id);
 
     if ( $c->req->param('up') ) {
         $ingredient->move_previous();

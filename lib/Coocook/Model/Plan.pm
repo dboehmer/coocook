@@ -16,7 +16,7 @@ __PACKAGE__->meta->make_immutable;
 sub COMPONENT {
     my ( $class, $app, $args ) = @_;
 
-    my $schema = $app->model('Schema')->schema;
+    my $schema = $app->model('DB')->schema;
 
     my $self = $class->new( $app, $args );
     $self->schema($schema);

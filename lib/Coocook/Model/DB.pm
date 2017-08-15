@@ -1,4 +1,4 @@
-package Coocook::Model::Schema;
+package Coocook::Model::DB;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

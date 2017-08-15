@@ -24,24 +24,24 @@ Catalyst Controller.
 sub index : Path('/quantities') : Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( quantities => $c->model('Schema::Quantity')->sorted );
+    $c->stash( quantities => $c->model('DB::Quantity')->sorted );
 }
 
 sub create : Local : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Quantity')->create( { name => scalar $c->req->param('name') } );
+    $c->model('DB::Quantity')->create( { name => scalar $c->req->param('name') } );
     $c->detach('redirect');
 }
 
 sub delete : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Quantity')->find($id)->delete;
+    $c->model('DB::Quantity')->find($id)->delete;
     $c->detach('redirect');
 }
 
 sub update : Local : Args(1) : POST {
     my ( $self, $c, $id ) = @_;
-    $c->model('Schema::Quantity')->find($id)->update(
+    $c->model('DB::Quantity')->find($id)->update(
         {
             name => scalar $c->req->param('name'),
         }

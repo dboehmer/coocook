@@ -33,7 +33,7 @@ sub begin : Private {
     my ( $self, $c ) = @_;
 
     if ( my $id = $c->session->{project} ) {
-        $c->stash( my_project => $c->model('Schema::Project')->find($id) );
+        $c->stash( my_project => $c->model('DB::Project')->find($id) );
     }
     else {
         $c->response->redirect( $c->uri_for_action('/project/index') );

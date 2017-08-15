@@ -75,8 +75,8 @@ sub assign : Local Args(0) POST {
 sub convert : Local POST Args(2) {
     my ( $self, $c, $item_id => $unit_id ) = @_;
 
-    my $item = $c->model('Schema::Item')->find($item_id);
-    my $unit = $c->model('Schema::Unit')->find($unit_id);
+    my $item = $c->model('DB::Item')->find($item_id);
+    my $unit = $c->model('DB::Unit')->find($unit_id);
 
     $item->convert($unit);
 
