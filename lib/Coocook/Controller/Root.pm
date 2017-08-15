@@ -57,6 +57,8 @@ sub auto : Private {
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->stash( projects => [ $c->model('DB::Project')->all ] );
 }
 
 =head2 default
