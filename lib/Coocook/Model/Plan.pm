@@ -131,4 +131,38 @@ sub day {
     return \@meals;
 }
 
+sub project {
+    my ( $self, $project_id ) = @_;
+
+    my $project = ref $project_id ? $project_id : $self->schema->resultset('Project')->find($project_id)
+      or return;
+
+    my %days;
+
+    my $meals = $project->meals->search(
+        undef,
+        {
+            prefetch => 'dishes',
+        }
+    );
+
+    while ( my $meal = $meals->next ) {
+        my @dishes = map { $_->name } $meal->dishes->all;
+
+        my $day = $days{ $meal->date } ||= {
+            date  => $meal->date,
+            meals => [],
+        };
+
+        push @{ $day->{meals} },
+          {
+            name   => $meal->name,
+            dishes => \@dishes,
+          };
+
+    }
+
+    return [ @days{ sort keys %days } ];
+}
+
 1;

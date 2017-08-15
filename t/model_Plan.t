@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use DateTime;
-use Coocook::Model::Schema;
 use DBICx::TestDatabase;
 use FindBin '$Bin';
 use lib "$Bin/lib";
@@ -75,7 +74,41 @@ is_deeply $day => [
         'prepared_dishes' => []
     }
   ],
-  "day"
+  "day()"
   or explain $day;
+
+my $project = $plan->project(1);
+$_->{date} .= "" for @$project;    # stringify dates for simpler comparison
+is_deeply $project => [
+    {
+        'date'  => '2000-01-01T00:00:00',
+        'meals' => [
+            {
+                'dishes' => ['pancakes'],
+                'name'   => 'breakfast'
+            }
+        ]
+    },
+    {
+        'date'  => '2000-01-02T00:00:00',
+        'meals' => [
+            {
+                'dishes' => ['pizza'],
+                'name'   => 'lunch'
+            }
+        ]
+    },
+    {
+        'date'  => '2000-01-03T00:00:00',
+        'meals' => [
+            {
+                'dishes' => ['bread'],
+                'name'   => 'dinner'
+            }
+        ]
+    }
+  ],
+  "project()"
+  or explain $project;
 
 done_testing;

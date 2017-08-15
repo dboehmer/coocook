@@ -73,36 +73,9 @@ sub project : Local Args(1) {
 
     my $project = $c->model('DB::Project')->find($id);
 
-    my %days;
-
-    my $meals = $project->meals->search(
-        undef,
-        {
-            prefetch => 'dishes',
-        }
-    );
-
-    while ( my $meal = $meals->next ) {
-        my @dishes = map { $_->name } $meal->dishes->all;
-
-        my $day = $days{ $meal->date } ||= {
-            date  => $meal->date,
-            meals => [],
-        };
-
-        push @{ $day->{meals} },
-          {
-            name   => $meal->name,
-            dishes => \@dishes,
-          };
-
-    }
-
-    my @days = @days{ sort keys %days };
-
     $c->stash(
         project => $project,
-        days    => \@days,
+        days    => $c->model('Plan')->project($project),
     );
 }
 
