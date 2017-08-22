@@ -90,7 +90,9 @@ sub edit_dishes : Local Args(1) POST {
         }
     }
     elsif ( $c->req->param('delete') ) {
-        $dishes->delete();
+        while ( my $dish = $dishes->next ) {    # fetch objects for cascade delete of ingredients
+            $dish->delete();
+        }
     }
 
     $c->detach( redirect => [ $project->id ] );
