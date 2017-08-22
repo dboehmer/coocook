@@ -111,7 +111,7 @@ sub create : Local : POST {
         $preorder_workdays = $c->req->param('preorder_workdays');
     }
 
-    $c->model('Schema')->schema->txn_do(
+    $c->model('DB')->schema->txn_do(
         sub {
             my $article = $c->model('DB::Article')->create(
                 {
@@ -151,7 +151,7 @@ sub update : POST Path Args(1) {
 
     my $article = $c->model('DB::Article')->find($id);
 
-    $c->model('Schema')->schema->txn_do(
+    $c->model('DB')->schema->txn_do(
         sub {
             $article->set_tags(  [ $tags->all ] );
             $article->set_units( [ $units->all ] );

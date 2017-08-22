@@ -105,7 +105,7 @@ sub update : Local : Args(1) : POST {
     my $name       = scalar $c->req->param('name');
     my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipe/$id" } );
     if ($input_okay) {
-        $c->model('Schema')->schema->txn_do(
+        $c->model('DB')->schema->txn_do(
             sub {
                 $recipe->update(
                     {

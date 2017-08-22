@@ -121,7 +121,7 @@ sub update : Local Args(1) POST {
 
     my $dish = $c->model('DB::Dish')->find($id);
 
-    $c->model('Schema')->schema->txn_do(
+    $c->model('DB')->schema->txn_do(
         sub {
             $dish->update(
                 {

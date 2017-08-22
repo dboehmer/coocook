@@ -57,7 +57,7 @@ sub assign : Local Args(0) POST {
 
     my %lists = map { $_->id => $_ } @{ $c->stash->{lists} };
 
-    $c->model('Schema')->schema->txn_do(    # TODO txn useful if single assignment fails?
+    $c->model('DB')->schema->txn_do(    # TODO txn useful if single assignment fails?
         sub {
             for my $ingredient ( @{ $c->stash->{ingredients} } ) {
                 my $id = $ingredient->id;
