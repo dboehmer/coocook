@@ -25,12 +25,6 @@ Catalyst Controller.
 # override begin() in Controller::Root
 sub begin : Private { }
 
-sub index : Path('/projects') : Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->stash( projects => $c->model('DB::Project'), );
-}
-
 sub edit : Path : Args(1) {
     my ( $self, $c, $id ) = @_;
     my $project = $c->model('DB::Project')->find($id);
