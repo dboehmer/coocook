@@ -59,11 +59,19 @@ sub auto : Private {
     $c->stash( errors => $errors );
 }
 
-sub index : Path : Args(0) {
+sub index : Path Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->go( $c->user ? 'dashboard' : 'homepage' );
 }
 
-sub dashboard : Local Args(0) {
+sub homepage : Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash( projects => [ $c->model('DB::Project')->all ] );
+}
+
+sub dashboard : Private {
     my ( $self, $c ) = @_;
 
     $c->stash( projects => [ $c->model('DB::Project')->all ] );

@@ -18,10 +18,11 @@ sub post_login : POST Path('/login') Args(0) {
     my $password = $c->req->param('password');
 
     if ( $c->authenticate( { username => $username, password => $password } ) ) {
-        $c->response->redirect( $c->uri_for_action('/dashboard') );
+        $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
-        $c->detach('logout');
+        $c->logout();
+        $c->response->redirect( $c->uri_for_action('/login') );
     }
 }
 
@@ -30,7 +31,7 @@ sub logout : POST Local Args(0) {
 
     $c->logout();
 
-    $c->response->redirect( $c->uri_for_action('/login') );
+    $c->response->redirect( $c->uri_for_action('/index') );
 }
 
 1;

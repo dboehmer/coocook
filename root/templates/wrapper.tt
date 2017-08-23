@@ -20,7 +20,7 @@
 <nav>
 <ul>
 [% IF user %]
-<a href="[% c.uri_for_action('/dashboard') %]"><li>Dashboard</li></a>
+<a href="[% c.uri_for_action('/index') %]"><li>Dashboard</li></a>
 [% ELSE %]
 <a href="[% c.uri_for_action('/login') %]"><li>Login</li></a>
 [% END %]

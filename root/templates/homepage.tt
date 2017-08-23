@@ -1,0 +1,13 @@
+<p>Coocook is a web application for collecting recipes and making food plans.</p>
+
+<p><a href="[% c.uri_for_action('/login') %]">Login</a></p>
+
+<h2>Projects</h2>
+
+<ul>
+[% FOR project IN projects %]
+    <li>
+        <a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
+    </li>
+[% END %]
+</ul>
