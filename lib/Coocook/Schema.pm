@@ -1,6 +1,6 @@
 package Coocook::Schema;
 
-our $VERSION = 4;    # version of schema definition, not software version!
+our $VERSION = 5;    # version of schema definition, not software version!
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

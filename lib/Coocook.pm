@@ -72,6 +72,17 @@ __PACKAGE__->config(
     },
 );
 
+# custom helper
+# TODO maybe move to designated helper module?
+sub project_uri {
+    my $c      = shift;
+    my $action = shift;
+
+    my $project = $c->stash->{project} || die;
+
+    return $c->uri_for_action( $action, [ $project->url_name, @_ ] );
+}
+
 # Start the application
 __PACKAGE__->setup();
 

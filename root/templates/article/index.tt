@@ -1,6 +1,6 @@
 <h2>Articles</h2>
 
-<form action="[% c.uri_for_action('/article/create') %]" method="POST">
+<form action="[% c.project_uri('/article/create') %]" method="POST">
 <fieldset>
     <legend>Create</legend>
     <input type="text" name="name" placeholder="name">
@@ -68,7 +68,7 @@
     <tbody>
 [% WHILE(a = articles.next) %]
         <tr>
-            <td><a href="[% c.uri_for_action('/article/edit', [a.id]) %]">[% a.name | xml %]</a></td>
+            <td><a href="[% c.project_uri('/article/edit', a.id) %]">[% a.name | xml %]</a></td>
             <td>[% a.comment | xml %]</td>
             <td>[% IF a.preorder_workdays.defined AND a.preorder_servings.defined; a.preorder_workdays %] days if ≥[% a.preorder_servings %] servings[% END %]</td>
             <td>[% IF a.shelf_life_days.defined; a.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
@@ -76,7 +76,7 @@
             <td>[% FOR u IN a.units; display_unit(u, {html=>1}); ' '; END %]</td>
             <td>[% a.tags_rs.joined %]</td>
             <td>
-                <form method="POST" action="[% c.uri_for_action('/article/delete', [project.id, a.id]) %]" class="inline">
+                <form method="POST" action="[% c.project_uri('/article/delete', a.id) %]" class="inline">
                     <input type="submit" value="Delete">
                 </form>
             </td>

@@ -1,6 +1,6 @@
 <h2>Project [% project.name %]</h2>
 
-<form action="[% c.uri_for_action('/project/edit_dishes', project.id) %]" method="POST">
+<form action="[% c.project_uri('/project/edit_dishes') %]" method="POST">
 
 <table>
     <thead>
@@ -20,7 +20,7 @@
         <th colspan="1" style="text-align:left">
             [% meal.name %]
         [% IF meal.dishes.all.size == 0 %]
-            <form action="[% c.uri_for_action('/meal/delete', meal.id) %]" method="POST" class="inline">
+            <form action="[% c.project_uri('/meal/delete', meal.id) %]" method="POST" class="inline">
                 <input type="submit" value="Delete meal">
             </form>
         [% END %]
@@ -33,7 +33,7 @@
     <tr>
         <td></td>
         <td>
-            <form action="[% c.uri_for_action('/meal/update', meal.id) %]" method="POST">
+            <form action="[% c.project_uri('/meal/update', meal.id) %]" method="POST">
                 <input type="text" name="name"    value="[% meal.name %]">
                 <input type="text" name="comment" value="[% meal.comment %]" placeholder="comment">
                 <input type="submit" value="Update meal">
@@ -43,19 +43,19 @@
         [% FOREACH dish IN meal.dishes.all %]
     <tr>
         <td><input type="checkbox" name="dish[% dish.id %]"></td>
-        <td><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings): [% dish.comment %]</td>
+        <td><a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings): [% dish.comment %]</td>
     </tr>
         [% END %]
     <tr>
         <td></td>
         <td>
-            <form action="[% c.uri_for_action('/dish/create') %]" method="POST">
+            <form action="[% c.project_uri('/dish/create') %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <input type="text"   name="name" placeholder="name">
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Create dish">
             </form>
-            <form action="[% c.uri_for_action('/dish/from_recipe') %]" method="POST">
+            <form action="[% c.project_uri('/dish/from_recipe') %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <select name="recipe">
         [% FOREACH recipe IN recipes %]
@@ -72,9 +72,8 @@
     <tr>
         <td></td>
         <td>
-            <form action="[% c.uri_for_action('/meal/create') %]" method="POST">
-		<input type="hidden" name="project" value="[% project.id %]">
-		<input type="hidden" name="date"    value="[% meal.date.ymd %]">
+            <form action="[% c.project_uri('/meal/create') %]" method="POST">
+		<input type="hidden" name="date" value="[% meal.date.ymd %]">
                 <fieldset>
                     <legend>Add meal</legend>
 		    Name:    <input type="text" name="name"    placeholder="name" required>
@@ -112,8 +111,7 @@
 </fieldset>
 </form>
 
-<form action="[% c.uri_for_action('/meal/create') %]" method="POST">
-    <input type="hidden" name="project" value="[% project.id %]">
+<form action="[% c.project_uri('/meal/create') %]" method="POST">
     <fieldset>
         <legend>Add meal</legend>
         Date:    <input type="date" name="date"    placeholder="YYYY-MM-DD" required value="[% default_date.ymd %]">
@@ -141,7 +139,7 @@
 </fieldset>
 </form>
 
-<form action="[% c.uri_for_action('/project/rename', project.id) %]" method="POST">
+<form action="[% c.project_uri('/project/rename') %]" method="POST">
     <fieldset>
         <legend>Rename project <em>[% project.name | html %]</em></legend>
         <input type="text" name="name" value="[% project.name | html %]">

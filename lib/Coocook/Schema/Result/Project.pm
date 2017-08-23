@@ -8,13 +8,15 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("projects");
 
 __PACKAGE__->add_columns(
-    id   => { data_type => 'int', is_auto_increment => 1 },
-    name => { data_type => 'text' },
+    id          => { data_type => 'int', is_auto_increment => 1 },
+    name        => { data_type => 'text' },
+    url_name    => { data_type => 'text' },
+    url_name_fc => { data_type => 'text' }, # fold cased
 );
 
 __PACKAGE__->set_primary_key("id");
 
-__PACKAGE__->add_unique_constraints( ['name'] );
+__PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
 __PACKAGE__->has_many( meals => 'Coocook::Schema::Result::Meal' );
 

@@ -53,7 +53,7 @@ sub index : Chained('/project/base') PathPart('print') Args(0) {
     );
 }
 
-sub day : Chained('/project/base') PathPart('day') Args(3) {
+sub day : Chained('/project/base') PathPart('print/day') Args(3) {
     my ( $self, $c, $year, $month, $day ) = @_;
 
     my $dt = DateTime->new(
@@ -68,7 +68,7 @@ sub day : Chained('/project/base') PathPart('day') Args(3) {
     );
 }
 
-sub project : Chained('/project/base') PathPart('project') Args(0) {
+sub project : Chained('/project/base') PathPart('print/project') Args(0) {
     my ( $self, $c, $id ) = @_;
 
     my $project = $c->stash->{project} || die;
@@ -79,7 +79,7 @@ sub project : Chained('/project/base') PathPart('project') Args(0) {
     );
 }
 
-sub purchase_list : Chained('/project/base') PathPart('purchase_list') Args(1) {
+sub purchase_list : Chained('/project/base') PathPart('print/purchase_list') Args(1) {
     my ( $self, $c, $id ) = @_;
 
     # get data from purchase list editor

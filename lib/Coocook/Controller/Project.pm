@@ -1,5 +1,7 @@
 package Coocook::Controller::Project;
 
+use feature 'fc';
+
 use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -24,9 +26,17 @@ C<Result::Project> object in the stash.
 =cut
 
 sub base : Chained('/') PathPart('project') CaptureArgs(1) {
-    my ( $self, $c, $id ) = @_;
+    my ( $self, $c, $url_name ) = @_;
 
-    if ( my $project = $c->model('DB::Project')->find($id) ) {
+    my $url_name_fc = fc $url_name;
+
+    if ( my $project = $c->model('DB::Project')->find( { url_name_fc => $url_name_fc } ) ) {
+        if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {
+
+            # TODO redirect to same URL with $url_name in exact case
+            # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
+        }
+
         $c->stash( project => $project );
     }
     else {
