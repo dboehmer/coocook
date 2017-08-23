@@ -14,7 +14,9 @@
 <header>
 <h1>
     <a class="mainlinks" href="[% c.uri_for('/') %]">[% c.config.name %]</a>
-    <a class="mainlinks" href="[% c.uri_for_action('/project/edit', my_project.id) %]">[% my_project.name %]</a>
+[% IF project %]
+    <a class="mainlinks" href="[% c.uri_for_action('/project/edit', [project.id]) %]">[% project.name | html %]</a>
+[% END %]
 </h1>
 
 <nav>
@@ -24,15 +26,18 @@
 [% ELSE %]
 <a href="[% c.uri_for_action('/login') %]"><li>Login</li></a>
 [% END %]
-<a href="[% c.uri_for_action('/recipe/index') %]"><li>Recipes</li></a>
-<a href="[% c.uri_for_action('/article/index') %]"><li>Articles</li></a>
-<a href="[% c.uri_for_action('/tag/index') %]"><li>Tags</li></a>
-<a href="[% c.uri_for_action('/items/unassigned') %]"><li>Unassigned Items</li></a>
-<a href="[% c.uri_for_action('/purchase_list/index') %]"><li>Purchase Lists</li></a>
-<a href="[% c.uri_for_action('/print/index') %]"><li>Printing</li></a>
-<a href="[% c.uri_for_action('/shop_section/index') %]"><li>Shop sections</li></a>
-<a href="[% c.uri_for_action('/quantity/index') %]"><li>Quantities</li></a>
-<a href="[% c.uri_for_action('/unit/index') %]"><li>Units</li></a>
+
+[% IF project %]
+<a href="[% c.uri_for_action('/recipe/index',        [project.id]) %]"><li>Recipes</li></a>
+<a href="[% c.uri_for_action('/article/index',       [project.id]) %]"><li>Articles</li></a>
+<a href="[% c.uri_for_action('/tag/index',           [project.id]) %]"><li>Tags</li></a>
+<a href="[% c.uri_for_action('/items/unassigned',    [project.id]) %]"><li>Unassigned Items</li></a>
+<a href="[% c.uri_for_action('/purchase_list/index', [project.id]) %]"><li>Purchase Lists</li></a>
+<a href="[% c.uri_for_action('/print/index',         [project.id]) %]"><li>Printing</li></a>
+<a href="[% c.uri_for_action('/shop_section/index',  [project.id]) %]"><li>Shop sections</li></a>
+<a href="[% c.uri_for_action('/quantity/index',      [project.id]) %]"><li>Quantities</li></a>
+<a href="[% c.uri_for_action('/unit/index',          [project.id]) %]"><li>Units</li></a>
+[% END %]
 </ul>
 </nav>
 </header>

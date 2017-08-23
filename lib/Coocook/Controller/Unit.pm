@@ -22,7 +22,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/units') : Args(0) {
+sub index : Chained('/project/base') PathPart('units') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(

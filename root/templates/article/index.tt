@@ -76,7 +76,7 @@
             <td>[% FOR u IN a.units; display_unit(u, {html=>1}); ' '; END %]</td>
             <td>[% a.tags_rs.joined %]</td>
             <td>
-                <form method="POST" action="[% c.uri_for_action('/article/delete', a.id) %]" class="inline">
+                <form method="POST" action="[% c.uri_for_action('/article/delete', [project.id, a.id]) %]" class="inline">
                     <input type="submit" value="Delete">
                 </form>
             </td>

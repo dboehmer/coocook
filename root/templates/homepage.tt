@@ -5,9 +5,9 @@
 <h2>Projects</h2>
 
 <ul>
-[% FOR project IN projects %]
+[% FOR proj IN projects # don't overwrite $project! %]
     <li>
-        <a href="[% c.uri_for_action('/project/edit', project.id) %]">[% project.name %]</a>
+        <a href="[% c.uri_for_action('/project/edit', [proj.id]) %]">[% proj.name | html %]</a>
     </li>
 [% END %]
 </ul>

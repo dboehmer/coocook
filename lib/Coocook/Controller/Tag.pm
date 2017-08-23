@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/tags') : Args(0) {
+sub index : GET Chained('/project/base') PathPart('tags') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -30,32 +30,36 @@ sub index : Path('/tags') : Args(0) {
     );
 }
 
-sub edit : Path Args(1) {
+sub edit : GET Chained('/project/base') PathPart('tag') Args(1) {
     my ( $self, $c, $id ) = @_;
+
     $c->stash(
         tag    => $c->model('DB::Tag')->find($id),
         groups => $c->model('DB::TagGroup')->sorted,
     );
 }
 
-sub delete : Local Args(1) POST {
+sub delete : POST Chained('/project/base') PathPart('tag/delete') Args(1) {
     my ( $self, $c, $id ) = @_;
+
     my $tag = $c->model('DB::Tag')->find($id);
     $tag->deletable or die "Not deletable";
     $tag->delete;
     $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
-sub delete_group : Local Args(1) POST {
+sub delete_group : POST Chained('/project/base') PathPart('tag_group/delete') Args(1) {
     my ( $self, $c, $id ) = @_;
+
     my $group = $c->model('DB::TagGroup')->find($id);
     $group->deletable or die "Not deletable";
     $group->delete;
     $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
-sub create : Local Args(0) POST {
+sub create : POST Chained('/project/base') PathPart('tag/create') Args(0) {
     my ( $self, $c ) = @_;
+
     $c->model('DB::Tag')->create(
         {
             tag_group => scalar $c->req->param('tag_group'),
@@ -65,8 +69,9 @@ sub create : Local Args(0) POST {
     $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
-sub create_group : Local Args(0) POST {
+sub create_group : POST Chained('/project/base') PathPart('tag_group/create') Args(0) {
     my ( $self, $c ) = @_;
+
     $c->model('DB::TagGroup')->create(
         {
             name    => scalar $c->req->param('name'),
@@ -76,8 +81,9 @@ sub create_group : Local Args(0) POST {
     $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
-sub update : Local Args(1) POST {
+sub update : POST Chained('/project/base') PathPart('tag/update') Args(1) {
     my ( $self, $c, $id ) = @_;
+
     $c->model('DB::Tag')->find($id)->update(
         {
             name      => scalar $c->req->param('name'),
@@ -87,7 +93,7 @@ sub update : Local Args(1) POST {
     $c->response->redirect( $c->uri_for_action( '/tag/edit', $id ) );
 }
 
-sub update_group : Local Args(1) POST {
+sub update_group : POST Chained('/project/base') PathPart('tag_group/update') Args(1) {
     my ( $self, $c, $id ) = @_;
     $c->model('DB::TagGroup')->find($id)->update(
         {

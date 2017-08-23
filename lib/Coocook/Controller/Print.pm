@@ -29,14 +29,14 @@ sub auto : Private {
     push @{ $c->stash->{css} }, 'print.css';
 }
 
-sub index : Path Args(0) {
+sub index : Chained('/project/base') PathPart('print') Args(0) {
     my ( $self, $c ) = @_;
 
     # TODO find a way to exclude this method when adding 'print.css' (5 lines above)
     my $css = $c->stash->{css};
     @$css = grep { $_ ne 'print.css' } @$css;    # remove 'print.css' again :-/
 
-    my $project = $c->stash->{my_project};
+    my $project = $c->stash->{project} || die;
 
     # can't use get_column(date) here because $meal->date() inflates DateTime object
     my @days =
@@ -53,7 +53,7 @@ sub index : Path Args(0) {
     );
 }
 
-sub day : Local Args(3) {
+sub day : Chained('/project/base') PathPart('day') Args(3) {
     my ( $self, $c, $year, $month, $day ) = @_;
 
     my $dt = DateTime->new(
@@ -64,14 +64,14 @@ sub day : Local Args(3) {
 
     $c->stash(
         day => $dt,
-        meals => $c->model('Plan')->day( $c->stash->{my_project}->id, $dt ),
+        meals => $c->model('Plan')->day( $c->stash->{project}->id, $dt ),
     );
 }
 
-sub project : Local Args(1) {
+sub project : Chained('/project/base') PathPart('project') Args(0) {
     my ( $self, $c, $id ) = @_;
 
-    my $project = $c->model('DB::Project')->find($id);
+    my $project = $c->stash->{project} || die;
 
     $c->stash(
         project => $project,
@@ -79,7 +79,7 @@ sub project : Local Args(1) {
     );
 }
 
-sub purchase_list : Local Args(1) {
+sub purchase_list : Chained('/project/base') PathPart('purchase_list') Args(1) {
     my ( $self, $c, $id ) = @_;
 
     # get data from purchase list editor

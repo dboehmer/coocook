@@ -16,18 +16,33 @@ Catalyst Controller.
 
 =head1 METHODS
 
+=head2 base
+
+Chain action that captures the project ID and stores the
+C<Result::Project> object in the stash.
+
 =cut
+
+sub base : Chained('/') PathPart('project') CaptureArgs(1) {
+    my ( $self, $c, $id ) = @_;
+
+    if ( my $project = $c->model('DB::Project')->find($id) ) {
+        $c->stash( project => $project );
+    }
+    else {
+        $c->response->redirect( $c->uri_for( '/', { error => "Project not found" } ) );
+        $c->detach;
+    }
+}
 
 =head2 index
 
 =cut
 
-# override begin() in Controller::Root
-sub begin : Private { }
-
-sub edit : Path : Args(1) {
+sub edit : Chained('base') PathPart('') Args(0) {
     my ( $self, $c, $id ) = @_;
-    my $project = $c->model('DB::Project')->find($id);
+
+    my $project = $c->stash->{project} || die;
 
     my $default_date = DateTime->today;
 
@@ -115,13 +130,6 @@ sub rename : Local POST {
     $project->update( { name => $name } );
 
     $c->detach( redirect => [ $project->id ] );
-}
-
-sub select : Local Args(1) GET {
-    my ( $self, $c, $id ) = @_;
-    my $project = $c->model('DB::Project')->find($id);
-    $c->session->{project} = $project->id;
-    $c->response->redirect('/');
 }
 
 sub redirect : Private {

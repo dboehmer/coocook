@@ -35,13 +35,6 @@ sub begin : Private {
     if ( my $user = $c->user ) {
         $c->stash( user => { name => $user->id } );
     }
-
-    if ( my $id = $c->session->{project} ) {
-        $c->stash( my_project => $c->model('DB::Project')->find($id) );
-    }
-    else {
-        $c->response->redirect( $c->uri_for_action('/project/index') );
-    }
 }
 
 sub auto : Private {

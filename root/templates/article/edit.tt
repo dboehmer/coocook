@@ -1,6 +1,6 @@
 <h2>Edit article <em>[% article.name | xml %]</em></h2>
 
-<form action="[% c.uri_for_action('/article/update', article.id) %]" method="POST">
+<form action="[% c.uri_for_action('/article/update', [project.id, article.id]) %]" method="POST">
     <p>Applicable units:</p>
 
     <table style="margin-left: 2em">
@@ -43,7 +43,7 @@ FOR quantity IN quantities %]
 
 <ul>
 [% FOR r IN recipes %]
-    <li>recipe <a href="[% c.uri_for_action('/recipe/edit', r.recipe.id) %]">[% r.recipe.name | xml %]</a>
+    <li>recipe <a href="[% c.uri_for_action('/recipe/edit', [project.id, r.recipe.id]) %]">[% r.recipe.name | xml %]</a>
     <ul>
     [% FOR dish IN r.dishes %]
         <li>dish <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
@@ -53,6 +53,6 @@ FOR quantity IN quantities %]
 [% END %]
 
 [% FOR dish IN dishes %]
-    <li>dish <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
+    <li>dish <a href="[% c.uri_for_action('/dish/edit', [project.id, dish.id]) %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
 [% END %]
 </ul>

@@ -22,4 +22,11 @@ __PACKAGE__->has_many( purchase_lists => 'Coocook::Schema::Result::PurchaseList'
 
 __PACKAGE__->meta->make_immutable;
 
+# TODO add relationship 'articles', remove pseudo-accessor
+sub articles {
+    my $self = shift;
+
+    return $self->result_source->schema->resultset('Article');
+}
+
 1;

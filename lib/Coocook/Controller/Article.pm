@@ -45,15 +45,15 @@ sub auto : Private {
     );
 }
 
-sub index : Path('/articles') : Args(0) {
+sub index : GET Chained('/project/base') PathPath('articles') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $articles = $c->model('DB::Article')->sorted;
+    my $articles = $c->stash->{project}->articles;
 
     $c->stash( articles => $articles );
 }
 
-sub edit : GET Path Args(1) {
+sub edit : GET Chained('/project/base') PathPart('article') Args(1) {
     my ( $self, $c, $id ) = @_;
 
     my $article = $c->model('DB::Article')->find($id)
@@ -86,7 +86,7 @@ sub edit : GET Path Args(1) {
     );
 }
 
-sub create : Local : POST {
+sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
     my ( $self, $c, $id ) = @_;
 
     my $units = $c->model('DB::Unit')->search(
