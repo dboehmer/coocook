@@ -30,18 +30,20 @@ __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 
-# trigger generating url_name[_fc]
-around name => sub {    # TODO make this work even with ResultSet::Project->create({name => ...})
-    my ( $orig, $self ) = ( shift, shift );
+# trigger for generating url_name[_fc]
+before store_column => sub {
+    my ( $self, $column, $value ) = @_;
 
-    if (@_) {
-        ( my $url_name = $_[0] ) =~ s/\W+/-/g;
+    if ( $column eq 'name' ) {
+        ( my $url_name = $value ) =~ s/\W+/-/g;
 
-        $self->url_name($url_name);
-        $self->url_name_fc( fc $url_name);
+        $self->set_columns(
+            {
+                url_name    => $url_name,
+                url_name_fc => fc $url_name,
+            }
+        );
     }
-
-    return $self->$orig(@_);
 };
 
 __PACKAGE__->meta->make_immutable;
