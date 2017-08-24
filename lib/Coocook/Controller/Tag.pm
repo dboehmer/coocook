@@ -24,84 +24,123 @@ Catalyst Controller.
 sub index : GET Chained('/project/base') PathPart('tags') Args(0) {
     my ( $self, $c ) = @_;
 
+    my $groups = $c->project->tag_groups->search(
+        undef,
+        {
+            prefetch => 'tags_sorted',
+        },
+    );
+
     $c->stash(
-        groups     => $c->model('DB::TagGroup')->sorted,
-        other_tags => $c->model('DB::Tag')->ungrouped->sorted,
+        groups     => [ $groups->all ],
+        other_tags => [ $c->project->tags->ungrouped->sorted->all ],
     );
 }
 
-sub edit : GET Chained('/project/base') PathPart('tag') Args(1) {
+sub tag : Chained('/project/base') PathPart('tag') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash(
-        tag    => $c->model('DB::Tag')->find($id),
-        groups => $c->model('DB::TagGroup')->sorted,
-    );
+    $c->stash( tag => $c->project->tags->find($id) );    # TODO error handling
 }
 
-sub delete : POST Chained('/project/base') PathPart('tag/delete') Args(1) {
+sub tag_group : Chained('/project/base') PathPart('tag_group') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $tag = $c->model('DB::Tag')->find($id);
+    $c->stash( tag_group => $c->project->tag_groups->find($id) );    # TODO error handling
+}
+
+sub edit : GET Chained('tag') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
+}
+
+sub delete : POST Chained('tag') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $tag = $c->stash->{tag};
     $tag->deletable or die "Not deletable";
     $tag->delete;
-    $c->response->redirect( $c->uri_for_action('/tag/index') );
+    $c->forward('redirect');
 }
 
-sub delete_group : POST Chained('/project/base') PathPart('tag_group/delete') Args(1) {
-    my ( $self, $c, $id ) = @_;
+sub delete_group : POST Chained('tag_group') PathPart('delete') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $group = $c->model('DB::TagGroup')->find($id);
+    my $group = $c->stash->{tag_group};
     $group->deletable or die "Not deletable";
     $group->delete;
-    $c->response->redirect( $c->uri_for_action('/tag/index') );
+    $c->forward('redirect');
 }
 
-sub create : POST Chained('/project/base') PathPart('tag/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('tags/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->model('DB::Tag')->create(
-        {
-            tag_group => scalar $c->req->param('tag_group'),
+    my $group;    # might be no group
+    if ( my $id = scalar $c->req->param('tag_group') ) {
+        $group = $c->project->tag_groups->find($id);
+    }
+
+    my $tag = $c->project->create_related(
+        tags => {
+            tag_group => $group,
             name      => scalar $c->req->param('name'),
         }
     );
-    $c->response->redirect( $c->uri_for_action('/tag/index') );
+    $c->forward('redirect');
 }
 
-sub create_group : POST Chained('/project/base') PathPart('tag_group/create') Args(0) {
+sub create_group : POST Chained('/project/base') PathPart('tag_groups/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->model('DB::TagGroup')->create(
+    $c->project->create_related(
+        tag_groups => {
+            name    => scalar $c->req->param('name'),
+            comment => scalar $c->req->param('comment'),
+        }
+    );
+    $c->forward('redirect');
+}
+
+sub update : POST Chained('tag') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $group;    # might be no group
+    if ( my $id = scalar $c->req->param('tag_group') ) {
+        $group = $c->project->tag_groups->find($id);
+    }
+
+    my $tag = $c->stash->{tag};
+    $tag->update(
+        {
+            name      => scalar $c->req->param('name'),
+            tag_group => $group,
+        }
+    );
+    $c->forward( redirect => [$tag] );
+}
+
+sub update_group : POST Chained('tag_group') PathPart('update') Args(0) {
+    my ( $self, $c, $id ) = @_;
+
+    $c->stash->{tag_group}->update(
         {
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
-sub update : POST Chained('/project/base') PathPart('tag/update') Args(1) {
-    my ( $self, $c, $id ) = @_;
+sub redirect : Private {
+    my ( $self, $c, $tag ) = @_;
 
-    $c->model('DB::Tag')->find($id)->update(
-        {
-            name      => scalar $c->req->param('name'),
-            tag_group => scalar $c->req->param('tag_group'),
-        }
+    $c->response->redirect(
+        $c->project_uri(
+            $tag
+            ? ( $self->action_for('edit'), $tag->id )
+            : ( $self->action_for('index') )
+        )
     );
-    $c->response->redirect( $c->uri_for_action( '/tag/edit', $id ) );
-}
-
-sub update_group : POST Chained('/project/base') PathPart('tag_group/update') Args(1) {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::TagGroup')->find($id)->update(
-        {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
-        }
-    );
-    $c->response->redirect( $c->uri_for_action('/tag/index') );
 }
 
 =encoding utf8
