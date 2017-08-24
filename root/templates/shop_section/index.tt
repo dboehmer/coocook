@@ -1,6 +1,6 @@
 <h2>Shop sections</h2>
 
-<form action="[% c.uri_for_action('/shop_section/create') %]" method="POST">
+<form action="[% c.project_uri('/shop_section/create') %]" method="POST">
 <fieldset>
     <legend>Create new Shop Section</legend>
     <input type="text" name="name" placeholder="name">
@@ -15,19 +15,19 @@
         <th colspan="2">Actions</th>
     </tr>
 
-[% FOREACH section IN shop_sections.all %]
+[% FOREACH section IN shop_sections %]
     <tr>
         <td>[% section.name | html %]</td>
         <td class="right-align">[% section.get_column('article_count') %]</td>
         <td>
-        <form method="POST" action="[% c.uri_for_action('/shop_section/update', section.id) %]" class="inline">
+        <form method="POST" action="[% c.project_uri('/shop_section/update', section.id) %]" class="inline">
             <input type="text" name="name" value="[% section.name | html %]">
             <input type="submit" value="Rename">
         </form>
         </td>
         <td>
-    [% IF section.get_column('article_count') == 0 %]
-        <form method="POST" action="[% c.uri_for_action('/shop_section/delete', section.id) %]" class="inline">
+    [% IF section.deletable %]
+        <form method="POST" action="[% c.project_uri('/shop_section/delete', section.id) %]" class="inline">
             <input type="submit" value="Delete">
         </form>
     [% END %]

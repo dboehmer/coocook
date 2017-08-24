@@ -23,16 +23,34 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/shop_sections') : Args(0) {
+sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( shop_sections => $c->model('DB::ShopSection')->with_article_count->sorted );
+    $c->stash( shop_sections => [ $c->project->shop_sections->with_article_count->sorted->all ] );
 }
 
-sub create : Local Args(0) POST {
+sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->model('DB::ShopSection')->create(
+    $c->project->create_related(
+        shop_sections => {
+            name => scalar $c->req->param('name'),
+        }
+    );
+
+    $c->detach('redirect');
+}
+
+sub base : Chained('/project/base') PathPart('shop_sections') CaptureArgs(1) {
+    my ( $self, $c, $id ) = @_;
+
+    $c->stash( shop_section => $c->project->shop_sections->find($id) );
+}
+
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{shop_section}->update(
         {
             name => scalar $c->req->param('name'),
         }
@@ -41,29 +59,17 @@ sub create : Local Args(0) POST {
     $c->detach('redirect');
 }
 
-sub update : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    $c->model('DB::ShopSection')->find($id)->update(
-        {
-            name => scalar $c->req->param('name'),
-        }
-    );
-
-    $c->detach('redirect');
-}
-
-sub delete : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
-
-    $c->model('DB::ShopSection')->find($id)->delete;
+    $c->stash->{shop_section}->delete;
     $c->detach('redirect');
 }
 
 sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 =encoding utf8

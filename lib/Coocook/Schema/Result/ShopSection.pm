@@ -26,4 +26,15 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->meta->make_immutable;
 
+sub deletable {
+    my $self = shift;
+
+    if ( defined( my $count = $self->get_column('article_count') ) ) {
+        return $count == 0;
+    }
+    else {
+        return $self->articles->count == 0;
+    }
+}
+
 1;
