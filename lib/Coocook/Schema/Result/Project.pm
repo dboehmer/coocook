@@ -30,4 +30,18 @@ __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 
 __PACKAGE__->meta->make_immutable;
 
+# pseudo-relationship
+sub dishes {
+    my $self = shift;
+
+    return $self->result_source->schema->resultset('Dish')->search(
+        {
+            'meal.project' => $self->id,
+        },
+        {
+            join => 'meal',
+        }
+    );
+}
+
 1;

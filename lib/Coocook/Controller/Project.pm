@@ -49,10 +49,10 @@ sub base : Chained('/') PathPart('project') CaptureArgs(1) {
 
 =cut
 
-sub edit : Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c, $id ) = @_;
 
-    my $project = $c->stash->{project} || die;
+    my $project = $c->project || die;
 
     my $default_date = DateTime->today;
 
@@ -83,7 +83,7 @@ sub edit : Chained('base') PathPart('') Args(0) {
     $c->stash(
         default_date => $default_date,
         project      => $project,
-        recipes      => [ $c->model('DB::Recipe')->search( undef, { order_by => 'name' } )->all ],
+        recipes      => [ $project->recipes->sorted->all ],
         days         => $days,
     );
 }

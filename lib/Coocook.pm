@@ -83,6 +83,13 @@ sub project_uri {
     return $c->uri_for_action( $action, [ $project->url_name, @_ ] );
 }
 
+# another helper
+sub project {
+    my $c = shift;
+
+    $c->stash->{project};
+}
+
 # Start the application
 __PACKAGE__->setup();
 
