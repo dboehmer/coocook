@@ -9,6 +9,7 @@ __PACKAGE__->table("recipes");
 
 __PACKAGE__->add_columns(
     id          => { data_type => 'int', is_auto_increment => 1 },
+    project     => { data_type => 'int' },
     name        => { data_type => 'text' },
     preparation => { data_type => 'text' },
     description => { data_type => 'text' },
@@ -17,7 +18,9 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-__PACKAGE__->add_unique_constraints( ['name'] );
+__PACKAGE__->add_unique_constraints( [ 'project', 'name' ] );
+
+__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->has_many(
     ingredients => 'Coocook::Schema::Result::RecipeIngredient',

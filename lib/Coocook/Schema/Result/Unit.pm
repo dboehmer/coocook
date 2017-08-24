@@ -9,6 +9,7 @@ __PACKAGE__->table("units");
 
 __PACKAGE__->add_columns(
     id                  => { data_type => 'int',  is_auto_increment => 1 },
+    project             => { data_type => 'int' },
     quantity            => { data_type => 'int',  is_nullable       => 0 },
     to_quantity_default => { data_type => 'real', is_nullable       => 1 },
     space               => { data_type => 'bool' },
@@ -18,7 +19,9 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-__PACKAGE__->add_unique_constraints( ['long_name'], );
+__PACKAGE__->add_unique_constraints( [ 'project', 'long_name' ] );
+
+__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to( quantity => 'Coocook::Schema::Result::Quantity' );
 

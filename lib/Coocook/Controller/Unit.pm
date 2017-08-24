@@ -26,7 +26,7 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        units => $c->model('DB::Unit')->search(
+        units => $c->stash->{project}->units->search(
             undef,
             {
                 join     => 'quantity',
