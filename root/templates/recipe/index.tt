@@ -1,6 +1,6 @@
 <h2>Recipes</h2>
 
-<form action="[% c.uri_for_action('/recipe/create') %]" method="POST">
+<form action="[% c.project_uri('/recipe/create') %]" method="POST">
 <fieldset>
     <legend>Create new recipe</legend>
 
@@ -25,9 +25,9 @@
     </tr>
 [% FOR recipe IN recipes.all %]
     <tr>
-    <td><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a></td>
+    <td><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name %]</a></td>
     <td>
-        <form class="inline" action="[% c.uri_for_action('/recipe/duplicate', recipe.id) %]" method="POST">
+        <form class="inline" action="[% c.project_uri('/recipe/duplicate', recipe.id) %]" method="POST">
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name %]">
             <input type="submit" value="Duplicate">
             <div class="tooltip">?
@@ -36,7 +36,7 @@
         </form>
     </td>
     <td>
-        <form class="inline" action="[% c.uri_for_action('/recipe/delete', recipe.id) %]" method="POST">
+        <form class="inline" action="[% c.project_uri('/recipe/delete', recipe.id) %]" method="POST">
             <input type="submit" value="Delete">
         </form>
     </td>

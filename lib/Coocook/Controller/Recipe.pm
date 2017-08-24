@@ -24,16 +24,22 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/recipes') : Args(0) {
+sub index : GET Chained('/project/base') PathPart('recipes') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recipes => $c->model('DB::Recipe')->sorted );
+    $c->stash( recipes => $c->project->recipes->sorted );
 }
 
-sub edit : Path : Args(1) {
+sub base : Chained('/project/base') PathPart('recipe') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $recipe = $c->model('DB::Recipe')->find($id);
+    $c->stash( recipe => $c->project->recipes->find($id) );    # TODO error handling
+}
+
+sub edit : GET Chained('base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe};
 
     my $ingredients = $recipe->ingredients;
     $ingredients = $ingredients->search(
@@ -47,16 +53,18 @@ sub edit : Path : Args(1) {
     $c->stash(
         recipe      => $recipe,
         ingredients => [ $ingredients->all ],
-        articles    => [ $c->model('DB::Article')->sorted->all ],
-        units       => [ $c->model('DB::Unit')->sorted->all ],
+        articles    => [ $c->project->articles->sorted->all ],
+        units       => [ $c->project->units->sorted->all ],
     );
 }
 
-sub add : Local : Args(1) {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::RecipeIngredient')->create(
-        {
-            recipe  => $id,
+sub add : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe};
+
+    $recipe->create_related(
+        ingredients => {
             prepare => ( $c->req->param('prepare') ? 1 : 0 ),
             article => scalar $c->req->param('article'),
             value   => scalar $c->req->param('value'),
@@ -64,46 +72,51 @@ sub add : Local : Args(1) {
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->detach( 'redirect', [$id] );
+
+    $c->detach( redirect => [ $recipe->id, '#ingredients' ] );
 }
 
-sub create : Local : POST {
+sub create : POST Chained('/project/base') Args(0) {
     my ( $self, $c ) = @_;
+
     my $name = scalar $c->req->param('name');
     my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipes" } );
     if ($input_okay) {
-        my $recipe = $c->model('DB::Recipe')->create(
-            {
+        my $recipe = $c->project->create_related(
+            recipes => {
                 name        => $name,
                 description => scalar $c->req->param('description') // "",
                 preparation => scalar $c->req->param('preparation') // "",
                 servings    => scalar $c->req->param('servings'),
             }
         );
-        $c->detach( 'redirect', [ $recipe->id ] );
+        $c->detach( redirect => [ $recipe->id ] );
     }
 
 }
 
-sub duplicate : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub duplicate : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    $c->model('DB::Recipe')->find($id)->duplicate( { name => scalar $c->req->param('name') } );
+    my $recipe = $c->stash->{recipe}->duplicate( { name => scalar $c->req->param('name') } );
 
-    $c->detach( 'redirect', [] );
+    $c->detach( redirect => [ $recipe->id ] );
 }
 
-sub delete : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Recipe')->find($id)->delete;
-    $c->detach( 'redirect', [] );
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe}->delete;
+    $c->detach('redirect');
 }
 
-sub update : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    my $recipe     = $c->model('DB::Recipe')->find($id);
-    my $name       = scalar $c->req->param('name');
-    my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipe/$id" } );
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe};
+    my $name   = scalar $c->req->param('name');
+    my $input_okay =
+      $self->check_name( $c, { name => $name, current_page => "/recipe/" . $recipe->id } );
     if ($input_okay) {
         $c->model('DB')->schema->txn_do(
             sub {
@@ -139,16 +152,16 @@ sub update : Local : Args(1) : POST {
             }
         );
 
-        $c->detach( 'redirect', [$id] );
+        $c->detach( 'redirect', [ $recipe->id ] );    # no fragment here, could be text edit
 
     }
 
 }
 
-sub reposition : POST Local Args(1) {
+sub reposition : POST Chained('/project/base') PathPart('recipe_ingredient/reposition') Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $ingredient = $c->model('DB::RecipeIngredient')->find($id);
+    my $ingredient = $c->project->recipes->ingredients->find($id);
 
     if ( $c->req->param('up') ) {
         $ingredient->move_previous();
@@ -164,14 +177,15 @@ sub reposition : POST Local Args(1) {
 }
 
 sub redirect : Private {
-    my ( $self, $c, $id, $fragment ) = @_;
+    my ( $self, $c, $recipe, $fragment ) = @_;
 
-    if ($id) {
+    if ($recipe) {
         $c->response->redirect(
-            $c->uri_for_action( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
+            $c->project_uri( $self->action_for('edit'), ref $recipe ? $recipe->id : $recipe )
+              . ( $fragment // '' ) );
     }
     else {
-        $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+        $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
     }
 }
 

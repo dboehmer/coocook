@@ -1,6 +1,6 @@
-<h2>Recipe [% recipe.name %]</h2>
+<h2>Recipe [% recipe.name | html %]</h2>
 
-<form action="[% c.uri_for_action('/recipe/update', recipe.id) %]" method="POST">
+<form action="[% c.project_uri('/recipe/update', recipe.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
@@ -29,14 +29,14 @@
     [% IF loop.first;
         '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
     ELSE %]
-        <form method="POST" action="[% c.uri_for_action('/recipe/reposition', [ingredient.id]) %]" class="inline">
+        <form method="POST" action="[% c.project_uri('/recipe/reposition', ingredient.id) %]" class="inline">
             [% '<input type="submit" name="up"   value="↑">' UNLESS loop.first %]
         </form>
     [% END %]
     </td>
     <td>
     [% UNLESS loop.last %]
-        <form method="POST" action="[% c.uri_for_action('/recipe/reposition', [ingredient.id]) %]" class="inline">
+        <form method="POST" action="[% c.project_uri('/recipe/reposition', ingredient.id) %]" class="inline">
             <input type="submit" name="down" value="↓">
         </form>
     [% END %]
@@ -54,7 +54,7 @@
 <input type="submit" value="Update Recipe">
 </form>
 
-<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">
+<form action="[% c.project_uri('/recipe/add', recipe.id) %]" method="POST">
 Article: <select name="article">
 [% FOR article IN articles %]
     <option value="[% article.id %]">[% article.name %]</option>
