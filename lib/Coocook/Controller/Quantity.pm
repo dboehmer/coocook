@@ -21,27 +21,36 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/quantities') : Args(0) {
+sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( quantities => $c->model('DB::Quantity')->sorted );
+    $c->stash( quantities => [ $c->project->quantities->sorted->all ] );
 }
 
-sub create : Local : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Quantity')->create( { name => scalar $c->req->param('name') } );
+sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->project->quantities->create( { name => scalar $c->req->param('name') } );
     $c->detach('redirect');
 }
 
-sub delete : Local : Args(1) : POST {
+sub base : Chained('/project/base') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
-    $c->model('DB::Quantity')->find($id)->delete;
+
+    $c->stash( quantity => $c->project->quantities->find($id) );    # TODO error handling
+}
+
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{quantity}->delete();
     $c->detach('redirect');
 }
 
-sub update : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Quantity')->find($id)->update(
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{quantity}->update(
         {
             name => scalar $c->req->param('name'),
         }
@@ -52,7 +61,7 @@ sub update : Local : Args(1) : POST {
 sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 =encoding utf8
