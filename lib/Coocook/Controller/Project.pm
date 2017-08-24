@@ -50,7 +50,7 @@ sub base : Chained('/') PathPart('project') CaptureArgs(1) {
 =cut
 
 sub edit : GET Chained('base') PathPart('') Args(0) {
-    my ( $self, $c, $id ) = @_;
+    my ( $self, $c ) = @_;
 
     my $project = $c->project || die;
 
@@ -114,37 +114,38 @@ sub edit_dishes : Local Args(1) POST {
         }
     }
 
-    $c->detach( redirect => [ $project->id ] );
+    $c->detach( redirect => [$project] );
 }
 
-sub create : Local : POST {
-    my ( $self, $c, $id ) = @_;
-    my $name = $c->req->param('name');
-    if ( length($name) > 0 ) {
-        my $project = $c->model('DB::Project')->create( { name => scalar $c->req->param('name') } );
-        $c->detach( 'redirect', [ $project->id ] );
+sub create : POST Local {
+    my ( $self, $c ) = @_;
+
+    if ( length( my $name = $c->req->param('name') ) > 0 ) {
+        my $project = $c->model('DB::Project')->new_result( {} );
+        $project->name( scalar $c->req->param('name') );
+        $project->insert;
+
+        $c->detach( 'redirect', [$project] );
     }
     else {
-        $c->response->redirect(
-            $c->uri_for( '/projects', { error => "Cannot create project with empty name!" } ) );
+        $c->response->redirect( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
     }
 }
 
-sub rename : Local POST {
-    my ( $self, $c, $id ) = @_;
+sub rename : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $name = $c->req->param('name');
+    my $project = $c->stash->{project};
 
-    my $project = $c->model('DB::Project')->find($id);
+    $project->update( { name => scalar $c->req->param('name') } );
 
-    $project->update( { name => $name } );
-
-    $c->detach( redirect => [ $project->id ] );
+    $c->detach( redirect => [$project] );
 }
 
 sub redirect : Private {
-    my ( $self, $c, $id ) = @_;
-    $c->response->redirect( $c->uri_for_action( $self->action_for('edit'), $id ) );
+    my ( $self, $c, $project ) = @_;
+
+    $c->response->redirect( $c->uri_for_action( $self->action_for('edit'), [ $project->url_name ] ) );
 }
 
 #TODO: enable deletion of big projects?

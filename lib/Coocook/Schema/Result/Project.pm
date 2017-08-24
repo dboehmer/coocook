@@ -5,6 +5,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
+use feature 'fc';    # Perl v5.16
+
 __PACKAGE__->table("projects");
 
 __PACKAGE__->add_columns(
@@ -27,6 +29,20 @@ __PACKAGE__->has_many( shop_sections  => 'Coocook::Schema::Result::ShopSection' 
 __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
+
+# trigger generating url_name[_fc]
+around name => sub {    # TODO make this work even with ResultSet::Project->create({name => ...})
+    my ( $orig, $self ) = ( shift, shift );
+
+    if (@_) {
+        ( my $url_name = $_[0] ) =~ s/\W+/-/g;
+
+        $self->url_name($url_name);
+        $self->url_name_fc( fc $url_name);
+    }
+
+    return $self->$orig(@_);
+};
 
 __PACKAGE__->meta->make_immutable;
 
