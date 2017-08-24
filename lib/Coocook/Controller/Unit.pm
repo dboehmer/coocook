@@ -26,19 +26,33 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        units => $c->stash->{project}->units->search(
+        units => $c->project->units->search(
             undef,
             {
                 join     => 'quantity',
                 order_by => [qw< quantity.name short_name >]
             }
         ),
-        quantities => [ $c->model('DB::Quantity')->sorted->all ],
+        quantities => [ $c->project->quantities->sorted->all ],
     );
 }
 
-sub create : Local : POST {
+sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
+
+    $c->stash( unit => $c->project->units->find($id) );    # TODO error handling
+
+}
+
+sub edit : GET Chained('base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash( articles => [ $c->stash->{unit}->articles->sorted->all ] );
+}
+
+sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
+    my ( $self, $c ) = @_;
+
     my $short_name          = scalar $c->req->param('short_name');
     my $long_name           = scalar $c->req->param('long_name');
     my $to_quantity_default = scalar $c->req->param('to_quantity_default');
@@ -52,8 +66,8 @@ sub create : Local : POST {
         }
     );
     if ($input_okay) {
-        $c->model('DB::Unit')->create(
-            {
+        my $unit = $c->project->create_related(
+            units => {
                 short_name          => $short_name,
                 long_name           => $long_name,
                 quantity            => scalar $c->req->param('quantity') || undef,
@@ -61,26 +75,32 @@ sub create : Local : POST {
                 space               => scalar $c->req->param('space') ? '1' : '0',
             }
         );
-        $c->detach('redirect');
+        $c->detach( 'redirect', [$unit] );
     }
 
 }
 
-sub delete : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Unit')->find($id)->delete;
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{unit}->delete();
+
     $c->detach('redirect');
 }
 
-sub make_quantity_default : Local Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Unit')->find($id)->make_quantity_default;
+sub make_quantity_default : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{unit}->make_quantity_default();
+
     $c->detach('redirect');
 }
 
-sub update : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    my $unit                = $c->model('DB::Unit')->find($id);
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $unit = $c->stash->{unit};
+
     my $short_name          = scalar $c->req->param('short_name');
     my $long_name           = scalar $c->req->param('long_name');
     my $to_quantity_default = scalar $c->req->param('to_quantity_default');
@@ -90,7 +110,7 @@ sub update : Local : Args(1) : POST {
             short_name          => $short_name,
             long_name           => $long_name,
             to_quantity_default => $to_quantity_default,
-            current_page        => "/unit/$id"
+            current_page        => "/unit/" . $unit->id,
         }
     );
     if ($input_okay) {
@@ -102,25 +122,20 @@ sub update : Local : Args(1) : POST {
                 space               => scalar $c->req->param('space') ? '1' : '0',
             }
         );
-        $c->detach('redirect');
+        $c->detach( 'redirect', [$unit] );
     }
 }
 
-sub edit : Path : Args(1) : GET {
-    my ( $self, $c, $id ) = @_;
-
-    my $unit = $c->model('DB::Unit')->find($id);
-
-    $c->stash(
-        unit     => $unit,
-        articles => [ $unit->articles->sorted->all ],
-    );
-}
-
 sub redirect : Private {
-    my ( $self, $c ) = @_;
+    my ( $self, $c, $unit ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+    $c->response->redirect(
+        $c->project_uri(
+            $unit
+            ? ( $self->action_for('edit'), $unit->id )
+            : $self->action_for('index')
+        )
+    );
 }
 
 #check input of unit when creating and updating a unit
