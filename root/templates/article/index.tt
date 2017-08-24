@@ -2,7 +2,7 @@
 
 <form action="[% c.project_uri('/article/create') %]" method="POST">
 <fieldset>
-    <legend>Create</legend>
+    <legend>Create article</legend>
     <input type="text" name="name" placeholder="name">
     <input type="text" name="comment" placeholder="comment">
     <input type="text" name="tags" placeholder="tags">
@@ -21,6 +21,7 @@
             <td>
     [% FOR unit IN quantity.units.all %]
         <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]">
+        [%~ '&nbsp;' ~%]
         <label for="u[% unit.id %]">[% display_unit(unit, {html => 1}) %]</label>
     [% END %]
             </td>
@@ -66,17 +67,17 @@
         </tr>
     </thead>
     <tbody>
-[% WHILE(a = articles.next) %]
+[% FOR article IN articles %]
         <tr>
-            <td><a href="[% c.project_uri('/article/edit', a.id) %]">[% a.name | xml %]</a></td>
-            <td>[% a.comment | xml %]</td>
-            <td>[% IF a.preorder_workdays.defined AND a.preorder_servings.defined; a.preorder_workdays %] days if ≥[% a.preorder_servings %] servings[% END %]</td>
-            <td>[% IF a.shelf_life_days.defined; a.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
-            <td>[% a.shop_section.name %]</td>
-            <td>[% FOR u IN a.units; display_unit(u, {html=>1}); ' '; END %]</td>
-            <td>[% a.tags_rs.joined %]</td>
+            <td><a href="[% c.project_uri('/article/edit', article.id) %]">[% article.name | xml %]</a></td>
+            <td>[% article.comment | xml %]</td>
+            <td>[% IF article.preorder_workdays.defined AND article.preorder_servings.defined; article.preorder_workdays %] days if ≥[% article.preorder_servings %] servings[% END %]</td>
+            <td>[% IF article.shelf_life_days.defined; article.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
+            <td>[% article.shop_section ? article.shop_section.name : '<em>none</em>' %]</td>
+            <td>[% FOR u IN article.units; display_unit(u, {html=>1}); ' '; END %]</td>
+            <td>[% article.tags_joined %]</td>
             <td>
-                <form method="POST" action="[% c.project_uri('/article/delete', a.id) %]" class="inline">
+                <form method="POST" action="[% c.project_uri('/article/delete', article.id) %]" class="inline">
                     <input type="submit" value="Delete">
                 </form>
             </td>

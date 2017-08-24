@@ -40,6 +40,13 @@ __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub tags_joined {
+    my $self = shift;
+
+    # TODO implement with get_column if not prefetched
+    return join " ", map { $_->name } $self->tags;
+}
+
 sub unit_ids {
     my $self = shift;
 

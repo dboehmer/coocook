@@ -30,7 +30,7 @@ FOR quantity IN quantities %]
     <p>Name: <input type="text" name="name" value="[% article.name | xml %]"></p>
     <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
     <p>Shop section: <select name="shop_section">
-        <option value="">(no shop section)</option>
+        <option value="" style="font-style:italic">(no shop section)</option>
 [% FOREACH section IN shop_sections %]
         <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
 [% END %]
