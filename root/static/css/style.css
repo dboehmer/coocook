@@ -26,11 +26,12 @@ body {
 /******** header part ********/
 
 /* padding for Coocook headline, not put to header to avoid space between header and navbar */
-.mainlinks {
+header h1 a {
     padding-left: 15px;
 }
 
-.mainlinks:hover, .mainlinks:active {
+header h1 a:hover,
+header h1 a:active {
     color: #f5f5ef;
 }
 

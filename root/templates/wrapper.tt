@@ -13,9 +13,10 @@
 
 <header>
 <h1>
-    <a class="mainlinks" href="[% c.uri_for('/') %]">[% c.config.name %]</a>
-[% IF project %]
-    <a class="mainlinks" href="[% c.project_uri('/project/edit') %]">[% project.name | html %]</a>
+    <a href="[% c.uri_for('/') %]">[% c.config.name %]</a>
+[%~ IF project ~%]
+    :
+    <a href="[% c.project_uri('/project/edit') %]">[% project.name | html %]</a>
 [% END %]
 </h1>
 
