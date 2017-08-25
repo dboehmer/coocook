@@ -18,10 +18,10 @@ Catalyst Controller.
 
 =cut
 
-sub unassigned : Local Args(0) {
+sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{my_project};
+    my $project = $c->project;
 
     my $ingredients = $project->meals->dishes->ingredients->unassigned->search(
         undef,
@@ -50,7 +50,7 @@ sub unassigned : Local Args(0) {
     );
 }
 
-sub assign : Local Args(0) POST {
+sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->forward('unassigned');
@@ -69,7 +69,7 @@ sub assign : Local Args(0) POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('unassigned') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('unassigned') ) );
 }
 
 sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1) {
