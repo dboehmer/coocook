@@ -30,4 +30,10 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->meta->make_immutable;
 
+sub deletable {
+    my $self = shift;
+
+    return $self->dishes->count == 0;
+}
+
 1;

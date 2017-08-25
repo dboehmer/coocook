@@ -2,6 +2,10 @@
 
 <form action="[% c.project_uri('/project/edit_dishes') %]" method="POST">
 
+<!-- Firefox claims nested forms are not allowed and ignores the 1st form
+    but any more forms work well -->
+<form></form>
+
 <table>
     <thead>
         <tr>
@@ -19,7 +23,7 @@
         <td></td>
         <th colspan="1" style="text-align:left">
             [% meal.name %]
-        [% IF meal.dishes.all.size == 0 %]
+        [% IF meal.deletable %]
             <form action="[% c.project_uri('/meal/delete', meal.id) %]" method="POST" class="inline">
                 <input type="submit" value="Delete meal">
             </form>
@@ -28,7 +32,7 @@
     </tr>
     <tr>
         <td></td>
-        <td>[% meal.comment %]</th>
+        <td>[% meal.comment %]</td>
     </tr>
     <tr>
         <td></td>
@@ -43,7 +47,10 @@
         [% FOREACH dish IN meal.dishes.all %]
     <tr>
         <td><input type="checkbox" name="dish[% dish.id %]"></td>
-        <td><a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings): [% dish.comment %]</td>
+        <td>
+            <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)
+            [%~ IF dish.comment; ': '; dish.comment | html; END %]
+        </td>
     </tr>
         [% END %]
     <tr>

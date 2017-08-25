@@ -84,13 +84,15 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
-sub edit_dishes : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub edit_dishes : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $project = $c->model('DB::Project')->find($id);
+    my $project = $c->project;
 
+    # filter selected IDs from possible dish IDs
     my @dish_ids = grep { $c->req->param("dish$_") } $project->meals->dishes->get_column('id')->all;
 
+    # select dishes from valid ID list
     my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );
 
     if ( $c->req->param('update') ) {
