@@ -25,10 +25,10 @@
         <th>Items</th>
         <th>Actions</th>
     </tr>
-[% WHILE(list = lists.next) %]
+[% FOR list IN lists %]
     <tr>
         <td>[% display_date(list.date, {html=>1}) %]</td>
-        <td><a href="[% c.project_uri('/purchase_list/edit', list.id) %]">[% list.name %]</a></td>
+        <td><a href="[% c.project_uri('/purchase_list/edit', list.id) %]">[% list.name | html %]</a></td>
         <td>[% list.items_rs.count %]</td>
         <td>
             <form action="[% c.project_uri('/purchase_list/update', list.id) %]" method="POST">
