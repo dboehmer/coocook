@@ -11,7 +11,11 @@
         <td>
             <strong>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name %]</strong>
             <br>
-            <a href="[% c.project_uri('/dish/edit', ingredient.dish.id) %]">[% ingredient.dish.name %]</a>, [% display_date(ingredient.dish.meal.date, {html=>1}) %]
+    [% IF ingredient.dish.prepare_at_meal %]
+            prepared at [% ingredient.dish.prepare_at_meal.name | html %] on [% display_date(ingredient.dish.prepare_at_meal.date, {html=>1}) %]
+            <br>
+    [% END %]
+            <a href="[% c.project_uri('/dish/edit', ingredient.dish.id) %]">[% ingredient.dish.name %]</a> for [% ingredient.dish.meal.name %] on [% display_date(ingredient.dish.meal.date, {html=>1}) %]
             [% IF ingredient.comment.length;
                 '<br><span class="comment">ingredient: ';
                 ingredient.comment | xml;
