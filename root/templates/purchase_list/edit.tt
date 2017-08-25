@@ -2,7 +2,7 @@
 
 
 [% FOREACH section IN sections %]
-<h3>[% section.name %]</h3>
+<h3>[% section.name | html %]</h3>
 
 <table class="purchase-items">
     <thead>
@@ -28,7 +28,7 @@
             END;
             display_unit(item.unit, {html=>1}) %]
         </td>
-        <td>[% item.article.name %]</td>
+        <td>[% item.article.name | html %]</td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
             <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name | html %] [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</li>

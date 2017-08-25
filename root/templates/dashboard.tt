@@ -1,4 +1,4 @@
-<p>Logged in as [% user.name %].</p>
+<p>Logged in as [% user.name | html %].</p>
 
 <form method="POST" action="[% c.uri_for_action('/logout') %]">
     <input type="submit" value="Logout">

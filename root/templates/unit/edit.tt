@@ -1,14 +1,14 @@
-<h2>Edit Unit <em>[% unit.long_name %]</em> (<em>[% unit.short_name %]</em>)</h2>
+<h2>Edit Unit <em>[% unit.long_name | html %]</em> (<em>[% unit.short_name | html %]</em>)</h2>
 
 <form action="[% c.project_uri('/unit/update', unit.id) %]" method="POST">
     <p>
         <label for="short_name">Short name:</label>
-        <input  id="short_name" type="text" name="short_name" value="[% unit.short_name %]">
+        <input  id="short_name" type="text" name="short_name" value="[% unit.short_name | html %]">
     </p>
 
     <p>
         <label for="long_name">Long name:</label>
-        <input  id="long_name" type="text" name="long_name" value="[% unit.long_name %]">
+        <input  id="long_name" type="text" name="long_name" value="[% unit.long_name | html %]">
     </p>
 
     <p>
@@ -28,7 +28,7 @@
     </p>
 </form>
 
-<h2>Where Unit <em>[% unit.long_name %]</em> is used ([% articles.size %] articles)</h2>
+<h2>Where Unit <em>[% unit.long_name | html %]</em> is used ([% articles.size %] articles)</h2>
 
 <ul>
 [% FOR article IN articles %]

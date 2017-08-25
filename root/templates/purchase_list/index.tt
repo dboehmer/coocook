@@ -32,7 +32,7 @@
         <td>[% list.items_rs.count %]</td>
         <td>
             <form action="[% c.project_uri('/purchase_list/update', list.id) %]" method="POST">
-                <input type="text" name="name" value="[% list.name %]">
+                <input type="text" name="name" value="[% list.name | html %]">
                 <input type="submit" value="Rename list">
             </form>
             <form action="[% c.project_uri('/purchase_list/delete', list.id) %]" method="POST">

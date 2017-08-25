@@ -23,7 +23,7 @@
         <label for="new_quantity">Quantity:</label>
         <select id="new_quantity" name="quantity">
         [% FOR quantity IN quantities %]
-            <option value="[% quantity.id %]">[% quantity.name; IF quantity.default_unit; ' (default unit: '; quantity.default_unit.long_name; ')'; END %]</option>
+            <option value="[% quantity.id %]">[% quantity.name | html; IF quantity.default_unit; ' (default unit: '; quantity.default_unit.long_name | html; ')'; END %]</option>
         [% END %]
         </select>
     </p>
@@ -48,11 +48,11 @@
     quantity = unit.quantity;
     default_unit = quantity.default_unit %]
 <tr>
-<td>[% quantity.name %]</td>
+<td>[% quantity.name | html %]</td>
 <td>
     <a href="[% c.project_uri('/unit/edit', unit.id) %]">
     [%~ '<strong>'  IF unit.is_quantity_default ~%]
-    [% unit.short_name %] ([% unit.long_name %])
+    [% unit.short_name | html %] ([% unit.long_name | html %])
     [%~ '</strong>' IF unit.is_quantity_default ~%]
     </a>
 </td>

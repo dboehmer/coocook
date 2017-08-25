@@ -25,10 +25,10 @@
     </tr>
 [% FOR recipe IN recipes.all %]
     <tr>
-    <td><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name %]</a></td>
+    <td><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name | html %]</a></td>
     <td>
         <form class="inline" action="[% c.project_uri('/recipe/duplicate', recipe.id) %]" method="POST">
-            Name: <input type="text" name="name" value="Duplicate of [% recipe.name %]">
+            Name: <input type="text" name="name" value="Duplicate of [% recipe.name | html %]">
             <input type="submit" value="Duplicate">
             <div class="tooltip">?
                 <span>Click "Duplicate" to duplicate your article.</span>

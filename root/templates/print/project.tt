@@ -1,4 +1,4 @@
-<h2>Project [% project.name %]</h2>
+<h2>Project [% project.name | html %]</h2>
 
 <table>
     <tr>
@@ -12,10 +12,10 @@
         [% IF loop.first %]
         <td rowspan="[% day.meals.size %]">[% display_date(day.date, {html=>1}) %]</td>
         [% END %]
-        <td>[% meal.name %]</td>
+        <td>[% meal.name | html %]</td>
         <td><ul>
         [% FOREACH dish IN meal.dishes %]
-            <li>[% dish %]</li>
+            <li>[% dish | html %]</li>
         [% END %]
         </ul></td>
     </tr>

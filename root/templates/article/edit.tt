@@ -7,7 +7,7 @@
 [% my_units = article.unit_ids;
 FOR quantity IN quantities %]
         <tr>
-            <th>[% quantity.name %]</th>
+            <th>[% quantity.name | html %]</th>
             <td>
     [% FOR unit IN quantity.units.all;
         id = unit.id %]
@@ -32,7 +32,7 @@ FOR quantity IN quantities %]
     <p>Shop section: <select name="shop_section">
         <option value="" style="font-style:italic">(no shop section)</option>
 [% FOREACH section IN shop_sections %]
-        <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name %]</option>
+        <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name | html %]</option>
 [% END %]
     </select></p>
     <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>

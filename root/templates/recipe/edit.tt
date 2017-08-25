@@ -1,7 +1,7 @@
 <h2>Recipe [% recipe.name | html %]</h2>
 
 <form action="[% c.project_uri('/recipe/update', recipe.id) %]" method="POST">
-<p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
+<p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
 <p>Preparation:<br>
@@ -42,10 +42,10 @@
     [% END %]
     </td>
     <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
-    <td>[% ingredient.article.name; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
+    <td>[% ingredient.article.name | html; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
     <td><input type="number" step="0.001" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
     <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% display_unit(unit) %]</option>[% END %]</select></td>
-    <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
+    <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment | html %]"></td>
     <td><input type="checkbox" name="delete[% ingredient.id %]"></td>
     </tr>
 [% END %]
@@ -57,7 +57,7 @@
 <form action="[% c.project_uri('/recipe/add', recipe.id) %]" method="POST">
 Article: <select name="article">
 [% FOR article IN articles %]
-    <option value="[% article.id %]">[% article.name %]</option>
+    <option value="[% article.id %]">[% article.name | html %]</option>
 [% END %]
 </select>
 <input type="checkbox" name="prepare" id="prepare"><label for="prepare">prepare</label>

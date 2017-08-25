@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>[% c.config.name %]</title>
+    <title>[% c.config.name | html %]</title>
 
     <meta charset="UTF-8">
 
@@ -13,7 +13,7 @@
 
 <header>
 <h1>
-    <a href="[% c.uri_for('/') %]">[% c.config.name %]</a>
+    <a href="[% c.uri_for('/') %]">[% c.config.name | html %]</a>
 [%~ IF project ~%]
     :
     <a href="[% c.project_uri('/project/edit') %]">[% project.name | html %]</a>

@@ -22,7 +22,7 @@
         [% END %]
         <td></td>
         <th colspan="1" style="text-align:left">
-            [% meal.name %]
+            [% meal.name | html %]
         [% IF meal.deletable %]
             <form action="[% c.project_uri('/meal/delete', meal.id) %]" method="POST" class="inline">
                 <input type="submit" value="Delete meal">
@@ -38,8 +38,8 @@
         <td></td>
         <td>
             <form action="[% c.project_uri('/meal/update', meal.id) %]" method="POST">
-                <input type="text" name="name"    value="[% meal.name %]">
-                <input type="text" name="comment" value="[% meal.comment %]" placeholder="comment">
+                <input type="text" name="name"    value="[% meal.name | html %]">
+                <input type="text" name="comment" value="[% meal.comment | html %]" placeholder="comment">
                 <input type="submit" value="Update meal">
             </form>
         </td>
@@ -48,7 +48,7 @@
     <tr>
         <td><input type="checkbox" name="dish[% dish.id %]"></td>
         <td>
-            <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)
+            <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)
             [%~ IF dish.comment; ': '; dish.comment | html; END %]
         </td>
     </tr>
@@ -66,7 +66,7 @@
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <select name="recipe">
         [% FOREACH recipe IN recipes %]
-                    <option value="[% recipe.id %]">[% recipe.name %]</option>
+                    <option value="[% recipe.id %]">[% recipe.name | html %]</option>
         [% END %]
                 </select>
                 <input type="number" name="servings" value="4">
