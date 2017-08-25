@@ -3,6 +3,10 @@
 [% FOR meal IN meals %]
 <h3>[% meal.name %]</h3>
 
+[% IF meal.comment %]
+    <p>[% meal.comment | html %]</p>
+[% END %]
+
     [% FOR dish IN meal.dishes %]
 
 <div class="dish">

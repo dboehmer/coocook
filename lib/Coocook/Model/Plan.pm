@@ -36,7 +36,7 @@ sub day {
                 project => $project,
             },
             {
-                columns  => [ 'id', 'name' ],
+                columns  => [ 'id', 'name', 'comment' ],
                 order_by => 'id',
             }
         );
@@ -45,6 +45,7 @@ sub day {
             push @meals,
               $meals{ $meal->id } = {
                 name            => $meal->name,
+                comment         => $meal->comment,
                 dishes          => [],
                 prepared_dishes => [],
               };
