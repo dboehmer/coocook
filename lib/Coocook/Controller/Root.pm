@@ -52,7 +52,7 @@ sub auto : Private {
     $c->stash( errors => $errors );
 }
 
-sub index : Path Args(0) {
+sub index : GET Path Args(0) {
     my ( $self, $c ) = @_;
 
     $c->go( $c->user ? 'dashboard' : 'homepage' );
