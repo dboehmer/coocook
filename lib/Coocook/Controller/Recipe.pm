@@ -41,14 +41,30 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     my $recipe = $c->stash->{recipe};
 
-    my $ingredients = $recipe->ingredients;
-    $ingredients = $ingredients->search(
-        undef,
-        {
-            prefetch => [qw< article unit >],
-            order_by => $ingredients->me('position'),
+    my @articles = $c->project->articles->sorted->all;
+    my @units    = $c->project->units->sorted->all;
+
+    my %articles = map { $_->id => $_ } @articles;
+    my %units    = map { $_->id => $_ } @units;
+
+    my @ingredients;
+    {
+        my $ingredients = $recipe->ingredients;
+        $ingredients = $ingredients->search( undef, { order_by => $ingredients->me('position') } );
+
+        while ( my $ingredient = $ingredients->next ) {
+            push @ingredients,
+              {
+                id             => $ingredient->id,
+                prepare        => $ingredient->prepare,
+                value          => $ingredient->value,
+                unit           => $units{ $ingredient->get_column('unit') },
+                article        => $articles{ $ingredient->get_column('article') },
+                comment        => $ingredient->comment,
+                reposition_url => $c->project_uri( '/recipe/reposition', $ingredient->id ),
+              };
         }
-    );
+    }
 
     my @dishes;
     {
@@ -72,11 +88,12 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     }
 
     $c->stash(
-        recipe      => $recipe,
-        ingredients => [ $ingredients->all ],
-        articles    => [ $c->project->articles->sorted->all ],
-        units       => [ $c->project->units->sorted->all ],
-        dishes      => \@dishes,
+        recipe             => $recipe,
+        articles           => \@articles,
+        units              => \@units,
+        ingredients        => \@ingredients,
+        dishes             => \@dishes,
+        add_ingredient_url => $c->project_uri( '/recipe/add', $recipe->id ),
     );
 }
 
