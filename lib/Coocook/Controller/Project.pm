@@ -77,10 +77,11 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     };
 
     $c->stash(
-        default_date => $default_date,
-        project      => $project,
-        recipes      => [ $project->recipes->sorted->all ],
-        days         => $days,
+        default_date          => $default_date,
+        project               => $project,
+        recipes               => [ $project->recipes->sorted->all ],
+        days                  => $days,
+        deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
 }
 
@@ -140,17 +141,22 @@ sub rename : POST Chained('base') Args(0) {
     $c->detach( redirect => [$project] );
 }
 
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    if ( $c->req->param('confirmation') eq $c->config->{project_deletion_confirmation} ) {
+        $c->project->delete;
+        $c->response->redirect( $c->uri_for_action('/index') );
+    }
+    else {
+        $c->response->redirect( $c->project_uri('/project/edit') );
+    }
+}
+
 sub redirect : Private {
     my ( $self, $c, $project ) = @_;
 
     $c->response->redirect( $c->uri_for_action( $self->action_for('edit'), [ $project->url_name ] ) );
-}
-
-#TODO: enable deletion of big projects?
-sub delete : Local Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Project')->find($id)->delete;
-    $c->response->redirect('/projects');
 }
 
 =encoding utf8

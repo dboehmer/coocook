@@ -153,3 +153,12 @@
         <input type="submit" value="Rename project">
     </fieldset>
 </form>
+
+<form method="POST" action="[% c.project_uri('/project/delete') %]">
+    <fieldset>
+        <legend>Delete project <em>[% project.name | html %]</em></legend>
+        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion.</p>
+        <input type="text" name="confirmation">
+        <input type="submit" value="Delete project">
+    </fieldset>
+</form>

@@ -96,6 +96,12 @@ a {
     color: #333333;
 }
 
+code {
+    background-color: LightGray;
+    border-radius: 0.25em;
+    padding:       0.25em;
+}
+
 .error {
     border: 2px solid red;
     padding: 0.5em;
