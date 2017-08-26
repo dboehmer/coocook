@@ -41,11 +41,10 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     my $recipe = $c->stash->{recipe};
 
-    my @articles = $c->project->articles->sorted->all;
-    my @units    = $c->project->units->sorted->all;
+    my ( $articles => $units ) = $c->project->articles_cached_units;
 
-    my %articles = map { $_->id => $_ } @articles;
-    my %units    = map { $_->id => $_ } @units;
+    my %articles = map { $_->id => $_ } @$articles;
+    my %units    = map { $_->id => $_ } @$units;
 
     my @ingredients;
     {
@@ -89,8 +88,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     $c->stash(
         recipe             => $recipe,
-        articles           => \@articles,
-        units              => \@units,
+        articles           => $articles,
+        units              => $units,
         ingredients        => \@ingredients,
         dishes             => \@dishes,
         add_ingredient_url => $c->project_uri( '/recipe/add', $recipe->id ),

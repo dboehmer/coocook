@@ -26,6 +26,8 @@ INSERT INTO 'articles' VALUES(1,1,'',NULL,NULL,NULL,'flour','');
 INSERT INTO 'articles' VALUES(2,1,'',NULL,NULL,NULL,'salt','');
 INSERT INTO 'articles' VALUES(3,1,'',NULL,NULL,NULL,'water','');
 INSERT INTO 'articles' VALUES(4,1,'',NULL,NULL,NULL,'cheese','');
+INSERT INTO 'articles' VALUES(5,1,'',NULL,NULL,NULL,'love',''); -- has no unit
+INSERT INTO 'articles' VALUES(6,2,'',NULL,NULL,NULL,'other article','');
 INSERT INTO 'meals' VALUES(1,1,'2000-01-01','breakfast','Best meal of the day!');
 INSERT INTO 'meals' VALUES(2,1,'2000-01-02','lunch','');
 INSERT INTO 'meals' VALUES(3,1,'2000-01-03','dinner','');

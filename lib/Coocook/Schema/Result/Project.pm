@@ -62,4 +62,38 @@ sub dishes {
     );
 }
 
+# fetch articles, units and cache their relationships
+# TODO add relationship unit->articles and set cache
+# TODO check for memory leaks, probably needs weaken()
+sub articles_cached_units {
+    my $self = shift;
+
+    my $articles = $self->articles;
+    my @articles = $articles->sorted->all;
+
+    my @units = $self->units->sorted->all;
+    my %units = map { $_->id => $_ } @units;
+
+    my %articles_units;
+
+    {
+        my $articles_units = $articles->articles_units;
+
+        while ( my $a_u = $articles_units->next ) {
+            my $a = $a_u->get_column('article');
+            my $u = $a_u->get_column('unit');
+
+            $a_u->related_resultset('unit')->set_cache( [ $units{$u} ] );
+
+            push @{ $articles_units{$a} }, $a_u;
+        }
+    }
+
+    for my $article (@articles) {
+        $article->related_resultset('articles_units')->set_cache( $articles_units{ $article->id } );
+    }
+
+    return \@articles, \@units;
+}
+
 1;
