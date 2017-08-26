@@ -1,0 +1,5 @@
+*.pl  linguist-language=Perl
+*.pm  linguist-language=Perl
+*.t   linguist-language=Perl
+*.tt  linguist-language=HTML
+*.sql linguist-language=SQL
