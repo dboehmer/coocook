@@ -22,6 +22,8 @@ __PACKAGE__->add_unique_constraints( [ 'project', 'name' ] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
+__PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish', 'from_recipe' );
+
 __PACKAGE__->has_many(
     ingredients => 'Coocook::Schema::Result::RecipeIngredient',
     undef,

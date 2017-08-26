@@ -50,11 +50,33 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         }
     );
 
+    my @dishes;
+    {
+        my $dishes = $recipe->dishes->search(
+            undef,
+            {
+                prefetch => 'meal',
+                order_by => 'meal.date',
+            }
+        );
+
+        while ( my $dish = $dishes->next ) {
+            push @dishes,
+              {
+                name => $dish->name,
+                meal => $dish->meal->name,
+                date => $dish->meal->date,
+                url  => $c->project_uri( '/dish/edit', $dish->id ),
+              };
+        }
+    }
+
     $c->stash(
         recipe      => $recipe,
         ingredients => [ $ingredients->all ],
         articles    => [ $c->project->articles->sorted->all ],
         units       => [ $c->project->units->sorted->all ],
+        dishes      => \@dishes,
     );
 }
 

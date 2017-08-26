@@ -1,4 +1,4 @@
-<h2>Recipe [% recipe.name | html %]</h2>
+<h2>Recipe <em>[% recipe.name | html %]</em></h2>
 
 <form action="[% c.project_uri('/recipe/update', recipe.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
@@ -70,3 +70,11 @@ Unit: <select name="unit">
 <input type="text" name="comment" placeholder="comment">
 <input type="submit" value="Add">
 </form>
+
+<h2>Where <em>[% recipe.name | html %]</em> is used</h2>
+
+<ul>
+[% FOR dish IN dishes %]
+    <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> for meal <em>[% dish.meal | html %]</em> on [% display_date(dish.date, {html=>1}) %]</li>
+[% END %]
+</ul>
