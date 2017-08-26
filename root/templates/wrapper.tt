@@ -29,6 +29,7 @@
 [% END %]
 
 [% IF project %]
+<a href="[% c.project_uri('/project/edit') %]"><li>Meals &amp; Dishes</li></a>
 <a href="[% c.project_uri('/recipe/index') %]"><li>Recipes</li></a>
 <a href="[% c.project_uri('/article/index') %]"><li>Articles</li></a>
 <a href="[% c.project_uri('/tag/index') %]"><li>Tags</li></a>
