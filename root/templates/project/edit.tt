@@ -101,17 +101,16 @@
     <legend>Manipulate selected dishes</legend>
     <p>Edit selected dishes and update their properties selected below with the respective value:</p>
 
-    <!-- TODO automatically check checkbox when changing input fields -->
     <p>
 	<input type="checkbox" name="edit_servings" id="edit_servings">
 	<label for="edit_servings">servings:</label>
-	<input type="number" name="new_servings" value="4"> <em>Automatically recalculates values.</em>
+	<input type="number" name="new_servings" value="4" oninput="document.getElementById('edit_servings').checked = true"> <em>Automatically recalculates values.</em>
     </p>
 
     <p>
 	<input type="checkbox" name="edit_comment" id="edit_comment">
 	<label for="edit_comment">comment:</label>
-	<input type="text" name="new_comment" placeholder="comment">
+	<input type="text" name="new_comment" placeholder="comment" oninput="document.getElementById('edit_comment').checked = true">
     </p>
 
     <input type="submit" name="update" value="Update selected dishes">
