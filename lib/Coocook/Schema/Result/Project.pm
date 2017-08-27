@@ -96,4 +96,16 @@ sub articles_cached_units {
     return \@articles, \@units;
 }
 
+=head2 other_projects
+
+Returns a resultset to all projects except itself.
+
+=cut
+
+sub other_projects {
+    my $self = shift;
+
+    return $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
+}
+
 1;

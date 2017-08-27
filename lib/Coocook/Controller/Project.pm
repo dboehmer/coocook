@@ -85,6 +85,25 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
+sub import : GET Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my @projects = $c->project->other_projects->all;
+
+    my @properties = (
+        {
+            key  => 'tags',
+            name => "Tags and Tag Groups",
+        },
+    );
+
+    $c->stash(
+        projects   => \@projects,
+        properties => \@properties,
+        import_url => 'foo',
+    );
+}
+
 sub edit_dishes : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
 
