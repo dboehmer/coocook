@@ -10,6 +10,7 @@ __PACKAGE__->load_components(
     qw<
       InflateColumn::DateTime
       +Coocook::Schema::Component::Result::Boolify
+      +Coocook::Schema::Component::Result::ResultsetRelationships
       >
 );
 

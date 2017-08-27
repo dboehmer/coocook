@@ -85,7 +85,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
-sub import : GET Chained('base') Args(0) {
+sub get_import : GET Chained('base') Args(0) {    # import() is already used by 'use'
     my ( $self, $c ) = @_;
 
     my @projects = $c->project->other_projects->all;
@@ -99,6 +99,8 @@ sub import : GET Chained('base') Args(0) {
         import_url      => 'foo',
     );
 }
+
+sub post_import : POST Chained('base') Args(0) { }
 
 sub edit_dishes : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;

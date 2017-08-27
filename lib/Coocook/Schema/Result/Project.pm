@@ -20,7 +20,7 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
-__PACKAGE__->has_many( articles       => 'Coocook::Schema::Result::Article' );
+__PACKAGE__->has_many( articles       => 'Coocook::Schema::Result::Article', 'project' );
 __PACKAGE__->has_many( meals          => 'Coocook::Schema::Result::Meal' );
 __PACKAGE__->has_many( purchase_lists => 'Coocook::Schema::Result::PurchaseList' );
 __PACKAGE__->has_many( quantities     => 'Coocook::Schema::Result::Quantity' );

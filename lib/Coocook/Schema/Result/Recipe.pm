@@ -26,7 +26,7 @@ __PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish', 'from_recipe' 
 
 __PACKAGE__->has_many(
     ingredients => 'Coocook::Schema::Result::RecipeIngredient',
-    undef,
+    'recipe',
     {
         cascade_delete => 1,    # TODO why does this not work?
     }

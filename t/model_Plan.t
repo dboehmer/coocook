@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use DateTime;
-use DBICx::TestDatabase;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
