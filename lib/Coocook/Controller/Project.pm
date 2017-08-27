@@ -90,17 +90,13 @@ sub import : GET Chained('base') Args(0) {
 
     my @projects = $c->project->other_projects->all;
 
-    my @properties = (
-        {
-            key  => 'tags',
-            name => "Tags and Tag Groups",
-        },
-    );
+    my $importer = $c->model('Importer');
 
     $c->stash(
-        projects   => \@projects,
-        properties => \@properties,
-        import_url => 'foo',
+        projects        => \@projects,
+        properties      => $importer->properties,
+        properties_json => $importer->properties_json,
+        import_url      => 'foo',
     );
 }
 
