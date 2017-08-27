@@ -85,7 +85,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
-sub get_import : GET Chained('base') Args(0) {    # import() is already used by 'use'
+sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() already used by 'use'
     my ( $self, $c ) = @_;
 
     my @projects = $c->project->other_projects->all;
@@ -96,11 +96,26 @@ sub get_import : GET Chained('base') Args(0) {    # import() is already used by 
         projects        => \@projects,
         properties      => $importer->properties,
         properties_json => $importer->properties_json,
-        import_url      => 'foo',
+        import_url      => $c->project_uri('/project/post_import'),
+        template        => 'project/import.tt',
     );
 }
 
-sub post_import : POST Chained('base') Args(0) { }
+sub post_import : POST Chained('base') PathPart('import') Args(0) { # import() already used by 'use'
+    my ( $self, $c ) = @_;
+
+    my $importer = $c->model('Importer');
+    my $source   = $c->model('DB::Project')->find( scalar $c->req->param('source_project') );
+    my $target   = $c->project;
+
+    # extract properties selected in form
+    my @properties =
+      grep { $c->req->param("property_$_") } map { $_->{key} } @{ $importer->properties };
+
+    $importer->import_data( $source => $target, \@properties );
+
+    $c->detach( redirect => [$target] );
+}
 
 sub edit_dishes : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
@@ -141,7 +156,8 @@ sub create : POST Local {
         $project->name( scalar $c->req->param('name') );
         $project->insert;
 
-        $c->detach( 'redirect', [$project] );
+        $c->response->redirect(
+            $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
     }
     else {
         $c->response->redirect( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );

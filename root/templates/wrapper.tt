@@ -39,6 +39,7 @@
 <a href="[% c.project_uri('/shop_section/index') %]"><li>Shop sections</li></a>
 <a href="[% c.project_uri('/quantity/index') %]"><li>Quantities</li></a>
 <a href="[% c.project_uri('/unit/index') %]"><li>Units</li></a>
+<a href="[% c.project_uri('/project/get_import') %]"><li>Import</li></a>
 [% END %]
 </ul>
 </nav>
