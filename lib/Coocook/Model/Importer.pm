@@ -100,15 +100,23 @@ sub import_data {                                   # import() is used by 'use'
 
             my $resultset = $rs->result_source->name;    # e.g. 'Project'
 
-            while ( my $row = $rs->next ) {
-                my %new_ids;
+            # Speeeeeeeed
+            my $hash_rs = $rs->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
+
+            while ( my $row = $hash_rs->next ) {
+                my $old_id = delete $row->{id};
 
                 while ( my ( $col => $rs_class ) = each %$translate ) {
-                    $new_ids{$col} = $new_id{$rs_class}{ $row->get_column($col) }
-                      || die "data missing for $rs_class " . $row->get_column($col);
+                    $row->{$col} = $new_id{$rs_class}{ $row->{$col} }
+                      || die "new ID missing for $rs_class $row->{$col}";
                 }
 
-                $new_id{$resultset}{ $row->id } = $row->copy( \%new_ids )->id;
+                if ( defined $old_id ) {    # TODO also check if rs is a dependency at all
+                    $new_id{$resultset}{$old_id} = $rs->create($row)->id;
+                }
+                else {
+                    $rs->populate( [$row] );    # TODO buffer $row's
+                }
             }
         }
     }
