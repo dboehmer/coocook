@@ -27,6 +27,8 @@ subtest properties => sub {
     is $depends_on => $dependency_of, "depends_on == dependency_of";
 };
 
+like $importer->properties_json => qr/^\[\{"/, "->properties_json looks like a JSON string";
+
 subtest import_data => sub {
     dies_ok { $importer->import_data() } "dies without arguments";
 
