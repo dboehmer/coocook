@@ -91,32 +91,52 @@ sub import_data {                                   # import() is used by 'use'
     for my $property (@properties) {
         $requested_props{ $property->{key} } or next;
 
-        # accept coderef or arrayref of coderefs
-        my ($imports) = map { ref eq 'ARRAY' ? $_ : [$_] } $property->{import};
+        # is any property requested that depends on this property?
+        my $is_dependency = !!grep { $requested_props{$_} } @{ $property->{dependency_of} };
 
-        for my $import (@$imports) {
+        # accept coderef or arrayref of coderefs
+        my @imports = map { ref eq 'ARRAY' ? @$_ : $_ } $property->{import};
+
+        while ( my $import = shift @imports ) {
             my ( $rs, $translate ) = $import->($source);
             $translate ||= { project => 'Project' };
+
+            # does that table have an 'id' column?
+            my $has_id = exists $rs->result_source->columns_info->{id};
 
             my $resultset = $rs->result_source->name;    # e.g. 'Project'
 
             # Speeeeeeeed
             my $hash_rs = $rs->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
 
-            while ( my $row = $hash_rs->next ) {
-                my $old_id = delete $row->{id};
+            # if ID exists, might be necessary for depending properties or remaining @imports
+            if ( $is_dependency or @imports and $has_id ) {    # probably need to store new IDs
+                while ( my $row = $hash_rs->next ) {
+                    my $old_id = delete $row->{id};
 
-                while ( my ( $col => $rs_class ) = each %$translate ) {
-                    $row->{$col} = $new_id{$rs_class}{ $row->{$col} }
-                      || die "new ID missing for $rs_class $row->{$col}";
-                }
+                    while ( my ( $col => $rs_class ) = each %$translate ) {
+                        $row->{$col} = $new_id{$rs_class}{ $row->{$col} }
+                          || die "new ID missing for $rs_class $row->{$col}";
+                    }
 
-                if ( defined $old_id ) {    # TODO also check if rs is a dependency at all
                     $new_id{$resultset}{$old_id} = $rs->create($row)->id;
                 }
-                else {
-                    $rs->populate( [$row] );    # TODO buffer $row's
+            }
+            else {                                             # IDs don't matter -> go even faster
+                my @buffer;
+
+                while ( my $row = $hash_rs->next ) {
+                    delete $row->{id};
+
+                    while ( my ( $col => $rs_class ) = each %$translate ) {
+                        $row->{$col} = $new_id{$rs_class}{ $row->{$col} }
+                          || die "new ID $rs_class $row->{$col} missing for new $resultset";
+                    }
+
+                    push @buffer, $row;
                 }
+
+                $rs->populate( \@buffer );    # must be in void context to save time!
             }
         }
     }
