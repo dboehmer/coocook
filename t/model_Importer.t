@@ -29,15 +29,26 @@ subtest properties => sub {
 
 like $importer->properties_json => qr/^\[\{"/, "->properties_json looks like a JSON string";
 
-subtest import_data => sub {
-    dies_ok { $importer->import_data() } "dies without arguments";
+dies_ok { $importer->import_data() } "import_data() dies without arguments";
 
-    my $source = $db->resultset('Project')->find(1);
-    my $target = $db->resultset('Project')->create( { name => "Import Target" } );
+my $source = $db->resultset('Project')->find(1);
+my $target = $db->resultset('Project')->create( { name => "Import Target" } );
 
-    throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
-    throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;
-    throws_ok { $importer->import_data( $source => $target, ['recipes'] ) } qr/require|depend/i;
+throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
+throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;
+throws_ok { $importer->import_data( $source => $target, ['recipes'] ) } qr/require|depend/i;
+
+subtest "empty import" => sub {
+    my $records_before = _count_records();
+
+    ok $importer->import_data( $source => $target, [] );
+
+    my $records_after = _count_records();
+    is $records_before => $records_after, "records before == records after";
+};
+
+subtest "complete import" => sub {
+    my $records_before = _count_records();
 
     my @all = map { $_->{key} } @{ $importer->properties };
     ok $importer->import_data( $source => $target, \@all );
@@ -55,10 +66,22 @@ subtest import_data => sub {
         units              => sub { shift->units },
     );
 
+    my $records_expected = 0;
+
     for my $related ( sort keys %related ) {
-        my $count = $related{$related}->($source)->count;
+        $records_expected += my $count = $related{$related}->($source)->count;
         is $related{$related}->($target) => $count, "created $count $related";
     }
+
+    my $records_after = _count_records();
+    is $records_before+ $records_expected => $records_after, "records before + expected == after";
 };
 
 done_testing;
+
+sub _count_records {
+    my $records = 0;
+    $records += $db->resultset($_)->count for $db->sources;
+
+    return $records;
+}
