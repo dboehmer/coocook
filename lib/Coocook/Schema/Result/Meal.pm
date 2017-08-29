@@ -21,7 +21,7 @@ __PACKAGE__->add_unique_constraints( [qw<project date name>] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
-__PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish' );
+__PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish', 'meal' );
 
 __PACKAGE__->has_many(
     prepared_dishes => 'Coocook::Schema::Result::Dish',

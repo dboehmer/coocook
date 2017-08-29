@@ -21,7 +21,7 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
 __PACKAGE__->has_many( articles       => 'Coocook::Schema::Result::Article', 'project' );
-__PACKAGE__->has_many( meals          => 'Coocook::Schema::Result::Meal' );
+__PACKAGE__->has_many( meals          => 'Coocook::Schema::Result::Meal', 'project' );
 __PACKAGE__->has_many( purchase_lists => 'Coocook::Schema::Result::PurchaseList' );
 __PACKAGE__->has_many( quantities     => 'Coocook::Schema::Result::Quantity' );
 __PACKAGE__->has_many( recipes        => 'Coocook::Schema::Result::Recipe' );
@@ -29,6 +29,25 @@ __PACKAGE__->has_many( shop_sections  => 'Coocook::Schema::Result::ShopSection' 
 __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
+
+before delete => sub { # TODO solve workaround
+    my $self = shift;
+
+    $self->articles->article_tags->delete;
+    $self->articles->articles_units->delete;
+    $self->meals->dishes->ingredients->delete;
+    $self->meals->dishes->delete;
+    $self->meals->delete;
+    $self->recipes->ingredients->delete;
+    $self->recipes->recipe_tags->delete;
+    $self->recipes->delete;
+    $self->articles->delete;
+    $self->shop_sections->delete;
+    $self->units->delete;
+    $self->quantities->delete;
+    $self->tags->delete;
+    $self->tag_groups->delete;
+};
 
 # trigger for generating url_name[_fc]
 before store_column => sub {
