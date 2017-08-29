@@ -26,10 +26,16 @@ my @properties = (
         name   => "Articles",
         import => sub { shift->articles },
     },
+    {    # TODO make cross tables work implicitly if all dependencies are enabled
+        key        => 'articles_units',
+        name       => "Articles x Units",
+        depends_on => [ 'articles', 'units' ],
+        import     => sub { shift->articles->articles_units, { article => 'articles', unit => 'units' } },
+    },
     {
         key        => 'recipes',
         name       => "Recipes",
-        depends_on => [ 'articles', 'units' ],
+        depends_on => [ 'articles', 'units', 'articles_units' ],
         import     => [
             sub { shift->recipes },
             sub {

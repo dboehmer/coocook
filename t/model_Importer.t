@@ -49,33 +49,29 @@ subtest "empty import" => sub {
 };
 
 subtest "complete import" => sub {
-    my $records_before = $db->count;
+    my @not_imported = qw< Dish DishIngredient DishTag IngredientItem Item Meal Project PurchaseList >;
+    my %not_imported = map { $_ => 1 } @not_imported;
+    my @imported     = grep { not $not_imported{$_} } $db->sources;
+
+    my $records1 = $db->count(@imported);
 
     my @all = map { $_->{key} } @{ $importer->properties };
     ok $importer->import_data( $source => $target, \@all );
 
-    my %related = (
-        articles           => sub { shift->articles },
-        articles_tags      => sub { shift->articles->tags },
-        quantities         => sub { shift->quantities },
-        recipes            => sub { shift->recipes },
-        recipe_ingredients => sub { shift->recipes->ingredients },
-        recipe_tags        => sub { shift->recipes->tags },
-        shop_sections      => sub { shift->shop_sections },
-        tags               => sub { shift->tags },
-        tag_groups         => sub { shift->tag_groups },
-        units              => sub { shift->units },
-    );
+    my $records2 = $db->count(@imported);
 
-    my $records_expected = 0;
+    $source->delete();    # delete source project and data
 
-    for my $related ( sort keys %related ) {
-        $records_expected += my $count = $related{$related}->($source)->count;
-        is $related{$related}->($target) => $count, "created $count $related";
-    }
+    my $records3 = $db->count(@imported);
 
-    my $records_after = $db->count;
-    is $records_before+ $records_expected => $records_after, "records before + expected == after";
+    my $deleted  = $records2 - $records3;
+    my $imported = $records2 - $records1;
+
+    is $imported => $deleted,
+      "rows imported == rows deleted"
+      and return;
+
+    note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
 };
 
 done_testing;
