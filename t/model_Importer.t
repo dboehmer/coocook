@@ -39,16 +39,16 @@ throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknow
 throws_ok { $importer->import_data( $source => $target, ['recipes'] ) } qr/require|depend/i;
 
 subtest "empty import" => sub {
-    my $records_before = _count_records();
+    my $records_before = $db->count;
 
     ok $importer->import_data( $source => $target, [] );
 
-    my $records_after = _count_records();
+    my $records_after = $db->count;
     is $records_before => $records_after, "records before == records after";
 };
 
 subtest "complete import" => sub {
-    my $records_before = _count_records();
+    my $records_before = $db->count;
 
     my @all = map { $_->{key} } @{ $importer->properties };
     ok $importer->import_data( $source => $target, \@all );
@@ -73,15 +73,8 @@ subtest "complete import" => sub {
         is $related{$related}->($target) => $count, "created $count $related";
     }
 
-    my $records_after = _count_records();
+    my $records_after = $db->count;
     is $records_before+ $records_expected => $records_after, "records before + expected == after";
 };
 
 done_testing;
-
-sub _count_records {
-    my $records = 0;
-    $records += $db->resultset($_)->count for $db->sources;
-
-    return $records;
-}

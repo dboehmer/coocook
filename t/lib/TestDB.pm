@@ -10,9 +10,15 @@ sub new {
 
     my $self = $class->SUPER::new( 'Coocook::Schema', @_ );
 
+    # store original position, see https://stackoverflow.com/a/4459682/498634
+    my $data_start = tell DATA;
+
     while (<DATA>) {
         $self->storage->dbh_do( sub { $_[1]->do($_) } );
     }
+
+    # reset DATA filehandle to original position
+    seek DATA, $data_start, 0;
 
     return $self;
 }

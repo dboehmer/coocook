@@ -17,4 +17,12 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->load_namespaces( default_resultset_class => '+Coocook::Schema::ResultSet' );
 
+sub count {
+    my $self = shift;
+
+    my $records = 0;
+    $records += $self->resultset($_)->count for $self->sources;
+    return $records;
+}
+
 1;
