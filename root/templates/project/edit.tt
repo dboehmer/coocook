@@ -130,6 +130,7 @@
 <form>
 <fieldset>
     <legend>Mass create meals</legend>
+    <p><strong>TODO This feature is broken and does nothing at all!</strong></p>
     <p>Create each meal entered below for all dates between <em>from date</em> and <em>until date</em> inclusively.</p>
     <input type="date" name="from"  placeholder="from date">
     <input type="date" name="until" placeholder="until date">
