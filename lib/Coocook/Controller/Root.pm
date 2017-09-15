@@ -32,11 +32,8 @@ The root page (/)
 sub begin : Private {
     my ( $self, $c ) = @_;
 
-    if ( my $id = $c->session->{project} ) {
-        $c->stash( my_project => $c->model('DB::Project')->find($id) );
-    }
-    else {
-        $c->response->redirect( $c->uri_for_action('/project/index') );
+    if ( my $user = $c->user ) {
+        $c->stash( user => { name => $user->id } );
     }
 }
 
@@ -55,8 +52,22 @@ sub auto : Private {
     $c->stash( errors => $errors );
 }
 
-sub index : Path : Args(0) {
+sub index : GET Path Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->go( $c->user ? 'dashboard' : 'homepage' );
+}
+
+sub homepage : Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash( projects => [ $c->model('DB::Project')->all ] );
+}
+
+sub dashboard : Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash( projects => [ $c->model('DB::Project')->all ] );
 }
 
 =head2 default

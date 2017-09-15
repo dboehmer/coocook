@@ -9,6 +9,7 @@ __PACKAGE__->table("articles");
 
 __PACKAGE__->add_columns(
     id                => { data_type => 'int', is_auto_increment => 1 },
+    project           => { data_type => 'int' },
     shop_section      => { data_type => 'int', is_nullable       => 1 },
     shelf_life_days   => { data_type => 'int', is_nullable       => 1 },
     preorder_servings => { data_type => 'int', is_nullable       => 1 },
@@ -19,7 +20,9 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-__PACKAGE__->add_unique_constraint( ['name'] );
+__PACKAGE__->add_unique_constraint( [ 'project', 'name' ] );
+
+__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to( shop_section => 'Coocook::Schema::Result::ShopSection' );
 
@@ -36,6 +39,13 @@ __PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIng
 __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
+
+sub tags_joined {
+    my $self = shift;
+
+    # TODO implement with get_column if not prefetched
+    return join " ", map { $_->name } $self->tags;
+}
 
 sub unit_ids {
     my $self = shift;

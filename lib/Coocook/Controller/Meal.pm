@@ -17,43 +17,49 @@ Catalyst Controller.
 
 =cut
 
-sub delete : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
-
-    my $meal = $c->model('DB::Meal')->find($id);
-    $meal->delete;
-    $c->detach( redirect => [$meal] );
-}
-
-sub create : Local Args(0) POST {
+sub create : POST Chained('/project/base') PathPart('meals/create') Args(0) {
     my ( $self, $c ) = @_;
-    my $meal = $c->model('DB::Meal')->create(
-        {
-            project => scalar $c->req->param('project'),
+
+    my $meal = $c->project->create_related(
+        meals => {
             date    => scalar $c->req->param('date'),
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->detach( redirect => [$meal] );
+    $c->detach('redirect');
 }
 
-sub update : Local Args(1) POST {
+sub base : Chained('/project/base') PathPart('meals') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
-    my $meal = $c->model('DB::Meal')->find($id);
 
-    $meal->update(
+    $c->stash( meal => $c->project->meals->find($id) );    # TODO error handling
+}
+
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c, $id ) = @_;
+
+    $c->stash->{meal}->update(
         {
             name    => scalar $c->req->param('name'),
             comment => scalar $c->req->param('comment'),
         }
     );
-    $c->detach( redirect => [$meal] );
+
+    $c->detach('redirect');
+}
+
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{meal}->delete();
+    $c->detach('redirect');
 }
 
 sub redirect : Private {
-    my ( $self, $c, $meal ) = @_;
-    $c->response->redirect( $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
+    my ( $self, $c ) = @_;
+
+    $c->response->redirect( $c->project_uri('/project/edit') );
 }
 
 =encoding utf8

@@ -25,6 +25,7 @@ use Catalyst qw/
   Session
   Session::Store::FastMmap
   Session::State::Cookie
+  Authentication
   StackTrace
   Static::Simple
   /;
@@ -46,14 +47,50 @@ $ENV{CATALYST_DEBUG}
 __PACKAGE__->config(
     name => 'Coocook',
 
+    project_deletion_confirmation => "I really want to loose my project",
+
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header
+
+    'Plugin::Authentication' => {
+        default => {
+            credential => {
+                class          => 'Password',
+                password_field => 'password',
+                password_type  => 'clear',
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    coocook => { password => "coocook" }
+                },
+            },
+        }
+    },
 
     'View::TT' => {
         INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
     },
 );
+
+# custom helper
+# TODO maybe move to designated helper module?
+sub project_uri {
+    my $c      = shift;
+    my $action = shift;
+
+    my $project = $c->stash->{project} || die;
+
+    return $c->uri_for_action( $action, [ $project->url_name, @_ ] );
+}
+
+# another helper
+sub project {
+    my $c = shift;
+
+    $c->stash->{project};
+}
 
 # Start the application
 __PACKAGE__->setup();

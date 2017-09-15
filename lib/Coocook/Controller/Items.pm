@@ -18,10 +18,10 @@ Catalyst Controller.
 
 =cut
 
-sub unassigned : Local Args(0) {
+sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{my_project};
+    my $project = $c->project;
 
     my $ingredients = $project->meals->dishes->ingredients->unassigned->search(
         undef,
@@ -50,7 +50,7 @@ sub unassigned : Local Args(0) {
     );
 }
 
-sub assign : Local Args(0) POST {
+sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->forward('unassigned');
@@ -69,19 +69,20 @@ sub assign : Local Args(0) POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('unassigned') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('unassigned') ) );
 }
 
-sub convert : Local POST Args(2) {
-    my ( $self, $c, $item_id => $unit_id ) = @_;
+sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1) {
+    my ( $self, $c, $item_id ) = @_;
 
-    my $item = $c->model('DB::Item')->find($item_id);
-    my $unit = $c->model('DB::Unit')->find($unit_id);
+    my $item = $c->project->purchase_lists->items->find($item_id);    # TODO error handling
+
+    my $unit = $c->project->units->find( scalar $c->req->param('unit') );    # TODO error handling
 
     $item->convert($unit);
 
     $c->response->redirect(
-        $c->uri_for_action( '/purchase_list/edit', $item->get_column('purchase_list') ) );
+        $c->project_uri( '/purchase_list/edit', $item->get_column('purchase_list') ) );
 }
 
 =encoding utf8

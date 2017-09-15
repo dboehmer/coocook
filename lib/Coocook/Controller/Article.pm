@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub auto : Private {
+sub project_data : Private {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -30,7 +30,7 @@ sub auto : Private {
         default_preorder_workdays => 3,
     );
 
-    my $quantities = $c->model('DB::Quantity');
+    my $quantities = $c->project->quantities;
     $quantities = $quantities->search(
         undef,
         {
@@ -40,29 +40,38 @@ sub auto : Private {
     );
 
     $c->stash(
-        shop_sections => [ $c->model('DB::ShopSection')->sorted->all ],
+        shop_sections => [ $c->project->shop_sections->sorted->all ],
         quantities    => [ $quantities->all ],
     );
 }
 
-sub index : Path('/articles') : Args(0) {
+sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $articles = $c->model('DB::Article')->sorted;
+    my $articles = $c->project->articles->sorted->search( undef, { prefetch => 'shop_section' } );
 
-    $c->stash( articles => $articles );
+    $c->forward('project_data');
+    $c->stash( articles => [ $articles->all ] );
 }
 
-sub edit : GET Path Args(1) {
+sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $article = $c->model('DB::Article')->find($id)
-      or die "Can't find article";    # TODO serious error message
+    $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
+}
+
+sub edit : GET Chained('base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->forward('project_data');
+
+    my $article = $c->stash->{article}
+      or die "Can't find article";                               # TODO serious error message
 
     # collect related recipes linked to dishes and independent dishes
     my $dishes = $article->dishes;
     $dishes = $dishes->search( undef, { order_by => $dishes->me('name'), prefetch => 'meal' } );
-    my $recipes = $article->recipes->search( undef, { order_by => 'name' } );
+    my $recipes = $article->recipes->sorted;
 
     my @dishes;
     my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
@@ -86,7 +95,7 @@ sub edit : GET Path Args(1) {
     );
 }
 
-sub create : Local : POST {
+sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
     my ( $self, $c, $id ) = @_;
 
     my $units = $c->model('DB::Unit')->search(
@@ -131,25 +140,27 @@ sub create : Local : POST {
     $c->detach('redirect');
 }
 
-sub delete : Local : Args(1) : POST {
-    my ( $self, $c, $id ) = @_;
-    $c->model('DB::Article')->find($id)->delete;
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{article}->delete();
     $c->detach('redirect');
 }
 
-sub update : POST Path Args(1) {
-    my ( $self, $c, $id ) = @_;
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $units = $c->model('DB::Unit')->search(
+    my $units = $c->project->units->search(
         {
             id => { -in => [ $c->req->param('units') ] },
         }
     );
 
-    my $tags =
-      $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
+    my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
 
-    my $article = $c->model('DB::Article')->find($id);
+    my $shop_section = $c->project->shop_sections->find( scalar $c->req->param('shop_section') );
+
+    my $article = $c->stash->{article};
 
     $c->model('DB')->schema->txn_do(
         sub {
@@ -159,7 +170,7 @@ sub update : POST Path Args(1) {
                 {
                     name         => scalar $c->req->param('name'),
                     comment      => scalar $c->req->param('comment'),
-                    shop_section => scalar $c->req->param('shop_section'),
+                    shop_section => $shop_section ? $shop_section->id : undef,
                 }
             );
             if ( scalar $c->req->param('shelf_life') ) {
@@ -193,7 +204,7 @@ sub update : POST Path Args(1) {
 sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 =encoding utf8

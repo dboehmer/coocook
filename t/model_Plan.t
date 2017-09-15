@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use DateTime;
-use DBICx::TestDatabase;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
@@ -20,7 +19,10 @@ my $plan = new_ok 'Coocook::Model::Plan', [ schema => $db ];
 my $day = $plan->day( 1, DateTime->new( year => 2000, month => 1, day => 1 ) );
 is_deeply $day => [
     {
-        'dishes' => [
+        name            => 'breakfast',
+        comment         => "Best meal of the day!",
+        prepared_dishes => [],
+        dishes          => [
             {
                 'description' => 'Make them really sweet!',
                 'id'          => 1,
@@ -70,8 +72,6 @@ is_deeply $day => [
                 'servings'    => 4
             }
         ],
-        'name'            => 'breakfast',
-        'prepared_dishes' => []
     }
   ],
   "day()"

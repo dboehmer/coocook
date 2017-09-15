@@ -24,13 +24,10 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path('/purchase_lists') Args(0) {
+sub index : GET Chained('/project/base') PathPart('purchase_lists') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{my_project};
-
-    my $lists =
-      $c->model('DB::PurchaseList')->search( { project => $project->id } );
+    my $lists = $c->project->purchase_lists;
 
     my $max_date = do {
         my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->first;
@@ -45,16 +42,20 @@ sub index : Path('/purchase_lists') Args(0) {
 
     $c->stash(
         default_date => $default_date,
-        lists        => $lists->search( undef, { order_by => 'date' } ),
+        lists        => [ $lists->sorted->all ],
     );
 }
 
-sub edit : Path Args(1) {
+sub base : Chained('/project/base') PathPart('purchase_list') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $list = $c->model('DB::PurchaseList')->find($id);
+    $c->stash( list => $c->project->purchase_lists->find($id) );    # TODO error handling
+}
 
-    my @items = $list->items->all;
+sub edit : GET Chained('base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my @items = $c->stash->{list}->items->all;
 
     my %units = map { $_->id => $_ } $c->model('DB::Unit')->all;
 
@@ -101,34 +102,26 @@ sub edit : Path Args(1) {
     }
 
     # sort sections
-    my $sections = [ sort { $a->{name} cmp $b->{name} } values %sections ];
-
-    $c->stash(
-        list     => $list,
-        sections => $sections,
-    );
+    $c->stash( sections => [ sort { $a->{name} cmp $b->{name} } values %sections ] );
 }
 
-sub create : Local POST {
+sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->model('DB::PurchaseList')->create(
-        {
-            date    => scalar $c->req->param('date'),
-            name    => scalar $c->req->param('name'),
-            project => scalar $c->req->param('project'),
+    $c->project->create_related(
+        purchase_lists => {
+            date => scalar $c->req->param('date'),
+            name => scalar $c->req->param('name'),
         }
     );
 
     $c->detach('redirect');
 }
 
-sub update : Args(1) Local POST {
-    my ( $self, $c, $id ) = @_;
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $list = $c->model('DB::PurchaseList')->find($id);
-
-    $list->update(
+    $c->stash->{list}->update(
         {
             name => scalar $c->req->param('name'),
         }
@@ -137,10 +130,10 @@ sub update : Args(1) Local POST {
     $c->detach('redirect');
 }
 
-sub delete : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub delete : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    $c->model('DB::PurchaseList')->find($id)->delete;
+    $c->stash->{list}->delete();
 
     $c->detach('redirect');
 }
@@ -148,7 +141,7 @@ sub delete : Local Args(1) POST {
 sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('index') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 =encoding utf8

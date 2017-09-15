@@ -17,13 +17,20 @@ Catalyst Controller.
 
 =cut
 
-sub edit : Path Args(1) {
+sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('DB::Dish')->search( undef, { prefetch => 'meal' } )->find($id);
+    # TODO error handling
+    $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id) );
+}
+
+sub edit : GET Chained('base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $dish = $c->stash->{dish};
 
     # candidate meals for preparing this dish: same day or earlier
-    my $meals         = $c->model('DB::Meal');
+    my $meals         = $c->project->meals;
     my $prepare_meals = $meals->search(
         {
             id   => { '!=' => $dish->meal->id },
@@ -37,28 +44,29 @@ sub edit : Path Args(1) {
     $c->stash(
         dish          => $dish,
         ingredients   => [ $dish->ingredients_ordered->all ],
-        articles      => [ $c->model('DB::Article')->all ],
-        units         => [ $c->model('DB::Unit')->sorted->all ],
+        articles      => [ $c->project->articles->all ],
+        units         => [ $c->project->units->sorted->all ],
         prepare_meals => [ $prepare_meals->all ],
     );
 }
 
-sub delete : Local Args(1) POST {
+sub delete : Local Args(1) POST {    # TODO fix
     my ( $self, $c, $id ) = @_;
 
-    my $dish = $c->model('DB::Dish')->find($id);
+    my $dish = $c->project->dishes->find($id);
 
     $dish->delete;
 
-    $c->response->redirect( $c->uri_for_action( '/meal/edit', $dish->get_column('meal') ) );
+    $c->response->redirect( $c->project_uri( '/meal/edit', $dish->get_column('meal') ) );
 }
 
-sub create : Local Args(0) POST {
+sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $dish = $c->model('DB::Dish')->create(
-        {
-            meal            => scalar $c->req->param('meal'),
+    my $meal = $c->project->meals->find( scalar scalar $c->req->param('meal') );
+
+    my $dish = $meal->create_related(
+        dishes => {
             servings        => scalar $c->req->param('servings'),
             name            => scalar $c->req->param('name'),
             description     => scalar $c->req->param('description') // "",
@@ -68,16 +76,16 @@ sub create : Local Args(0) POST {
         }
     );
 
-    $c->response->redirect( $c->uri_for_action( '/dish/edit', $dish->id ) );
+    $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub from_recipe : Local Args(0) POST {
+sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $meal   = $c->model('DB::Meal')->find( scalar $c->req->param('meal') );
-    my $recipe = $c->model('DB::Recipe')->find( scalar $c->req->param('recipe') );
+    my $meal   = $c->project->meals->find( scalar $c->req->param('meal') );
+    my $recipe = $c->project->recipes->find( scalar $c->req->param('recipe') );
 
-    $c->model('DB::Dish')->from_recipe(
+    my $dish = $c->model('DB::Dish')->from_recipe(
         $recipe,
         (
             meal     => $meal->id,
@@ -86,25 +94,26 @@ sub from_recipe : Local Args(0) POST {
         )
     );
 
-    $c->response->redirect( $c->uri_for_action( '/project/edit', $meal->get_column('project') ) );
+    $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub recalculate : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub recalculate : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $dish = $c->model('DB::Dish')->find($id);
+    my $dish = $c->stash->{dish};
 
     $dish->recalculate( scalar $c->req->param('servings') );
 
-    $c->detach( redirect => [$id] );
+    $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub add : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub add : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    $c->model('DB::DishIngredient')->create(
-        {
-            dish    => $id,
+    my $dish = $c->stash->{dish};
+
+    $dish->create_related(
+        ingredients => {
             article => scalar $c->req->param('article'),
             value   => scalar $c->req->param('value'),
             unit    => scalar $c->req->param('unit'),
@@ -113,13 +122,13 @@ sub add : Local Args(1) POST {
         }
     );
 
-    $c->detach( redirect => [$id] );
+    $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub update : Local Args(1) POST {
-    my ( $self, $c, $id ) = @_;
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $dish = $c->model('DB::Dish')->find($id);
+    my $dish = $c->stash->{dish};
 
     $c->model('DB')->schema->txn_do(
         sub {
@@ -135,7 +144,7 @@ sub update : Local Args(1) POST {
                 }
             );
 
-            my $tags = $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
+            my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
             $dish->set_tags( [ $tags->all ] );
 
             for my $ingredient ( $dish->ingredients->all ) {
@@ -160,13 +169,13 @@ sub update : Local Args(1) POST {
         }
     );
 
-    $c->detach( redirect => [$id] );
+    $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub reposition : POST Local Args(1) {
+sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposition') Args(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $ingredient = $c->model('DB::DishIngredient')->find($id);
+    my $ingredient = $c->project->dishes->ingredients->find($id);
 
     if ( $c->req->param('up') ) {
         $ingredient->move_previous();
@@ -184,8 +193,7 @@ sub reposition : POST Local Args(1) {
 sub redirect : Private {
     my ( $self, $c, $id, $fragment ) = @_;
 
-    $c->response->redirect(
-        $c->uri_for_action( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('edit'), $id ) . ( $fragment // '' ) );
 }
 
 =encoding utf8

@@ -1,6 +1,6 @@
 <h2>Units</h2>
 
-<form action="[% c.uri_for_action('/unit/create') %]" method="POST">
+<form action="[% c.project_uri('/unit/create') %]" method="POST">
 <fieldset>
     <legend>Create new unit</legend>
 
@@ -23,7 +23,7 @@
         <label for="new_quantity">Quantity:</label>
         <select id="new_quantity" name="quantity">
         [% FOR quantity IN quantities %]
-            <option value="[% quantity.id %]">[% quantity.name; IF quantity.default_unit; ' (default unit: '; quantity.default_unit.long_name; ')'; END %]</option>
+            <option value="[% quantity.id %]">[% quantity.name | html; IF quantity.default_unit; ' (default unit: '; quantity.default_unit.long_name | html; ')'; END %]</option>
         [% END %]
         </select>
     </p>
@@ -42,31 +42,33 @@
 <th>Quantity</th>
 <th>Unit</th>
 <th colspan="2">Conversion</th>
-<th colspan="3">Actions</th>
+<th colspan="2">Actions</th>
 </tr>
 [% FOR unit IN units.all;
     quantity = unit.quantity;
     default_unit = quantity.default_unit %]
 <tr>
-<td>[% quantity.name %]</td>
-<td>[% '<strong>' IF unit.is_quantity_default; unit.short_name %] ([% unit.long_name %])[% '</strong>' IF unit.is_quantity_default %]</td>
+<td>[% quantity.name | html %]</td>
+<td>
+    <a href="[% c.project_uri('/unit/edit', unit.id) %]">
+    [%~ '<strong>'  IF unit.is_quantity_default ~%]
+    [% unit.short_name | html %] ([% unit.long_name | html %])
+    [%~ '</strong>' IF unit.is_quantity_default ~%]
+    </a>
+</td>
 [% IF unit.to_quantity_default AND NOT unit.is_quantity_default %]
     <td>[% display_value_unit(1, unit, {html=>1}) %] = [% display_value_unit(unit.to_quantity_default, default_unit, {html=>1}) %]</td>
     <td>[% display_value_unit(1 / unit.to_quantity_default, unit, {html=>1}) %] = [% display_value_unit(1, default_unit, {html=>1}) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
-    <td><form action="[% c.uri_for_action('/unit/edit', unit.id) %]" method="GET" class="inline">
-		<input type="submit" value="Edit">
-	</form>
-    </td>
     <td>
 [% IF unit.quantity AND NOT unit.is_quantity_default %]
-        <form action="[% c.uri_for_action('/unit/make_quantity_default', unit.id) %]" method="POST" class="inline">
+        <form action="[% c.project_uri('/unit/make_quantity_default', unit.id) %]" method="POST" class="inline">
             <input type="submit" value="Make quantity's default">
         </form>
 [% END %]
     </td>
     <td>
-        <form action="[% c.uri_for_action('/unit/delete', unit.id) %]" method="POST" class="inline">
+        <form action="[% c.project_uri('/unit/delete', unit.id) %]" method="POST" class="inline">
             <input type="submit" value="Delete">
         </form>
     </td>

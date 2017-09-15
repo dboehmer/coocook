@@ -1,0 +1,21 @@
+<p>Logged in as [% user.name | html %].</p>
+
+<form method="POST" action="[% c.uri_for_action('/logout') %]">
+    <input type="submit" value="Logout">
+</form>
+
+<h2>My projects</h2>
+
+<ul>
+[% FOR proj IN projects; # don't overwrite $project! %]
+    <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
+[% END %]
+</ul>
+
+<form method="POST" action="[% c.uri_for_action('/project/create') %]">
+<fieldset>
+    <legend>Create new project</legend>
+    <input type="text" name="name" placeholder="name">
+    <input type="submit" value="Create project">
+</fieldset>
+</form>

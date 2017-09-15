@@ -1,19 +1,19 @@
-<h2>Tag [% tag.name %]</h2>
+<h2>Tag [% tag.name | html %]</h2>
 
 [% IF tag.deletable %]
-<form action="[% c.uri_for_action('/tag/delete', tag.id) %]" method="POST">
+<form action="[% c.project_uri('/tag/delete', tag.id) %]" method="POST">
     <input type="submit" value="Delete Tag">
 </form>
 [% END %]
 
-<form action="[% c.uri_for_action('/tag/update', tag.id) %]" method="POST">
+<form action="[% c.project_uri('/tag/update', tag.id) %]" method="POST">
     <fieldset>
         <legend>Edit Tag</legend>
-        <input type="text" name="name" value="[% tag.name %]">
+        <input type="text" name="name" value="[% tag.name | html %]">
         <select name="tag_group">
             <option value="">(no tag group)</option>
-[% WHILE(group = groups.next) %]
-            <option value="[% group.id %]" [% 'selected' IF group.id == tag.tag_group.id %]>[% group.name %]</option>
+[% FOR group IN groups %]
+            <option value="[% group.id %]" [% 'selected' IF group.id == tag.tag_group.id %]>[% group.name | html %]</option>
 [% END %]
         </select>
         <input type="submit" value="Edit">
@@ -23,24 +23,24 @@
 <h3>Articles</h3>
 
 <ul>
-[% FOREACH article IN tag.articles %]
-    <li><a href="[% c.uri_for_action('/article/index') %]">[% article.name %]</a></li>
+[% FOREACH article IN articles %]
+    <li><a href="[% c.project_uri('/article/index') %]">[% article.name | html %]</a></li>
 [% END %]
 </ul>
 
 <h3>Dishes</h3>
 
 <ul>
-[% FOREACH dish IN tag.dishes %]
-    <li><a href="[% c.uri_for_action('/meal/edit', dish.meal.id) %]">[% dish.name %]</a></li>
+[% FOREACH dish IN dishes %]
+    <li><a href="[% c.project_uri('/meal/edit', dish.meal.id) %]">[% dish.name | html %]</a></li>
 [% END %]
 </ul>
 
 <h3>Recipes</h3>
 
 <ul>
-[% FOREACH recipe IN tag.recipes %]
-    <li><a href="[% c.uri_for_action('/recipe/edit', recipe.id) %]">[% recipe.name %]</a></li>
+[% FOREACH recipe IN recipes %]
+    <li><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name | html %]</a></li>
 [% END %]
 </ul>
 

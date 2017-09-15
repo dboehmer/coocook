@@ -1,15 +1,15 @@
 <h2>Quantities</h2>
 
 <ul>
-[% FOR quantity IN quantities.all %]
+[% FOR quantity IN quantities %]
     <li>[% quantity.name | html %]
-        <form class="inline" action="[% c.uri_for_action('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
-        <form class="inline" action="[% c.uri_for_action('/quantity/update', quantity.id) %]" method="POST"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
+        <form class="inline" action="[% c.project_uri('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
+        <form class="inline" action="[% c.project_uri('/quantity/update', quantity.id) %]" method="POST"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
     </li>
 [% END %]
 </ul>
 
-<form action="[% c.uri_for_action('/quantity/create') %]" method="POST">
+<form action="[% c.project_uri('/quantity/create') %]" method="POST">
 <input type="text" name="name" placeholder="name">
 <input type="submit" value="Create">
 </form>

@@ -1,13 +1,17 @@
 <h2>Meals on [% display_date(day) %]</h2>
 
 [% FOR meal IN meals %]
-<h3>[% meal.name %]</h3>
+<h3>[% meal.name | html %]</h3>
+
+[% IF meal.comment %]
+    <p>[% meal.comment | html %]</p>
+[% END %]
 
     [% FOR dish IN meal.dishes %]
 
 <div class="dish">
 
-<h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
+<h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 0 %]
 
@@ -30,7 +34,7 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes %]
-<h4>Prepare for [% dish.meal.name %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name %]</a> ([% dish.servings %] servings)</h4>
+<h4>Prepare for [% dish.meal.name | html %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 1 %]
 
@@ -49,13 +53,13 @@ BLOCK table %]
             NEXT IF prepare AND NOT ingredient.prepare %]
     <tr class="[% 'prepare' IF ingredient.prepare AND NOT prepare %]">
         <td class="right-align">[% ingredient.value %]</td>
-        <td>[% ingredient.unit.long_name %]</td>
-        </td><td>[% ingredient.article.name ~%]
+        <td>[% ingredient.unit.long_name | html %]</td>
+        </td><td>[% ingredient.article.name | html ~%]
         [%~ IF ingredient.article.comment.length;
             ': ';
-            ingredient.article.comment;
+            ingredient.article.comment | html;
         END %]</td>
-        <td>[% ingredient.comment %]</td>
+        <td>[% ingredient.comment | html %]</td>
     </tr>
         [% END %]
 </table>

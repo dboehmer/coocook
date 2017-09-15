@@ -1,6 +1,6 @@
 <h2>Assign Ingredients to Purchase Lists ([% ingredients.size %] items)</h2>
 
-<form action="[% c.uri_for_action('/items/assign') %]" method="POST">
+<form action="[% c.project_uri('/items/assign') %]" method="POST">
 <table id="items">
     <tr>
         <th>Ingredient</th>
@@ -9,9 +9,13 @@
 [% FOR ingredient IN ingredients %]
     <tr>
         <td>
-            <strong>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name %]</strong>
+            <strong>[% display_value_unit(ingredient.value, ingredient.unit, {html=>1}) %] [% ingredient.article.name | html %]</strong>
             <br>
-            <a href="[% c.uri_for_action('/dish/edit', ingredient.dish.id) %]">[% ingredient.dish.name %]</a>, [% display_date(ingredient.dish.meal.date, {html=>1}) %]
+    [% IF ingredient.dish.prepare_at_meal %]
+            prepared at [% ingredient.dish.prepare_at_meal.name | html %] on [% display_date(ingredient.dish.prepare_at_meal.date, {html=>1}) %]
+            <br>
+    [% END %]
+            <a href="[% c.project_uri('/dish/edit', ingredient.dish.id) %]">[% ingredient.dish.name | html %]</a> for [% ingredient.dish.meal.name %] on [% display_date(ingredient.dish.meal.date, {html=>1}) %]
             [% IF ingredient.comment.length;
                 '<br><span class="comment">ingredient: ';
                 ingredient.comment | xml;
@@ -30,7 +34,7 @@
     [% FOREACH list IN lists %]
         <td>
             <input type="radio" name="assign[% ingredient.id %]" value="[% list.id %]" id="a[% ingredient.id %]l[% list.id %]">
-            <label for="a[% ingredient.id %]l[% list.id %]">list <em>[% list.name %]</em></label>
+            <label for="a[% ingredient.id %]l[% list.id %]">list <em>[% list.name | html %]</em></label>
         </td>
     [% END %]
     </tr>

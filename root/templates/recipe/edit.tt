@@ -1,7 +1,7 @@
-<h2>Recipe [% recipe.name %]</h2>
+<h2>Recipe <em>[% recipe.name | html %]</em></h2>
 
-<form action="[% c.uri_for_action('/recipe/update', recipe.id) %]" method="POST">
-<p>Name: <input type="text" name="name" value="[% recipe.name %]"></p>
+<form action="[% c.project_uri('/recipe/update', recipe.id) %]" method="POST">
+<p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
 <p>Preparation:<br>
@@ -13,60 +13,17 @@
 
 <h2><a name="ingredients">Ingredients</a></h2>
 
-<table>
-<thead>
-<th colspan="2">Sort</th>
-<th>Part of<br>preparation?</th>
-<th>Article</th>
-<th>Value</th>
-<th>Unit</th>
-<th>Comment</th>
-<th>Delete?</th>
-</thead>
-[% FOR ingredient IN ingredients %]
-    <tr>
-    <td>
-    [% IF loop.first;
-        '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
-    ELSE %]
-        <form method="POST" action="[% c.uri_for_action('/recipe/reposition', [ingredient.id]) %]" class="inline">
-            [% '<input type="submit" name="up"   value="↑">' UNLESS loop.first %]
-        </form>
-    [% END %]
-    </td>
-    <td>
-    [% UNLESS loop.last %]
-        <form method="POST" action="[% c.uri_for_action('/recipe/reposition', [ingredient.id]) %]" class="inline">
-            <input type="submit" name="down" value="↓">
-        </form>
-    [% END %]
-    </td>
-    <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
-    <td>[% ingredient.article.name; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
-    <td><input type="number" step="0.001" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
-    <td><select name="unit[% ingredient.id %]">[% FOR unit IN ingredient.article.units %]<option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% display_unit(unit) %]</option>[% END %]</select></td>
-    <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]"></td>
-    <td><input type="checkbox" name="delete[% ingredient.id %]"></td>
-    </tr>
-[% END %]
-</table>
+[% INCLUDE 'includes/forms/ingredients_editor.tt' %]
 
 <input type="submit" value="Update Recipe">
 </form>
 
-<form action="[% c.uri_for_action('/recipe/add', recipe.id) %]" method="POST">
-Article: <select name="article">
-[% FOR article IN articles %]
-    <option value="[% article.id %]">[% article.name %]</option>
+[% INCLUDE 'includes/forms/ingredients_add.tt' %]
+
+<h2>Where <em>[% recipe.name | html %]</em> is used</h2>
+
+<ul>
+[% FOR dish IN dishes %]
+    <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> for meal <em>[% dish.meal | html %]</em> on [% display_date(dish.date, {html=>1}) %]</li>
 [% END %]
-</select>
-<input type="checkbox" name="prepare" id="prepare"><label for="prepare">prepare</label>
-Value: <input type="number" step="0.001" name="value" value="1">
-Unit: <select name="unit">
-[% FOR unit IN units %]
-    <option value="[% unit.id %]">[% display_unit(unit) %]</option>
-[% END %]
-</select>
-<input type="text" name="comment" placeholder="comment">
-<input type="submit" value="Add">
-</form>
+</ul>
