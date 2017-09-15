@@ -29,9 +29,9 @@ sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(
             prefetch => [ 'article', { 'dish' => 'meal' }, 'unit' ],
             order_by => [
                 qw<
+                  meal.date
                   article.shop_section
                   article.name
-                  meal.date
                   >
             ],
         }

@@ -13,6 +13,7 @@ sub filter {
     defined $number or return;
     length $number  or return "";
 
+    $number =~ s/,/./g;    # workaround for German number format
     looks_like_number($number)
       or die "Argument \"$number\" isn't numeric";
 

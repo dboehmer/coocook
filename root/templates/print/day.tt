@@ -34,7 +34,7 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes %]
-<h4>Prepare for [% dish.meal.name | html %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
+<h4 style="clear:left">Prepare for [% dish.meal.name | html %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 1 %]
 
@@ -72,7 +72,10 @@ BLOCK table %]
     margin-bottom: 1em;
 }
 
-div.dish + * { clear: left }
+div.dish + *,
+table {
+    clear: left;
+}
 
 tr.prepare th,
 tr.prepare td {
