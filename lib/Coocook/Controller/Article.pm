@@ -122,8 +122,8 @@ sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
 
     $c->model('DB')->schema->txn_do(
         sub {
-            my $article = $c->model('DB::Article')->create(
-                {
+            my $article = $c->stash->{project}->create_related(
+                articles => {
                     name              => scalar $c->req->param('name'),
                     comment           => scalar $c->req->param('comment'),
                     shop_section      => scalar $c->req->param('shop_section'),
