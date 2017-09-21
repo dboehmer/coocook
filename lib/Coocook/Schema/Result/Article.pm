@@ -24,7 +24,10 @@ __PACKAGE__->add_unique_constraint( [ 'project', 'name' ] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
-__PACKAGE__->belongs_to( shop_section => 'Coocook::Schema::Result::ShopSection' );
+__PACKAGE__->belongs_to(
+    shop_section => 'Coocook::Schema::Result::ShopSection',
+    undef, { join_type => 'LEFT' }
+);
 
 __PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
 __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
