@@ -29,6 +29,7 @@ __PACKAGE__->has_many(
     'recipe',
     {
         cascade_delete => 1,    # TODO why does this not work?
+        cascade_copy   => 1,    # this works surprisingly
     }
 );
 
@@ -45,6 +46,8 @@ __PACKAGE__->meta->make_immutable;
 
 sub duplicate {
     my ( $self, $args ) = @_;
+
+    $args->{name} // die "no name defined in \$args";
 
     return $self->copy($args);
 }
