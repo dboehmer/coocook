@@ -82,7 +82,10 @@ sub project_uri {
 
     my $project = $c->stash->{project} || die;
 
-    return $c->uri_for_action( $action, [ $project->url_name, @_ ] );
+    # if last argument is hashref that's the \%query_values argument
+    my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();
+
+    return $c->uri_for_action( $action, [ $project->url_name, @_ ], @query );
 }
 
 # another helper

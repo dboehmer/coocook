@@ -98,6 +98,13 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
     my ( $self, $c, $id ) = @_;
 
+    my $name = $c->req->param('name');
+    if ( $name !~ m/\S/ ) {    # $name contains nothing more than whitespace
+        $c->response->redirect(
+            $c->project_uri( '/article/index', { error => "Name must not be empty" } ) );
+        $c->detach;            # TODO preserve form input
+    }
+
     my $units = $c->model('DB::Unit')->search(
         {
             id => { -in => [ $c->req->param('units') ] },
@@ -122,9 +129,9 @@ sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
 
     $c->model('DB')->schema->txn_do(
         sub {
-            my $article = $c->stash->{project}->create_related(
+            my $article = $c->project->create_related(
                 articles => {
-                    name              => scalar $c->req->param('name'),
+                    name              => $name,
                     comment           => scalar $c->req->param('comment'),
                     shop_section      => scalar $c->req->param('shop_section'),
                     shelf_life_days   => $shelf_life_days,
@@ -147,8 +154,17 @@ sub delete : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) {    # TODO unify business logic with create()
     my ( $self, $c ) = @_;
+
+    my $article = $c->stash->{article};
+
+    my $name = $c->req->param('name');
+    if ( $name !~ m/\S/ ) {                    # $name contains nothing more than whitespace
+        $c->response->redirect(
+            $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
+        $c->detach;                            # TODO preserve form input
+    }
 
     my $units = $c->project->units->search(
         {
@@ -160,15 +176,13 @@ sub update : POST Chained('base') Args(0) {
 
     my $shop_section = $c->project->shop_sections->find( scalar $c->req->param('shop_section') );
 
-    my $article = $c->stash->{article};
-
     $c->model('DB')->schema->txn_do(
         sub {
             $article->set_tags(  [ $tags->all ] );
             $article->set_units( [ $units->all ] );
             $article->set_columns(
                 {
-                    name         => scalar $c->req->param('name'),
+                    name         => $name,
                     comment      => scalar $c->req->param('comment'),
                     shop_section => $shop_section ? $shop_section->id : undef,
                 }
