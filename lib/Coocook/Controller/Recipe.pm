@@ -4,9 +4,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use Scalar::Util qw(looks_like_number);
 
-# Chrissi sperrt ihren Bildschirm nicht!!!!11111
-
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller' }
 
 =head1 NAME
 
