@@ -1,5 +1,3 @@
-<h2>Purchase Lists</h2>
-
 <form action="[% c.project_uri('/purchase_list/create') %]" method="POST">
     <fieldset>
         <legend>Create purchase list</legend>

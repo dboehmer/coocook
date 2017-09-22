@@ -1,5 +1,3 @@
-<h2>Edit article <em>[% article.name | xml %]</em></h2>
-
 <form action="[% c.project_uri('/article/update', article.id) %]" method="POST">
     <p>Applicable units:</p>
 

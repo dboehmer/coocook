@@ -1,5 +1,3 @@
-<h2>Edit Unit <em>[% unit.long_name | html %]</em> (<em>[% unit.short_name | html %]</em>)</h2>
-
 <form action="[% c.project_uri('/unit/update', unit.id) %]" method="POST">
     <p>
         <label for="short_name">Short name:</label>

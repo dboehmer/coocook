@@ -1,5 +1,3 @@
-<h2>Assign Ingredients to Purchase Lists ([% ingredients.size %] items)</h2>
-
 <form action="[% c.project_uri('/items/assign') %]" method="POST">
 <table id="items">
     <tr>

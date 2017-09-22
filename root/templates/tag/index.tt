@@ -1,5 +1,3 @@
-<h2>Tags</h2>
-
 <form action="[% c.project_uri('/tag/create_group') %]" method="POST">
     <fieldset>
         <legend>New Tag Group</legend>

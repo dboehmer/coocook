@@ -1,6 +1,10 @@
 <html lang="en">
 <head>
-    <title>[% c.config.name | html %]</title>
+    <title>
+        [% title        _ ' · ' | html IF title %]
+        [% project.name _ ' · ' | html IF project %]
+        [% c.config.name | html %]
+    </title>
 
     <meta charset="UTF-8">
 
@@ -46,10 +50,11 @@
 </header>
 
 <div class="content">
+<h2>[% IF html_title; html_title; ELSE; title | html; END %]</h2>
+
 [% FOREACH error IN errors %]
     <p class="error">[% error | xml %]</p>
 [% END %]
-
 
 [% content %]
 </div>

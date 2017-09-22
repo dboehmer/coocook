@@ -1,5 +1,3 @@
-<h2>Articles</h2>
-
 <form action="[% c.project_uri('/article/create') %]" method="POST">
 <fieldset>
     <legend>Create article</legend>

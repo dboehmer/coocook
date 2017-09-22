@@ -47,6 +47,7 @@ sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(
     $c->stash(
         ingredients => [ $ingredients->all ],
         lists       => [ $lists->all ],
+        title       => "Unassigned items",
     );
 }
 

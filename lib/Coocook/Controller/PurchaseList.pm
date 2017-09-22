@@ -43,6 +43,7 @@ sub index : GET Chained('/project/base') PathPart('purchase_lists') Args(0) {
     $c->stash(
         default_date => $default_date,
         lists        => [ $lists->sorted->all ],
+        title        => "Purchase lists",
     );
 }
 
@@ -103,6 +104,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     # sort sections
     $c->stash( sections => [ sort { $a->{name} cmp $b->{name} } values %sections ] );
+
+    $c->escape_title( "Purchase list" => $c->stash->{list}->name );
 }
 
 sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0) {

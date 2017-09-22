@@ -1,5 +1,3 @@
-<h2>Printing</h2>
-
 <ul>
     <li><a href="[% c.project_uri('/print/project') %]">Project overview</a></li>
 [% FOREACH day IN days %]

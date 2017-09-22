@@ -51,7 +51,10 @@ sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
         }
     }
 
-    $c->stash( quantities => \@quantities );
+    $c->stash(
+        quantities => \@quantities,
+        title      => "Quantities",
+    );
 }
 
 sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0) {

@@ -84,6 +84,7 @@ sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() a
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
         template        => 'project/import.tt',
+        title           => "Import",
     );
 }
 

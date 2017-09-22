@@ -1,5 +1,3 @@
-<h2>Project <em>[% project.name | html %]</em></h2>
-
 <form action="[% c.project_uri('/project/edit_dishes') %]" method="POST">
 
 <!-- Firefox claims nested forms are not allowed and ignores the 1st form

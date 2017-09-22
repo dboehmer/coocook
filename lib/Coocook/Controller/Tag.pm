@@ -34,6 +34,7 @@ sub index : GET Chained('/project/base') PathPart('tags') Args(0) {
     $c->stash(
         groups     => [ $groups->all ],
         other_tags => [ $c->project->tags->ungrouped->sorted->all ],
+        title      => "Tags",
     );
 }
 
@@ -53,6 +54,8 @@ sub edit : GET Chained('tag') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
+
+    $c->escape_title( Tag => $c->stash->{tag}->name );
 }
 
 sub delete : POST Chained('tag') Args(0) {

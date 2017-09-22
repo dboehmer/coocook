@@ -1,5 +1,3 @@
-<h2>Units</h2>
-
 <form method="POST" action="[% create_url %]">
 <fieldset>
     <legend>Create new unit</legend>

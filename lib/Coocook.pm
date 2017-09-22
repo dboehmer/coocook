@@ -3,6 +3,7 @@ package Coocook;
 # ABSTRACT: Web application for collecting recipes and making food plans
 # VERSION
 
+use HTML::Entities;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -91,6 +92,20 @@ __PACKAGE__->config(
         INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
     },
 );
+
+sub encode_entities {
+    my ( $self, $text ) = @_;
+    return HTML::Entities::encode_entities($text);
+}
+
+sub escape_title {
+    my ( $self, $title, $text ) = @_;
+
+    $self->stash(
+        title      => "$title \"$text\"",
+        html_title => "$title <em>" . $self->encode_entities($text) . "</em>",
+    );
+}
 
 # custom helper
 # TODO maybe move to designated helper module?

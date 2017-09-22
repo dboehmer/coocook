@@ -1,5 +1,3 @@
-<h2>Recipe <em>[% recipe.name | html %]</em></h2>
-
 <form action="[% c.project_uri('/recipe/update', recipe.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>

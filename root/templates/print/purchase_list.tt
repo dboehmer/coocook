@@ -1,6 +1,3 @@
-<h2>Purchase List <em>[% list.name | html %]</em></h2>
-
-
 [% FOREACH section IN sections %]
 <h3>[% section.name | html %]</h3>
 

@@ -27,7 +27,6 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     $c->forward('fetch_project_data');
 
     my ( @articles, %articles );
-    $c->stash( articles => \@articles );
 
     {
         my $edit_action   = $self->action_for('edit');
@@ -57,6 +56,11 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
         my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };
         push @{ $articles{$article}{units} }, $units{$unit};
     }
+
+    $c->stash(
+        articles => \@articles,
+        title    => "Articles",
+    );
 }
 
 sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
@@ -98,6 +102,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         dishes  => \@dishes,
         recipes => \@recipes,
     );
+
+    $c->escape_title( Article => $article->name );
 }
 
 ### CRUD ###

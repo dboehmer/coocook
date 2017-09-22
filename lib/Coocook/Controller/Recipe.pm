@@ -25,7 +25,10 @@ Catalyst Controller.
 sub index : GET Chained('/project/base') PathPart('recipes') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recipes => $c->project->recipes->sorted );
+    $c->stash(
+        recipes => $c->project->recipes->sorted,
+        title   => "Recipes",
+    );
 }
 
 sub base : Chained('/project/base') PathPart('recipe') CaptureArgs(1) {
@@ -92,6 +95,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         dishes             => \@dishes,
         add_ingredient_url => $c->project_uri( '/recipe/add', $recipe->id ),
     );
+
+    $c->escape_title( Recipe => $recipe->name );
 }
 
 sub add : POST Chained('base') Args(0) {

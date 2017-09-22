@@ -1,5 +1,3 @@
-<h2>Shop sections</h2>
-
 <form action="[% c.project_uri('/shop_section/create') %]" method="POST">
 <fieldset>
     <legend>Create new Shop Section</legend>

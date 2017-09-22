@@ -1,5 +1,3 @@
-<h2>Tag [% tag.name | html %]</h2>
-
 [% IF tag.deletable %]
 <form action="[% c.project_uri('/tag/delete', tag.id) %]" method="POST">
     <input type="submit" value="Delete Tag">

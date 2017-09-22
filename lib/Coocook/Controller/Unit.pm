@@ -88,6 +88,7 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
         create_url => $c->project_uri( $self->action_for('create') ),
         quantities => \@quantities,
         units      => \@units,
+        title      => "Units",
     );
 }
 
@@ -101,7 +102,11 @@ sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( articles => [ $c->stash->{unit}->articles->sorted->all ] );
+    my $unit = $c->stash->{unit};
+
+    $c->stash( articles => [ $unit->articles->sorted->all ] );
+
+    $c->escape_title( Unit => $unit->long_name );
 }
 
 sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {

@@ -48,6 +48,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         units         => [ $c->project->units->sorted->all ],
         prepare_meals => [ $prepare_meals->all ],
     );
+
+    $c->escape_title( Dish => $dish->name );
 }
 
 sub delete : Local Args(1) POST {    # TODO fix

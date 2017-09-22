@@ -1,5 +1,3 @@
-<h2>Meals on [% display_date(day) %]</h2>
-
 [% FOR meal IN meals %]
 <h3>[% meal.name | html %]</h3>
 

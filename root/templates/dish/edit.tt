@@ -1,5 +1,3 @@
-<h2>Dish [% dish.name | xml %]</h2>
-
 <p>for meal <em>[% dish.meal.name | xml %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
 
 [% IF dish.recipe %]

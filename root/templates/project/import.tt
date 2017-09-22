@@ -1,5 +1,3 @@
-<h2>Import</h2>
-
 <form method="POST" action="[% import_url %]">
     <fieldset>
         <legend>Source Project</legend>

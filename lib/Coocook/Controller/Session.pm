@@ -9,6 +9,8 @@ __PACKAGE__->config( namespace => '' );
 
 sub login : GET Local Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->stash( title => "Login" );
 }
 
 sub post_login : POST Path('/login') Args(0) {

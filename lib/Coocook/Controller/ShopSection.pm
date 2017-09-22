@@ -26,7 +26,10 @@ Catalyst Controller.
 sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( shop_sections => [ $c->project->shop_sections->with_article_count->sorted->all ] );
+    $c->stash(
+        shop_sections => [ $c->project->shop_sections->with_article_count->sorted->all ],
+        title         => "Shop sections",
+    );
 }
 
 sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0) {

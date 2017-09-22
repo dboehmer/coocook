@@ -50,6 +50,7 @@ sub index : GET Chained('/project/base') PathPart('print') Args(0) {
         days     => \@days,
         lists    => $lists,
         projects => \@projects,
+        title    => "Printing",
     );
 }
 
@@ -65,20 +66,28 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
     $c->stash(
         day => $dt,
         meals => $c->model('Plan')->day( $c->project, $dt ),
+        title => "Print " . $dt->ymd,                 # TODO date format
     );
 }
 
 sub project : GET Chained('/project/base') PathPart('print/project') Args(0) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( days => $c->model('Plan')->project( $c->project ) );
+    $c->stash(
+        days  => $c->model('Plan')->project( $c->project ),
+        title => "Print overview",
+    );
 }
 
 sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list') Args(1) {
     my ( $self, $c, $id ) = @_;
 
+    my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);
+
     # get data from purchase list editor
     $c->forward( '/purchase_list/edit', [$id] );
+
+    $c->escape_title( "Purchase list" => $list->name );
 }
 
 =encoding utf8
