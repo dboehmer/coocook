@@ -1,11 +1,14 @@
 <h2>Project [% project.name | html %]</h2>
 
 <table>
+<thead>
     <tr>
         <th>Day</th>
         <th>Meal</th>
         <th>Dishes</td>
     </tr>
+</thead>
+<tbody>
 [% FOREACH day IN days;
     FOREACH meal IN day.meals %]
     <tr>
@@ -21,3 +24,5 @@
     </tr>
     [% END;
 END %]
+</tbody>
+</table>
