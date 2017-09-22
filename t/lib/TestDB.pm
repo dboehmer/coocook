@@ -47,6 +47,7 @@ INSERT INTO 'units' VALUES(1,1,1,0.001,0,'g','grams');
 INSERT INTO 'units' VALUES(2,1,1,1.0,0,'kg','kilograms');
 INSERT INTO 'units' VALUES(3,1,2,1.0,0,'l','liters');
 INSERT INTO 'units' VALUES(4,1,1,1000,0,'t','tons');
+INSERT INTO 'units' VALUES(5,1,1,NULL,0,'p','pinch'); -- no conversion, (in German: Prise)
 INSERT INTO 'dishes' VALUES(1,1,NULL,'pancakes',4,NULL,'','Make them really sweet!','');
 INSERT INTO 'dishes' VALUES(2,2,1,'pizza',4,NULL,'','','');
 INSERT INTO 'dishes' VALUES(3,3,NULL,'bread',4,2,'','Bake bread!','');

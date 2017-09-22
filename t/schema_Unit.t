@@ -33,8 +33,16 @@ $db->resultset($_)->delete for qw<
 throws_ok { $kg->delete } qr/default/, "fails because kg is default unit";
 
 note "deleting all other units ...";
-$db->resultset('Unit')->search( { short_name => { '!=' => 'kg' } } )->delete;
+$db->resultset('Unit')->search(
+    {
+        short_name          => { '!=' => 'kg' },
+        to_quantity_default => { '!=' => undef },
+    }
+)->delete;
 
 ok $kg->delete, "default unit can be deleted if last remaining unit";
+
+is $db->resultset('Quantity')->find( { name => 'Mass' } )->default_unit => undef,
+  "default unit of quantity changed to NULL";
 
 done_testing;

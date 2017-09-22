@@ -34,7 +34,8 @@ __PACKAGE__->has_many(
 
         return {    # TODO exclude units without to_quantity_default
             "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
-            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
+            "$args->{foreign_alias}.quantity"            => { -ident => "$args->{self_alias}.quantity" },
+            "$args->{foreign_alias}.to_quantity_default" => { '!='   => undef },
         };
     }
 );
@@ -57,10 +58,11 @@ before delete => sub {
           or die "unit can't be deleted because it's in use";
     }
 
-    if (    $self->is_quantity_default
-        and $self->convertible_into->count > 0 )
-    {
-        die "unit is quantity default and other units exist";
+    if ( $self->is_quantity_default ) {
+        $self->convertible_into->count > 0
+          and die "unit is quantity default and other units exist";
+
+        $self->quantity->update( { default_unit => undef } );
     }
 };
 

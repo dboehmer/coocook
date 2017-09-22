@@ -31,7 +31,7 @@ subtest articles_cached_units => sub {
       "articles are: $_"
       for 'cheese,flour,love,salt,water';
 
-    is join( ",", map { $_->short_name } @$units ) => $_, "units are: $_" for 'g,kg,l,t';
+    is join( ",", map { $_->short_name } @$units ) => $_, "units are: $_" for 'g,kg,l,p,t';
 
     my %articles_units = (
         cheese => 'g,kg',
