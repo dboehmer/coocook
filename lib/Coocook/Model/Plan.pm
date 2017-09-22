@@ -4,24 +4,7 @@ use DateTime;
 use Moose;
 use MooseX::NonMoose;
 
-extends 'Catalyst::Model';
-
-has schema => (
-    is  => 'rw',
-    isa => 'Coocook::Schema',
-);
-
 __PACKAGE__->meta->make_immutable;
-
-sub COMPONENT {
-    my ( $class, $app, $args ) = @_;
-
-    my $schema = $app->model('DB')->schema;
-
-    my $self = $class->new( $app, $args );
-    $self->schema($schema);
-    return $self;
-}
 
 sub day {
     my ( $self, $project, $dt ) = @_;
@@ -30,12 +13,11 @@ sub day {
     my @meals;
 
     {
-        my $meals = $self->schema->resultset('Meal')->search(
+        my $meals = $project->meals->search(
             {
-                date    => $dt->ymd,
-                project => $project,
+                date => $dt->ymd,
             },
-            {
+            {    # TODO allow manual ordering
                 columns  => [ 'id', 'name', 'comment' ],
                 order_by => 'id',
             }
@@ -53,9 +35,10 @@ sub day {
     }
 
     my %dishes;
+    my $schema = $project->result_source->schema;
 
     {
-        my $dishes = $self->schema->resultset('Dish')->search(
+        my $dishes = $schema->resultset('Dish')->search(
             [
                 meal            => { -in => [ keys %meals ] },
                 prepare_at_meal => { -in => [ keys %meals ] },
@@ -102,7 +85,7 @@ sub day {
     }
 
     {
-        my $ingredients = $self->schema->resultset('DishIngredient')->search(
+        my $ingredients = $schema->resultset('DishIngredient')->search(
             {
                 dish => { -in => [ keys %dishes ] },
             },
@@ -134,10 +117,7 @@ sub day {
 }
 
 sub project {
-    my ( $self, $project_id ) = @_;
-
-    my $project = ref $project_id ? $project_id : $self->schema->resultset('Project')->find($project_id)
-      or return;
+    my ( $self, $project ) = @_;
 
     my %days;
 

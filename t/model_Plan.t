@@ -10,13 +10,13 @@ use Test::Most;
 
 my $db = TestDB->new;
 
+my $project = $db->resultset('Project')->find(1);
+
 use_ok 'Coocook::Model::Plan';
 
 my $plan = new_ok 'Coocook::Model::Plan', [ schema => $db ];
 
-# TODO test COMPONENT()
-
-my $day = $plan->day( 1, DateTime->new( year => 2000, month => 1, day => 1 ) );
+my $day = $plan->day( $project, DateTime->new( year => 2000, month => 1, day => 1 ) );
 is_deeply $day => [
     {
         name            => 'breakfast',
@@ -77,9 +77,9 @@ is_deeply $day => [
   "day()"
   or explain $day;
 
-my $project = $plan->project(1);
-$_->{date} .= "" for @$project;    # stringify dates for simpler comparison
-is_deeply $project => [
+my $project_plan = $plan->project($project);
+$_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
+is_deeply $project_plan => [
     {
         'date'  => '2000-01-01T00:00:00',
         'meals' => [
@@ -109,6 +109,6 @@ is_deeply $project => [
     }
   ],
   "project()"
-  or explain $project;
+  or explain $project_plan;
 
 done_testing;

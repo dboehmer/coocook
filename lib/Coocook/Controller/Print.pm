@@ -64,19 +64,14 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
 
     $c->stash(
         day => $dt,
-        meals => $c->model('Plan')->day( $c->stash->{project}->id, $dt ),
+        meals => $c->model('Plan')->day( $c->project, $dt ),
     );
 }
 
 sub project : GET Chained('/project/base') PathPart('print/project') Args(0) {
     my ( $self, $c, $id ) = @_;
 
-    my $project = $c->stash->{project} || die;
-
-    $c->stash(
-        project => $project,
-        days    => $c->model('Plan')->project($project),
-    );
+    $c->stash( days => $c->model('Plan')->project( $c->project ) );
 }
 
 sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list') Args(1) {
