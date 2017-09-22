@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use 5.008000;
+use 5.016000;
 
 use ExtUtils::MakeMaker;
 
@@ -21,10 +21,11 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "Coocook",
   "LICENSE" => "restrictive",
-  "MIN_PERL_VERSION" => "5.008000",
+  "MIN_PERL_VERSION" => "5.016000",
   "NAME" => "Coocook",
   "PREREQ_PM" => {
     "App::DH" => 0,
+    "Carp" => 0,
     "Catalyst" => 0,
     "Catalyst::Action::RenderView" => 0,
     "Catalyst::Controller" => 0,
@@ -38,6 +39,7 @@ my %WriteMakefileArgs = (
     "Catalyst::Runtime" => "5.80",
     "Catalyst::View::TT" => 0,
     "Config::General" => 0,
+    "DBIx::Class" => 0,
     "DBIx::Class::Core" => 0,
     "DBIx::Class::FilterColumn" => 0,
     "DBIx::Class::Helpers" => 0,
@@ -45,12 +47,17 @@ my %WriteMakefileArgs = (
     "DBIx::Class::ResultSet" => 0,
     "DBIx::Class::Schema::Config" => 0,
     "DateTime" => 0,
+    "JSON::MaybeXS" => 0,
     "Moose" => 0,
     "MooseX::MarkAsMethods" => 0,
     "MooseX::NonMoose" => 0,
     "Scalar::Util" => 0,
+    "Sub::Name" => 0,
     "Template::Plugin::Filter" => 0,
     "Template::Plugin::Markdown" => 0,
+    "base" => 0,
+    "feature" => 0,
+    "mro" => 0,
     "parent" => 0,
     "strict" => 0,
     "utf8" => 0,
@@ -78,6 +85,7 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "App::DH" => 0,
+  "Carp" => 0,
   "Catalyst" => 0,
   "Catalyst::Action::RenderView" => 0,
   "Catalyst::Controller" => 0,
@@ -94,6 +102,7 @@ my %FallbackPrereqs = (
   "Catalyst::View::TT" => 0,
   "Config::General" => 0,
   "DBICx::TestDatabase" => 0,
+  "DBIx::Class" => 0,
   "DBIx::Class::Core" => 0,
   "DBIx::Class::FilterColumn" => 0,
   "DBIx::Class::Helpers" => 0,
@@ -105,16 +114,21 @@ my %FallbackPrereqs = (
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "FindBin" => 0,
+  "JSON::MaybeXS" => 0,
   "Moose" => 0,
   "MooseX::MarkAsMethods" => 0,
   "MooseX::NonMoose" => 0,
   "Scalar::Util" => 0,
+  "Sub::Name" => 0,
   "Template::Plugin::Filter" => 0,
   "Template::Plugin::Markdown" => 0,
   "Test::MockObject" => 0,
   "Test::More" => 0,
   "Test::Most" => 0,
+  "base" => 0,
+  "feature" => 0,
   "lib" => 0,
+  "mro" => 0,
   "parent" => 0,
   "strict" => 0,
   "utf8" => 0,
