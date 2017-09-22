@@ -44,7 +44,7 @@
             </form>
         </td>
     </tr>
-        [% FOREACH dish IN meal.dishes.all %]
+        [% FOREACH dish IN meal.dishes %]
     <tr>
         <td><input type="checkbox" name="dish[% dish.id %]"></td>
         <td>
@@ -72,7 +72,7 @@
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Import recipe">
             </form>
-	    <p>([% meal.dishes.all.size %] dishes)</p>
+	    <p>([% meal.dishes.size %] [% meal.dishes.size == 1 ? 'dish' : 'dishes' %])</p>
 	</td>
     </tr>
     [% END %]

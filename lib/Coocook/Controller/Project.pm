@@ -48,38 +48,24 @@ sub base : Chained('/') PathPart('project') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $project = $c->project || die;
-
     my $default_date = DateTime->today;
 
-    my $days = do {
-        my %days;
+    my $days = $c->model('Plan')->project( $c->project );
 
-        my $meals = $project->meals->search( undef, { prefetch => 'dishes' } );
+    # calculate dishes per day for table's row-span
+    for my $day (@$days) {
+        $day->{dishes} = 0;
 
-        # group meals by date
-        while ( my $meal = $meals->next ) {
-            $default_date < $meal->date and $default_date = $meal->date;
-
-            push @{ $days{ $meal->date }{meals} }, $meal;
+        for my $meal ( @{ $day->{meals} } ) {
+            my $dishes = @{ $meal->{dishes} };
+            $day->{dishes} += $dishes;
+            $meal->{deletable} = not $dishes;
         }
-
-        for my $day ( values %days ) {
-            $day->{dishes} = 0;
-            $day->{dishes} += $_->dishes->count for @{ $day->{meals} };
-
-            # save DateTime object for table display
-            $day->{date} = $day->{meals}[0]->date;
-        }
-
-        # remove sort keys, save sorted list
-        [ map { $days{$_} } sort keys %days ];
-    };
+    }
 
     $c->stash(
         default_date          => $default_date,
-        project               => $project,
-        recipes               => [ $project->recipes->sorted->all ],
+        recipes               => [ $c->project->recipes->sorted->all ],
         days                  => $days,
         deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
