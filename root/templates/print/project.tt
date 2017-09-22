@@ -15,7 +15,7 @@
         <td>[% meal.name | html %]</td>
         <td><ul>
         [% FOREACH dish IN meal.dishes %]
-            <li>[% dish | html %]</li>
+            <li>[% dish.name | html %]</li>
         [% END %]
         </ul></td>
     </tr>

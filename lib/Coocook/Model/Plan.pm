@@ -129,8 +129,6 @@ sub project {
     );
 
     while ( my $meal = $meals->next ) {
-        my @dishes = map { $_->name } $meal->dishes->all;
-
         my $day = $days{ $meal->date } ||= {
             date  => $meal->date,
             meals => [],
@@ -139,9 +137,17 @@ sub project {
         push @{ $day->{meals} },
           {
             name   => $meal->name,
-            dishes => \@dishes,
+            dishes => \my @dishes,
           };
 
+        for my $dish ( $meal->dishes->all ) {
+            push @dishes,
+              {
+                id       => $dish->id,
+                name     => $dish->name,
+                servings => $dish->servings,
+              };
+        }
     }
 
     return [ @days{ sort keys %days } ];
