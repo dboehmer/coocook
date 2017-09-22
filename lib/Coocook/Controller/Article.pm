@@ -24,10 +24,39 @@ Catalyst Controller.
 sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $articles = $c->project->articles->sorted->search( undef, { prefetch => 'shop_section' } );
-
     $c->forward('fetch_project_data');
-    $c->stash( articles => [ $articles->all ] );
+
+    my ( @articles, %articles );
+    $c->stash( articles => \@articles );
+
+    {
+        my $edit_action   = $self->action_for('edit');
+        my $delete_action = $self->action_for('delete');
+
+        my %shop_sections = map { $_->id => $_ } @{ $c->stash->{shop_sections} };
+
+        my $articles = $c->project->articles->sorted->inflate_hashes;
+
+        while ( my $article = $articles->next ) {
+            $article->{url}        = $c->project_uri( $edit_action,   $article->{id} );
+            $article->{delete_url} = $c->project_uri( $delete_action, $article->{id} );
+            $article->{units}      = [];
+            $article->{shop_section} &&= $shop_sections{ $article->{shop_section} };
+
+            push @articles, $articles{ $article->{id} } = $article;
+        }
+    }
+
+    # all units of all quantities
+    my @units = map { $_->units->all } @{ $c->stash->{quantities} };
+    my %units = map { $_->id => $_ } @units;
+
+    my $articles_units = $c->project->articles->articles_units->inflate_hashes;
+
+    while ( my $article_unit = $articles_units->next ) {
+        my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };
+        push @{ $articles{$article}{units} }, $units{$unit};
+    }
 }
 
 sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {

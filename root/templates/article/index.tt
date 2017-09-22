@@ -69,7 +69,7 @@
     <tbody>
 [% FOR article IN articles %]
         <tr>
-            <td><a href="[% c.project_uri('/article/edit', article.id) %]">[% article.name | xml %]</a></td>
+            <td><a href="[% article.url %]">[% article.name | xml %]</a></td>
             <td>[% article.comment | xml %]</td>
             <td>[% IF article.preorder_workdays.defined AND article.preorder_servings.defined; article.preorder_workdays %] days if ≥[% article.preorder_servings %] servings[% END %]</td>
             <td>[% IF article.shelf_life_days.defined; article.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
@@ -77,7 +77,7 @@
             <td>[% FOR u IN article.units; display_unit(u, {html=>1}); ' '; END %]</td>
             <td>[% article.tags_joined %]</td>
             <td>
-                <form method="POST" action="[% c.project_uri('/article/delete', article.id) %]" class="inline">
+                <form method="POST" action="[% article.delete_url %]" class="inline">
                     <input type="submit" value="Delete">
                 </form>
             </td>
