@@ -95,56 +95,18 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
+### CRUD ###
+
 sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
     my ( $self, $c, $id ) = @_;
 
-    my $name = $c->req->param('name');
-    if ( $name !~ m/\S/ ) {    # $name contains nothing more than whitespace
-        $c->response->redirect(
-            $c->project_uri( '/article/index', { error => "Name must not be empty" } ) );
-        $c->detach;            # TODO preserve form input
-    }
+    $c->detach( update_or_insert => [ $c->project->new_related( articles => {} ) ] );
+}
 
-    my $units = $c->model('DB::Unit')->search(
-        {
-            id => { -in => [ $c->req->param('units') ] },
-        }
-    );
+sub update : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $tags =
-      $c->model('DB::Tag')->from_names( scalar $c->req->param('tags') );
-
-    my $shelf_life_days = undef;
-
-    if ( $c->req->param('shelf_life') and defined( my $days = $c->req->param('shelf_life_days') ) ) {
-        $shelf_life_days = $days;
-    }
-
-    my ( $preorder_servings, $preorder_workdays );
-
-    if ( $c->req->param('preorder') ) {
-        $preorder_servings = $c->req->param('preorder_servings');
-        $preorder_workdays = $c->req->param('preorder_workdays');
-    }
-
-    $c->model('DB')->schema->txn_do(
-        sub {
-            my $article = $c->project->create_related(
-                articles => {
-                    name              => $name,
-                    comment           => scalar $c->req->param('comment'),
-                    shop_section      => scalar $c->req->param('shop_section'),
-                    shelf_life_days   => $shelf_life_days,
-                    preorder_servings => $preorder_servings,
-                    preorder_workdays => $preorder_workdays,
-                }
-            );
-
-            $article->set_tags(  [ $tags->all ] );
-            $article->set_units( [ $units->all ] );
-        }
-    );
-    $c->detach('redirect');
+    $c->detach( update_or_insert => [ $c->stash->{article} ] );
 }
 
 sub delete : POST Chained('base') Args(0) {
@@ -154,49 +116,35 @@ sub delete : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {    # TODO unify business logic with create()
+### private helpers ###
+
+sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    my $article = $c->stash->{article};
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
+}
+
+sub update_or_insert : Private {
+    my ( $self, $c, $article ) = @_;
 
     my $name = $c->req->param('name');
-    if ( $name !~ m/\S/ ) {                    # $name contains nothing more than whitespace
+    if ( $name !~ m/\S/ ) {    # $name contains nothing more than whitespace
         $c->response->redirect(
             $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
-        $c->detach;                            # TODO preserve form input
+        $c->detach;            # TODO preserve form input
     }
 
-    my $units = $c->project->units->search(
-        {
-            id => { -in => [ $c->req->param('units') ] },
-        }
-    );
+    my $units = $c->project->units->search( { id => { -in => [ $c->req->param('units') ] } } );
 
     my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
 
-    my $shop_section = $c->project->shop_sections->find( scalar $c->req->param('shop_section') );
+    my $shop_section;
+    if ( my $id = $c->req->param('shop_section') ) {
+        $shop_section = $c->project->shop_sections->find($id);
+    }
 
     $c->model('DB')->schema->txn_do(
         sub {
-            $article->set_tags(  [ $tags->all ] );
-            $article->set_units( [ $units->all ] );
-            $article->set_columns(
-                {
-                    name         => $name,
-                    comment      => scalar $c->req->param('comment'),
-                    shop_section => $shop_section ? $shop_section->id : undef,
-                }
-            );
-            if ( scalar $c->req->param('shelf_life') ) {
-                $article->set_columns(
-                    {
-                        shelf_life_days => scalar $c->req->param('shelf_life_days')
-                    }
-                );
-            }
-            else {
-                $article->set_columns( { shelf_life_days => undef } );
-            }
             if ( scalar $c->req->param('preorder') ) {
                 $article->set_columns(
                     {
@@ -206,19 +154,28 @@ sub update : POST Chained('base') Args(0) {    # TODO unify business logic with 
                 );
             }
             else {
-                $article->set_columns( { preorder_servings => undef, preorder_workdays => undef, } );
+                $article->set_columns( { preorder_servings => undef, preorder_workdays => undef } );
             }
-            $article->update;
+
+            $article->set_columns(
+                {
+                    name         => $name,
+                    comment      => scalar $c->req->param('comment'),
+                    shop_section => $shop_section ? $shop_section->id : undef,
+                    shelf_life_days =>
+                      scalar( $c->req->param('shelf_life') ? $c->req->param('shelf_life_days') : undef ),
+                }
+            );
+
+            $article->update_or_insert;
+
+            # works only after update_or_insert()
+            $article->set_tags(  [ $tags->all ] );
+            $article->set_units( [ $units->all ] );
         }
     );
 
     $c->detach('redirect');
-}
-
-sub redirect : Private {
-    my ( $self, $c ) = @_;
-
-    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 =encoding utf8
