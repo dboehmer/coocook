@@ -25,6 +25,9 @@ __PACKAGE__->has_many(
     'purchase_list'
 );
 
+__PACKAGE__->many_to_many( articles => items => 'article' );
+__PACKAGE__->many_to_many( units    => items => 'unit' );
+
 __PACKAGE__->meta->make_immutable;
 
 1;

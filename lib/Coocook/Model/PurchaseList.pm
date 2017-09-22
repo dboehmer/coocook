@@ -1,6 +1,7 @@
 package Coocook::Model::PurchaseList;
 
 use Moose;
+use Scalar::Util 'weaken';
 
 has list => (
     is       => 'ro',
@@ -16,54 +17,96 @@ sub by_section {
     my $list    = $self->list;
     my $project = $list->project;
 
-    my @items = $list->items->all;
+    # articles
+    my %articles = map { $_->{id} => $_ } $list->articles->inflate_hashes->all;
 
-    my %units = map { $_->id => $_ } $project->units->all;
+    # units: can't narrow down because needs convertible units
+    my %units = map { $_->{id} => $_ } $project->units->inflate_hashes->all;
 
-    # collect distinct article IDs (hash may contain duplicates)
-    my @article_ids =
-      keys %{ { map { $_->get_column('article') => undef } @items } };
+    my %default_units = map { $_ => 1 } $project->quantities->get_column('default_unit')->all;
 
-    my @articles = $project->articles->search( { id => { -in => \@article_ids } } )->all;
+    for my $unit ( values %units ) {
+        if ( $default_units{ $unit->{id} } ) {
+            $unit->{is_default_quantity} = 1;
+        }
+        elsif ( $unit->{to_quantity_default} ) {
+            $unit->{can_be_quantity_default} = 1;
 
-    my %articles = map { $_->id => $_ } @articles;
-    my %article_to_section =
-      map { $_->id => $_->get_column('shop_section') } @articles;
+            $unit->{convertible_into} = [
+                grep {
+                          $_->{id} != $unit->{id}
+                      and $_->{quantity} == $unit->{quantity}
+                      and defined $_->{to_quantity_default}
+                } values %units
+            ];
 
-    my @section_ids =
-      keys %{ { map { $_ => undef } values %article_to_section } };
+            weaken $_ for @{ $unit->{convertible_into} };
+        }
+    }
 
-    my @sections = $project->shop_sections->search( { id => { -in => \@section_ids } } )->all;
+    # items
+    my %items = map { $_->{id} => $_ } $list->items->inflate_hashes->all;
+    my %items_per_section;
 
-    my %sections =
-      map { $_->id => { name => $_->name, items => [] } } @sections;
+    for my $item ( values %items ) {
+        $item->{article}     = $articles{ $item->{article} };
+        $item->{unit}        = $units{ $item->{unit} };
+        $item->{ingredients} = [];
 
-    for my $item (@items) {
-        my $article = $item->get_column('article');
-        my $unit    = $item->get_column('unit');
+        push @{ $items_per_section{ $item->{article}{shop_section} } }, $item;
+    }
 
-        my $section = $article_to_section{$article};
+    # ingredients
+    {
+        my %ingredients_by_dish;
 
-        push @{ $sections{$section}{items} },
-          {
-            id               => $item->id,
-            value            => $item->value,
-            offset           => $item->offset,
-            article          => $articles{$article},
-            unit             => $units{$unit},
-            comment          => $item->comment,
-            ingredients      => [ $item->ingredients->all ],
-            convertible_into => [ $item->convertible_into->all ],
-          };
+        my $ingredients = $list->items->ingredients->inflate_hashes;
+
+        while ( my $ingredient = $ingredients->next ) {
+            $ingredient->{article} = $articles{ $ingredient->{article} };
+            $ingredient->{unit}    = $units{ $ingredient->{unit} };
+
+            push @$_, $ingredient
+              for (
+                $items{ $ingredient->{item} }{ingredients},     # add $ingredient{} to %items
+                $ingredients_by_dish{ $ingredient->{dish} },    # collect $ingredient{} for dish
+              );
+        }
+
+        my $dishes = $project->dishes;
+        $dishes = $dishes->search( { $dishes->me('id') => { -in => [ keys %ingredients_by_dish ] } } )
+          ->inflate_hashes;
+
+        while ( my $dish = $dishes->next ) {
+            for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
+                $ingredient->{dish} = $dish;
+            }
+        }
+    }
+
+    # shop sections
+    my @sections = $project->shop_sections->search(
+        { id => { -in => [ grep { length } keys %items_per_section ] } } )->inflate_hashes->all;
+
+    for my $section (@sections) {
+        $section->{items} = $items_per_section{ $section->{id} };
     }
 
     # sort products alphabetically
-    for my $section ( values %sections ) {
-        $section->{items} = [ sort { $a->{article}->name cmp $b->{article}->name } @{ $section->{items} } ];
+    for my $section (@sections) {
+        my $items = $section->{items};
+        @$items = sort { $a->{article}{name} cmp $b->{article}{name} } @$items;
     }
 
     # sort sections
-    return [ sort { $a->{name} cmp $b->{name} } values %sections ];
+    @sections = sort { $a->{name} cmp $b->{name} } @sections;
+
+    # items with no shop section
+    if ( my $items = $items_per_section{''} ) {
+        push @sections, { items => $items };
+    }
+
+    return \@sections;
 }
 
 1;
