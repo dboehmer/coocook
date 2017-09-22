@@ -33,6 +33,9 @@ __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 before delete => sub {    # TODO solve workaround
     my $self = shift;
 
+    $self->purchase_lists->items->ingredients_items->delete;
+    $self->purchase_lists->items->delete;
+    $self->purchase_lists->delete;
     $self->articles->article_tags->delete;
     $self->articles->articles_units->delete;
     $self->meals->dishes->ingredients->delete;
