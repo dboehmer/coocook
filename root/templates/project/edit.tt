@@ -49,7 +49,7 @@
     </tr>
         [% FOREACH dish IN meal.dishes %]
     <tr>
-        <td><input type="checkbox" name="dish[% dish.id %]"></td>
+        <td><input type="checkbox" class="dish-checkbox" name="dish[% dish.id %]"></td>
         <td>
             <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)
             [%~ IF dish.comment; ': '; dish.comment | html; END %]
@@ -164,3 +164,37 @@
         <input type="submit" value="Delete project">
     </fieldset>
 </form>
+
+<script>
+var checkbox = document.createElement('input');
+checkbox.type  = 'checkbox';
+checkbox.title = "Toggle all dishes";
+
+document.getElementById('mass-selector').appendChild(checkbox);
+
+var checkboxes = Array.from( document.getElementsByClassName('dish-checkbox') );
+
+function checkboxesChecked() {
+    var checked = 0;
+    checkboxes.forEach( function(box) { if( box.checked ) { checked++ } } );
+    return checked;
+}
+
+checkbox.addEventListener( 'click', function() {
+    if( checkboxesChecked() < checkboxes.length ) {
+        checkboxes.forEach(function(box) { box.checked = true });
+    }
+    else {
+        checkboxes.forEach(function(box) { box.checked = false });
+    }
+});
+
+var updateCheckbox = function() {
+    var checked = checkboxesChecked();
+
+    checkbox.checked = checked == checkboxes.length;
+    checkbox.indeterminate = 0 < checked && checked < checkboxes.length;
+};
+
+checkboxes.forEach( function(box) { box.addEventListener( 'click', updateCheckbox ) } );
+</script>
