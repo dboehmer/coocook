@@ -22,7 +22,8 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to(
     default_unit => 'Coocook::Schema::Result::Unit',
-    { 'foreign.id' => 'self.default_unit' }
+    { 'foreign.id' => 'self.default_unit' },
+    { join_type    => 'LEFT' }
 );
 
 __PACKAGE__->has_many( units => 'Coocook::Schema::Result::Unit' );
