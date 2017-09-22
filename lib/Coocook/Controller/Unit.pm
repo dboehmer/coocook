@@ -29,16 +29,35 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
       $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } )->all;
     my %quantities = map { $_->id => $_ } @quantities;
 
+    my %units_in_use;
+
+    {
+        my @resultsets = (
+            $c->project->units->articles_units,    #perltidy
+            $c->project->purchase_lists->items,
+            $c->project->dishes->ingredients,
+            $c->project->recipes->ingredients,
+        );
+
+        for my $resultset (@resultsets) {
+            my $ids = $resultset->get_column( { distinct => 'unit' } );
+
+            @units_in_use{ $ids->all } = ();       # set all keys to undef
+        }
+    }
+
     my @units;
 
     {
+        my $action = $self->action_for('delete');
+
         my $units = $c->project->units->search( undef,
             { join => 'quantity', order_by => [ 'quantity.name', 'long_name' ] } );
 
         while ( my $unit = $units->next ) {
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
 
-            push @units, {
+            my %unit = (
                 url => $c->project_uri( $self->action_for('edit'), $unit->id ),
                 from_quantity_default => $unit->to_quantity_default ? 1 / $unit->to_quantity_default : undef,
                 map { $_ => $unit->$_() }
@@ -51,31 +70,17 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
                   space
                   to_quantity_default
                   >
-            };
-        }
-    }
+            );
 
-    {
-        my @resultsets = (
-            $c->project->units->articles_units,    #perltidy
-            $c->project->purchase_lists->items,
-            $c->project->dishes->ingredients,
-            $c->project->recipes->ingredients,
-        );
+            push @units, \%unit;
 
-        my %undeletable;
+            next if exists $units_in_use{ $unit->{id} };
 
-        for my $resultset (@resultsets) {
-            my $ids = $resultset->get_column( { distinct => 'unit' } );
+            if ( $unit->is_quantity_default ) {
+                next if $unit->convertible_into > 0;
+            }
 
-            @undeletable{ $ids->all } = ();        # set all keys to undef
-        }
-
-        my $action = $self->action_for('delete');
-
-        for my $unit (@units) {
-            exists $undeletable{ $unit->{id} }
-              or $unit->{delete_url} = $c->project_uri( $action, $unit->{id} );
+            $unit{delete_url} = $c->project_uri( $action, $unit{id} );
         }
     }
 
