@@ -1,15 +1,34 @@
 <h2>Quantities</h2>
 
-<ul>
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Default unit</th>
+        <th colspan="2">Actions</th>
+    </tr>
+</thead>
+
+<tbody>
 [% FOR quantity IN quantities %]
-    <li>[% quantity.name | html %]
-        <form class="inline" action="[% c.project_uri('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
+    <tr>
+        <td>[% quantity.name | html %]</td>
+        <td>[% quantity.default_unit ? display_unit(quantity.default_unit) : '<em>none</em>' %]</td>
+        <td>
         <form class="inline" action="[% c.project_uri('/quantity/update', quantity.id) %]" method="POST"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
-    </li>
+        </td>
+        <td>
+        <form class="inline" action="[% c.project_uri('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
+        </td>
+    </tr>
 [% END %]
-</ul>
+</tbody>
+</table>
 
 <form action="[% c.project_uri('/quantity/create') %]" method="POST">
-<input type="text" name="name" placeholder="name">
-<input type="submit" value="Create">
+<fieldset>
+    <legend>Create new quantity</legend>
+    <input type="text" name="name" placeholder="name">
+    <input type="submit" value="Create">
+</fieldset>
 </form>

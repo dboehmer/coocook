@@ -24,13 +24,15 @@ Catalyst Controller.
 sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( quantities => [ $c->project->quantities->sorted->all ] );
+    my $quantities = $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } );
+
+    $c->stash( quantities => [ $quantities->all ] );
 }
 
 sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->project->quantities->create( { name => scalar $c->req->param('name') } );
+    $c->project->create_related( quantities => { name => scalar $c->req->param('name') } );
     $c->detach('redirect');
 }
 
