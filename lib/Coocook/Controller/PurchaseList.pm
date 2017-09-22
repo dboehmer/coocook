@@ -56,54 +56,7 @@ sub base : Chained('/project/base') PathPart('purchase_list') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    my @items = $c->stash->{list}->items->all;
-
-    my %units = map { $_->id => $_ } $c->model('DB::Unit')->all;
-
-    # collect distinct article IDs (hash may contain duplicates)
-    my @article_ids =
-      keys %{ { map { $_->get_column('article') => undef } @items } };
-
-    my @articles = $c->model('DB::Article')->search( { id => { -in => \@article_ids } } )->all;
-
-    my %articles = map { $_->id => $_ } @articles;
-    my %article_to_section =
-      map { $_->id => $_->get_column('shop_section') } @articles;
-
-    my @section_ids =
-      keys %{ { map { $_ => undef } values %article_to_section } };
-
-    my @sections = $c->model('DB::ShopSection')->search( { id => { -in => \@section_ids } } )->all;
-
-    my %sections =
-      map { $_->id => { name => $_->name, items => [] } } @sections;
-
-    for my $item (@items) {
-        my $article = $item->get_column('article');
-        my $unit    = $item->get_column('unit');
-
-        my $section = $article_to_section{$article};
-
-        push @{ $sections{$section}{items} },
-          {
-            id               => $item->id,
-            value            => $item->value,
-            offset           => $item->offset,
-            article          => $articles{$article},
-            unit             => $units{$unit},
-            comment          => $item->comment,
-            ingredients      => [ $item->ingredients->all ],
-            convertible_into => [ $item->convertible_into->all ],
-          };
-    }
-
-    # sort products alphabetically
-    for my $section ( values %sections ) {
-        $section->{items} = [ sort { $a->{article}->name cmp $b->{article}->name } @{ $section->{items} } ];
-    }
-
-    # sort sections
-    $c->stash( sections => [ sort { $a->{name} cmp $b->{name} } values %sections ] );
+    $c->stash( sections => $c->model('PurchaseList')->new( list => $c->stash->{list} )->by_section );
 
     $c->escape_title( "Purchase list" => $c->stash->{list}->name );
 }
