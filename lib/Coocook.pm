@@ -3,7 +3,7 @@ package Coocook;
 # ABSTRACT: Web application for collecting recipes and making food plans
 # VERSION
 
-use HTML::Entities;
+use HTML::Entities ();
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
