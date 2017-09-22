@@ -32,7 +32,7 @@ __PACKAGE__->has_many(
     sub {
         my $args = shift;
 
-        return {
+        return {    # TODO exclude units without to_quantity_default
             "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
             "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
         };
@@ -41,7 +41,28 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'unit' );
 
+__PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient', 'unit' );
+
+__PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient', 'unit' );
+
+__PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item', 'unit' );
+
 __PACKAGE__->many_to_many( articles => articles_units => 'article' );
+
+before delete => sub {
+    my $self = shift;
+
+    for ( $self->articles_units, $self->items, $self->dish_ingredients, $self->recipe_ingredients ) {
+        $_->count == 0
+          or die "unit can't be deleted because it's in use";
+    }
+
+    if (    $self->is_quantity_default
+        and $self->convertible_into->count > 0 )
+    {
+        die "unit is quantity default and other units exist";
+    }
+};
 
 __PACKAGE__->meta->make_immutable;
 
