@@ -36,6 +36,12 @@ Install database into local SQLite and start development server:
     script/coocook_deploy.pl install
     script/coocook_server.pl
 
+## Mailing list
+
+* coocook@lists.coocook.org
+* subscribe at http://lists.coocook.org/mailman/listinfo/coocook
+* or send e-mail with subject `subscribe` to coocook-request@lists.coocook.org
+
 ## Terminology
 
 | Name | Description | Example |
