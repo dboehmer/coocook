@@ -1,4 +1,4 @@
-<p>Coocook is a web application for collecting recipes and making food plans.</p>
+[% USE Markdown; c.config.homepage_text_md | $Markdown %]
 
 <p><a href="[% c.uri_for_action('/login') %]">Login</a></p>
 

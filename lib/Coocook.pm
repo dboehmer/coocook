@@ -47,6 +47,18 @@ $ENV{CATALYST_DEBUG}
 __PACKAGE__->config(
     name => 'Coocook',
 
+    homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
+        open my $fh, __FILE__;    # read abstract from this file
+        my $abstract;
+        while (<$fh>) {
+            /^# ?ABSTRACT: (.+)$/ or next;
+            $abstract = $1;
+            last;
+        }
+        close $fh;
+        $abstract;
+    },
+
     project_deletion_confirmation => "I really want to loose my project",
 
     # Disable deprecated behavior needed by old applications

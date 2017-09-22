@@ -1,4 +1,8 @@
-coocook.sqlite
+# default database file
+/coocook.sqlite
+
+# custom config file
+/coocook_local.conf
 
 # build files
 /blib/
