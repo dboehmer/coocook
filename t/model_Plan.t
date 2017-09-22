@@ -81,29 +81,32 @@ my $project_plan = $plan->project($project);
 $_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
 is_deeply $project_plan => [
     {
-        'date'  => '2000-01-01T00:00:00',
-        'meals' => [
+        date  => '2000-01-01T00:00:00',
+        meals => [
             {
-                'dishes' => [ { id => 1, name => 'pancakes', servings => 4 } ],
-                'name'   => 'breakfast'
+                name    => 'breakfast',
+                dishes  => [ { id => 1, name => 'pancakes', servings => 4 } ],
+                comment => 'Best meal of the day!',
             }
         ]
     },
     {
-        'date'  => '2000-01-02T00:00:00',
-        'meals' => [
+        date  => '2000-01-02T00:00:00',
+        meals => [
             {
-                'dishes' => [ { id => 2, name => 'pizza', servings => 4 } ],
-                'name'   => 'lunch'
+                name    => 'lunch',
+                dishes  => [ { id => 2, name => 'pizza', servings => 4 } ],
+                comment => '',
             }
         ]
     },
     {
-        'date'  => '2000-01-03T00:00:00',
-        'meals' => [
+        date  => '2000-01-03T00:00:00',
+        meals => [
             {
-                'dishes' => [ { id => 3, name => 'bread', servings => 4 } ],
-                'name'   => 'dinner'
+                name    => 'dinner',
+                dishes  => [ { id => 3, name => 'bread', servings => 4 } ],
+                comment => '',
             }
         ]
     }

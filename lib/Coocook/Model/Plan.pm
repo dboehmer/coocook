@@ -136,8 +136,9 @@ sub project {
 
         push @{ $day->{meals} },
           {
-            name   => $meal->name,
-            dishes => \my @dishes,
+            name    => $meal->name,
+            comment => $meal->comment,
+            dishes  => \my @dishes,
           };
 
         for my $dish ( $meal->dishes->all ) {
