@@ -25,15 +25,39 @@ Catalyst Controller.
 sub index : Chained('/project/base') PathPart('units') Args(0) {
     my ( $self, $c ) = @_;
 
+    my @quantities =
+      $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } )->all;
+    my %quantities = map { $_->id => $_ } @quantities;
+
+    my @units;
+
+    {
+        my $units = $c->project->units->search( undef,
+            { join => 'quantity', order_by => [ 'quantity.name', 'long_name' ] } );
+
+        while ( my $unit = $units->next ) {
+            $unit->quantity( $quantities{ $unit->get_column('quantity') } );
+
+            push @units, {
+                url        => $c->project_uri( $self->action_for('edit'),   $unit->id ),
+                delete_url => $c->project_uri( $self->action_for('delete'), $unit->id ),
+                from_quantity_default => $unit->to_quantity_default ? 1 / $unit->to_quantity_default : undef,
+                map { $_ => $unit->$_() }
+                  qw<
+                  is_quantity_default
+                  long_name
+                  quantity
+                  short_name
+                  to_quantity_default
+                  >
+            };
+        }
+    }
+
     $c->stash(
-        units => $c->project->units->search(
-            undef,
-            {
-                join     => 'quantity',
-                order_by => [qw< quantity.name short_name >]
-            }
-        ),
-        quantities => [ $c->project->quantities->sorted->all ],
+        create_url => $c->project_uri( $self->action_for('create') ),
+        quantities => \@quantities,
+        units      => \@units,
     );
 }
 
