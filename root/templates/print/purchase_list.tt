@@ -5,14 +5,15 @@
 <h3>[% section.name | html %]</h3>
 
 <table>
-    <thead>
-        <tr>
-            <th>Amount</th>
-            <th>Article</th>
-            <th>Dishes</th>
-            <th>Comment</th>
-        </tr>
-    </thead>
+<thead>
+    <tr>
+        <th>Amount</th>
+        <th>Article</th>
+        <th>Dishes</th>
+        <th>Comment</th>
+    </tr>
+</thead>
+<tbody>
     [% FOREACH item IN section.items %]
     <tr>
         <td>
@@ -38,5 +39,6 @@
         <td>[% item.comment | html %]</td>
     <tr>
     [% END %]
+</tbody>
 </table>
 [% END %]
