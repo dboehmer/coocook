@@ -53,6 +53,12 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header
 
+    'Model::DB' => {
+        connect_info => {
+            dsn => 'development',                        # referrs to dbic.yaml
+        },
+    },
+
     'Plugin::Authentication' => {
         default => {
             credential => {
