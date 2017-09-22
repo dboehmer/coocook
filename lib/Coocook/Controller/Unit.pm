@@ -48,6 +48,7 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
                   long_name
                   quantity
                   short_name
+                  space
                   to_quantity_default
                   >
             };
