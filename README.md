@@ -1,28 +1,59 @@
-# NAME
+# Coocook [![Build Status](https://travis-ci.org/dboehmer/coocook.svg?branch=master)](https://travis-ci.org/dboehmer/coocook)
 
-Coocook - Web application for collecting recipes and making food plans
+Web application for collecting recipes and making food plans
 
-# VERSION
+## Main features
 
-version 0.001
+* collect recipes
+* create food plans
+  * simply import dishes from your recipes
+* gather purchase lists
+  * convert units to summarize list items
+* print views for whole project and each day
+  * including ingredients, cooking instructions
+* special features
+  * define maximum shelf life or limit for need to preorder of articles
+  * select some ingredients and part of cooking instructions to be done at an earlier meals
 
-# SYNOPSIS
+## Quick start
 
+Prerequisites:
+
+* Perl5
+* SQLite by default
+
+Get source code:
+
+    git clone https://github.com/dboehmer/coocook.git
+
+Install dependencies:
+
+    perl Makefile.PL
+    make installdeps
+
+Install database into local SQLite and start development server:
+
+    script/coocook_deploy.pl install
     script/coocook_server.pl
 
-# DESCRIPTION
+## Terminology
 
-\[enter your description here\]
+| Name | Description | Example |
+| --- | --- | --- |
+| Project | self-contained collection of Coocook data | Paris vacation |
+| Meal | an occasion for food on a particular date | lunch at August 15th |
+| Dish | an actual food planned for a certain meal | apple pie for lunch on August 15th |
+| Recipe | a scalable template for a dish | apple pie |
+| Ingredient | an amount of some article for a dish/recipe | 1kg of apples |
+| Article | a single sort of food that can be purchased | apples |
+| Unit | a type of measurement | kilograms
+| Quantity | a collection of physical units that can be converted | masses
 
-# SEE ALSO
+## Author
 
-[Coocook::Controller::Root](https://metacpan.org/pod/Coocook::Controller::Root), [Catalyst](https://metacpan.org/pod/Catalyst)
+Daniel Böhmer <post@daniel-boehmer.de>
 
-# AUTHOR
+## Copyright and License
 
-Daniel Böhmer <dboehmer@cpan.org>
-
-# COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2016 by Daniel Böhmer.  No
+This software is copyright (c) 2016,2017 by Daniel Böhmer.  No
 license is granted to other entities.
