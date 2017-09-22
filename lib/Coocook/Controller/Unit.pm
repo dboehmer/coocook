@@ -39,11 +39,11 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
 
             push @units, {
-                url        => $c->project_uri( $self->action_for('edit'),   $unit->id ),
-                delete_url => $c->project_uri( $self->action_for('delete'), $unit->id ),
+                url => $c->project_uri( $self->action_for('edit'), $unit->id ),
                 from_quantity_default => $unit->to_quantity_default ? 1 / $unit->to_quantity_default : undef,
                 map { $_ => $unit->$_() }
                   qw<
+                  id
                   is_quantity_default
                   long_name
                   quantity
@@ -51,6 +51,30 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
                   to_quantity_default
                   >
             };
+        }
+    }
+
+    {
+        my @resultsets = (
+            $c->project->units->articles_units,    #perltidy
+            $c->project->purchase_lists->items,
+            $c->project->dishes->ingredients,
+            $c->project->recipes->ingredients,
+        );
+
+        my %undeletable;
+
+        for my $resultset (@resultsets) {
+            my $ids = $resultset->get_column( { distinct => 'unit' } );
+
+            @undeletable{ $ids->all } = ();        # set all keys to undef
+        }
+
+        my $action = $self->action_for('delete');
+
+        for my $unit (@units) {
+            exists $undeletable{ $unit->{id} }
+              or $unit->{delete_url} = $c->project_uri( $action, $unit->{id} );
         }
     }
 

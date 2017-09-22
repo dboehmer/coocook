@@ -68,9 +68,11 @@
 [% END %]
     </td>
     <td>
+[% IF unit.delete_url %]
         <form action="[% unit.delete_url %]" method="POST" class="inline">
             <input type="submit" value="Delete">
         </form>
+[% END %]
     </td>
 </tr>
 [% END %]

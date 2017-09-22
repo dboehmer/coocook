@@ -39,7 +39,7 @@ __PACKAGE__->has_many(
     }
 );
 
-__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
+__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'unit' );
 
 __PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
