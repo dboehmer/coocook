@@ -21,36 +21,12 @@ Catalyst Controller.
 
 =cut
 
-sub project_data : Private {
-    my ( $self, $c ) = @_;
-
-    $c->stash(
-        default_shelf_life_days   => 7,
-        default_preorder_servings => 10,
-        default_preorder_workdays => 3,
-    );
-
-    my $quantities = $c->project->quantities;
-    $quantities = $quantities->search(
-        undef,
-        {
-            prefetch => 'units',
-            order_by => [ $quantities->me('name'), 'units.short_name', ],
-        }
-    );
-
-    $c->stash(
-        shop_sections => [ $c->project->shop_sections->sorted->all ],
-        quantities    => [ $quantities->all ],
-    );
-}
-
 sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     my ( $self, $c ) = @_;
 
     my $articles = $c->project->articles->sorted->search( undef, { prefetch => 'shop_section' } );
 
-    $c->forward('project_data');
+    $c->forward('fetch_project_data');
     $c->stash( articles => [ $articles->all ] );
 }
 
@@ -63,7 +39,7 @@ sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->forward('project_data');
+    $c->forward('fetch_project_data');
 
     my $article = $c->stash->{article}
       or die "Can't find article";                               # TODO serious error message
@@ -117,6 +93,29 @@ sub delete : POST Chained('base') Args(0) {
 }
 
 ### private helpers ###
+
+sub fetch_project_data : Private {
+    my ( $self, $c ) = @_;
+
+    my $quantities = $c->project->quantities;
+    $quantities = $quantities->search(
+        undef,
+        {
+            prefetch => 'units',
+            order_by => [ $quantities->me('name'), 'units.short_name' ],
+        }
+    );
+
+    my $shop_sections = $c->project->shop_sections->sorted;
+
+    $c->stash(
+        default_shelf_life_days   => 7,
+        default_preorder_servings => 10,
+        default_preorder_workdays => 3,
+        shop_sections             => [ $shop_sections->all ],
+        quantities                => [ $quantities->all ],
+    );
+}
 
 sub redirect : Private {
     my ( $self, $c ) = @_;
