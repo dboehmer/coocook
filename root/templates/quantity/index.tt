@@ -15,10 +15,12 @@
         <td>[% quantity.name | html %]</td>
         <td>[% quantity.default_unit ? display_unit(quantity.default_unit) : '<em>none</em>' %]</td>
         <td>
-        <form class="inline" action="[% c.project_uri('/quantity/update', quantity.id) %]" method="POST"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
+        <form class="inline" method="POST" action="[% quantity.update_url %]"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
         </td>
         <td>
-        <form class="inline" action="[% c.project_uri('/quantity/delete', quantity.id) %]" method="POST"><input type="submit" value="Delete"></form>
+    [% IF quantity.delete_url %]
+        <form class="inline" method="POST" action="[% quantity.delete_url %]"><input type="submit" value="Delete"></form>
+    [% END %]
         </td>
     </tr>
 [% END %]
