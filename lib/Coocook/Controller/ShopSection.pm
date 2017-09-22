@@ -3,7 +3,7 @@ package Coocook::Controller::ShopSection;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller' }
 
 __PACKAGE__->config( namespace => 'shop_section' );
 

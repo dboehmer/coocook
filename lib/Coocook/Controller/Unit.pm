@@ -4,7 +4,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use Scalar::Util qw(looks_like_number);
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { extends 'Catalyst::Controller' }
 
 =head1 NAME
 
