@@ -14,6 +14,9 @@ sub new {
     my $data_start = tell DATA;
 
     while (<DATA>) {
+        $ENV{DBIC_TRACE}
+          and warn $_;
+
         $self->storage->dbh_do( sub { $_[1]->do($_) } );
     }
 
