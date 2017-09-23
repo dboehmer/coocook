@@ -32,7 +32,7 @@ __PACKAGE__->has_many(
     sub {
         my $args = shift;
 
-        return {    # TODO exclude units without to_quantity_default
+        return {
             "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
             "$args->{foreign_alias}.quantity"            => { -ident => "$args->{self_alias}.quantity" },
             "$args->{foreign_alias}.to_quantity_default" => { '!='   => undef },
