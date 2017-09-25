@@ -84,6 +84,7 @@ is_deeply $project_plan => [
         date  => '2000-01-01T00:00:00',
         meals => [
             {
+                id      => 1,
                 name    => 'breakfast',
                 dishes  => [ { id => 1, name => 'pancakes', servings => 4 } ],
                 comment => 'Best meal of the day!',
@@ -94,6 +95,7 @@ is_deeply $project_plan => [
         date  => '2000-01-02T00:00:00',
         meals => [
             {
+                id      => 2,
                 name    => 'lunch',
                 dishes  => [ { id => 2, name => 'pizza', servings => 4 } ],
                 comment => '',
@@ -104,6 +106,7 @@ is_deeply $project_plan => [
         date  => '2000-01-03T00:00:00',
         meals => [
             {
+                id      => 3,
                 name    => 'dinner',
                 dishes  => [ { id => 3, name => 'bread', servings => 4 } ],
                 comment => '',
