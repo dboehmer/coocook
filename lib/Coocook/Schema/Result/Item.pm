@@ -35,8 +35,7 @@ __PACKAGE__->belongs_to(
     }
 );
 
-__PACKAGE__->has_many( ingredients_items => 'Coocook::Schema::Result::IngredientItem', 'item' );
-__PACKAGE__->many_to_many( ingredients => ingredients_items => 'ingredient' );
+__PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::DishIngredient', 'item' );
 
 __PACKAGE__->meta->make_immutable;
 
@@ -50,25 +49,11 @@ sub convert {
 
     my $factor = $unit1->to_quantity_default / $unit2->to_quantity_default;
 
-    $self->result_source->schema->txn_do(
-        sub {
-            my $item2 = $self->result_source->resultset->add_or_create(
-                {
-                    purchase_list => $self->get_column('purchase_list'),
-                    article       => $self->get_column('article'),
-                    unit          => $unit2->id,
-
-                    # checking if unit is quantity default involved fetching the quantity ...
-                    value  => $self->value * $factor,
-                    offset => $self->offset * $factor,
-                }
-            ) or return;
-
-            $item2->add_to_ingredients($_) for $self->ingredients->all;
-
-            $self->delete;
-
-            return $item2;
+    $self->update(
+        {
+            unit   => $unit2->id,
+            value  => $self->value * $factor,
+            offset => $self->offset * $factor,
         }
     );
 }

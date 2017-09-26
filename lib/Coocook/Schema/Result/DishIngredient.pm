@@ -18,6 +18,7 @@ __PACKAGE__->add_columns(
     unit     => { data_type => 'int' },
     value    => { data_type => 'real' },
     comment  => { data_type => 'text' },
+    item     => { data_type => 'int', is_nullable       => 1 },    # from purchase list
 );
 
 __PACKAGE__->set_primary_key("id");
@@ -28,6 +29,7 @@ __PACKAGE__->grouping_column('dish');
 
 __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
 __PACKAGE__->belongs_to( dish    => 'Coocook::Schema::Result::Dish' );
+__PACKAGE__->belongs_to( item    => 'Coocook::Schema::Result::Item' );
 __PACKAGE__->belongs_to( unit    => 'Coocook::Schema::Result::Unit' );
 __PACKAGE__->belongs_to(
     article_unit => 'Coocook::Schema::Result::ArticleUnit',
@@ -36,10 +38,6 @@ __PACKAGE__->belongs_to(
         'foreign.unit'    => 'self.unit',
     }
 );
-
-__PACKAGE__->has_many(
-    ingredients_items => 'Coocook::Schema::Result::IngredientItem' => 'ingredient' );
-__PACKAGE__->many_to_many( items => ingredients_items => 'item' );
 
 __PACKAGE__->meta->make_immutable;
 
@@ -57,7 +55,7 @@ sub assign_to_purchase_list {
                 }
             );
 
-            $self->add_to_items($item);
+            $self->update( { item => $item->id } );
         }
     );
 }
