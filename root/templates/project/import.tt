@@ -1,14 +1,11 @@
 <form method="POST" action="[% import_url %]">
     <fieldset>
         <legend>Source Project</legend>
-        <ul>
+        <select name="source_project">
 [% FOR proj IN projects # don't overwrite $project %]
-            <li>
-                <input  id="project[% proj.id %]" type="radio" name="source_project" value="[% proj.id %]">
-                <label for="project[% proj.id %]">[% proj.name | html %]</label>
-            </li>
+            <option value="[% proj.id %]">[% proj.name | html %]</option>
 [% END %]
-        </ul>
+        </select>
     </fieldset>
 
     <fieldset>
