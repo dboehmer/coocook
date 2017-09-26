@@ -6,17 +6,18 @@ use strict;
 use warnings;
 
 use base 'DBIx::Class';
-use mro;    # provides next::
+use mro;    # provides next::method
 
 use Carp;
 use Sub::Name;
+
+our @CARP_NOT;
 
 sub has_many {
     my $class = shift;
     my ( $accessor_name, $related_class, $their_fk_column, $attrs ) = @_;
 
     if ( defined $their_fk_column and ref $their_fk_column eq '' ) {
-
         $related_class =~ s/^Coocook::Schema::Result:://;
 
         my $resultset_class = _resultset_class($class);
@@ -33,7 +34,10 @@ sub has_many {
         );
     }
     else {
-        carp "only scalar with PK column supported";
+        local @CARP_NOT = ('DBIx::Class::Relationship::BelongsTo');
+
+        carp "Can't create resultset relationship for ${class}->$accessor_name"
+          . " because only scalar with PK column supported\n";
     }
 
     return $class->next::method(@_);
