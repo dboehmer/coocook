@@ -74,7 +74,7 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
 
             push @units, \%unit;
 
-            next if exists $units_in_use{ $unit->{id} };
+            next if exists $units_in_use{ $unit{id} };
 
             if ( $unit->is_quantity_default ) {
                 next if $unit->convertible_into > 0;
