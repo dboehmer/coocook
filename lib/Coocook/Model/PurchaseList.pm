@@ -9,9 +9,19 @@ has list => (
     required => 1,
 );
 
-__PACKAGE__->meta->make_immutable;
+has shop_sections => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+);
 
-sub by_section {
+has units => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+);
+
+sub BUILD {
     my $self = shift;
 
     my $list    = $self->list;
@@ -23,24 +33,45 @@ sub by_section {
     # units: can't narrow down because needs convertible units
     my %units = map { $_->{id} => $_ } $project->units->inflate_hashes->all;
 
-    my %default_units = map { $_ => 1 } $project->quantities->get_column('default_unit')->all;
+    {
+        my %default_unit;    # holds true value for all IDs of default units
+        my %convertible;     # holds arrayrefs for convertible units per quantity
 
-    for my $unit ( values %units ) {
-        if ( $default_units{ $unit->{id} } ) {
-            $unit->{is_default_quantity} = 1;
+        my $quantities = $project->quantities->inflate_hashes;
+
+        while ( my $quantity = $quantities->next ) {
+            if ( my $unit = $quantity->{default_unit} ) {
+                $default_unit{$unit} = 1;
+            }
+
+            $convertible{ $quantity->{id} } = [];
         }
-        elsif ( $unit->{to_quantity_default} ) {
-            $unit->{can_be_quantity_default} = 1;
 
-            $unit->{convertible_into} = [
-                grep {
-                          $_->{id} != $unit->{id}
-                      and $_->{quantity} == $unit->{quantity}
-                      and defined $_->{to_quantity_default}
-                } values %units
-            ];
+        for my $unit ( values %units ) {
+            if ( $default_unit{ $unit->{id} } ) {
+                $unit->{is_default_quantity} = 1;
+            }
+            elsif ( $unit->{to_quantity_default} ) {
+                $unit->{can_be_quantity_default} = 1;
+            }
+            else {
+                next;
+            }
 
-            weaken $_ for @{ $unit->{convertible_into} };
+            # unit is either quantity default or can be converted to
+            push @{ $convertible{ $unit->{quantity} } }, $unit;
+        }
+
+        # clone list of convertibles and exclude unit itself
+        for my $units ( values %convertible ) {
+            for my $unit (@$units) {
+                my @convertible = grep { $_->{id} != $unit->{id} } @$units;
+
+                # avoid circular references
+                weaken $_ for @convertible;
+
+                $unit->{convertible_into} = \@convertible;
+            }
         }
     }
 
@@ -106,7 +137,10 @@ sub by_section {
         push @sections, { items => $items };
     }
 
-    return \@sections;
+    $self->units( [ values %units ] );
+    $self->shop_sections( \@sections );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;

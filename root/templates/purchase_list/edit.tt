@@ -33,7 +33,7 @@
         </ul></td>
         <td>[% item.comment %]</td>
         <td>
-        [% FOREACH unit IN item.convertible_into %]
+        [% FOREACH unit IN item.unit.convertible_into %]
             <form action="[% c.project_uri('/items/convert', item.id) %]" method="POST" class="inline">
                 <input type="hidden" name="unit" value="[% unit.id %]">
                 <input type="submit" value="[% unit.short_name | html %]" title="[% unit.long_name | html %]">

@@ -17,7 +17,7 @@ use_ok 'Coocook::Model::PurchaseList';
 my $list = new_ok 'Coocook::Model::PurchaseList',
   [ list => $db->resultset('PurchaseList')->find(1) ];
 
-my $sections = $list->by_section;
+ok my $sections = $list->shop_sections;
 
 cmp_deeply $sections => [
     {

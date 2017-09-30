@@ -84,7 +84,12 @@ sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list')
 
     my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);
 
-    $c->stash( sections => $c->model('PurchaseList')->new( list => $c->stash->{list} )->by_section );
+    my $model_list = $c->model('PurchaseList')->new( list => $c->stash->{list} );
+
+    $c->stash(
+        sections => $model_list->shop_sections,
+        units    => $model_list->units,
+    );
 
     $c->escape_title( "Purchase list" => $list->name );
 }

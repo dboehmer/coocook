@@ -56,7 +56,12 @@ sub base : Chained('/project/base') PathPart('purchase_list') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( sections => $c->model('PurchaseList')->new( list => $c->stash->{list} )->by_section );
+    my $list = $c->model('PurchaseList')->new( list => $c->stash->{list} );
+
+    $c->stash(
+        sections => $list->shop_sections,
+        units    => $list->units,
+    );
 
     $c->escape_title( "Purchase list" => $c->stash->{list}->name );
 }
