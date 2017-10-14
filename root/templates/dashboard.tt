@@ -1,4 +1,4 @@
-<p>Logged in as [% user.name | html %].</p>
+<p>Logged in as [% user.display_name | html %].</p>
 
 <form method="POST" action="[% logout_url %]">
     <input type="submit" value="Logout">

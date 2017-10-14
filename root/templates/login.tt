@@ -1,5 +1,5 @@
 <form method="POST" action="[% post_login_url %]">
-    <input type="text" name="username" value="coocook">
-    <input type="password" name="password">
+    <input type="text"     name="username" value="coocook">
+    <input type="password" name="password" value="coocook">
     <input type="submit" value="Login">
 </form>

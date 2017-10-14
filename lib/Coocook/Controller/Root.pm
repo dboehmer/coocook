@@ -32,9 +32,7 @@ The root page (/)
 sub begin : Private {
     my ( $self, $c ) = @_;
 
-    if ( my $user = $c->user ) {
-        $c->stash( user => { name => $user->id } );
-    }
+    $c->stash( user => $c->user );
 }
 
 sub auto : Private {

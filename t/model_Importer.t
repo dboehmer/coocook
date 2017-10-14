@@ -53,9 +53,10 @@ subtest "empty import" => sub {
 };
 
 subtest "complete import" => sub {
-    my @not_imported = qw< Dish DishIngredient DishTag Item Meal Project PurchaseList >;
+    my @not_imported =
+      qw< Dish DishIngredient DishTag Item Meal Project ProjectUser PurchaseList User >;
     my %not_imported = map { $_ => 1 } @not_imported;
-    my @imported     = grep { not $not_imported{$_} } $db->sources;
+    my @imported = grep { not $not_imported{$_} } $db->sources;
 
     my $records1 = $db->count(@imported);
 

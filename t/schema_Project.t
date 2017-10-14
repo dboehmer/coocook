@@ -59,7 +59,7 @@ subtest delete => sub {
 
     ok $db->resultset('Project')->find(1)->delete;
 
-    is $db->count => 4    # number of records for other projects
+    is $db->count => 6    # number of records for other projects
       and return;
 
     note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;

@@ -30,6 +30,9 @@ __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 
+__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
+__PACKAGE__->many_to_many( users => projects_users => 'user' );
+
 before delete => sub {    # TODO solve workaround
     my $self = shift;
 

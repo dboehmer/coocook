@@ -88,10 +88,8 @@ __PACKAGE__->config(
                 password_type  => 'clear',
             },
             store => {
-                class => 'Minimal',
-                users => {
-                    coocook => { password => "coocook" }
-                },
+                class      => 'DBIx::Class',
+                user_model => 'DB::User',
             },
         }
     },

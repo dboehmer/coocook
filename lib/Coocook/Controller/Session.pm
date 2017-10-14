@@ -22,7 +22,7 @@ sub post_login : POST Path('/login') Args(0) {
     my $username = $c->req->param('username');
     my $password = $c->req->param('password');
 
-    if ( $c->authenticate( { username => $username, password => $password } ) ) {
+    if ( $c->authenticate( { name => $username, password => $password } ) ) {
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
