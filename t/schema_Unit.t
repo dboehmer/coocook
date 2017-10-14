@@ -17,7 +17,7 @@ my $db = TestDB->new;
 
 my $kg = $db->resultset('Unit')->find( { short_name => 'kg' } );
 
-my @other_units = $kg->convertible_into->all => 2, "is convertible into 2 units";
+is my @other_units = $kg->convertible_into->all => 2, "is convertible into 2 units";
 
 ok $kg->is_quantity_default, "unit is quantity default";
 
