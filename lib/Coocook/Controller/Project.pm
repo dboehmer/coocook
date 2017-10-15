@@ -135,7 +135,7 @@ sub edit_dishes : POST Chained('base') Args(0) {
     $c->detach( redirect => [$project] );
 }
 
-sub create : POST Local {
+sub create : POST Local Args(0) {
     my ( $self, $c ) = @_;
 
     if ( length( my $name = $c->req->param('name') ) > 0 ) {
