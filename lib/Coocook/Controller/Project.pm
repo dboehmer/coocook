@@ -143,6 +143,8 @@ sub create : POST Local {
         $project->name( scalar $c->req->param('name') );
         $project->insert;
 
+        $c->user->add_to_projects($project);
+
         $c->response->redirect(
             $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
     }
