@@ -1,0 +1,26 @@
+<form method="POST" action="[% register_url %]">
+<table>
+    <tr>
+        <th><label for="name">Name</label></th>
+        <td><input  id="name" type="text" name="name" placeholder="name"></td>
+    </tr>
+    <tr>
+        <th><label for="display_name">Display name</label></th>
+        <td><input  id="display_name" type="text" name="display_name" placeholder="display name"></td>
+    </tr>
+    <tr>
+        <th><label for="email">E-mail address</label></th>
+        <td><input  id="email" type="email" name="email" placeholder="e-mail address"></td>
+    </tr>
+    <tr>
+        <th><label for="password">Password</label></th>
+        <td><input  id="password" type="password" name="password"></td>
+    </tr>
+    <tr>
+        <th><label for="password2">Confirm password</label></th>
+        <td><input  id="password2" type="password" name="password2"></td>
+    </tr>
+</table>
+
+<input type="submit" value="Register">
+</form>

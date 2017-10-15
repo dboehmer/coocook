@@ -67,7 +67,10 @@ sub auto : Private {
         );
     }
     else {
-        $c->stash( login_url => $c->uri_for_action('/login') );
+        $c->stash(
+            login_url    => $c->uri_for_action('/login'),
+            register_url => $c->uri_for_action('/user/register'),
+        );
     }
 }
 

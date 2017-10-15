@@ -33,6 +33,36 @@ sub show : GET Chained('base') Args(0) {
     $c->escape_title( User => $user->display_name );
 }
 
+sub register : GET Path('/register') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash( register_url => $c->uri_for( $self->action_for('create') ) );
+}
+
+sub create : POST Path('/users/create') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $password = $c->req->param('password');
+
+    $password eq $c->req->param('password2')
+      or die "passwords don't match";    # TODO error message
+
+    my $user = $c->model('DB::User')->create(
+        {
+            name         => scalar $c->req->param('name'),
+            display_name => scalar $c->req->param('display_name'),
+            email        => scalar $c->req->param('email'),
+            password     => $password,
+        }
+    );
+
+    $c->set_authenticated(               # TODO documented as internal method
+        $c->find_user( { id => $user->id } )
+    );
+
+    $c->response->redirect( $c->uri_for('/') );
+}
+
 sub update : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
 
