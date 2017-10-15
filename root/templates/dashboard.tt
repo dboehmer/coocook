@@ -1,4 +1,4 @@
-<p>Logged in as <a href="[% c.uri_for_action('/user/show', user.name) %]">[% user.display_name | html %]</a>.</p>
+<p>Logged in as <a href="[% c.uri_for_action('/user/show', [user.name]) %]">[% user.display_name | html %]</a>.</p>
 
 <form method="POST" action="[% logout_url %]">
     <input type="submit" value="Logout">
@@ -17,5 +17,13 @@
     <legend>Create new project</legend>
     <input type="text" name="name" placeholder="name">
     <input type="submit" value="Create project">
+</fieldset>
+</form>
+
+<form method="POST" action="[% c.uri_for_action('/user/update', [user.name]) %]">
+<fieldset>
+    <legend>Change your user's display name</legend>
+    <input type="text" name="display_name" value="[% user.display_name | html %]">
+    <input type="submit" value="Update user">
 </fieldset>
 </form>
