@@ -52,9 +52,10 @@ sub auto : Private {
         ],
     );
 
-    my $errors = $c->req->query_params->{error};
-    if ( defined $errors ) {
-        ref $errors or $errors = [$errors];
+    my $errors = $c->stash->{errors} ||= [];
+
+    if ( my $e = $c->req->query_params->{error} ) {
+        push @$errors, ref $e eq 'ARRAY' ? @$e : $e;
     }
     $c->stash( errors => $errors );
 
@@ -72,6 +73,8 @@ sub auto : Private {
             register_url => $c->uri_for_action('/user/register'),
         );
     }
+
+    return 1;    # important
 }
 
 sub index : GET Path Args(0) {

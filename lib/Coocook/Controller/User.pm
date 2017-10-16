@@ -1,5 +1,6 @@
 package Coocook::Controller::User;
 
+use Data::Validate::Email 'is_email';
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -23,7 +24,7 @@ sub base : Chained('/') PathPart('user') CaptureArgs(1) {
     $c->stash( user => $c->model('DB::User')->find( { name => $name } ) );
 }
 
-sub show : GET Chained('base') Args(0) {
+sub show : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
@@ -39,28 +40,72 @@ sub register : GET Path('/register') Args(0) {
     $c->stash( register_url => $c->uri_for( $self->action_for('create') ) );
 }
 
-sub create : POST Path('/users/create') Args(0) {
+sub create : POST Path('/register') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $password = $c->req->param('password');
+    my $name         = $c->req->param('name');
+    my $password     = $c->req->param('password');
+    my $display_name = $c->req->param('display_name');
+    my $email        = $c->req->param('email');
 
-    $password eq $c->req->param('password2')
-      or die "passwords don't match";    # TODO error message
+    my @errors;
+
+    if ( length $name == 0 ) {
+        push @errors, "username must not be empty";
+    }
+    else {
+        if ( $c->model('DB::User')->search( { name => $name } )->count > 0 ) {    # TODO case sensitivity?
+            push @errors, "username already in use";
+        }
+    }
+
+    if ( length $password == 0 ) {
+        push @errors, "password must not be empty";
+    }
+    else {
+        if ( $password ne $c->req->param('password2') ) {
+            push @errors, "password's don't match";
+        }
+    }
+
+    if ( length $display_name == 0 ) {
+        push @errors, "display name must not be empty";
+    }
+
+    $email = is_email($email)
+      or push @errors, "e-mail address is not valid";
+
+    if (@errors) {
+        my $errors = $c->stash->{errors} ||= [];
+        push @$errors, @errors;
+
+        $c->stash(
+            template   => 'user/register.tt',
+            last_input => {
+                name         => $name,
+                display_name => $display_name,
+                email        => $email,
+            },
+        );
+
+        $c->go('register');
+    }
 
     my $user = $c->model('DB::User')->create(
         {
-            name         => scalar $c->req->param('name'),
+            name         => $name,
+            password     => $password,
             display_name => scalar $c->req->param('display_name'),
             email        => scalar $c->req->param('email'),
-            password     => $password,
         }
     );
 
-    $c->set_authenticated(               # TODO documented as internal method
+    $c->set_authenticated(    # TODO documented as internal method
         $c->find_user( { id => $user->id } )
     );
 
     $c->response->redirect( $c->uri_for('/') );
+    $c->detach;
 }
 
 sub update : POST Chained('base') Args(0) {

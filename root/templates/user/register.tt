@@ -2,15 +2,15 @@
 <table>
     <tr>
         <th><label for="name">Name</label></th>
-        <td><input  id="name" type="text" name="name" placeholder="name"></td>
+        <td><input  id="name" type="text" name="name" placeholder="name" value="[% last_input.name | html %]"></td>
     </tr>
     <tr>
         <th><label for="display_name">Display name</label></th>
-        <td><input  id="display_name" type="text" name="display_name" placeholder="display name"></td>
+        <td><input  id="display_name" type="text" name="display_name" placeholder="display name" value="[% last_input.display_name | html %]"></td>
     </tr>
     <tr>
         <th><label for="email">E-mail address</label></th>
-        <td><input  id="email" type="email" name="email" placeholder="e-mail address"></td>
+        <td><input  id="email" type="email" name="email" placeholder="e-mail address" value="[% last_input.email | html %]"></td>
     </tr>
     <tr>
         <th><label for="password">Password</label></th>
