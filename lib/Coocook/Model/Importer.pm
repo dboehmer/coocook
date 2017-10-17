@@ -27,8 +27,9 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         import => sub { shift->shop_sections },
     },
     {
-        key    => 'articles',
-        name   => "Articles",
+        key             => 'articles',
+        name            => "Articles",
+        soft_depends_on => ['shop_sections'],
         import => sub { shift->articles, { project => 'projects', shop_section => 'shop_sections?' } },
     },
     {
@@ -77,10 +78,14 @@ for my $property (@internal_properties) {
     $property->{name} xor $property->{auto}
       or die "Property $property->{name} can have only 'name' xor 'auto'";
 
-    $property->{$_} ||= [] for qw< depends_on dependency_of >;
+    $property->{$_} ||= [] for qw< depends_on dependency_of soft_depends_on soft_dependency_of >;
 
     for ( @{ $property->{depends_on} } ) {
         push @{ $internal_properties{$_}{dependency_of} }, $property->{key};
+    }
+
+    for ( @{ $property->{soft_depends_on} } ) {
+        push @{ $internal_properties{$_}{soft_dependency_of} }, $property->{key};
     }
 }
 
@@ -91,7 +96,8 @@ my @public_properties = map +{%$_},    # shallow copy
 my %public_properties = map { $_->{key} => $_ } @public_properties;
 
 for my $property (@public_properties) {
-    delete $property->{import};        # hide from outside world
+    delete $property->{$_}
+      for qw< import soft_depends_on soft_dependency_of >;    # hide internals from outside world
 
     # reduce lists to public properties
     for (qw< depends_on dependency_of >) {
@@ -132,11 +138,12 @@ sub import_data {    # import() is used by 'use'
                       or next;
                 }
 
-                # is this property a dependency of any property that
+                # is this property a (soft) dependency of any property that
                 # - is requested or
                 # - has the 'auto' flag
                 my $is_dependency =
-                  !!grep { $requested_props{$_} or $internal_properties{$_}{auto} } @{ $property->{dependency_of} };
+                  !!grep { $requested_props{$_} or $internal_properties{$_}{auto} }
+                  ( @{ $property->{dependency_of} }, @{ $property->{soft_dependency_of} } );
 
                 # accept coderef or arrayref of coderefs
                 my @imports = map { ref eq 'ARRAY' ? @$_ : $_ } $property->{import};
@@ -151,6 +158,7 @@ sub import_data {    # import() is used by 'use'
                     # 'shop_sections?' => undef           (if not already translated)
                     for ( values %translate ) {
                         if (s/\?$//) {    # column name had '?' appended, '?' is removed
+                            $DB::single = 1;
                             exists $new_id{$_}
                               or $_ = undef;
                         }

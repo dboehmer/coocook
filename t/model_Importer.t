@@ -71,6 +71,10 @@ subtest "complete import" => sub {
     my $deleted  = $records2 - $records3;
     my $imported = $records2 - $records1;
 
+    # was broken in ccd0b94
+    is $target->articles->find( { name => 'flour' } )->shop_section->name => 'bakery products',
+      "article 'flour' stays in shop section 'bakery products'";
+
     is $imported => $deleted,
       "rows imported == rows deleted"
       and return;
