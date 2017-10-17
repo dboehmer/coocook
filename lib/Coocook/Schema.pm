@@ -31,4 +31,15 @@ sub count {
     return $records;
 }
 
+sub fk_checks_off_do {
+    my ( $self, $cb ) = @_;
+
+    $self->storage->sqlt_type eq 'SQLite'
+      or die "only implemented for SQLite";
+
+    $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = OFF;') } );
+    $cb->();
+    $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = ON;') } );
+}
+
 1;
