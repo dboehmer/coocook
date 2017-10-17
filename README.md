@@ -19,7 +19,7 @@ Web application for collecting recipes and making food plans
 
 Prerequisites:
 
-* Perl5
+* Perl5 with `cpanm`
 * SQLite by default
 
 Get source code:
@@ -29,7 +29,7 @@ Get source code:
 Install dependencies:
 
     perl Makefile.PL
-    make installdeps
+    cpanm --installdeps .
 
 Install database into local SQLite and start development server:
 
