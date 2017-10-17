@@ -15,8 +15,9 @@ ok my $db2 = TestDB->new, "another instance";
 
 ok $db2->count, "... is also populated";
 
-ok $db->resultset('Unit')->delete, "delete table in 1st instance";
+# rows from 'dish_ingredients' can be safely deleted because no FK point there
+ok $db->resultset('DishIngredient')->delete, "delete table in 1st instance";
 
-ok $db2->resultset('Unit')->count, "table still populated in 2nd instance";
+ok $db2->resultset('DishIngredient')->count, "table still populated in 2nd instance";
 
 done_testing;

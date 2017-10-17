@@ -16,13 +16,17 @@ subtest articles_cached_units => sub {
     is_deeply [ map ref, @result ] => [ 'ARRAY', 'ARRAY' ], "... returned 2 arrayrefs";
 
     # delete all entries to make sure everything is cached
-    for my $rs (qw< Article Unit >) {
+    $db->resultset('Quantity')->update( { default_unit => undef } );
+    for my $rs (qw< DishIngredient Item ArticleTag Article RecipeIngredient Unit >) {
         ok $db->resultset($rs)->delete, "delete all ${rs}s";
         is $db->resultset($rs)->count => 0, "count($rs) == 0";
     }
 
-    # add unit to article to make sure that is cached, too
-    $db->resultset('ArticleUnit')->create( { article => 5, unit => 1 } );
+    # add new unit to new article to make sure that is cached, too
+    my $article = $project->create_related( articles => { name => "foo", comment => "" } );
+    my $unit = $project->create_related(
+        units => { short_name => "b", long_name => "bar", quantity => 1, space => 0 } );
+    $article->add_to_units($unit);
 
     my ( $articles => $units ) = @result;
     my %articles = map { $_->name => $_ } @$articles;

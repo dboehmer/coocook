@@ -33,6 +33,7 @@ $db->resultset($_)->delete for qw<
 throws_ok { $kg->delete } qr/default/, "fails because kg is default unit";
 
 note "deleting all other units ...";
+$db->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = OFF;') } );  # TODO move to helper method?
 $db->resultset('Unit')->search(
     {
         short_name          => { '!=' => 'kg' },

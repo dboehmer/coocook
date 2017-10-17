@@ -97,7 +97,7 @@ is_deeply $project_plan => [
             {
                 id      => 2,
                 name    => 'lunch',
-                dishes  => [ { id => 2, name => 'pizza', servings => 4 } ],
+                dishes  => [ { id => 2, name => 'pizza', servings => 2 } ],
                 comment => '',
             }
         ]

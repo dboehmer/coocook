@@ -45,6 +45,7 @@ before delete => sub {    # TODO solve workaround
     $self->recipes->delete;
     $self->articles->delete;
     $self->shop_sections->delete;
+    $self->quantities->update( { default_unit => undef } );    # to pass FK constraint
     $self->units->delete;
     $self->quantities->delete;
     $self->tags->delete;
