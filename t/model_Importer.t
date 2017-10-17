@@ -38,6 +38,10 @@ my $target = $db->resultset('Project')->create( { name => "Import Target" } );
 throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
 throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;
 throws_ok { $importer->import_data( $source => $target, ['recipes'] ) } qr/require|depend/i;
+throws_ok {
+    $importer->import_data( $source => $target, [qw< quantities units articles articles_units >] )
+}
+qr/unknown/i, "private properties are rejected";
 
 subtest "empty import" => sub {
     my $records_before = $db->count;
