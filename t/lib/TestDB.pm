@@ -8,7 +8,7 @@ use parent 'DBICx::TestDatabase';
 sub new {
     my $class = shift;
 
-    my $self = $class->SUPER::new( 'Coocook::Schema', @_ );
+    my $schema = $class->SUPER::new( 'Coocook::Schema', @_ );
 
     open my $fh, '<', 'share/test_data.sql';
 
@@ -16,12 +16,12 @@ sub new {
         $ENV{DBIC_TRACE}
           and warn $_;
 
-        $self->storage->dbh_do( sub { $_[1]->do($_) } );
+        $schema->storage->dbh_do( sub { $_[1]->do($_) } );
     }
 
     close $fh;
 
-    return $self;
+    return $schema;
 }
 
 1;
