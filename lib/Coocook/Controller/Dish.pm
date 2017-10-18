@@ -44,7 +44,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     $c->stash(
         dish          => $dish,
         ingredients   => [ $dish->ingredients_ordered->all ],
-        articles      => [ $c->project->articles->all ],
+        articles      => [ $c->project->articles->sorted->all ],
         units         => [ $c->project->units->sorted->all ],
         prepare_meals => [ $prepare_meals->all ],
     );
