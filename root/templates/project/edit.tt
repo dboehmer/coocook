@@ -194,5 +194,8 @@ var updateCheckbox = function() {
     checkbox.indeterminate = 0 < checked && checked < checkboxes.length;
 };
 
+// run once at document load time
+updateCheckbox();
+
 checkboxes.forEach( function(box) { box.addEventListener( 'click', updateCheckbox ) } );
 </script>
