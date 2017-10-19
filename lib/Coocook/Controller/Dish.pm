@@ -29,24 +29,42 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     my $dish = $c->stash->{dish};
 
-    # candidate meals for preparing this dish: same day or earlier
-    my $meals         = $c->project->meals;
-    my $prepare_meals = $meals->search(
-        {
-            id   => { '!=' => $dish->meal->id },
-            date => { '<=' => $meals->format_date( $dish->meal->date ) },
-        },
-        {
-            order_by => 'date',
+    my ( $articles => $units ) = $c->project->articles_cached_units;
+
+    my %articles = map { $_->id => $_ } @$articles;
+    my %units    = map { $_->id => $_ } @$units;
+
+    my @ingredients;
+    {
+        my $ingredients = $dish->ingredients->sorted;
+
+        while ( my $ingredient = $ingredients->next ) {
+            push @ingredients,
+              {
+                id             => $ingredient->id,
+                prepare        => $ingredient->prepare,
+                value          => $ingredient->value,
+                unit           => $units{ $ingredient->get_column('unit') },
+                article        => $articles{ $ingredient->get_column('article') },
+                comment        => $ingredient->comment,
+                reposition_url => $c->project_uri( '/dish/reposition', $ingredient->id ),
+              };
         }
-    );
+    }
+
+    # candidate meals for preparing this dish: same day or earlier
+    my $meals = $c->project->meals;
+    my $prepare_meals =
+      $meals->search( { date => { '<=' => $meals->format_date( $dish->meal->date ) } },
+        { order_by => 'date' } );
 
     $c->stash(
-        dish          => $dish,
-        ingredients   => [ $dish->ingredients_ordered->all ],
-        articles      => [ $c->project->articles->sorted->all ],
-        units         => [ $c->project->units->sorted->all ],
-        prepare_meals => [ $prepare_meals->all ],
+        dish               => $dish,
+        ingredients        => \@ingredients,
+        articles           => $articles,
+        units              => $units,
+        prepare_meals      => [ $prepare_meals->all ],
+        add_ingredient_url => $c->project_uri( '/dish/add', $dish->id ),
     );
 
     $c->escape_title( Dish => $dish->name );

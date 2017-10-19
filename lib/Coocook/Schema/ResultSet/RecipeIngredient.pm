@@ -1,11 +1,11 @@
-package Coocook::Schema::ResultSet::Meal;
+package Coocook::Schema::ResultSet::RecipeIngredient;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::ResultSet';
 
-sub order_by_columns { qw< date id > }    # TODO add sorting of meals
+sub sorted_by_columns { 'position' }
 
 __PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::SortByName');
 

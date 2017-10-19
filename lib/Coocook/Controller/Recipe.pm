@@ -49,8 +49,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
     my @ingredients;
     {
-        my $ingredients = $recipe->ingredients;
-        $ingredients = $ingredients->search( undef, { order_by => $ingredients->me('position') } );
+        my $ingredients = $recipe->ingredients->sorted;
 
         while ( my $ingredient = $ingredients->next ) {
             push @ingredients,
