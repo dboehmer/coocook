@@ -4,6 +4,7 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
+use Test::Memory::Cycle;
 use Test::Most;
 
 subtest articles_cached_units => sub {
@@ -14,6 +15,8 @@ subtest articles_cached_units => sub {
     ok my @result = $project->articles_cached_units, "\$project->articles_cached_units";
 
     is_deeply [ map ref, @result ] => [ 'ARRAY', 'ARRAY' ], "... returned 2 arrayrefs";
+
+    memory_cycle_ok \@result, "... result is free of memory cycles";
 
     # delete all entries to make sure everything is cached
     $db->resultset('Quantity')->update( { default_unit => undef } );
