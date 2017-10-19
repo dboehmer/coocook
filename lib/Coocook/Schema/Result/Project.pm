@@ -85,7 +85,6 @@ sub dishes {
 }
 
 # fetch articles, units and cache their relationships
-# TODO add relationship unit->articles and set cache
 sub articles_cached_units {
     my $self = shift;
 
