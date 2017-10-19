@@ -93,6 +93,7 @@ sub articles_cached_units {
 
     my @units = $self->units->sorted->all;
     my %units = map { $_->id => $_ } @units;
+    my %units_with_articles;
 
     my %articles_units;
 
@@ -106,6 +107,8 @@ sub articles_cached_units {
             $a_u->related_resultset('unit')->set_cache( [ $units{$u} ] );
 
             push @{ $articles_units{$a} }, $a_u;
+
+            $units_with_articles{$u}++;
         }
     }
 
@@ -113,7 +116,15 @@ sub articles_cached_units {
         $article->related_resultset('articles_units')->set_cache( $articles_units{ $article->id } );
     }
 
-    return \@articles, \@units;
+    if (wantarray) {
+
+        # this is probably (?) faster than additionally querying the relationship in SQL
+        # TODO speed up
+        return \@articles, [ grep { exists $units_with_articles{ $_->id } } @units ];
+    }
+    else {
+        return \@articles;
+    }
 }
 
 =head2 other_projects
