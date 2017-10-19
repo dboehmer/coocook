@@ -9,7 +9,7 @@
 
 <div class="dish">
 
-<h4><a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
+<h4><a href="[% dish.url %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 0 %]
 

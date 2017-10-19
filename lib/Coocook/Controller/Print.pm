@@ -63,9 +63,17 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
         day   => $day,
     );
 
+    my $meals = $c->model('Plan')->day( $c->project, $dt );
+
+    for (@$meals) {
+        for ( @{ $_->{dishes} } ) {
+            $_->{url} = $c->project_uri( '/dish/edit', $_->{id} );
+        }
+    }
+
     $c->stash(
-        day => $dt,
-        meals      => $c->model('Plan')->day( $c->project, $dt ),
+        day        => $dt,
+        meals      => $meals,
         title      => "Print " . $dt->strftime( $c->stash->{date_format_short} ),
         html_title => "Print " . $dt->strftime( $c->stash->{date_format_long} ),
     );
