@@ -4,9 +4,13 @@
     <p>
         Article:
         <select name="article">
-[% FOR article IN articles %]
+[% FOR article IN articles;
+    IF article.units.size > 0 %]
             <option value="[% article.id %]">[% article.name | html %]</option>
-[% END %]
+    [% ELSE %]
+            <option disabled %]" disabled>[% article.name | html %] (no units)</option>
+    [% END;
+END %]
         </select>
     </p>
     <p>
