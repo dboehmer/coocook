@@ -40,6 +40,8 @@ sub begin : Private {
 sub auto : Private {
     my ( $self, $c ) = @_;
 
+    $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
+
     $c->stash(
         css => ['style.css'],
         js  => ['script.js'],

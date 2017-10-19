@@ -48,6 +48,14 @@ $ENV{CATALYST_DEBUG}
 __PACKAGE__->config(
     name => 'Coocook',
 
+    # reasoning: if tab title bar in browser is short,
+    #            display most important information first
+    date_format_short => '%a, %{day} %b',    # Mon, 31 Dec
+
+    # based on
+    # https://en.wikipedia.org/w/index.php?title=Calendar_date&oldid=799176855
+    date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
+
     homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
         open my $fh, __FILE__;    # read abstract from this file
         my $abstract;

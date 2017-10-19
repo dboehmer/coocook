@@ -1,9 +1,8 @@
 [%~ MACRO display_date(date, opts) BLOCK;
-    format = opts.format || '%a, %d.%m.';
     IF opts.html ~%]
-        <abbr title="[% date.strftime('%A, %d. %B %Y') %]">[% date.strftime(format) %]</abbr>
+        <abbr title="[% date.strftime(date_format_long) %]">[% date.strftime(date_format_short) %]</abbr>
     [%~ ELSE;
-        date.strftime(format);
+        date.strftime(date_format_short);
     END;
 END;
 

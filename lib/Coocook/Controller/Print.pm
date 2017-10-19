@@ -65,8 +65,9 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
 
     $c->stash(
         day => $dt,
-        meals => $c->model('Plan')->day( $c->project, $dt ),
-        title => "Print " . $dt->ymd,                 # TODO date format
+        meals      => $c->model('Plan')->day( $c->project, $dt ),
+        title      => "Print " . $dt->strftime( $c->stash->{date_format_short} ),
+        html_title => "Print " . $dt->strftime( $c->stash->{date_format_long} ),
     );
 }
 
