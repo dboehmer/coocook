@@ -65,9 +65,20 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
 
     my $meals = $c->model('Plan')->day( $c->project, $dt );
 
-    for (@$meals) {
-        for ( @{ $_->{dishes} } ) {
-            $_->{url} = $c->project_uri( '/dish/edit', $_->{id} );
+    for my $meal (@$meals) {
+        for my $dish ( @{ $meal->{dishes} } ) {
+            $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+
+            if ( my $prep_meal = $dish->{prepare_at_meal} ) {
+                $prep_meal->{url} =
+                  $c->project_uri( '/print/day', map { $prep_meal->{date}->$_ } qw< year month day > );
+            }
+        }
+
+        for my $dish ( @{ $meal->{prepared_dishes} } ) {
+            my $meal = $dish->{meal};
+
+            $meal->{url} ||= $c->project_uri( '/print/day', map { $meal->{date}->$_ } qw< year month day > );
         }
     }
 

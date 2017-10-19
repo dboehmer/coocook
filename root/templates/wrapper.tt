@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
 
 [% FOREACH path IN css %]
-    <link rel="stylesheet" href="[% c.uri_for('/static/css/' _ path) %]">
+    <link rel="stylesheet" href="[% path %]">
 [% END %]
 </head>
 
@@ -17,7 +17,7 @@
 
 <header>
 <h1>
-    <a href="[% c.uri_for('/') %]">[% c.config.name | html %]</a>
+    <a href="[% homepage_url %]">[% c.config.name | html %]</a>
 [%~ IF project ~%]
     :
     <a href="[% c.project_uri('/project/edit') %]">[% project.name | html %]</a>
@@ -26,10 +26,10 @@
 
 <nav>
 <ul>
-[% IF user %]
-<a href="[% c.uri_for_action('/index') %]"><li>Dashboard</li></a>
-[% ELSE %]
-<a href="[% c.uri_for_action('/login') %]"><li>Login</li></a>
+[% IF dashboard_url %]
+<a href="[% dashboard_url %]"><li>Dashboard</li></a>
+[% ELSIF login_url %]
+<a href="[% login_url %]"><li>Login</li></a>
 [% END %]
 
 [% IF project %]

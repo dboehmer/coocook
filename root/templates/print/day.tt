@@ -17,7 +17,7 @@
     <h5>Preparation
         [% IF dish.prepare_at_meal;
             prep_meal = dish.prepare_at_meal %]
-            (scheduled for [% prep_meal.name | xml %] on <a href="[% c.uri_for_action('/print/day', prep_meal.date.year, prep_meal.date.month, prep_meal.date.day) %]">[% display_date(prep_meal.date) %]</a>)
+            (scheduled for <a href="[% prep_meal.url %]">[% prep_meal.name | xml %] on [% display_date(prep_meal.date) %]</a>)
         [% END %]
     </h5>
 
@@ -32,7 +32,7 @@ END %]
     [% END;
 
     FOR dish IN meal.prepared_dishes %]
-<h4 style="clear:left">Prepare for [% dish.meal.name | html %] on <a href="[% c.uri_for_action('/print/day', dish.meal.date.year, dish.meal.date.month, dish.meal.date.day) %]">[% display_date(dish.meal.date) %]</a>: <a href="[% c.uri_for_action('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
+<h4 style="clear:left">Prepare for <a href="[% dish.meal.url %]">[% dish.meal.name | html %] on [% display_date(dish.meal.date) %]</a>: <a href="[% dish.url %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
 
 [% PROCESS table prepare = 1 %]
 

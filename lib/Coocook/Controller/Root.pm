@@ -40,6 +40,9 @@ sub begin : Private {
 sub auto : Private {
     my ( $self, $c ) = @_;
 
+    # TODO distinguish GET and POST requests
+    # is some of this information useful for POST controller code, too?
+
     $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
 
     $c->stash(
@@ -52,6 +55,18 @@ sub auto : Private {
         ref $errors or $errors = [$errors];
     }
     $c->stash( errors => $errors );
+
+    $c->stash( homepage_url => $c->uri_for_action('/index') );
+
+    if ( $c->user ) {
+        $c->stash(
+            dashboard_url => $c->stash->{homepage_url},
+            logout_url    => $c->uri_for_action('/logout'),
+        );
+    }
+    else {
+        $c->stash( login_url => $c->uri_for_action('/login') );
+    }
 }
 
 sub index : GET Path Args(0) {
@@ -69,7 +84,10 @@ sub homepage : Private {
 sub dashboard : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash( projects => [ $c->model('DB::Project')->all ] );
+    $c->stash(
+        project_create_url => $c->uri_for_action('/project/create'),
+        projects           => [ $c->model('DB::Project')->all ],
+    );
 }
 
 =head2 default
@@ -90,7 +108,13 @@ Attempt to render a view, if needed.
 
 =cut
 
-sub end : ActionClass('RenderView') { }
+sub end : ActionClass('RenderView') {
+    my ( $self, $c ) = @_;
+
+    for ( @{ $c->stash->{css} } ) {
+        $_ = $c->uri_for( '/static/css/' . $_ );
+    }
+}
 
 =head1 AUTHOR
 
