@@ -97,10 +97,36 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         }
     }
 
-    my %units = map { $_ => 1 } $article->units->get_column('id')->all;
+    my ( %selected_units, %units_in_use );
+    {
+        my $units = $article->units;
+        $units = $units->search(
+            undef,
+            {
+                'columns'  => ['id'],
+                '+columns' => {
+                    dish_ingredients_count   => $units->correlate('dish_ingredients')->count_rs->as_query,
+                    recipe_ingredients_count => $units->correlate('recipe_ingredients')->count_rs->as_query,
+                    items_count              => $units->correlate('items')->count_rs->as_query,
+                },
+            }
+        )->inflate_hashes;
+
+      UNIT: while ( my $unit = $units->next ) {
+            $selected_units{ $unit->{id} } = 1;
+
+            for (qw< dish_ingredients_count recipe_ingredients_count items_count >) {
+                if ( $unit->{$_} ) {
+                    $units_in_use{ $unit->{id} } = 1;
+                    next UNIT;
+                }
+            }
+        }
+    }
 
     $c->stash(
-        selected_units => \%units,
+        selected_units => \%selected_units,
+        units_in_use   => \%units_in_use,
         dishes         => \@dishes,
         recipes        => \@recipes,
     );
