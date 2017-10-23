@@ -1,10 +1,26 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sun Oct 15 01:41:07 2017
+-- Created on Tue Oct 24 02:43:16 2017
 -- 
 
 ;
 BEGIN TRANSACTION;
+--
+-- Table: users
+--
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY NOT NULL,
+  name text NOT NULL,
+  password_hash text NOT NULL,
+  display_name text NOT NULL,
+  role text NOT NULL,
+  email text NOT NULL,
+  email_verified datetime,
+  token text,
+  token_expires datetime
+);
+CREATE UNIQUE INDEX users_name ON users (name);
+CREATE UNIQUE INDEX users_token ON users (token);
 --
 -- Table: projects
 --
@@ -12,22 +28,15 @@ CREATE TABLE projects (
   id INTEGER PRIMARY KEY NOT NULL,
   name text NOT NULL,
   url_name text NOT NULL,
-  url_name_fc text NOT NULL
+  url_name_fc text NOT NULL,
+  is_public bool NOT NULL DEFAULT '1',
+  owner int NOT NULL,
+  FOREIGN KEY (owner) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE INDEX projects_idx_owner ON projects (owner);
 CREATE UNIQUE INDEX projects_name ON projects (name);
 CREATE UNIQUE INDEX projects_url_name ON projects (url_name);
 CREATE UNIQUE INDEX projects_url_name_fc ON projects (url_name_fc);
---
--- Table: users
---
-CREATE TABLE users (
-  id INTEGER PRIMARY KEY NOT NULL,
-  name text NOT NULL,
-  password text NOT NULL,
-  email text NOT NULL,
-  display_name text NOT NULL
-);
-CREATE UNIQUE INDEX users_name ON users (name);
 --
 -- Table: meals
 --
@@ -41,6 +50,19 @@ CREATE TABLE meals (
 );
 CREATE INDEX meals_idx_project ON meals (project);
 CREATE UNIQUE INDEX meals_project_date_name ON meals (project, date, name);
+--
+-- Table: projects_users
+--
+CREATE TABLE projects_users (
+  project int NOT NULL,
+  user int NOT NULL,
+  role text NOT NULL,
+  PRIMARY KEY (project, user),
+  FOREIGN KEY (project) REFERENCES projects(id) ON DELETE CASCADE,
+  FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX projects_users_idx_project ON projects_users (project);
+CREATE INDEX projects_users_idx_user ON projects_users (user);
 --
 -- Table: purchase_lists
 --
@@ -109,18 +131,6 @@ CREATE TABLE articles (
 CREATE INDEX articles_idx_project ON articles (project);
 CREATE INDEX articles_idx_shop_section ON articles (shop_section);
 CREATE UNIQUE INDEX articles_project_name ON articles (project, name);
---
--- Table: projects_users
---
-CREATE TABLE projects_users (
-  project int NOT NULL,
-  user int NOT NULL,
-  PRIMARY KEY (project, user),
-  FOREIGN KEY (project) REFERENCES projects(id) ON DELETE CASCADE,
-  FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
-);
-CREATE INDEX projects_users_idx_project ON projects_users (project);
-CREATE INDEX projects_users_idx_user ON projects_users (user);
 --
 -- Table: quantities
 --

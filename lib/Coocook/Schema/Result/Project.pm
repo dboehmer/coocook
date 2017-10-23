@@ -10,15 +10,22 @@ use feature 'fc';    # Perl v5.16
 __PACKAGE__->table("projects");
 
 __PACKAGE__->add_columns(
-    id          => { data_type => 'int', is_auto_increment => 1 },
+    id          => { data_type => 'int',  is_auto_increment => 1 },
     name        => { data_type => 'text' },
     url_name    => { data_type => 'text' },
     url_name_fc => { data_type => 'text' }, # fold cased
+    is_public   => { data_type => 'bool', default_value     => 1 },
+    owner       => { data_type => 'int' },
 );
 
 __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
+
+__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
+
+__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
+__PACKAGE__->many_to_many( users => projects_users => 'user' );
 
 __PACKAGE__->has_many( articles => 'Coocook::Schema::Result::Article', 'project' );
 __PACKAGE__->has_many( meals    => 'Coocook::Schema::Result::Meal',    'project' );
@@ -29,9 +36,6 @@ __PACKAGE__->has_many( shop_sections  => 'Coocook::Schema::Result::ShopSection' 
 __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
-
-__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
-__PACKAGE__->many_to_many( users => projects_users => 'user' );
 
 before delete => sub {    # TODO solve workaround
     my $self = shift;

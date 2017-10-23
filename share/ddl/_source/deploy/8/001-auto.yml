@@ -150,7 +150,7 @@ schema:
           type: NORMAL
       name: articles
       options: []
-      order: 8
+      order: 9
     articles_tags:
       constraints:
         - deferrable: 1
@@ -1087,6 +1087,19 @@ schema:
           reference_fields: []
           reference_table: ''
           type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - owner
+          match_type: ''
+          name: projects_fk_owner
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: users
+          type: FOREIGN KEY
       fields:
         id:
           data_type: int
@@ -1099,6 +1112,16 @@ schema:
           order: 1
           size:
             - 0
+        is_public:
+          data_type: bool
+          default_value: 1
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_public
+          order: 5
+          size:
+            - 0
         name:
           data_type: text
           default_value: ~
@@ -1107,6 +1130,16 @@ schema:
           is_unique: 1
           name: name
           order: 2
+          size:
+            - 0
+        owner:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: owner
+          order: 6
           size:
             - 0
         url_name:
@@ -1129,10 +1162,15 @@ schema:
           order: 4
           size:
             - 0
-      indices: []
+      indices:
+        - fields:
+            - owner
+          name: projects_idx_owner
+          options: []
+          type: NORMAL
       name: projects
       options: []
-      order: 1
+      order: 2
     projects_users:
       constraints:
         - deferrable: 1
@@ -1185,6 +1223,16 @@ schema:
           order: 1
           size:
             - 0
+        role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role
+          order: 3
+          size:
+            - 0
         user:
           data_type: int
           default_value: ~
@@ -1208,7 +1256,7 @@ schema:
           type: NORMAL
       name: projects_users
       options: []
-      order: 9
+      order: 4
     purchase_lists:
       constraints:
         - deferrable: 1
@@ -1299,7 +1347,7 @@ schema:
           type: NORMAL
       name: purchase_lists
       options: []
-      order: 4
+      order: 5
     quantities:
       constraints:
         - deferrable: 1
@@ -1694,7 +1742,7 @@ schema:
           type: NORMAL
       name: recipes
       options: []
-      order: 5
+      order: 6
     recipes_tags:
       constraints:
         - deferrable: 1
@@ -1851,7 +1899,7 @@ schema:
           type: NORMAL
       name: shop_sections
       options: []
-      order: 6
+      order: 7
     tag_groups:
       constraints:
         - deferrable: 1
@@ -1952,7 +2000,7 @@ schema:
           type: NORMAL
       name: tag_groups
       options: []
-      order: 7
+      order: 8
     tags:
       constraints:
         - deferrable: 1
@@ -2227,6 +2275,18 @@ schema:
           reference_fields: []
           reference_table: ''
           type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - token
+          match_type: ''
+          name: users_token
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
       fields:
         display_name:
           data_type: text
@@ -2235,7 +2295,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: display_name
-          order: 5
+          order: 4
           size:
             - 0
         email:
@@ -2245,7 +2305,17 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: email
-          order: 4
+          order: 6
+          size:
+            - 0
+        email_verified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: email_verified
+          order: 7
           size:
             - 0
         id:
@@ -2269,20 +2339,50 @@ schema:
           order: 2
           size:
             - 0
-        password:
+        password_hash:
           data_type: text
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
           is_unique: 0
-          name: password
+          name: password_hash
           order: 3
+          size:
+            - 0
+        role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role
+          order: 5
+          size:
+            - 0
+        token:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 1
+          name: token
+          order: 8
+          size:
+            - 0
+        token_expires:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: token_expires
+          order: 9
           size:
             - 0
       indices: []
       name: users
       options: []
-      order: 2
+      order: 1
   triggers: {}
   views: {}
 translator:

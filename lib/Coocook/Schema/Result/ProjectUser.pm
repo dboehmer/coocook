@@ -10,6 +10,7 @@ __PACKAGE__->table("projects_users");
 __PACKAGE__->add_columns(
     project => { data_type => 'int' },
     user    => { data_type => 'int' },
+    role    => { data_type => 'text' },
 );
 
 __PACKAGE__->set_primary_key(qw< project user >);
