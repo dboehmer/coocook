@@ -2,14 +2,13 @@
     <p>Applicable units:</p>
 
     <table style="margin-left: 2em">
-[% my_units = article.unit_ids;
-FOR quantity IN quantities %]
+[% FOR quantity IN quantities %]
         <tr>
             <th>[% quantity.name | html %]</th>
             <td>
     [% FOR unit IN quantity.units.all;
         id = unit.id %]
-        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF my_units.$id %]>
+        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'checked' IF selected_units.$id %]>
         <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {html=>1}) %]</label>
     [% END %]
             </td>

@@ -50,10 +50,4 @@ sub tags_joined {
     return join " ", map { $_->name } $self->tags;
 }
 
-sub unit_ids {
-    my $self = shift;
-
-    return { map { $_ => 1 } $self->units->get_column('id')->all };
-}
-
 1;

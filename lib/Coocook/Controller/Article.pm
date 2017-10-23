@@ -97,10 +97,12 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         }
     }
 
+    my %units = map { $_ => 1 } $article->units->get_column('id')->all;
+
     $c->stash(
-        article => $article,
-        dishes  => \@dishes,
-        recipes => \@recipes,
+        selected_units => \%units,
+        dishes         => \@dishes,
+        recipes        => \@recipes,
     );
 
     $c->escape_title( Article => $article->name );
