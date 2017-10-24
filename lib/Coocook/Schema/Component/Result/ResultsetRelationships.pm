@@ -71,18 +71,24 @@ sub _resultset_class {
 
     # make sure class is loaded
     local $@;
-    $class->ensure_class_loaded($resultset_class);
+    eval "require $resultset_class";
+
+    # TODO replace string-eval, but this dies regardless of eval-block:
+    #eval { $class->ensure_class_loaded($resultset_class) };
 
     if ($@) {
-        if ( $@ =~ m/^Can't locate / ) {    # define most basic resultset class
+        if ( $@ =~ m/^Can't locate (\S+) / ) {    # define most basic resultset class
             $DEBUG
               and warn "Autogenerating class $resultset_class\n";
+
+            my $pm_filename = $1;
+            $INC{$pm_filename} = 1;
 
             no strict 'refs';
             @{"${resultset_class}::ISA"} = ('Coocook::Schema::ResultSet');
         }
         else {
-            die $@;                         # raise unexpected error
+            die $@;                               # raise unexpected error
         }
     }
 

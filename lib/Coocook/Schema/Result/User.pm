@@ -23,7 +23,7 @@ __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['name'], ['token'] );
 
-__PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project' );
+__PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
 
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
