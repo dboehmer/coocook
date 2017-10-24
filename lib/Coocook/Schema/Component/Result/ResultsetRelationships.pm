@@ -11,6 +11,7 @@ use mro;    # provides next::method
 use Carp;
 use Sub::Name;
 
+our $DEBUG;
 our @CARP_NOT;
 
 sub has_many {
@@ -33,7 +34,7 @@ sub has_many {
             }
         );
     }
-    else {
+    elsif ($DEBUG) {
         local @CARP_NOT = ('DBIx::Class::Relationship::BelongsTo');
 
         carp "Can't create resultset relationship for ${class}->$accessor_name"
@@ -74,7 +75,9 @@ sub _resultset_class {
 
     if ($@) {
         if ( $@ =~ m/^Can't locate / ) {    # define most basic resultset class
-            warn "Autogenerating class $resultset_class\n";
+            $DEBUG
+              and warn "Autogenerating class $resultset_class\n";
+
             no strict 'refs';
             @{"${resultset_class}::ISA"} = ('Coocook::Schema::ResultSet');
         }
@@ -92,7 +95,8 @@ sub _add_sub {
     no strict 'refs';
     *$subname = subname $subname => $coderef;
 
-    warn "Created $subname\n";
+    $DEBUG
+      and warn "Created $subname\n";
 }
 
 1;
