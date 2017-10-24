@@ -1,10 +1,15 @@
 use strict;
 use warnings;
 
+use lib 't/lib';
+
+use TestDB;
 use Test::Most;
 use Test::WWW::Mechanize::Catalyst;
 
-my $t = Test::WWW::Mechanize::Catalyst->new( catalyst_app => 'Coocook' );
+our $SCHEMA = TestDB->new;
+
+ok my $t = Test::WWW::Mechanize::Catalyst->new( catalyst_app => 'Coocook' );
 
 $t->get_ok('/');
 
@@ -46,5 +51,8 @@ $t->submit_form_ok(
 
 $t->get_ok('/');
 $t->content_like(qr/Test Project/);
+
+is $SCHEMA->resultset('Project')->find( { name => "Test Project" } )->owner->name => 'test',
+  "new project is owned by new user";
 
 done_testing;

@@ -13,6 +13,26 @@ __PACKAGE__->load_components(
       >
 );
 
+# enable faking connect() by setting our $SCHEMA = ... in test files
+around connection => sub {
+    my $orig  = shift;
+    my $class = shift;
+
+    if ( my $schema = $main::SCHEMA ) {
+
+        # Catalyst::Model::DBIC::Schema composes a schema itself
+        # and simply applies the new schema's storage
+        if ( ref $class ) {
+            my $self = $class;
+            $self->storage( $schema->storage );
+        }
+
+        return $schema;
+    }
+
+    return $class->$orig(@_);
+};
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->load_namespaces( default_resultset_class => '+Coocook::Schema::ResultSet' );
