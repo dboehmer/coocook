@@ -84,7 +84,7 @@ __PACKAGE__->config(
         default => {
             credential => {
                 class          => 'Password',
-                password_field => 'password',
+                password_field => 'password_hash',
                 password_type  => 'clear',
             },
             store => {

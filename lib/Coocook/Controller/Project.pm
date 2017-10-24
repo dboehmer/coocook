@@ -139,11 +139,13 @@ sub create : POST Local Args(0) {
     my ( $self, $c ) = @_;
 
     if ( length( my $name = $c->req->param('name') ) > 0 ) {
-        my $project = $c->model('DB::Project')->new_result( {} );
-        $project->name( scalar $c->req->param('name') );
-        $project->insert;
-
-        $c->user->add_to_projects($project);
+        my $project = $c->model('DB::Project')->create(
+            {
+                name      => scalar $c->req->param('name'),
+                owner     => $c->user->id,
+                is_public => 1,
+            }
+        );
 
         $c->response->redirect(
             $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );

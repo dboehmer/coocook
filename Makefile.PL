@@ -81,6 +81,7 @@ my %WriteMakefileArgs = (
     "Test::MockObject" => 0,
     "Test::More" => 0,
     "Test::Most" => 0,
+    "Test::WWW::Mechanize::Catalyst" => 0,
     "lib" => 0
   },
   "VERSION" => "0.001",
@@ -139,6 +140,7 @@ my %FallbackPrereqs = (
   "Test::MockObject" => 0,
   "Test::More" => 0,
   "Test::Most" => 0,
+  "Test::WWW::Mechanize::Catalyst" => 0,
   "base" => 0,
   "feature" => 0,
   "lib" => 0,

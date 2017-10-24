@@ -93,10 +93,11 @@ sub create : POST Path('/register') Args(0) {
 
     my $user = $c->model('DB::User')->create(
         {
-            name         => $name,
-            password     => $password,
-            display_name => scalar $c->req->param('display_name'),
-            email        => scalar $c->req->param('email'),
+            name          => $name,
+            password_hash => $password,
+            role          => 'admin',
+            display_name  => scalar $c->req->param('display_name'),
+            email         => scalar $c->req->param('email'),
         }
     );
 
