@@ -37,10 +37,10 @@ sub show : GET Chained('base') PathPart('') Args(0) {
 sub register : GET Path('/register') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( register_url => $c->uri_for( $self->action_for('create') ) );
+    $c->stash( post_register_url => $c->uri_for( $self->action_for('post_register') ) );
 }
 
-sub create : POST Path('/register') Args(0) {
+sub post_register : POST Path('/register') Args(0) {
     my ( $self, $c ) = @_;
 
     my $name         = $c->req->param('name');
@@ -98,14 +98,39 @@ sub create : POST Path('/register') Args(0) {
             role          => 'admin',
             display_name  => scalar $c->req->param('display_name'),
             email         => scalar $c->req->param('email'),
+            token         => 'token',                                 # TODO
+            token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );
 
-    $c->set_authenticated(    # TODO documented as internal method
-        $c->find_user( { id => $user->id } )
+    $c->stash(
+        email => {
+            from     => 'coocook@example.com',
+            to       => $user->email,
+            subject  => 'Verifiy Coocook Account',
+            template => 'email/verify.tt',
+        },
+        verification_url => $c->uri_for( $self->action_for('verify'), [ $user->token ] ),
     );
 
+    $c->forward( $c->view('Email::Template') );
+
     $c->response->redirect( $c->uri_for('/') );
+    $c->detach;
+}
+
+sub verify : GET Local Args(1) {
+    my ( $self, $c, $token ) = @_;
+
+    my $user = $c->model('DB::User')->find( { token => $token } );
+
+    $user->update(
+        {
+            email_verified => $user->format_datetime( DateTime->now ),
+        }
+    );
+
+    $c->response->redirect( $c->uri_for_action('/login') );
     $c->detach;
 }
 

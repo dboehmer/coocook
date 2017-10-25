@@ -94,6 +94,19 @@ __PACKAGE__->config(
         }
     },
 
+    default_view => 'TT',
+
+    'View::Email::Template' => {
+        default => {
+            view => 'TT',
+
+            content_type => 'text/plain',
+            charset      => 'utf-8',
+            encoding     => 'quoted-printable',
+        },
+        sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
+    },
+
     'View::TT' => {
         INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
     },

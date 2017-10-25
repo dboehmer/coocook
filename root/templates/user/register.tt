@@ -1,4 +1,4 @@
-<form method="POST" action="[% register_url %]">
+<form method="POST" action="[% post_register_url %]">
 <table>
     <tr>
         <th><label for="name">Name</label></th>
