@@ -8,6 +8,7 @@ extends 'DBIx::Class::ResultSet';
 
 __PACKAGE__->load_components(
     qw<
+      +Coocook::Schema::Component::DateTimeHelper
       Helper::ResultSet::CorrelateRelationship
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
@@ -15,18 +16,6 @@ __PACKAGE__->load_components(
 );
 
 __PACKAGE__->meta->make_immutable;
-
-sub format_date {
-    my ( $self, $date ) = @_;
-
-    return $self->result_source->schema->storage->datetime_parser->format_date($date);
-}
-
-sub format_datetime {
-    my ( $self, $datetime ) = @_;
-
-    return $self->result_source->schema->storage->datetime_parser->format_datetime($datetime);
-}
 
 sub inflate_hashes {
     shift->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
