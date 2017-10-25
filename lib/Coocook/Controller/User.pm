@@ -105,18 +105,7 @@ sub post_register : POST Path('/register') Args(0) {
         }
     );
 
-    $c->stash(
-        email => {
-            from     => 'coocook@example.com',
-            to       => $user->email,
-            subject  => 'Verifiy Coocook Account',
-            template => 'email/verify.tt',
-        },
-        wrapper          => undef,
-        verification_url => $c->uri_for( $self->action_for('verify'), [$token] ),
-    );
-
-    $c->forward( $c->view('Email::Template') );
+    $c->forward( '/email/verification', [$user] );
 
     $c->response->redirect( $c->uri_for('/') );
     $c->detach;
