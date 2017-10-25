@@ -91,6 +91,8 @@ sub post_register : POST Path('/register') Args(0) {
         $c->go('register');
     }
 
+    my $token = join '', map { ( 'a' .. 'z', 'A' .. 'Z', 0 .. 9 )[ rand 26 + 26 + 10 ] } 1 .. 16;
+
     my $user = $c->model('DB::User')->create(
         {
             name          => $name,
@@ -98,7 +100,7 @@ sub post_register : POST Path('/register') Args(0) {
             role          => 'admin',
             display_name  => scalar $c->req->param('display_name'),
             email         => scalar $c->req->param('email'),
-            token         => 'token',                                 # TODO
+            token         => $token,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );
@@ -110,7 +112,7 @@ sub post_register : POST Path('/register') Args(0) {
             subject  => 'Verifiy Coocook Account',
             template => 'email/verify.tt',
         },
-        verification_url => $c->uri_for( $self->action_for('verify'), [ $user->token ] ),
+        verification_url => $c->uri_for( $self->action_for('verify'), [$token] ),
     );
 
     $c->forward( $c->view('Email::Template') );
