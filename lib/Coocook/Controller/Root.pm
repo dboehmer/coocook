@@ -50,6 +50,7 @@ sub auto : Private {
             'lib/marked/marked' . ( $ENV{CATALYST_DEBUG} ? '.js' : '.min.js' ),
             'js/script.js',
         ],
+        wrapper => 'wrapper.tt',
     );
 
     my $errors = $c->stash->{errors} ||= [];

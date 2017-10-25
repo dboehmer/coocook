@@ -112,6 +112,7 @@ sub post_register : POST Path('/register') Args(0) {
             subject  => 'Verifiy Coocook Account',
             template => 'email/verify.tt',
         },
+        wrapper          => undef,
         verification_url => $c->uri_for( $self->action_for('verify'), [$token] ),
     );
 
