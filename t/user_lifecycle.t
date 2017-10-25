@@ -36,11 +36,11 @@ my @deliveries = Email::Sender::Simple->default_transport->deliveries;
 
 is scalar @deliveries => 1, "sent 1 e-mail";
 
-my $email_body = $deliveries[0]->{email}->get_body;
-note $email_body;
+my $email = $deliveries[0]->{email};
+note $email->as_string;
 
 my @urls =
-  ( $email_body =~ m/http\S+verify\S+/g );    # TODO regex is very simple and will break easily
+  ( $email->get_body =~ m/http\S+verify\S+/g );    # TODO regex is very simple and will break easily
 
 is scalar @urls => 1, "found 1 URL";
 

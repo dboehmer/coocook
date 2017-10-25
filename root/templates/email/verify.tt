@@ -3,3 +3,6 @@ Welcome to Coocook!
 Please verify your e-mail address by clicking on this link:
 
 [% verification_url %]
+
+[% name %]
+[% homepage_url %]
