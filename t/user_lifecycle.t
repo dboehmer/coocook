@@ -73,7 +73,17 @@ $t->submit_form_ok(
     }
 );
 
+$t->submit_form_ok(
+    {
+        with_fields => {
+            display_name => 'John Doe',
+        },
+        strict_forms => 1,
+    }
+);
 $t->get_ok('/');
+$t->content_like(qr/John Doe/);
+
 $t->click_ok('logout');
 
 $t->follow_link_ok( { text => 'Login' } );

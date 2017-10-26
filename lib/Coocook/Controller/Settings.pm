@@ -10,7 +10,20 @@ __PACKAGE__->config( namespace => '' );
 sub settings : GET Local Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( change_password_url => $c->uri_for( $self->action_for('change_password') ) );
+    $c->stash(
+        change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
+        change_password_url     => $c->uri_for( $self->action_for('change_password') ),
+    );
+}
+
+sub change_display_name : POST Local Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $user = $c->stash->{user};
+
+    $user->update( { display_name => scalar $c->req->param('display_name') } );
+
+    $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }
 
 sub change_password : POST Local Args(0) {

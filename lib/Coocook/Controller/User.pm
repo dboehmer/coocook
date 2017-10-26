@@ -126,20 +126,6 @@ sub verify : GET Local Args(1) {
     $c->detach;
 }
 
-sub update : POST Chained('base') Args(0) {
-    my ( $self, $c ) = @_;
-
-    my $user = $c->stash->{user};
-
-    $user->update(
-        {
-            display_name => scalar $c->req->param('display_name'),
-        }
-    );
-
-    $c->response->redirect( $c->uri_for( $self->action_for('show'), [ $user->name ] ) );
-}
-
 __PACKAGE__->meta->make_immutable;
 
 1;

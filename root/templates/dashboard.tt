@@ -19,11 +19,3 @@
     <input type="submit" value="Create project">
 </fieldset>
 </form>
-
-<form method="POST" action="[% c.uri_for_action('/user/update', [user.name]) %]">
-<fieldset>
-    <legend>Change your user's display name</legend>
-    <input type="text" name="display_name" value="[% user.display_name | html %]">
-    <input type="submit" value="Update user">
-</fieldset>
-</form>
