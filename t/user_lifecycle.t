@@ -60,6 +60,33 @@ $t->submit_form_ok(
     }
 );
 
+$t->follow_link_ok( { text => 'Settings' } );
+
+$t->submit_form_ok(
+    {
+        with_fields => {
+            old_password  => 's3cr3t',
+            new_password  => 'P@ssw0rd',
+            new_password2 => 'P@ssw0rd',
+        },
+        strict_forms => 1,
+    }
+);
+
+$t->get_ok('/');
+$t->click_ok('logout');
+
+$t->follow_link_ok( { text => 'Login' } );
+$t->submit_form_ok(
+    {
+        with_fields => {
+            username => 'test',
+            password => 'P@ssw0rd',
+        },
+        strict_forms => 1,
+    }
+);
+
 $t->submit_form_ok(
     {
         with_fields  => { name => "Test Project" },

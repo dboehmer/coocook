@@ -28,6 +28,7 @@
 <ul>
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Dashboard</a></li>
+    <li><a href="[% settings_url %]">Settings</a></li>
 [% ELSIF login_url %]
     <li><a href="[% login_url %]">Login</a></li>
     <li><a href="[% register_url %]">Register</a></li>
