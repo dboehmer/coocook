@@ -46,8 +46,11 @@ sub auto : Private {
     $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
 
     $c->stash(
-        css => ['style.css'],
-        js => [ 'script.js', ( $ENV{CATALYST_DEBUG} ? 'lib/jquery-3.2.1.js' : 'lib/jquery-3.2.1.min.js' ) ],
+        css => ['css/style.css'],
+        js  => [
+            'js/script.js',
+            'lib/jquery-3.2.1' .               ( $ENV{CATALYST_DEBUG} ? '.js' : '.min.js' ),
+        ],
     );
 
     my $errors = $c->req->query_params->{error};
@@ -111,8 +114,8 @@ Attempt to render a view, if needed.
 sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
-    for ( @{ $c->stash->{css} } ) {
-        $_ = $c->uri_for( '/static/css/' . $_ );
+    for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
+        $_ = $c->uri_for( '/static/' . $_ );
     }
 }
 
