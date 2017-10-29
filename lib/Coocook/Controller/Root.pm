@@ -47,7 +47,7 @@ sub auto : Private {
 
     $c->stash(
         css => ['style.css'],
-        js  => ['script.js'],
+        js => [ 'script.js', ( $ENV{CATALYST_DEBUG} ? 'lib/jquery-3.2.1.js' : 'lib/jquery-3.2.1.min.js' ) ],
     );
 
     my $errors = $c->req->query_params->{error};
