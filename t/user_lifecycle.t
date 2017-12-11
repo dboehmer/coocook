@@ -148,7 +148,8 @@ $t->submit_form_ok(
 );
 
 $t->get_ok('/');
-$t->content_like(qr/Test Project/);
+$t->content_like(qr/Test Project/)
+  or note $t->content;
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";

@@ -138,32 +138,34 @@ sub edit_dishes : POST Chained('base') Args(0) {
 sub create : POST Local Args(0) {
     my ( $self, $c ) = @_;
 
-    if ( length( my $name = $c->req->param('name') ) > 0 ) {
-        $c->model('DB')->txn_do(
-            sub {
-                my $project = $c->model('DB::Project')->create(
-                    {
-                        name      => scalar $c->req->param('name'),
-                        owner     => $c->user->id,
-                        is_public => 1,
-                    }
-                );
+    my $name = $c->req->param('name');
 
-                $project->create_related(
-                    projects_users => {
-                        user => $c->user->id,
-                        role => 'owner',
-                    }
-                );
-
-                $c->response->redirect(
-                    $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
-            }
-        );
-    }
-    else {
+    if ( length $name == 0 ) {
         $c->response->redirect( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
+        $c->detach;
     }
+
+    $c->model('DB')->txn_do(
+        sub {
+            my $project = $c->model('DB::Project')->create(
+                {
+                    name      => scalar $c->req->param('name'),
+                    owner     => $c->user->id,
+                    is_public => 1,
+                }
+            );
+
+            $project->create_related(
+                projects_users => {
+                    user => $c->user->id,
+                    role => 'owner',
+                }
+            );
+
+            $c->response->redirect(
+                $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
+        }
+    );
 }
 
 sub rename : POST Chained('base') Args(0) {
