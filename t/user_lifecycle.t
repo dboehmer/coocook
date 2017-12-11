@@ -67,6 +67,25 @@ my $verification_url = $urls[0];
 
 $t->get_ok($verification_url);
 
+subtest "failing login with wrong password" => sub {
+    $t->follow_link_ok( { text => 'Login' } )
+      or note $t->content;
+
+    $t->submit_form_ok(
+        {
+            with_fields => {
+                username => 'test',
+                password => 'invalid',    # wrong password
+            },
+            strict_forms => 1,
+        },
+        "submit login form"
+    );
+
+    $t->content_like(qr/fail/);
+    $t->content_like(qr/Login/);
+};
+
 $t->follow_link_ok( { text => 'Login' } );
 
 $t->submit_form_ok(
