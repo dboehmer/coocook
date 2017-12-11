@@ -29,7 +29,8 @@ $t->submit_form_ok(
             password2    => "s3cr3t",
         },
         strict_forms => 1,
-    }
+    },
+    "register account"
 );
 
 my @deliveries = Email::Sender::Simple->default_transport->deliveries;
@@ -57,7 +58,8 @@ $t->submit_form_ok(
             password => 's3cr3t',
         },
         strict_forms => 1,
-    }
+    },
+    "submit login form"
 );
 
 $t->follow_link_ok( { text => 'Settings' } );
@@ -70,7 +72,8 @@ $t->submit_form_ok(
             new_password2 => 'P@ssw0rd',
         },
         strict_forms => 1,
-    }
+    },
+    "submit change password form"
 );
 
 $t->submit_form_ok(
@@ -79,12 +82,13 @@ $t->submit_form_ok(
             display_name => 'John Doe',
         },
         strict_forms => 1,
-    }
+    },
+    "submit change display name form"
 );
 $t->get_ok('/');
 $t->content_like(qr/John Doe/);
 
-$t->click_ok('logout');
+$t->click_ok( 'logout', "click logout button" );
 
 $t->follow_link_ok( { text => 'Login' } );
 $t->submit_form_ok(
@@ -94,14 +98,16 @@ $t->submit_form_ok(
             password => 'P@ssw0rd',
         },
         strict_forms => 1,
-    }
+    },
+    "submit login form"
 );
 
 $t->submit_form_ok(
     {
         with_fields  => { name => "Test Project" },
         strict_forms => 1,
-    }
+    },
+    "submit rename project form"
 );
 
 $t->get_ok('/');
