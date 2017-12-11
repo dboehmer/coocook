@@ -22,12 +22,20 @@ sub post_login : POST Path('/login') Args(0) {
     my $username = $c->req->param('username');
     my $password = $c->req->param('password');
 
-    if ( $c->authenticate( { name => $username, password_hash => $password } ) ) {
+    my $user = $c->authenticate(
+        {
+            name           => $username,
+            password_hash  => $password,
+            email_verified => { '!=' => undef }
+        }
+    );
+
+    if ($user) {
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
         $c->logout();
-        $c->response->redirect( $c->uri_for_action('/login') );
+        $c->response->redirect( $c->uri_for_action( '/login', { error => "Login failed!" } ) );
     }
 }
 

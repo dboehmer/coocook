@@ -33,6 +33,24 @@ $t->submit_form_ok(
     "register account"
 );
 
+subtest "try login after registration before verification" => sub {
+    $t->follow_link_ok( { text => 'Login' } );
+
+    $t->submit_form_ok(
+        {
+            with_fields => {
+                username => 'test',
+                password => 's3cr3t',    # right password but account not yet verified!
+            },
+            strict_forms => 1,
+        },
+        "submit login form"
+    );
+
+    ( $t->content_like(qr/fail/) and $t->content_like(qr/Login/) )
+      or note $t->content;
+};
+
 my @deliveries = Email::Sender::Simple->default_transport->deliveries;
 
 is scalar @deliveries => 1, "sent 1 e-mail";

@@ -116,11 +116,8 @@ sub verify : GET Local Args(1) {
 
     my $user = $c->model('DB::User')->find( { token => $token } );
 
-    $user->update(
-        {
-            email_verified => $user->format_datetime( DateTime->now ),
-        }
-    );
+    $user->email_verified
+      or $user->update( { email_verified => $user->format_datetime( DateTime->now ) } );
 
     $c->response->redirect( $c->uri_for_action('/login') );
     $c->detach;
