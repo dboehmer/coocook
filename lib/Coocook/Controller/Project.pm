@@ -145,7 +145,7 @@ sub create : POST Local Args(0) {
         $c->detach;
     }
 
-    $c->model('DB')->txn_do(
+    $c->txn_do(
         sub {
             my $project = $c->model('DB::Project')->create(
                 {

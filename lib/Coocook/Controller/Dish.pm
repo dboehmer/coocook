@@ -135,7 +135,7 @@ sub update : POST Chained('base') Args(0) {
 
     my $dish = $c->stash->{dish};
 
-    $c->model('DB')->schema->txn_do(
+    $c->txn_do(
         sub {
             $dish->update(
                 {

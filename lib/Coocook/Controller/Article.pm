@@ -205,7 +205,7 @@ sub update_or_insert : Private {
         $shop_section = $c->project->shop_sections->find($id);
     }
 
-    $c->model('DB')->schema->txn_do(
+    $c->txn_do(
         sub {
             if ( scalar $c->req->param('preorder') ) {
                 $article->set_columns(

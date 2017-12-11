@@ -147,6 +147,9 @@ sub project {
     $c->stash->{project};
 }
 
+# proxy
+sub txn_do { shift->model('DB')->schema->txn_do(@_) }
+
 # Start the application
 __PACKAGE__->setup();
 

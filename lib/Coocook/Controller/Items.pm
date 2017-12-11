@@ -58,7 +58,7 @@ sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) 
 
     my %lists = map { $_->id => $_ } @{ $c->stash->{lists} };
 
-    $c->model('DB')->schema->txn_do(
+    $c->txn_do(
         sub {
             for my $ingredient ( @{ $c->stash->{ingredients} } ) {
                 my $id = $ingredient->id;

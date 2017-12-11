@@ -144,7 +144,7 @@ sub update : POST Chained('base') Args(0) {
     my $input_okay =
       $self->check_name( $c, { name => $name, current_page => "/recipe/" . $recipe->id } );
     if ($input_okay) {
-        $c->model('DB')->schema->txn_do(
+        $c->txn_do(
             sub {
                 $recipe->update(
                     {
