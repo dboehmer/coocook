@@ -150,7 +150,13 @@ $t->submit_form_ok(
 $t->get_ok('/');
 $t->content_like(qr/Test Project/);
 
-is $SCHEMA->resultset('Project')->find( { name => "Test Project" } )->owner->name => 'test',
+ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
+  "project is in database";
+
+is $project->owner->name => 'test',
   "new project is owned by new user";
+
+is $project->users->first->name => 'test',
+  "owner relationship is also stored via table 'projects_users'";
 
 done_testing;
