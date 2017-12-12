@@ -96,6 +96,7 @@ sub settings : GET Chained('base') PathPart('settings') Args(0) {
 
     $c->stash(
         rename_url            => $c->project_uri('/project/rename'),
+        visibility_url        => $c->project_uri('/project/visibility'),
         delete_url            => $c->project_uri('/project/delete'),
         deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
@@ -206,6 +207,16 @@ sub rename : POST Chained('base') Args(0) {
     my $project = $c->stash->{project};
 
     $project->update( { name => scalar $c->req->param('name') } );
+
+    $c->response->redirect( $c->project_uri('/project/settings') );
+}
+
+sub visibility : POST Chained('base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $project = $c->stash->{project};
+
+    $project->update( { is_public => scalar $c->req->param('public') ? 1 : 0 } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
