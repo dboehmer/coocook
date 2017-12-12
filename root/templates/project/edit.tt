@@ -1,3 +1,5 @@
+<a href="[% settings_url %]">Project settings</a>
+
 <form action="[% edit_dishes_url %]" method="POST">
 
 <!-- Firefox claims nested forms are not allowed and ignores the 1st form
@@ -165,23 +167,6 @@
     <p><input type="text" name="meal8" placeholder="meal"></p>
     <input type="submit" value="Mass create">
 </fieldset>
-</form>
-
-<form action="[% rename_url %]" method="POST">
-    <fieldset>
-        <legend>Rename project <em>[% project.name | html %]</em></legend>
-        <input type="text" name="name" value="[% project.name | html %]">
-        <input type="submit" value="Rename project">
-    </fieldset>
-</form>
-
-<form method="POST" action="[% delete_url %]">
-    <fieldset>
-        <legend>Delete project <em>[% project.name | html %]</em></legend>
-        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion.</p>
-        <input type="text" name="confirmation">
-        <input type="submit" value="Delete project">
-    </fieldset>
 </form>
 
 <script>

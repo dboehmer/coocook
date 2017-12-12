@@ -79,18 +79,28 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     }
 
     $c->stash(
-        default_date          => $default_date,
-        recipes               => [ $c->project->recipes->sorted->all ],
-        days                  => $days,
-        users                 => \@users,
-        edit_dishes_url       => $c->project_uri('/project/edit_dishes'),
-        dish_create_url       => $c->project_uri('/dish/create'),
-        dish_from_recipe_url  => $c->project_uri('/dish/from_recipe'),
-        meal_create_url       => $c->project_uri('/meal/create'),
+        default_date         => $default_date,
+        recipes              => [ $c->project->recipes->sorted->all ],
+        days                 => $days,
+        users                => \@users,
+        settings_url         => $c->project_uri('/project/settings'),
+        edit_dishes_url      => $c->project_uri('/project/edit_dishes'),
+        dish_create_url      => $c->project_uri('/dish/create'),
+        dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
+        meal_create_url      => $c->project_uri('/meal/create'),
+    );
+}
+
+sub settings : GET Chained('base') PathPart('settings') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
         rename_url            => $c->project_uri('/project/rename'),
         delete_url            => $c->project_uri('/project/delete'),
         deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
+
+    $c->escape_title( "Project settings" => $c->project->name );
 }
 
 sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() already used by 'use'
@@ -197,7 +207,7 @@ sub rename : POST Chained('base') Args(0) {
 
     $project->update( { name => scalar $c->req->param('name') } );
 
-    $c->detach( redirect => [$project] );
+    $c->response->redirect( $c->project_uri('/project/settings') );
 }
 
 sub delete : POST Chained('base') Args(0) {
@@ -208,7 +218,7 @@ sub delete : POST Chained('base') Args(0) {
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
-        $c->response->redirect( $c->project_uri('/project/edit') );
+        $c->response->redirect( $c->project_uri('/project/settings') );
     }
 }
 
