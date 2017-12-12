@@ -17,4 +17,10 @@ sub find_by_url_name {
     return $self->find( { url_name_fc => fc $url_name} );
 }
 
+sub public {
+    my $self = shift;
+
+    return $self->search( { is_public => 1 } );
+}
+
 1;

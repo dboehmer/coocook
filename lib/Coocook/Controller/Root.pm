@@ -88,15 +88,24 @@ sub index : GET Path Args(0) {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash( projects => [ $c->model('DB::Project')->all ] );
+    $c->stash( public_projects => [ $c->model('DB::Project')->public->all ] );
 }
 
 sub dashboard : Private {
     my ( $self, $c ) = @_;
 
+    my $my_projects = $c->user->projects;
+
+    my $other_projects = $c->model('DB::Project')->public->search(
+        {
+            id => { -not_in => $my_projects->get_column('id')->as_query },
+        }
+    );
+
     $c->stash(
+        my_projects        => [ $my_projects->all ],
+        other_projects     => [ $other_projects->all ],
         project_create_url => $c->uri_for_action('/project/create'),
-        projects           => [ $c->model('DB::Project')->all ],
     );
 }
 
