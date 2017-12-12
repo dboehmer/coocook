@@ -48,8 +48,8 @@ sub auto : Private {
     $c->stash(
         css => ['css/style.css'],
         js  => [
+            'lib/jquery-3.2.1' . ( $ENV{CATALYST_DEBUG} ? '.js' : '.min.js' ),    # perltidy
             'js/script.js',
-            'lib/jquery-3.2.1' .               ( $ENV{CATALYST_DEBUG} ? '.js' : '.min.js' ),
         ],
     );
 

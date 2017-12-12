@@ -63,5 +63,10 @@
 Coocook&mdash;Web application for collecting recipes and making food plans<br>
 This software is copyright (c) 2016&ndash;2017 by Daniel Böhmer. No license is granted to other entities.
 </footer>
+
+[% FOR path IN js %]
+<script src="[% path %]"></script>
+[% END %]
+
 </body>
 </html>
