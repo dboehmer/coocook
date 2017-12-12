@@ -4,6 +4,10 @@
 <p>from recipe <a href="[% c.project_uri('/recipe/edit', dish.recipe.id) %]">[% dish.recipe.name | html %]</a></p>
 [% END %]
 
+<form method="POST" action="[% delete_url %]">
+    <input type="submit" value="Delete dish">
+</form>
+
 <form action="[% c.project_uri('/dish/update', dish.id) %]" method="POST">
 <p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
 <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>

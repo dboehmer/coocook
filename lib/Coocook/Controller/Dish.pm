@@ -48,19 +48,18 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         units              => $ingredients->all_units,
         prepare_meals      => [ $prepare_meals->all ],
         add_ingredient_url => $c->project_uri( '/dish/add', $dish->id ),
+        delete_url         => $c->project_uri( '/dish/delete', $dish->id ),
     );
 
     $c->escape_title( Dish => $dish->name );
 }
 
-sub delete : Local Args(1) POST {    # TODO fix
-    my ( $self, $c, $id ) = @_;
+sub delete : POST Chained('base') PathPart('delete') Args(0) {
+    my ( $self, $c ) = @_;
 
-    my $dish = $c->project->dishes->find($id);
+    $c->stash->{dish}->delete;
 
-    $dish->delete;
-
-    $c->response->redirect( $c->project_uri( '/meal/edit', $dish->get_column('meal') ) );
+    $c->response->redirect( $c->project_uri('/project/edit') );
 }
 
 sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0) {
