@@ -1,4 +1,4 @@
-<form action="[% c.project_uri('/project/edit_dishes') %]" method="POST">
+<form action="[% edit_dishes_url %]" method="POST">
 
 <!-- Firefox claims nested forms are not allowed and ignores the 1st form
     but any more forms work well -->
@@ -57,13 +57,13 @@
     <tr>
         <td></td>
         <td>
-            <form action="[% c.project_uri('/dish/create') %]" method="POST">
+            <form action="[% dish_create_url %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <input type="text"   name="name" placeholder="name">
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Create dish">
             </form>
-            <form action="[% c.project_uri('/dish/from_recipe') %]" method="POST">
+            <form action="[% dish_from_recipe_url %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <select name="recipe">
         [% FOREACH recipe IN recipes %]
@@ -79,7 +79,7 @@
     <tr>
         <td></td>
         <td>
-            <form action="[% c.project_uri('/meal/create') %]" method="POST">
+            <form action="[% meal_create_url %]" method="POST">
 		<input type="hidden" name="date" value="[% day.date.ymd %]">
                 <fieldset>
                     <legend>Add meal on [% display_date(day.date, {html=>1}) %]</legend>
@@ -117,7 +117,7 @@
 </fieldset>
 </form>
 
-<form action="[% c.project_uri('/meal/create') %]" method="POST">
+<form action="[% meal_create_url %]" method="POST">
     <fieldset>
         <legend>Add meal</legend>
         Date:    <input type="date" name="date"    placeholder="YYYY-MM-DD" required value="[% default_date.ymd %]">
@@ -146,7 +146,7 @@
 </fieldset>
 </form>
 
-<form action="[% c.project_uri('/project/rename') %]" method="POST">
+<form action="[% rename_url %]" method="POST">
     <fieldset>
         <legend>Rename project <em>[% project.name | html %]</em></legend>
         <input type="text" name="name" value="[% project.name | html %]">
@@ -154,7 +154,7 @@
     </fieldset>
 </form>
 
-<form method="POST" action="[% c.project_uri('/project/delete') %]">
+<form method="POST" action="[% delete_url %]">
     <fieldset>
         <legend>Delete project <em>[% project.name | html %]</em></legend>
         <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion.</p>
