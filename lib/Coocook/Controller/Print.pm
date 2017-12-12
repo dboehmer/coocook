@@ -117,9 +117,12 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
 sub project : GET Chained('/project/base') PathPart('print/project') Args(0) {
     my ( $self, $c, $id ) = @_;
 
+    my @extra_columns = grep { defined and length } $c->req->param('extra_column');
+
     $c->stash(
-        days  => $c->model('Plan')->project( $c->project ),
-        title => "Print overview",
+        days          => $c->model('Plan')->project( $c->project ),
+        extra_columns => \@extra_columns,
+        title         => "Print overview",
     );
 }
 

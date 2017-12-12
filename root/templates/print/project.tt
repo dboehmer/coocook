@@ -4,6 +4,9 @@
         <th>Day</th>
         <th>Meal</th>
         <th>Dishes</td>
+[% FOR column IN extra_columns %]
+        <th>[% column | html %]</th>
+[% END %]
     </tr>
 </thead>
 <tbody>
@@ -19,6 +22,9 @@
             <li>[% dish.name | html %]</li>
         [% END %]
         </ul></td>
+        [% FOR column IN extra_columns %]
+        <td>&nbsp;</td>
+        [% END %]
     </tr>
     [% END;
 END %]

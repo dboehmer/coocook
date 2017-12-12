@@ -11,3 +11,14 @@
 [% END %]
 
 </ul>
+
+<form method="GET" action="[% project_url %]">
+    <fieldset>
+        <legend>Custom project print view</legend>
+
+        <input type="text" name="extra_column" placeholder="extra column">
+        <input type="text" name="extra_column" placeholder="extra column">
+        <input type="text" name="extra_column" placeholder="extra column">
+        <input type="submit" value="Project print view">
+    </fieldset>
+</form>
