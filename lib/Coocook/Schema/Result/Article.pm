@@ -43,6 +43,13 @@ __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
 
+sub unit_ids_joined {
+    my $self = shift;
+    my $seperator = shift || ',';
+
+    return join $seperator, map { $_->id } $self->units;
+}
+
 sub tags_joined {
     my $self = shift;
 
