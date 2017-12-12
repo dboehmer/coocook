@@ -63,10 +63,26 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         }
     }
 
+    my @users;
+
+    {
+        my $users = $c->project->projects_users->search( undef, { prefetch => 'user' } );
+
+        while ( my $user = $users->next ) {    # TODO better var name
+            push @users,
+              {
+                role     => $user->role,
+                user     => $user->user,
+                user_url => $c->uri_for_action( '/user/show', [ $user->user->name ] ),
+              };
+        }
+    }
+
     $c->stash(
         default_date          => $default_date,
         recipes               => [ $c->project->recipes->sorted->all ],
         days                  => $days,
+        users                 => \@users,
         edit_dishes_url       => $c->project_uri('/project/edit_dishes'),
         dish_create_url       => $c->project_uri('/dish/create'),
         dish_from_recipe_url  => $c->project_uri('/dish/from_recipe'),

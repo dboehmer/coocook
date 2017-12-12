@@ -127,6 +127,27 @@
     </fieldset>
 </form>
 
+<fieldset>
+    <legend>Permissions</legend>
+
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+[% FOR u IN users %]
+            <tr>
+                <td><a href="[% u.user_url %]">[% u.user.display_name | xml %]</a></td>
+                <td>[% u.role %]</td>
+            </tr>
+[% END %]
+        </tbody>
+    </table>
+</fieldset>
+
 <form>
 <fieldset>
     <legend>Mass create meals</legend>
