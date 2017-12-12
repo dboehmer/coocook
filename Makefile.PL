@@ -20,7 +20,7 @@ my %WriteMakefileArgs = (
     "File::ShareDir::Install" => "0.06"
   },
   "DISTNAME" => "Coocook",
-  "LICENSE" => "restrictive",
+  "LICENSE" => "gpl",
   "MIN_PERL_VERSION" => "5.016000",
   "NAME" => "Coocook",
   "PREREQ_PM" => {

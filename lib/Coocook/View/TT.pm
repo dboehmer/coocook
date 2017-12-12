@@ -17,27 +17,4 @@ __PACKAGE__->config(
     render_die         => 1,
 );
 
-=head1 NAME
-
-Coocook::View::TT - TT View for Coocook
-
-=head1 DESCRIPTION
-
-TT View for Coocook.
-
-=head1 SEE ALSO
-
-L<Coocook>
-
-=head1 AUTHOR
-
-Daniel Böhmer,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-
 1;

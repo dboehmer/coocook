@@ -86,19 +86,6 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1) {
         $c->project_uri( '/purchase_list/edit', $item->get_column('purchase_list') ) );
 }
 
-=encoding utf8
-
-=head1 AUTHOR
-
-Daniel Böhmer,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-
 __PACKAGE__->meta->make_immutable;
 
 1;

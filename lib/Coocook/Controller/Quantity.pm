@@ -94,19 +94,6 @@ sub redirect : Private {
     $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
-=encoding utf8
-
-=head1 AUTHOR
-
-Daniel Böhmer,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-
 __PACKAGE__->meta->make_immutable;
 
 1;
