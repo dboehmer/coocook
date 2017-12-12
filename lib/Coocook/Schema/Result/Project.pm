@@ -57,6 +57,7 @@ before delete => sub {    # TODO solve workaround
     $self->quantities->delete;
     $self->tags->delete;
     $self->tag_groups->delete;
+    $self->projects_users->delete;
 };
 
 # trigger for generating url_name[_fc]

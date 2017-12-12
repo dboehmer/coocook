@@ -3,7 +3,9 @@ INSERT INTO 'users' VALUES(1,'john_doe','P@ssw0rd','John Doe','admin','john.doe@
 INSERT INTO 'users' VALUES(2,'other','other','Other User','user','other@example.com',DATETIME('now'),NULL,NULL);
 INSERT INTO 'projects' VALUES(1,'Test','test','test',1,1);
 INSERT INTO 'projects' VALUES(2,'Other Project','other-project','other-project',1,1);
+INSERT INTO 'projects_users' VALUES(1,1,'owner');
 INSERT INTO 'projects_users' VALUES(1,2,'editor');
+INSERT INTO 'projects_users' VALUES(2,1,'owner');
 INSERT INTO 'shop_sections' VALUES(1,1,'bakery products');
 INSERT INTO 'shop_sections' VALUES(2,1,'milk products');
 INSERT INTO 'shop_sections' VALUES(9,2,'other product');
