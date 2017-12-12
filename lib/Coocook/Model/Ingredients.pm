@@ -31,12 +31,6 @@ has project => (
 
 sub build_project { shift->ingredients->first->project }
 
-has reposition_url_factory => (
-    is       => 'rw',
-    isa      => 'CodeRef',
-    required => 1,
-);
-
 sub as_arrayref {
     my $self = shift;
 
@@ -52,13 +46,12 @@ sub as_arrayref {
         while ( my $ingredient = $ingredients->next ) {
             push @ingredients,
               {
-                id             => $ingredient->id,
-                prepare        => $ingredient->prepare,
-                value          => $ingredient->value,
-                comment        => $ingredient->comment,
-                unit           => $units{ $ingredient->get_column('unit') },
-                article        => $articles{ $ingredient->get_column('article') },
-                reposition_url => $self->reposition_url_factory->( $ingredient->id ),
+                id      => $ingredient->id,
+                prepare => $ingredient->prepare,
+                value   => $ingredient->value,
+                comment => $ingredient->comment,
+                unit    => $units{ $ingredient->get_column('unit') },
+                article => $articles{ $ingredient->get_column('article') },
               };
         }
     }

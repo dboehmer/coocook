@@ -30,9 +30,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     my $dish = $c->stash->{dish};
 
     my $ingredients = $c->model('Ingredients')->new(
-        project                => $c->project,
-        ingredients            => $dish->ingredients,
-        reposition_url_factory => sub { $c->project_uri( '/dish/reposition', shift ) },
+        project     => $c->project,
+        ingredients => $dish->ingredients,
     );
 
     # candidate meals for preparing this dish: same day or earlier
@@ -50,6 +49,10 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         add_ingredient_url => $c->project_uri( '/dish/add', $dish->id ),
         delete_url         => $c->project_uri( '/dish/delete', $dish->id ),
     );
+
+    for my $ingredient ( @{ $c->stash->{ingredients} } ) {
+        $ingredient->{reposition_url} = $c->project_uri( '/dish/reposition', $ingredient->{id} );
+    }
 
     $c->escape_title( Dish => $dish->name );
 }
