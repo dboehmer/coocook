@@ -21,12 +21,14 @@
 [% END %]
     </select>
 </p>
-<p>Preparation:<br>
-<textarea name="preparation" style="width:60em;height:10em;">[% dish.preparation %]</textarea></p>
-<p>Description:<br>
-<textarea name="description" style="width:60em;height:10em;">[% dish.description %]</textarea></p>
 
-<input type="submit" value="Update Dish">
+<h3>Preparation</h3>
+<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation %]</textarea>
+
+<h3>Description</h3>
+<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description %]</textarea>
+
+<p><input type="submit" value="Update Dish"></p>
 
 <h2><a name="ingredients">Ingredients</a></h2>
 

@@ -2,12 +2,14 @@
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
-<p>Preparation:<br>
-<textarea name="preparation" style="width:60em;height:10em;">[% recipe.preparation %]</textarea></p>
-<p>Description:<br>
-<textarea name="description" style="width:60em;height:10em;">[% recipe.description %]</textarea></p>
 
-<input type="submit" value="Update Recipe">
+<h3>Preparation</h3>
+<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% recipe.preparation %]</textarea>
+
+<h3>Description</h3>
+<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% recipe.description %]</textarea>
+
+<p><input type="submit" value="Update Recipe"></p>
 
 <h2><a name="ingredients">Ingredients</a></h2>
 

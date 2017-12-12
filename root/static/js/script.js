@@ -32,4 +32,13 @@ $(function() {
         }
     });
 
+    $('textarea.with-markdown-preview').each(function() {
+        let $textarea = $(this);
+        let $preview = $('<div>', {class: 'markdown-preview'}).insertBefore($textarea);
+
+        $textarea.on('change input', function() {
+            $preview.html( marked( $textarea.val() ) );
+        }).change();
+    });
+
 });

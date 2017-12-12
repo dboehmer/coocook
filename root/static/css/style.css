@@ -132,6 +132,23 @@ input[type="submit"]:hover, input[type="submit"]:active{
     background-color: #4CAF50;
 }
 
+.markdown-preview {
+    width: 50%;
+    float: right;
+    overflow: auto;
+    background-color: white;
+}
+
+.markdown-preview + textarea {
+    display: block;
+    width: 45%;
+    width: calc( 50% - 2em );
+}
+
+.markdown-preview + textarea + * {
+    clear: both;
+}
+
 table td input[type="checkbox"]:first-child:last-child {
     /* center single checkbox in table column */
     display: block;
