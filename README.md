@@ -63,5 +63,5 @@ Daniel Böhmer <post@daniel-boehmer.de>
 
 ## Copyright and License
 
-This software is copyright (c) 2016,2017 by Daniel Böhmer.
+This software is copyright (c) 2015-2017 by Daniel Böhmer.
 This is free software, licensed under the GNU General Public License, Version 3, June 2007.
