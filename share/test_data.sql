@@ -47,7 +47,7 @@ INSERT INTO 'dish_ingredients' VALUES(8,2,3,1,2,1,25.0,'',NULL);
 INSERT INTO 'dish_ingredients' VALUES(9,3,3,1,3,3,1.0,'',NULL);
 INSERT INTO 'dish_ingredients' VALUES(10,4,3,0,4,1,500.0,'',NULL);
 INSERT INTO 'purchase_lists' VALUES(1,1,'all at once','1999-12-31');
-INSERT INTO 'items' VALUES(1,1,1000,0.0,1,1,0,'');
+INSERT INTO 'items' VALUES(1,1,500,0.0,1,1,0,'');
 UPDATE 'dish_ingredients' SET 'item' = 1 WHERE id IN (1,3);
 INSERT INTO 'tag_groups' VALUES(1,1,0xff0000,'allergens','may harm');
 INSERT INTO 'tags' VALUES(1,1,1,'gluten');

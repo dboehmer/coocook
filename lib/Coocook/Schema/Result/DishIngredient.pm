@@ -44,9 +44,11 @@ __PACKAGE__->meta->make_immutable;
 sub assign_to_purchase_list {
     my ( $self, $list ) = @_;
 
+    my $item;
+
     $self->result_source->schema->txn_do(
         sub {
-            my $item = $self->result_source->schema->resultset('Item')->add_or_create(
+            $item = $self->result_source->schema->resultset('Item')->add_or_create(
                 {
                     purchase_list => $list,
                     article       => $self->get_column('article'),
@@ -58,6 +60,44 @@ sub assign_to_purchase_list {
             $self->update( { item => $item->id } );
         }
     );
+
+    return $item;
+}
+
+sub remove_from_purchase_list {
+    my $self = shift;
+
+    $self->result_source->schema->txn_do(
+        sub {
+            my $item = $self->item
+              or return
+              warn "Trying to remove ingredient " . $self->id . " that's not assigned to any purchase list";
+
+            $self->update( { item => undef } );
+
+            if ( $item->ingredients->count > 0 ) {
+                my $value = $self->value;
+
+                # if item got converted to other unit, convert $value, too
+                if ( $self->get_column('unit') != $item->get_column('unit') ) {
+                    my $unit1 = $self->unit;
+                    my $unit2 = $item->unit;
+
+                    $unit1->get_column('quantity') == $unit2->get_column('quantity')
+                      or die "Units not of same quantity";
+
+                    $value *= $unit1->to_quantity_default / $unit2->to_quantity_default;
+                }
+
+                $item->update( { value => $item->value - $value } );
+            }
+            else {    # item belongs to other ingredients
+                $item->delete;
+            }
+        }
+    );
+
+    return 1;
 }
 
 1;

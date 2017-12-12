@@ -28,7 +28,13 @@
         <td>[% item.article.name | html %]</td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
-            <li>[% ingredient.value; display_unit(ingredient.unit) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name | html %] [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</li>
+            <li>
+                [% ingredient.value; display_unit(ingredient.unit) %]
+                [% ingredient.dish.meal.date.strftime('%a, %F') %]
+                [% ingredient.dish.name | html %]
+                [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
+                <form class="inline" method="POST" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
+            </li>
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>

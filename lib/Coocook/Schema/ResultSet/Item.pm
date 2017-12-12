@@ -25,6 +25,7 @@ sub add_or_create {
             {
                 value   => $args->{value},
                 comment => "",               # no argument because existing items have comments
+                offset  => 0,                # instantly apply default_value
             }
         );
     }

@@ -29,6 +29,8 @@ __PACKAGE__->belongs_to(
     undef, { join_type => 'LEFT' }
 );
 
+__PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item' );
+
 __PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
 __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
 

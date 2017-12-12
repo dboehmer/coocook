@@ -63,7 +63,32 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
         units    => $list->units,
     );
 
+    for my $sections ( @{ $c->stash->{sections} } ) {
+        for my $item ( @{ $sections->{items} } ) {
+            for my $ingredient ( @{ $item->{ingredients} } ) {
+                $ingredient->{remove_url} =
+                  $c->project_uri( '/purchase_list/remove_ingredient', $ingredient->{id} );
+            }
+        }
+    }
+
     $c->escape_title( "Purchase list" => $c->stash->{list}->name );
+}
+
+sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/remove_ingredient')
+  Args(1) {
+    my ( $self, $c, $ingredient_id ) = @_;
+
+    my $ingredient = $c->project->dishes->ingredients->find($ingredient_id)
+      or die "ingredient not found";
+
+    my $item = $ingredient->item
+      or die "item not found";
+
+    $ingredient->remove_from_purchase_list();
+
+    $c->response->redirect(
+        $c->project_uri( $self->action_for('edit'), $item->get_column('purchase_list') ) );
 }
 
 sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0) {
