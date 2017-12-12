@@ -38,19 +38,43 @@ sub index : GET Chained('/project/base') PathPart('print') Args(0) {
 
     my $project = $c->stash->{project} || die;
 
-    # can't use get_column(date) here because $meal->date() inflates DateTime object
-    my @days =
-      map { $_->date } $project->meals->search( undef, { columns => 'date', distinct => 1 } )->all;
+    my @days;
+    {
+        # can't use get_column(date) here because only $meal->date() inflates DateTime object
+        my @dates =
+          map { $_->date } $project->meals->search( undef, { columns => 'date', distinct => 1 } )->all;
 
-    my $lists = $project->purchase_lists->search( undef, { order_by => 'date' } );
+        for my $date (@dates) {
+            push @days,
+              {
+                date => $date,
+                url  => $c->project_uri( '/print/day', $date->year, $date->month, $date->day ),
+              };
+        }
+    }
+
+    my @lists;
+    {
+        my $lists = $project->purchase_lists->search( undef, { order_by => 'date' } );
+
+        while ( my $list = $lists->next ) {
+            push @lists,
+              {
+                date => $list->date,
+                name => $list->name,
+                url  => $c->project_uri( '/print/purchase_list', $list->id ),
+              };
+        }
+    }
 
     my @projects = $c->model('DB::Project')->all;
 
     $c->stash(
-        days     => \@days,
-        lists    => $lists,
-        projects => \@projects,
-        title    => "Printing",
+        days        => \@days,
+        lists       => \@lists,
+        projects    => \@projects,
+        project_url => $c->project_uri('/print/project'),
+        title       => "Printing",
     );
 }
 

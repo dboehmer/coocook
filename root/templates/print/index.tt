@@ -1,9 +1,13 @@
 <ul>
-    <li><a href="[% c.project_uri('/print/project') %]">Project overview</a></li>
+
+    <li><a href="[% project_url %]">Project overview</a></li>
+
 [% FOREACH day IN days %]
-    <li><a href="[% c.project_uri('/print/day', day.year, day.month, day.day)  %]">Plan for day [% display_date(day, {html=>1}) %]</a></li>
+    <li><a href="[% day.url  %]">Plan for day [% display_date(day.date, {html=>1}) %]</a></li>
 [% END %]
-[% WHILE(list = lists.next) %]
-    <li><a href="[% c.project_uri('/print/purchase_list', list.id) %]">Purchase list <em>[% list.name | html %]</em> on [% display_date(list.date, {html=>1}) %]</a></li>
+
+[% FOR list IN lists %]
+    <li><a href="[% list.url %]">Purchase list <em>[% list.name | html %]</em> on [% display_date(list.date, {html=>1}) %]</a></li>
 [% END %]
+
 </ul>
