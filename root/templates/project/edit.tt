@@ -80,7 +80,7 @@
         <td></td>
         <td>
             <form action="[% c.project_uri('/meal/create') %]" method="POST">
-		<input type="hidden" name="date" value="[% meal.date.ymd %]">
+		<input type="hidden" name="date" value="[% day.date.ymd %]">
                 <fieldset>
                     <legend>Add meal on [% display_date(day.date, {html=>1}) %]</legend>
 		    Name:    <input type="text" name="name"    placeholder="name" required>
