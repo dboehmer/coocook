@@ -10,11 +10,11 @@
 <form method="POST" action="[% visibility_url %]">
     <fieldset>
         <legend>Visibility</legend>
-        <p>Project is: <strong>[% project.is_public ? 'public' : 'private' %]</strong></p>
+        <p>Project is: <strong>[% project.is_public ? 'public' : '🔒private' %]</strong></p>
 [% IF NOT project.is_public %]
         <input type="hidden" name="public" value="on">
 [% END %]
-        <input type="submit" value="[% project.is_public ? 'Make private' : 'Make public' %]">
+        <input type="submit" value="[% project.is_public ? 'Make 🔒private' : 'Make public' %]">
     </fieldset>
 </form>
 

@@ -87,9 +87,11 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
         while ( my $project_user = $projects_users->next ) {
             push @permissions,
               {
-                role           => $project_user->role,
-                user           => $project_user->user,
-                user_url       => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
+                role     => $project_user->role,
+                user     => $project_user->user,
+                user_url => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
+                edit_url => $project_user->role eq 'owner' ? undef
+                : $c->project_uri( $self->action_for('edit_permission'), $project_user->user->name ),
                 make_owner_url => $project_user->role eq 'admin'
                 ? $c->project_uri( $self->action_for('make_owner'), $project_user->user->name )
                 : undef,
@@ -103,12 +105,12 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
         $c->stash(
             add_permission_url => $c->project_uri( $self->action_for('add_permission') ),
             other_users        => \@other_users,
-            roles => [qw< admin user >],    # TODO define roles, define them globally
         );
     }
 
     $c->stash(
         permissions => \@permissions,
+        roles       => [qw< admin user >],    # TODO define roles, define them globally
         title       => "Permissions",
     );
 }
@@ -134,6 +136,14 @@ sub permission_base : Chained('base') PathPart('permissions') CaptureArgs(1) {
     $c->stash->{permission} =
       $c->project->projects_users->search( { 'user.name' => $username }, { prefetch => 'user' } )
       ->single;
+}
+
+sub edit_permission : POST Chained('permission_base') PathPart('edit') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{permission}->update( { role => scalar $c->req->param('role') } );
+
+    $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
 
 sub make_owner : POST Chained('permission_base') PathPart('make_owner') Args(0) {
