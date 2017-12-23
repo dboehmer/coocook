@@ -1,0 +1,16 @@
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+[% FOR permission IN permissions %]
+        <tr>
+            <td><a href="[% permission.user_url %]">[% permission.user.display_name | xml %]</a></td>
+            <td>[% permission.role %]</td>
+        </tr>
+[% END %]   
+    </tbody>
+</table>
