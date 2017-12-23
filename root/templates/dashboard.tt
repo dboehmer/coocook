@@ -8,7 +8,7 @@
 
 <ul>
 [% FOR proj IN my_projects; # don't overwrite $project! %]
-    <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
+    <li>[% '🔒' UNLESS proj.is_public %]<a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
 [% END %]
 </ul>
 
