@@ -147,4 +147,22 @@ sub other_projects {
     return $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
 }
 
+=head2 other_users
+
+Returns a resultset with all C<Result::User>s without any related C<projects_users> record.
+
+=cut
+
+sub users_without_permission {
+    my $self = shift;
+
+    my $permitted_users = $self->projects_users->get_column('user');
+
+    return $self->result_source->schema->resultset('User')->search(
+        {
+            id => { -not_in => $permitted_users->as_query },
+        }
+    );
+}
+
 1;

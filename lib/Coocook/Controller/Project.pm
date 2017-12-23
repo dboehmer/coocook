@@ -94,10 +94,33 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
         }
     }
 
+    if ( my @other_users = $c->project->users_without_permission->all ) {
+        $c->stash(
+            add_permission_url => $c->project_uri( $self->action_for('add_permission') ),
+            other_users        => \@other_users,
+            roles => [qw< admin user >],    # TODO define roles, define them globally
+        );
+    }
+
     $c->stash(
         permissions => \@permissions,
         title       => "Permissions",
     );
+}
+
+sub add_permission : POST Chained('base') PathPart('permissions/add') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $user = $c->model('DB::User')->find( { name => scalar $c->req->param('user') } );
+
+    $c->project->create_related(
+        projects_users => {
+            user => $user->id,
+            role => scalar $c->req->param('role'),
+        }
+    );
+
+    $c->response->redirect( $c->project_uri('/project/permissions') );
 }
 
 sub settings : GET Chained('base') PathPart('settings') Args(0) {
