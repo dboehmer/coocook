@@ -22,8 +22,12 @@
 
 <h2>Other public projects</h2>
 
+[% IF other_projects.size == 0 %]
+    <p>None yet.</p>
+[% ELSE %]
 <ul>
-[% FOR proj IN public_projects; # don't overwrite $project! %]
+[% FOR proj IN other_projects; # don't overwrite $project! %]
     <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
 [% END %]
 </ul>
+[% END %]
