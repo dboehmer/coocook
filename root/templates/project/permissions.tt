@@ -3,7 +3,7 @@
         <tr>
             <th>User</th>
             <th>Role</th>
-            <th>Actions</th>
+            <th colspan="2">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -18,10 +18,19 @@
                 </form>
     [% END %]
             </td>
+            <td>
+    [% IF permission.make_owner_url %]
+                <form method="POST" action="[% permission.make_owner_url %]" class="inline">
+                    <input type="submit" value="Transfer ownership">
+                </form>
+    [% END %]
+            </td>
         </tr>
 [% END %]   
     </tbody>
 </table>
+
+<p>You need another user with role <em>admin</em> to transfer ownership to them.</p>
 
 <fieldset>
     <legend>Add permission</legend>
