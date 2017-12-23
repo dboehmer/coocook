@@ -3,6 +3,7 @@
         <tr>
             <th>User</th>
             <th>Role</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -10,6 +11,13 @@
         <tr>
             <td><a href="[% permission.user_url %]">[% permission.user.display_name | xml %]</a></td>
             <td>[% permission.role %]</td>
+            <td>
+    [% IF permission.revoke_url %]
+                <form method="POST" action="[% permission.revoke_url %]" class="inline">
+                    <input type="submit" value="Revoke">
+                </form>
+    [% END %]
+            </td>
         </tr>
 [% END %]   
     </tbody>

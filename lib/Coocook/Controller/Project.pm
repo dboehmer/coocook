@@ -87,9 +87,12 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
         while ( my $project_user = $projects_users->next ) {
             push @permissions,
               {
-                role     => $project_user->role,
-                user     => $project_user->user,
-                user_url => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
+                role       => $project_user->role,
+                user       => $project_user->user,
+                user_url   => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
+                revoke_url => $project_user->role eq 'owner'
+                ? undef
+                : $c->project_uri( $self->action_for('revoke_permission'), $project_user->user->name ),
               };
         }
     }
@@ -120,7 +123,23 @@ sub add_permission : POST Chained('base') PathPart('permissions/add') Args(0) {
         }
     );
 
-    $c->response->redirect( $c->project_uri('/project/permissions') );
+    $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
+}
+
+sub permission_base : Chained('base') PathPart('permissions') CaptureArgs(1) {
+    my ( $self, $c, $username ) = @_;
+
+    $c->stash->{permission} =
+      $c->project->projects_users->search( { 'user.name' => $username }, { prefetch => 'user' } )
+      ->single;
+}
+
+sub revoke_permission : POST Chained('permission_base') PathPart('revoke') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{permission}->delete;
+
+    $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
 
 sub settings : GET Chained('base') PathPart('settings') Args(0) {
