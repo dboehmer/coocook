@@ -42,18 +42,48 @@ __PACKAGE__->meta->make_immutable;
 sub convert {
     my ( $self => $unit2 ) = @_;
 
-    my $unit1 = $self->unit;
+    $self->result_source->schema->txn_do(
+        sub {
+            my $unit1 = $self->unit;
 
-    $unit1->get_column('quantity') == $unit2->get_column('quantity')
-      or die "Units not of same quantity";
+            $unit1->get_column('quantity') == $unit2->get_column('quantity')
+              or die "Units not of same quantity";
 
-    my $factor = $unit1->to_quantity_default / $unit2->to_quantity_default;
+            my $factor = $unit1->to_quantity_default / $unit2->to_quantity_default;
 
-    $self->update(
-        {
-            unit   => $unit2->id,
-            value  => $self->value * $factor,
-            offset => $self->offset * $factor,
+            my $unit2_item = $self->result_source->resultset->find(
+                {
+                    purchase_list => $self->get_column('purchase_list'),
+                    article       => $self->get_column('article'),
+                    unit          => $unit2->id,
+                }
+            );
+
+            if ($unit2_item) {
+                $unit2_item->update(
+                    {
+                        value  => $unit2_item->value + $self->value * $factor,
+                        offset => $unit2_item->offset + $self->offset * $factor,
+                    }
+                );
+
+                $self->ingredients->update( { item => $unit2_item->id } );
+
+                $self->delete;
+
+                return $unit2_item;
+            }
+            else {
+                $self->update(
+                    {
+                        unit   => $unit2->id,
+                        value  => $self->value * $factor,
+                        offset => $self->offset * $factor,
+                    }
+                );
+
+                return $self;
+            }
         }
     );
 }
