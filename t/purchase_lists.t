@@ -43,7 +43,7 @@ $next_ingredient->discard_changes;
 
 article_has_items $article => "1000g";
 
-ok $next_ingredient->remove_from_purchase_list, "remove_from_purchase_list";
+ok $next_ingredient->remove_from_purchase_list, "DishIngredient->remove_from_purchase_list";
 
 article_has_items $article => "500g";
 
