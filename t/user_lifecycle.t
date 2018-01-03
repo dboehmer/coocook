@@ -7,83 +7,95 @@ use lib 't/lib';
 BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
 use Email::Sender::Simple;
-use TestDB;
+use DBICx::TestDatabase;
 use Test::Most;
 use Test::WWW::Mechanize::Catalyst;
 
-our $SCHEMA = TestDB->new;
+our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
 ok my $t = Test::WWW::Mechanize::Catalyst->new( catalyst_app => 'Coocook' );
 
-$t->get_ok('/');
+sub register_ok {
+    my ($field_values) = @_;
 
-$t->follow_link_ok( { text => 'Register' } );
+    $t->get_ok('/');
 
-$t->submit_form_ok(
-    {
-        with_fields => {
-            name         => "test",
-            display_name => "Test User",
-            email        => "test\@example.com",
-            password     => "s3cr3t",
-            password2    => "s3cr3t",
-        },
-        strict_forms => 1,
-    },
-    "register account"
-);
-
-subtest "try login after registration before verification" => sub {
-    $t->follow_link_ok( { text => 'Login' } );
+    $t->follow_link_ok( { text => 'Register' } );
 
     $t->submit_form_ok(
         {
-            with_fields => {
-                username => 'test',
-                password => 's3cr3t',    # right password but account not yet verified!
-            },
+            with_fields  => $field_values,
             strict_forms => 1,
         },
-        "submit login form"
+        "register account"
     );
 
-    ( $t->content_like(qr/fail/) and $t->content_like(qr/Login/) )
-      or note $t->content;
+    subtest "try login after registration before verification" => sub {
+        $t->follow_link_ok( { text => 'Login' } );
+
+        $t->submit_form_ok(
+            {
+                with_fields => {
+                    username => $field_values->{name},
+                    password => $field_values->{password},    # right password but account not yet verified!
+                },
+                strict_forms => 1,
+            },
+            "submit login form"
+        );
+
+        ( $t->content_like(qr/fail/) and $t->content_like(qr/Login/) )
+          or note $t->content;
+    };
+
+    my @deliveries = Email::Sender::Simple->default_transport->deliveries;
+
+    ok my $email = pop(@deliveries)->{email}, "sent 1 e-mail";
+    note $email->as_string;
+
+    my @urls =
+      ( $email->get_body =~ m/http\S+verify\S+/g );    # TODO regex is very simple and will break easily
+
+    is scalar @urls => 1, "found 1 URL";
+
+    my $verification_url = $urls[0];
+
+    $t->get_ok($verification_url);
+
+    subtest "failing login with wrong password" => sub {
+        $t->follow_link_ok( { text => 'Login' } )
+          or note $t->content;
+
+        $t->submit_form_ok(
+            {
+                with_fields => {
+                    username => 'test',
+                    password => 'invalid',    # wrong password
+                },
+                strict_forms => 1,
+            },
+            "submit login form"
+        );
+
+        $t->content_like(qr/fail/);
+        $t->content_like(qr/Login/);
+    };
+}
+
+register_ok {
+    name         => "test",
+    display_name => "Test User",
+    email        => "test\@example.com",
+    password     => "s3cr3t",
+    password2    => "s3cr3t",
 };
 
-my @deliveries = Email::Sender::Simple->default_transport->deliveries;
-
-is scalar @deliveries => 1, "sent 1 e-mail";
-
-my $email = $deliveries[0]->{email};
-note $email->as_string;
-
-my @urls =
-  ( $email->get_body =~ m/http\S+verify\S+/g );    # TODO regex is very simple and will break easily
-
-is scalar @urls => 1, "found 1 URL";
-
-my $verification_url = $urls[0];
-
-$t->get_ok($verification_url);
-
-subtest "failing login with wrong password" => sub {
-    $t->follow_link_ok( { text => 'Login' } )
-      or note $t->content;
-
-    $t->submit_form_ok(
-        {
-            with_fields => {
-                username => 'test',
-                password => 'invalid',    # wrong password
-            },
-            strict_forms => 1,
-        },
-        "submit login form"
-    );
-
-    $t->content_like(qr/fail/);
-    $t->content_like(qr/Login/);
+register_ok {
+    name         => "test2",
+    display_name => "Other User",
+    email        => "test2\@example.com",
+    password     => "s3cr3t",
+    password2    => "s3cr3t",
 };
 
 $t->follow_link_ok( { text => 'Login' } );
@@ -150,6 +162,14 @@ $t->submit_form_ok(
 $t->get_ok('/');
 $t->content_like(qr/Test Project/)
   or note $t->content;
+
+my $users = $SCHEMA->resultset('User');
+
+is $users->find( { name => 'test' } )->role => 'admin',
+  "1st user created has 'admin' role";
+
+is $users->find( { name => 'test2' } )->role => 'user',
+  "2nd user created has 'user' role";
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";

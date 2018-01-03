@@ -93,11 +93,13 @@ sub post_register : POST Path('/register') Args(0) {
 
     my $token = join '', map { ( 'a' .. 'z', 'A' .. 'Z', 0 .. 9 )[ rand 26 + 26 + 10 ] } 1 .. 16;
 
+    my $role = $c->model('DB::User')->count > 0 ? 'user' : 'admin';
+
     my $user = $c->model('DB::User')->create(
         {
             name          => $name,
             password_hash => $password,
-            role          => 'admin',
+            role          => $role,
             display_name  => scalar $c->req->param('display_name'),
             email         => scalar $c->req->param('email'),
             token         => $token,
