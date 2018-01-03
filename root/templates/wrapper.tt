@@ -47,6 +47,8 @@
     <li><a href="[% c.project_uri('/unit/index') %]">Units</a></li>
     <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
 [% END %]
+
+<li><a href="[% statistics_url %]">Statistics</a></li>
 </ul>
 </nav>
 </header>

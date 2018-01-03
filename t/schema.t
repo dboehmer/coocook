@@ -13,6 +13,16 @@ ok my $db = TestDB->new;
 is $db->count()                   => 59, "count()";
 is $db->count(qw< Article Unit >) => 11, "count(Article Unit)";
 
+subtest statistics => sub {
+    ok my $stats = $db->statistics(), "\$schema->statistics()";
+
+    is_deeply $stats => {
+        projects      => 2,
+        users         => 2,
+        dishes_served => 4 + 2 + 4,
+    };
+};
+
 subtest fk_checks_off_do => sub {
     $db = TestDB->new;
 

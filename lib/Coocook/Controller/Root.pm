@@ -60,7 +60,10 @@ sub auto : Private {
     }
     $c->stash( errors => $errors );
 
-    $c->stash( homepage_url => $c->uri_for_action('/index') );
+    $c->stash(
+        homepage_url   => $c->uri_for_action('/index'),
+        statistics_url => $c->uri_for_action('/statistics'),
+    );
 
     if ( $c->user ) {
         $c->stash(
@@ -106,6 +109,15 @@ sub dashboard : Private {
         my_projects        => [ $my_projects->all ],
         other_projects     => [ $other_projects->all ],
         project_create_url => $c->uri_for_action('/project/create'),
+    );
+}
+
+sub statistics : GET Local Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        title      => "Statistics",
+        statistics => $c->model('DB')->statistics,
     );
 }
 

@@ -2,6 +2,7 @@ package Coocook::Schema;
 
 our $VERSION = 8;    # version of schema definition, not software version!
 
+use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -60,6 +61,25 @@ sub fk_checks_off_do {
     $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = OFF;') } );
     $cb->();
     $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = ON;') } );
+}
+
+sub statistics {
+    my $self = shift;
+
+    my $dishes = $self->resultset('Dish')->search(
+        {
+            'meal.date' => { '<=' => $self->storage->datetime_parser->format_date( DateTime->today ) },
+        },
+        {
+            join => 'meal',
+        }
+    );
+
+    return {
+        dishes_served => $dishes->get_column('servings')->sum,
+        projects      => $self->resultset('Project')->count,
+        users         => $self->resultset('User')->count,
+    };
 }
 
 1;

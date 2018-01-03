@@ -14,4 +14,6 @@ __PACKAGE__->config(
     schema_class => 'Coocook::Schema',
 );
 
+sub statistics { shift->schema->statistics(@_) }
+
 1;

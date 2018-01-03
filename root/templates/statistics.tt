@@ -1,0 +1,5 @@
+<ul>
+    <li>[% statistics.dishes_served %] dishes served until today</li>
+    <li>[% statistics.projects %] projects</li>
+    <li>[% statistics.users %] users</li>
+</ul>
