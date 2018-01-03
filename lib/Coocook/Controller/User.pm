@@ -29,7 +29,15 @@ sub show : GET Chained('base') PathPart('') Args(0) {
 
     my $user = $c->stash->{user};
 
-    $c->stash( projects => [ $user->projects->all ] );
+    my @permissions = $user->projects_users->search(
+        undef,
+        {
+            prefetch => 'project',
+            order_by => 'project.url_name_fc',
+        }
+    )->all;
+
+    $c->stash( permissions => \@permissions );
 
     $c->escape_title( User => $user->display_name );
 }

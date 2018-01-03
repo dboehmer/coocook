@@ -1,11 +1,14 @@
 <p>Username: [% user.name %]</p>
 
-<p>Role: [% user.role %]</p>
+<p>Global role: [% user.role %]</p>
 
 <p>Projects:</p>
 
 <ul>
-[% FOR proj IN projects %]
-    <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
+[% FOR permission IN permissions %]
+    <li>
+        <a href="[% c.uri_for_action('/project/edit', [permission.project.url_name]) %]">[% permission.project.name | html %]</a>
+        ([% permission.role %])
+    </li>
 [% END %]
 </ul>
