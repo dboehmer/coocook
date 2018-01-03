@@ -1,5 +1,7 @@
 <p>Username: [% user.name %]</p>
 
+<p>Role: [% user.role %]</p>
+
 <p>Projects:</p>
 
 <ul>
