@@ -1,0 +1,4 @@
+<form method="POST" action="[% recover_url %]">
+    <input type="email" name="email" placeholder="e-mail">
+    <input type="submit" value="Send recovery link">
+</form>

@@ -163,4 +163,38 @@ sub change_display_name_ok {
     };
 }
 
+sub reset_password_ok {
+    my ( $self, $email, $password, $name ) = @_;
+
+    subtest $name || "reset password for $email to '$password'", sub {
+        $self->follow_link_ok( { text => 'Login' } );
+
+        $self->follow_link_ok( { text => 'Lost your password?' } );
+
+        $self->submit_form_ok(
+            {
+                with_fields  => { email => $email },
+                strict_forms => 1,
+            },
+            "submit e-mail recovery form"
+        ) ;
+
+        $self->get_email_link_ok(
+            qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
+            $name || "click e-mail recovery link"
+        );
+
+        $self->submit_form_ok(
+            {
+                with_fields => {
+                    password  => $password,
+                    password2 => $password,
+                },
+                strict_forms => 1,
+            },
+            "submit password reset form"
+        ) ;
+    };
+}
+
 1;

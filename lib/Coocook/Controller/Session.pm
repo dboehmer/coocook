@@ -12,6 +12,7 @@ sub login : GET Chained('/enforce_ssl') Args(0) {
 
     $c->stash(
         post_login_url => $c->uri_for( $self->action_for('post_login') ),
+        recover_url    => $c->uri_for_action('/user/recover'),
         title          => "Login",
     );
 }

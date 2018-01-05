@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 17;
+use Test::Most tests => 20;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -54,6 +54,12 @@ $t->change_display_name_ok('John Doe');
 $t->logout_ok();
 
 $t->login_ok( 'test', 'P@ssw0rd' );
+
+$t->logout_ok();
+
+$t->reset_password_ok( 'test@example.com', 'new, nice & shiny' );
+
+$t->is_logged_in();
 
 subtest "create project" => sub {
     $t->get_ok('/');

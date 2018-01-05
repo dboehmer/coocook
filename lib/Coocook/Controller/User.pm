@@ -1,6 +1,7 @@
 package Coocook::Controller::User;
 
 use Data::Validate::Email 'is_email';
+use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -115,22 +116,97 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
         }
     );
 
-    $c->forward( '/email/verification', [$user] );
+    $c->visit( '/email/verification', [$user] );
 
     $c->response->redirect( $c->uri_for('/') );
     $c->detach;
 }
 
+sub recover : GET Chained('/enforce_ssl') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash( recover_url => $c->uri_for( $self->action_for('post_recover') ) );
+}
+
+sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $email = $c->req->param('email');
+
+    if ( !is_email($email) ) {
+        $c->response->redirect(
+            $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
+        $c->detach;
+    }
+
+    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
+        $c->visit( '/email/recovery_link', [$user] );
+    }
+    else {
+        $c->visit( '/email/recovery_unregistered', [$email] );
+    }
+
+    $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
+}
+
+sub reset_password : GET Chained('/enforce_ssl') Args(1) {
+    my ( $self, $c, $token ) = @_;
+
+    my $user = $c->forward( _find_user_by_token => [$token] )
+      or die;
+
+    $c->stash( reset_password_url => $c->uri_for( $self->action_for('post_reset_password'), $token ) );
+}
+
+sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password') Args(1) {
+    my ( $self, $c, $token ) = @_;
+
+    my $new_password = $c->req->param('password');
+
+    $c->req->param('password2') eq $new_password
+      or die "new passwords don't match";    # TODO error handling
+
+    my $user = $c->forward( _find_user_by_token => [$token] )
+      or die;
+
+    $user->update(
+        {
+            password      => $new_password,
+            token         => undef,
+            token_expires => undef,
+        }
+    );
+
+    # no point in letting user log in again
+    # https://security.stackexchange.com/q/64828/91275
+    $c->set_authenticated( $c->find_user( { id => $user->id } ) );
+
+    $c->response->redirect( $c->uri_for_action('/index') );
+}
+
 sub verify : GET Chained('/enforce_ssl') PathPart('user/verify') Args(1) {
     my ( $self, $c, $token ) = @_;
 
-    my $user = $c->model('DB::User')->find( { token => $token } );
+    my $user = $c->forward( _find_user_by_token => [$token] )
+      or die;
 
     $user->email_verified
       or $user->update( { email_verified => $user->format_datetime( DateTime->now ) } );
 
     $c->response->redirect( $c->uri_for_action('/login') );
     $c->detach;
+}
+
+sub _find_user_by_token : Private {
+    my ( $self, $c, $token ) = @_;
+
+    my $users = $c->model('DB::User');
+
+    my $user = $users->find(
+        { token => $token, token_expires => { '>' => $users->format_datetime( DateTime->now ) } } )
+      or die "no token or token expired";    # TODO error handling
+
+    return $user;
 }
 
 __PACKAGE__->meta->make_immutable;

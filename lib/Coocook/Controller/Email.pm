@@ -1,26 +1,76 @@
 package Coocook::Controller::Email;
 
+use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Catalyst::Controller' }
 
-sub verification : Private {
+sub begin : Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        name    => $c->config->{name},
+        wrapper => undef,                # disable default wrapper
+    );
+}
+
+sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 
-    my $name = $c->config->{name};
+    my $token = 'TODO';                              # TODO
+    my $expires = DateTime->now->add( days => 1 );
 
-    local $c->stash->{wrapper} = undef;    # disable default wrapper
+    $user->update(
+        {
+            token         => $token,
+            token_expires => $user->format_datetime($expires),
+        }
+    );
 
     $c->stash(
         email => {
-            from     => 'coocook@example.com',
+            from     => 'coocook@example.com',                         # TODO configure
             to       => $user->email,
-            subject  => "Verify your Account at $name",
+            subject  => "Account recovery at " . $c->config->{name},
+            template => 'email/recovery_link.tt',
+        },
+        user         => $user,
+        expires      => $expires,
+        recovery_url => $c->uri_for_action( '/user/reset_password', [$token] ),
+    );
+}
+
+sub recovery_unregistered : Private {
+    my ( $self, $c, $email ) = @_;
+
+    $c->stash(
+        email => {
+            from     => 'coocook@example.com',                         # TODO configure
+            to       => $email,
+            subject  => "Account recovery at " . $c->config->{name},
+            template => 'email/recovery_unregistered.tt',
+        },
+        register_url => $c->uri_for_action('/user/register'),
+    );
+}
+
+sub verification : Private {
+    my ( $self, $c, $user ) = @_;
+
+    $c->stash(
+        email => {
+            from     => 'coocook@example.com',                            # TODO configure
+            to       => $user->email,
+            subject  => "Verify your Account at " . $c->config->{name},
             template => 'email/verify.tt',
         },
         verification_url => $c->uri_for_action( '/user/verify', [ $user->token ] ),
     );
+}
+
+sub end : Private {
+    my ( $self, $c ) = @_;
 
     $c->forward( $c->view('Email::Template') );
 }

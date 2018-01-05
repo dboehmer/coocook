@@ -62,8 +62,11 @@ sub auto : Private {
             'lib/marked/marked' . ( $ENV{CATALYST_DEBUG} ? '.js' : '.min.js' ),
             'js/script.js',
         ],
-        wrapper => 'wrapper.tt',
     );
+
+    # wrapper might be undef, e.g. after /email/begin
+    exists $c->stash->{wrapper}
+      or $c->stash( wrapper => 'wrapper.tt' );
 
     if ( not defined $c->stash->{errors} ) {
         my $errors = $c->req->query_params->{error} || [];
