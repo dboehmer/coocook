@@ -72,7 +72,7 @@ header nav a {
     color: #f5f5ef;
 }
 
-header nav a li:hover{
+header nav a:hover{
     color: #333333;
 }
 

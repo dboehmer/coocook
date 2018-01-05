@@ -27,23 +27,23 @@
 <nav>
 <ul>
 [% IF dashboard_url %]
-<a href="[% dashboard_url %]"><li>Dashboard</li></a>
+    <li><a href="[% dashboard_url %]">Dashboard</a></li>
 [% ELSIF login_url %]
-<a href="[% login_url %]"><li>Login</li></a>
+    <li><a href="[% login_url %]">Login</a></li>
 [% END %]
 
 [% IF project %]
-<a href="[% c.project_uri('/project/edit') %]"><li>Meals &amp; Dishes</li></a>
-<a href="[% c.project_uri('/recipe/index') %]"><li>Recipes</li></a>
-<a href="[% c.project_uri('/article/index') %]"><li>Articles</li></a>
-<a href="[% c.project_uri('/tag/index') %]"><li>Tags</li></a>
-<a href="[% c.project_uri('/items/unassigned') %]"><li>Unassigned Items</li></a>
-<a href="[% c.project_uri('/purchase_list/index') %]"><li>Purchase Lists</li></a>
-<a href="[% c.project_uri('/print/index') %]"><li>Printing</li></a>
-<a href="[% c.project_uri('/shop_section/index') %]"><li>Shop sections</li></a>
-<a href="[% c.project_uri('/quantity/index') %]"><li>Quantities</li></a>
-<a href="[% c.project_uri('/unit/index') %]"><li>Units</li></a>
-<a href="[% c.project_uri('/project/get_import') %]"><li>Import</li></a>
+    <li><a href="[% c.project_uri('/project/edit') %]">Meals &amp; Dishes</a></li>
+    <li><a href="[% c.project_uri('/recipe/index') %]">Recipes</a></li>
+    <li><a href="[% c.project_uri('/article/index') %]">Articles</a></li>
+    <li><a href="[% c.project_uri('/tag/index') %]">Tags</a></li>
+    <li><a href="[% c.project_uri('/items/unassigned') %]">Unassigned Items</a></li>
+    <li><a href="[% c.project_uri('/purchase_list/index') %]">Purchase Lists</a></li>
+    <li><a href="[% c.project_uri('/print/index') %]">Printing</a></li>
+    <li><a href="[% c.project_uri('/shop_section/index') %]">Shop sections</a></li>
+    <li><a href="[% c.project_uri('/quantity/index') %]">Quantities</a></li>
+    <li><a href="[% c.project_uri('/unit/index') %]">Units</a></li>
+    <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
 [% END %]
 </ul>
 </nav>
