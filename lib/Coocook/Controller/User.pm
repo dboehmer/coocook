@@ -105,12 +105,12 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
 
     my $user = $c->model('DB::User')->create(
         {
-            name          => $name,
-            password_hash => $password,
-            role          => $role,
-            display_name  => scalar $c->req->param('display_name'),
-            email         => scalar $c->req->param('email'),
-            token         => $token,
+            name         => $name,
+            password     => $password,
+            role         => $role,
+            display_name => scalar $c->req->param('display_name'),
+            email        => scalar $c->req->param('email'),
+            token        => $token,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );

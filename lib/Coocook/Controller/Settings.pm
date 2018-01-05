@@ -34,7 +34,7 @@ sub change_password : POST Chained('base') Args(0) {
     my $user = $c->user
       or die;
 
-    $c->req->param('old_password') eq $user->password_hash
+    $user->check_password( $c->req->param('old_password') )
       or die "wrong old password";    # TODO error handling
 
     my $new_password = $c->req->param('new_password');
@@ -42,7 +42,7 @@ sub change_password : POST Chained('base') Args(0) {
     $c->req->param('new_password2') eq $new_password
       or die "new passwords don't match";    # TODO error handling
 
-    $user->update( { password_hash => $new_password } );    # TODO hashing
+    $user->update( { password => $new_password } );
 
     $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }

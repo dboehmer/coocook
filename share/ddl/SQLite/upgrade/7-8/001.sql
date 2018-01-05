@@ -57,10 +57,14 @@ INSERT INTO projects
 SELECT id,name,url_name,url_name_fc,1,1
 FROM alter_projects;
 
+-- create default admin user for existing installations
+-- to avoid orphaned projects
 INSERT INTO users VALUES (
   1,
   'coocook',
-  'coocook',
+
+  -- Argon2-crypted version of 'coocook'
+  '$argon2i$v=19$m=32768,t=3,p=1$YtI+qVwB3ZG/icw3Z5qazw$ELUfsvpzWxWoAw8YTKMeXg',
   'Default User',
   'admin',
   'cooocook-user@example.com',

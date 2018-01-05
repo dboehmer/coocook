@@ -90,7 +90,7 @@ __PACKAGE__->config(
             credential => {
                 class          => 'Password',
                 password_field => 'password_hash',
-                password_type  => 'clear',
+                password_type  => 'self_check',
             },
             store => {
                 class      => 'DBIx::Class',
