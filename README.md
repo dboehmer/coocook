@@ -61,6 +61,10 @@ Install database into local SQLite and start development server:
 
 Daniel Böhmer <post@daniel-boehmer.de>
 
+## Contributors
+
+* Christina Sixtus
+
 ## Copyright and License
 
 This software is copyright (c) 2015-2018 by Daniel Böhmer.
