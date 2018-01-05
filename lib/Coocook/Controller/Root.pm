@@ -65,12 +65,14 @@ sub auto : Private {
         wrapper => 'wrapper.tt',
     );
 
-    my $errors = $c->stash->{errors} ||= [];
+    if ( not defined $c->stash->{errors} ) {
+        my $errors = $c->req->query_params->{error} || [];
 
-    if ( my $e = $c->req->query_params->{error} ) {
-        push @$errors, ref $e eq 'ARRAY' ? @$e : $e;
+        ref $errors eq 'ARRAY'
+          or $errors = [$errors];
+
+        $c->stash( errors => $errors );
     }
-    $c->stash( errors => $errors );
 
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
