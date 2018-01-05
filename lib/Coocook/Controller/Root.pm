@@ -29,6 +29,8 @@ The root page (/)
 
 =cut
 
+sub enforce_ssl : Chained('/') PathPart('') CaptureArgs(0) Does('RequireSSL') { }
+
 sub begin : Private {
     my ( $self, $c ) = @_;
 
@@ -92,7 +94,7 @@ sub auto : Private {
     return 1;    # important
 }
 
-sub index : GET Path Args(0) {
+sub index : GET Chained('/enforce_ssl') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->go( $c->user ? 'dashboard' : 'homepage' );
@@ -122,7 +124,7 @@ sub dashboard : Private {
     );
 }
 
-sub statistics : GET Local Args(0) {
+sub statistics : GET Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -137,7 +139,7 @@ Standard 404 error page
 
 =cut
 
-sub default : Path {
+sub default : Chained('/enforce_ssl') {
     my ( $self, $c ) = @_;
     $c->response->body('Page not found');
     $c->response->status(404);

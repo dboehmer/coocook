@@ -18,7 +18,7 @@ Catalyst Controller.
 
 =cut
 
-sub base : Chained('/') PathPart('user') CaptureArgs(1) {
+sub base : Chained('/enforce_ssl') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
     $c->stash( user => $c->model('DB::User')->find( { name => $name } ) );
@@ -42,13 +42,13 @@ sub show : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( User => $user->display_name );
 }
 
-sub register : GET Path('/register') Args(0) {
+sub register : GET Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( post_register_url => $c->uri_for( $self->action_for('post_register') ) );
 }
 
-sub post_register : POST Path('/register') Args(0) {
+sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
     my ( $self, $c ) = @_;
 
     my $name         = $c->req->param('name');
@@ -121,7 +121,7 @@ sub post_register : POST Path('/register') Args(0) {
     $c->detach;
 }
 
-sub verify : GET Local Args(1) {
+sub verify : GET Chained('/enforce_ssl') PathPart('user/verify') Args(1) {
     my ( $self, $c, $token ) = @_;
 
     my $user = $c->model('DB::User')->find( { token => $token } );

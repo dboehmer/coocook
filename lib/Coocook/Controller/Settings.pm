@@ -7,7 +7,9 @@ BEGIN { extends 'Catalyst::Controller' }
 
 __PACKAGE__->config( namespace => '' );
 
-sub settings : GET Local Args(0) {
+sub base : Chained('/enforce_ssl') PathPart('settings') CaptureArgs(0) { }
+
+sub settings : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -16,7 +18,7 @@ sub settings : GET Local Args(0) {
     );
 }
 
-sub change_display_name : POST Local Args(0) {
+sub change_display_name : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
@@ -26,7 +28,7 @@ sub change_display_name : POST Local Args(0) {
     $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }
 
-sub change_password : POST Local Args(0) {
+sub change_password : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
 
     my $user = $c->user

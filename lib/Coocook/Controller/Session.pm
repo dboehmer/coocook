@@ -7,7 +7,7 @@ BEGIN { extends 'Catalyst::Controller' }
 
 __PACKAGE__->config( namespace => '' );
 
-sub login : GET Local Args(0) {
+sub login : GET Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -16,7 +16,7 @@ sub login : GET Local Args(0) {
     );
 }
 
-sub post_login : POST Path('/login') Args(0) {
+sub post_login : POST Chained('/enforce_ssl') PathPart('login') Args(0) {
     my ( $self, $c ) = @_;
 
     my $username = $c->req->param('username');
@@ -39,7 +39,7 @@ sub post_login : POST Path('/login') Args(0) {
     }
 }
 
-sub logout : POST Local Args(0) {
+sub logout : POST Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->logout();

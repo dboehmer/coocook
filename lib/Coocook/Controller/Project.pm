@@ -23,7 +23,7 @@ C<Result::Project> object in the stash.
 
 =cut
 
-sub base : Chained('/') PathPart('project') CaptureArgs(1) {
+sub base : Chained('/enforce_ssl') PathPart('project') CaptureArgs(1) {
     my ( $self, $c, $url_name ) = @_;
 
     if ( my $project = $c->model('DB::Project')->find_by_url_name($url_name) ) {
@@ -239,7 +239,7 @@ sub edit_dishes : POST Chained('base') Args(0) {
     $c->detach( redirect => [$project] );
 }
 
-sub create : POST Local Args(0) {
+sub create : POST Chained('/enforce_ssl') PathPart('project/create') Args(0) {
     my ( $self, $c ) = @_;
 
     my $name = $c->req->param('name');

@@ -101,6 +101,11 @@ __PACKAGE__->config(
 
     default_view => 'TT',
 
+    require_ssl => {
+        disabled       => !!$ENV{CATALYST_DEBUG},
+        ignore_on_post => !!$ENV{CATALYST_DEBUG},    # 'disabled' seems not to apply to POST requests
+    },
+
     'View::Email::Template' => {
         default => {
             view => 'TT',
