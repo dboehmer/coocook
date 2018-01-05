@@ -36,6 +36,11 @@ extends 'Catalyst';
 $ENV{CATALYST_DEBUG}
   and with 'CatalystX::LeakChecker';    # TODO add as dependency or check if module is installed?
 
+# print e-mails on STDOUT in debugging mode
+if ( $ENV{CATALYST_DEBUG} ) {
+    $ENV{EMAIL_SENDER_TRANSPORT} = 'Print';
+}
+
 # Configure the application.
 #
 # Note that settings in coocook.conf (or other external
