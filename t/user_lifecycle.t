@@ -56,6 +56,8 @@ $t->logout_ok();
 $t->login_ok( 'test', 'P@ssw0rd' );
 
 subtest "create project" => sub {
+    $t->get_ok('/');
+
     $t->submit_form_ok(
         {
             with_fields  => { name => "Test Project" },

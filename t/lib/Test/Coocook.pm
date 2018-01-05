@@ -37,10 +37,10 @@ sub register_ok {
     };
 }
 
-sub verify_email_ok {
-    my ( $self, $name ) = @_;
+sub get_email_link_ok {
+    my ( $self, $url_regex, $name ) = @_;
 
-    subtest $name || "verify e-mail address", sub {
+    subtest $name || "GET link from last e-mail", sub {
         my $emails = $self->emails;
 
         if ( @$emails == 0 ) {
@@ -54,8 +54,7 @@ sub verify_email_ok {
 
             note $email->as_string;
 
-            my @urls =
-              ( $email->get_body =~ m/http\S+verify\S+/g );    # TODO regex is very simple and will break easily
+            my @urls = ( $email->get_body =~ m/$url_regex/g );
 
             is scalar @urls => 1,
               "found 1 URL"
@@ -66,6 +65,22 @@ sub verify_email_ok {
             $self->get_ok($verification_url);
         }
     };
+}
+
+sub verify_email_ok {
+    my ( $self, $name ) = @_;
+
+    $self->get_email_link_ok(
+        qr/http\S+verify\S+/,    # TODO regex is very simple and will break easily
+        $name || "verify e-mail address"
+    );
+}
+
+sub is_logged_in {
+    my ( $self, $name ) = @_;
+
+    $self->content_like( qr/Dashboard/, $name || "client is logged in" )
+      or note $self->content;
 }
 
 sub login {
@@ -91,8 +106,7 @@ sub login_ok {
     subtest $name || "login with $username:$password", sub {
         $self->login( $username, $password );
 
-        $self->content_like(qr/Dashboard/)
-          or note $self->content;
+        $self->is_logged_in();
     };
 }
 
