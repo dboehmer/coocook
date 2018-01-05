@@ -41,6 +41,16 @@ sub auto : Private {
     # TODO distinguish GET and POST requests
     # is some of this information useful for POST controller code, too?
 
+    if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
+        if ( !$c->user and $c->model('DB::User')->count == 0 ) {
+            my $message = "There are currently no users registered at this Coocook installation."
+              . " The first user you register will be global admin!";
+
+            $c->response->redirect( $c->uri_for_action( '/user/register', { error => $message } ) );
+            $c->detach;
+        }
+    }
+
     $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
 
     $c->stash(
