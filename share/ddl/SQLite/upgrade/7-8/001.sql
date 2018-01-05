@@ -14,6 +14,7 @@ CREATE TABLE users (
   token_expires datetime
 );
 
+CREATE UNIQUE INDEX users_email ON users (email);
 CREATE UNIQUE INDEX users_name  ON users (name);
 CREATE UNIQUE INDEX users_token ON users (token);
 

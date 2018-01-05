@@ -29,7 +29,7 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraints( ['name'], ['token'] );
+__PACKAGE__->add_unique_constraints( ['name'], ['email'], ['token'] );
 
 __PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
 

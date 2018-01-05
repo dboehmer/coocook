@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Tue Oct 24 02:43:16 2017
+-- Created on Sat Jan  6 00:27:48 2018
 -- 
 
 ;
@@ -19,6 +19,7 @@ CREATE TABLE users (
   token text,
   token_expires datetime
 );
+CREATE UNIQUE INDEX users_email ON users (email);
 CREATE UNIQUE INDEX users_name ON users (name);
 CREATE UNIQUE INDEX users_token ON users (token);
 --
