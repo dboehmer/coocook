@@ -100,7 +100,7 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
         $c->go('register');
     }
 
-    my $token = join '', map { ( 'a' .. 'z', 'A' .. 'Z', 0 .. 9 )[ rand 26 + 26 + 10 ] } 1 .. 16;
+    my $token = $c->model('Token')->new();
 
     my $role = $c->model('DB::User')->count > 0 ? 'user' : 'admin';
 
@@ -111,12 +111,12 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
             role         => $role,
             display_name => scalar $c->req->param('display_name'),
             email        => scalar $c->req->param('email'),
-            token        => $token,
+            token_hash   => $token->to_salted_hash,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );
 
-    $c->visit( '/email/verification', [$user] );
+    $c->visit( '/email/verification', [ $user, $token ] );
 
     $c->response->redirect( $c->uri_for('/') );
     $c->detach;
@@ -149,28 +149,31 @@ sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
     $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
 }
 
-sub reset_password : GET Chained('/enforce_ssl') Args(1) {
-    my ( $self, $c, $token ) = @_;
+sub reset_password : GET Chained('base') Args(1) {
+    my ( $self, $c, $base64_token ) = @_;
+
+    my $user = $c->stash->{user};
 
     # accept only limited tokens
     # because password reset allows hijacking of valueable accounts
-    my $user = $c->model('DB::User')->with_valid_limited_token->find( { token => $token } );
-
-    if ( !$user ) {
+    if ( !$user->token_expires or !$user->check_base64_token($base64_token) ) {
         $c->response->redirect(
             $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
 
         $c->detach;
     }
 
-    $c->stash( reset_password_url => $c->uri_for( $self->action_for('post_reset_password'), $token ) );
+    $c->stash( reset_password_url =>
+          $c->uri_for( $self->action_for('post_reset_password'), [ $user->name, $base64_token ] ) );
 }
 
-sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password') Args(1) {
-    my ( $self, $c, $token ) = @_;
+sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) {
+    my ( $self, $c, $base64_token ) = @_;
+
+    my $user = $c->stash->{user};
 
     # for rationale see reset_password()
-    my $user = $c->model('DB::User')->with_valid_limited_token->find( { token => $token } )
+    ( $user->token_expires and $user->check_base64_token($base64_token) )
       or die;
 
     my $new_password = $c->req->param('password');
@@ -181,7 +184,7 @@ sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password'
     $user->update(
         {
             password      => $new_password,
-            token         => undef,
+            token_hash    => undef,
             token_expires => undef,
         }
     );
@@ -193,15 +196,23 @@ sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password'
     $c->response->redirect( $c->uri_for_action('/index') );
 }
 
-sub verify : GET Chained('/enforce_ssl') PathPart('user/verify') Args(1) {
-    my ( $self, $c, $token ) = @_;
+sub verify : GET Chained('base') PathPart('verify') Args(1) {
+    my ( $self, $c, $base64_token ) = @_;
 
-    # verification links are unlimited because accounts are still empty and not valueable
-    my $user = $c->model('DB::User')->with_valid_or_unlimited_token->find( { token => $token } )
-      or die;
+    my $user = $c->stash->{user};
 
-    $user->email_verified
-      or $user->update( { email_verified => $user->format_datetime( DateTime->now ) } );
+    if ( !$user->email_verified ) {
+        $user->check_base64_token($base64_token)
+          or die;    # TODO error handling
+
+        $user->update(
+            {
+                email_verified => $user->format_datetime( DateTime->now ),
+                token_hash     => undef,
+                token_expires  => undef,
+            }
+        );
+    }
 
     $c->response->redirect( $c->uri_for_action('/login') );
     $c->detach;

@@ -16,12 +16,12 @@ CREATE TABLE users (
   role text NOT NULL,
   email text NOT NULL,
   email_verified datetime,
-  token text,
+  token_hash text,
   token_expires datetime
 );
 CREATE UNIQUE INDEX users_email ON users (email);
 CREATE UNIQUE INDEX users_name ON users (name);
-CREATE UNIQUE INDEX users_token ON users (token);
+CREATE UNIQUE INDEX users_token_hash ON users (token_hash);
 --
 -- Table: projects
 --

@@ -2290,9 +2290,9 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
-            - token
+            - token_hash
           match_type: ''
-          name: users_token
+          name: users_token_hash
           on_delete: ''
           on_update: ''
           options: []
@@ -2371,13 +2371,13 @@ schema:
           order: 5
           size:
             - 0
-        token:
+        token_hash:
           data_type: text
           default_value: ~
           is_nullable: 1
           is_primary_key: 0
           is_unique: 1
-          name: token
+          name: token_hash
           order: 8
           size:
             - 0

@@ -26,13 +26,12 @@ sub begin : Private {
 sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 
-    my $i       = 1;
-    my $token   = 'TODO' . $i++;                     # TODO
+    my $token = $c->model('Token')->new();
     my $expires = DateTime->now->add( days => 1 );
 
     $user->update(
         {
-            token         => $token,
+            token_hash    => $token->to_salted_hash,
             token_expires => $user->format_datetime($expires),
         }
     );
@@ -46,7 +45,7 @@ sub recovery_link : Private {
         },
         user         => $user,
         expires      => $expires,
-        recovery_url => $c->uri_for_action( '/user/reset_password', [$token] ),
+        recovery_url => $c->uri_for_action( '/user/reset_password', [ $user->name, $token->to_base64 ] ),
     );
 }
 
@@ -65,7 +64,7 @@ sub recovery_unregistered : Private {
 }
 
 sub verification : Private {
-    my ( $self, $c, $user ) = @_;
+    my ( $self, $c, $user, $token ) = @_;
 
     $c->stash(
         email => {
@@ -74,7 +73,7 @@ sub verification : Private {
             subject  => "Verify your Account at " . $c->config->{name},
             template => 'email/verify.tt',
         },
-        verification_url => $c->uri_for_action( '/user/verify', [ $user->token ] ),
+        verification_url => $c->uri_for_action( '/user/verify', [ $user->name, $token->to_base64 ] ),
     );
 }
 
