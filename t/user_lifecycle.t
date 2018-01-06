@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 20;
+use Test::Most tests => 23;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -57,9 +57,23 @@ $t->login_ok( 'test', 'P@ssw0rd' );
 
 $t->logout_ok();
 
-$t->reset_password_ok( 'test@example.com', 'new, nice & shiny' );
+subtest "expired password reset token URL" => sub {
+    $t->request_recovery_link_ok('test@example.com');
+
+    $SCHEMA->resultset('User')->update( { token_expires => '2000-01-01 00:00:00' } );
+
+    $t->get_email_link_ok(qr/http\S+reset_password\S+/);
+
+    $t->content_like(qr/expired/);
+};
+
+$t->recover_account_ok( 'test@example.com', 'new, nice & shiny' );
 
 $t->is_logged_in();
+
+$t->logout_ok();
+
+$t->login_ok( 'test', 'new, nice & shiny' );
 
 subtest "create project" => sub {
     $t->get_ok('/');

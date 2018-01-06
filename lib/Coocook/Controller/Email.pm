@@ -18,7 +18,8 @@ sub begin : Private {
 sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 
-    my $token = 'TODO';                              # TODO
+    my $i       = 1;
+    my $token   = 'TODO' . $i++;                     # TODO
     my $expires = DateTime->now->add( days => 1 );
 
     $user->update(

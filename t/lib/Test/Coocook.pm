@@ -163,10 +163,10 @@ sub change_display_name_ok {
     };
 }
 
-sub reset_password_ok {
-    my ( $self, $email, $password, $name ) = @_;
+sub request_recovery_link_ok {
+    my ( $self, $email, $name ) = @_;
 
-    subtest $name || "reset password for $email to '$password'", sub {
+    subtest $name || "request recovery link for $email", sub {
         $self->follow_link_ok( { text => 'Login' } );
 
         $self->follow_link_ok( { text => 'Lost your password?' } );
@@ -177,8 +177,14 @@ sub reset_password_ok {
                 strict_forms => 1,
             },
             "submit e-mail recovery form"
-        ) ;
+        );
+    };
+}
 
+sub reset_password_ok {
+    my ( $self, $password, $name ) = @_;
+
+    subtest $name || "reset password to '$password'", sub {
         $self->get_email_link_ok(
             qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
             $name || "click e-mail recovery link"
@@ -193,7 +199,16 @@ sub reset_password_ok {
                 strict_forms => 1,
             },
             "submit password reset form"
-        ) ;
+        );
+    };
+}
+
+sub recover_account_ok {
+    my ( $self, $email, $password, $name ) = @_;
+
+    subtest $name || "reset password for $email to '$password'", sub {
+        $self->request_recovery_link_ok($email);
+        $self->reset_password_ok($password);
     };
 }
 

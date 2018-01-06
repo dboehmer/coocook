@@ -152,8 +152,16 @@ sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
 sub reset_password : GET Chained('/enforce_ssl') Args(1) {
     my ( $self, $c, $token ) = @_;
 
-    my $user = $c->forward( _find_user_by_token => [$token] )
-      or die;
+    # accept only limited tokens
+    # because password reset allows hijacking of valueable accounts
+    my $user = $c->model('DB::User')->with_valid_limited_token->find( { token => $token } );
+
+    if ( !$user ) {
+        $c->response->redirect(
+            $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
+
+        $c->detach;
+    }
 
     $c->stash( reset_password_url => $c->uri_for( $self->action_for('post_reset_password'), $token ) );
 }
@@ -161,13 +169,14 @@ sub reset_password : GET Chained('/enforce_ssl') Args(1) {
 sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password') Args(1) {
     my ( $self, $c, $token ) = @_;
 
+    # for rationale see reset_password()
+    my $user = $c->model('DB::User')->with_valid_limited_token->find( { token => $token } )
+      or die;
+
     my $new_password = $c->req->param('password');
 
     $c->req->param('password2') eq $new_password
       or die "new passwords don't match";    # TODO error handling
-
-    my $user = $c->forward( _find_user_by_token => [$token] )
-      or die;
 
     $user->update(
         {
@@ -187,7 +196,8 @@ sub post_reset_password : POST Chained('/enforce_ssl') PathPart('reset_password'
 sub verify : GET Chained('/enforce_ssl') PathPart('user/verify') Args(1) {
     my ( $self, $c, $token ) = @_;
 
-    my $user = $c->forward( _find_user_by_token => [$token] )
+    # verification links are unlimited because accounts are still empty and not valueable
+    my $user = $c->model('DB::User')->with_valid_or_unlimited_token->find( { token => $token } )
       or die;
 
     $user->email_verified
@@ -195,18 +205,6 @@ sub verify : GET Chained('/enforce_ssl') PathPart('user/verify') Args(1) {
 
     $c->response->redirect( $c->uri_for_action('/login') );
     $c->detach;
-}
-
-sub _find_user_by_token : Private {
-    my ( $self, $c, $token ) = @_;
-
-    my $users = $c->model('DB::User');
-
-    my $user = $users->find(
-        { token => $token, token_expires => { '>' => $users->format_datetime( DateTime->now ) } } )
-      or die "no token or token expired";    # TODO error handling
-
-    return $user;
 }
 
 __PACKAGE__->meta->make_immutable;
