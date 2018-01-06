@@ -190,11 +190,12 @@ sub update_or_insert : Private {
     my ( $self, $c, $article ) = @_;
 
     my $name = $c->req->param('name');
-    if ( $name !~ m/\S/ ) {    # $name contains nothing more than whitespace
-        $c->response->redirect(
-            $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
-        $c->detach;            # TODO preserve form input
-    }
+
+    # $name contains nothing more than whitespace
+    # TODO preserve form input
+    $name =~ m/\S/
+      or $c->redirect_detach(
+        $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
 
     my $units = $c->project->units->search( { id => { -in => [ $c->req->param('units') ] } } );
 

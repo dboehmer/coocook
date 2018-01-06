@@ -118,8 +118,7 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
 
     $c->visit( '/email/verification', [ $user, $token ] );
 
-    $c->response->redirect( $c->uri_for('/') );
-    $c->detach;
+    $c->redirect_detach( $c->uri_for('/') );
 }
 
 sub recover : GET Chained('/enforce_ssl') Args(0) {
@@ -133,11 +132,9 @@ sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
 
     my $email = $c->req->param('email');
 
-    if ( !is_email($email) ) {
-        $c->response->redirect(
-            $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
-        $c->detach;
-    }
+    is_email($email)
+      or $c->redirect_detach(
+        $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
 
     if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
         $c->visit( '/email/recovery_link', [$user] );
@@ -156,12 +153,9 @@ sub reset_password : GET Chained('base') Args(1) {
 
     # accept only limited tokens
     # because password reset allows hijacking of valueable accounts
-    if ( !$user->token_expires or !$user->check_base64_token($base64_token) ) {
-        $c->response->redirect(
-            $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
-
-        $c->detach;
-    }
+    ( $user->token_expires and $user->check_base64_token($base64_token) )
+      or $c->redirect_detach(
+        $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
 
     $c->stash( reset_password_url =>
           $c->uri_for( $self->action_for('post_reset_password'), [ $user->name, $base64_token ] ) );

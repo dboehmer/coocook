@@ -36,8 +36,7 @@ sub base : Chained('/enforce_ssl') PathPart('project') CaptureArgs(1) {
         $c->stash( project => $project );
     }
     else {
-        $c->response->redirect( $c->uri_for( '/', { error => "Project not found" } ) );
-        $c->detach;
+        $c->redirect_detach( $c->uri_for( '/', { error => "Project not found" } ) );
     }
 }
 
@@ -244,10 +243,9 @@ sub create : POST Chained('/enforce_ssl') PathPart('project/create') Args(0) {
 
     my $name = $c->req->param('name');
 
-    if ( length $name == 0 ) {
-        $c->response->redirect( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
-        $c->detach;
-    }
+    length $name > 0
+      or
+      $c->redirect_detach( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
 
     $c->txn_do(
         sub {

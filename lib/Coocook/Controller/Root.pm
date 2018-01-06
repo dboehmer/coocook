@@ -48,8 +48,7 @@ sub auto : Private {
             my $message = "There are currently no users registered at this Coocook installation."
               . " The first user you register will be global admin!";
 
-            $c->response->redirect( $c->uri_for_action( '/user/register', { error => $message } ) );
-            $c->detach;
+            $c->redirect_detach( $c->uri_for_action( '/user/register', { error => $message } ) );
         }
     }
 

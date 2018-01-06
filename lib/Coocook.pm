@@ -167,6 +167,13 @@ sub project {
     $c->stash->{project};
 }
 
+sub redirect_detach {
+    my ( $c, $uri ) = @_;
+
+    $c->response->redirect($uri);
+    $c->detach;
+}
+
 # proxy
 sub txn_do { shift->model('DB')->schema->txn_do(@_) }
 
