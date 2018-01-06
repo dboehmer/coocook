@@ -33,12 +33,20 @@ use Catalyst qw/
 
 extends 'Catalyst';
 
-$ENV{CATALYST_DEBUG}
-  and with 'CatalystX::LeakChecker';    # TODO add as dependency or check if module is installed?
-
-# print e-mails on STDOUT in debugging mode
 if ( $ENV{CATALYST_DEBUG} ) {
+    if ( eval "require CatalystX::LeakChecker; 1" ) {
+        with 'CatalystX::LeakChecker';
+    }
+
+    # print e-mails on STDOUT in debugging mode
     $ENV{EMAIL_SENDER_TRANSPORT} = 'Print';
+
+    __PACKAGE__->config(
+        require_ssl => {
+            disabled       => 1,
+            ignore_on_post => 1,    # 'disabled' seems not to apply to POST requests
+        },
+    );
 }
 
 # Configure the application.
@@ -110,11 +118,6 @@ EOT
     },
 
     default_view => 'TT',
-
-    require_ssl => {
-        disabled       => !!$ENV{CATALYST_DEBUG},
-        ignore_on_post => !!$ENV{CATALYST_DEBUG},    # 'disabled' seems not to apply to POST requests
-    },
 
     'View::Email::Template' => {
         default => {
