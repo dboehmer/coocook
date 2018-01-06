@@ -21,6 +21,10 @@ sub emails {
     return [ Email::Sender::Simple->default_transport->deliveries ];
 }
 
+sub clear_emails {
+    Email::Sender::Simple->default_transport->clear_deliveries;
+}
+
 sub register_ok {
     my ( $self, $field_values, $name ) = @_;
 

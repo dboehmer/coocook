@@ -25,6 +25,8 @@ $t->register_ok(
 
 $t->verify_email_ok();
 
+$t->clear_emails();
+
 $t->register_ok(
     {
         name         => "test2",
@@ -34,6 +36,8 @@ $t->register_ok(
         password2    => "s3cr3t",
     }
 );
+
+$t->clear_emails();
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 
@@ -65,6 +69,8 @@ subtest "expired password reset token URL" => sub {
     $t->get_email_link_ok(qr/http\S+reset_password\S+/);
 
     $t->content_like(qr/expired/);
+
+    $t->clear_emails();
 };
 
 $t->recover_account_ok( 'test@example.com', 'new, nice & shiny' );
