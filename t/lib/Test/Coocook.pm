@@ -3,11 +3,17 @@ package Test::Coocook;
 use strict;
 use warnings;
 
-# don't actually send any e-mails
-BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
-
 use Email::Sender::Simple;
+use FindBin;
 use Test::Most;
+
+BEGIN {
+    # don't actually send any e-mails
+    $ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
+
+    # point Catalyst to t/ to avoid reading local config files
+    $ENV{COOCOOK_CONFIG} = "$FindBin::Bin";
+}
 
 use parent 'Test::WWW::Mechanize::Catalyst';
 
