@@ -73,6 +73,12 @@ __PACKAGE__->config(
         $abstract;
     },
 
+    email_signature => sub {
+        my $c = shift;
+
+        return $c->config->{name} . " " . $c->uri_for_action('/index');
+    },
+
     project_deletion_confirmation => "I really want to loose my project",
 
     # Disable deprecated behavior needed by old applications

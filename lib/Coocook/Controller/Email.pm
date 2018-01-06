@@ -9,9 +9,17 @@ BEGIN { extends 'Catalyst::Controller' }
 sub begin : Private {
     my ( $self, $c ) = @_;
 
+    if ( my $signature = $c->config->{email_signature} ) {
+        if ( ref $signature eq 'CODE' ) {
+            $signature = $signature->($c);
+        }
+
+        $c->stash( signature => $signature );
+    }
+
     $c->stash(
         name    => $c->config->{name},
-        wrapper => undef,                # disable default wrapper
+        wrapper => 'email.tt',
     );
 }
 

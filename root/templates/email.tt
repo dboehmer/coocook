@@ -1,0 +1,6 @@
+[% content %]
+
+[%~ IF signature;
+'-- '; # intentional space! %]
+[% signature;
+END %]
