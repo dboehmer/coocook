@@ -21,8 +21,7 @@ sub new {
 
     my $class = ref $self || $self;
 
-    my $token = Net::SSLeay::RAND_bytes( my $salt, $SALT_BYTES )
-      or die "Net::SSLeay couldn't deliver $SALT_BYTES random bytes";
+    my $token = $self->_random_bytes($TOKEN_BYTES);
 
     return bless \$token, $class;
 }
