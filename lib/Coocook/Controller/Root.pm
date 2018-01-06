@@ -77,9 +77,14 @@ sub auto : Private {
         $c->stash( errors => $errors );
     }
 
+    if ( my $about = $c->config->{about_page_title} ) {
+        $c->stash( about_title => $about );
+    }
+
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
         statistics_url => $c->uri_for_action('/statistics'),
+        about_url      => $c->uri_for_action('/about'),
     );
 
     if ( $c->user ) {
@@ -135,6 +140,15 @@ sub statistics : GET Chained('/enforce_ssl') Args(0) {
     $c->stash(
         title      => "Statistics",
         statistics => $c->model('DB')->statistics,
+    );
+}
+
+sub about : GET Chained('/enforce_ssl') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        title => $c->config->{about_page_title} || "About",
+        about_page_md => $c->config->{about_page_md},
     );
 }
 
