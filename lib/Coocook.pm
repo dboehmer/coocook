@@ -5,6 +5,7 @@ package Coocook;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use Sys::Hostname::FQDN 'fqdn';
 
 use Catalyst::Runtime 5.80;
 
@@ -85,6 +86,8 @@ __PACKAGE__->config(
     about_page_md => <<EOT,
 This is an instance of the Coocook food planning software.
 EOT
+
+    email_from_address => getpwuid($<) . '@' . fqdn(),
 
     email_signature => sub {
         my $c = shift;

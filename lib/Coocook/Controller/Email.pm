@@ -38,7 +38,7 @@ sub recovery_link : Private {
 
     $c->stash(
         email => {
-            from     => 'coocook@example.com',                         # TODO configure
+            from     => $c->config->{email_from_address},
             to       => $user->email,
             subject  => "Account recovery at " . $c->config->{name},
             template => 'email/recovery_link.tt',
@@ -54,7 +54,7 @@ sub recovery_unregistered : Private {
 
     $c->stash(
         email => {
-            from     => 'coocook@example.com',                         # TODO configure
+            from     => $c->config->{email_from_address},
             to       => $email,
             subject  => "Account recovery at " . $c->config->{name},
             template => 'email/recovery_unregistered.tt',
@@ -68,7 +68,7 @@ sub verification : Private {
 
     $c->stash(
         email => {
-            from     => 'coocook@example.com',                            # TODO configure
+            from     => $c->config->{email_from_address},
             to       => $user->email,
             subject  => "Verify your Account at " . $c->config->{name},
             template => 'email/verify.tt',
