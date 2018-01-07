@@ -76,9 +76,9 @@ sub statistics {
     );
 
     return {
-        dishes_served => $dishes->get_column('servings')->sum,
-        projects      => $self->resultset('Project')->count,
-        users         => $self->resultset('User')->count,
+        dishes_served   => $dishes->get_column('servings')->sum,
+        public_projects => $self->resultset('Project')->public->count,
+        users           => $self->resultset('User')->count,
     };
 }
 

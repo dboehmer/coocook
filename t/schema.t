@@ -17,9 +17,9 @@ subtest statistics => sub {
     ok my $stats = $db->statistics(), "\$schema->statistics()";
 
     is_deeply $stats => {
-        projects      => 2,
-        users         => 2,
-        dishes_served => 4 + 2 + 4,
+        public_projects => 1,
+        users           => 2,
+        dishes_served   => 4 + 2 + 4,
     };
 };
 
