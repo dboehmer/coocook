@@ -175,13 +175,18 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     $c->req->param('password2') eq $new_password
       or die "new passwords don't match";    # TODO error handling
 
-    $user->update(
+    $user->set_columns(
         {
             password      => $new_password,
             token_hash    => undef,
             token_expires => undef,
         }
     );
+
+    $user->email_verified
+      or $user->email_verified( DateTime->now );
+
+    $user->update();
 
     # no point in letting user log in again
     # https://security.stackexchange.com/q/64828/91275

@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 23;
+use Test::Most tests => 22;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -73,11 +73,28 @@ subtest "expired password reset token URL" => sub {
     $t->clear_emails();
 };
 
-$t->recover_account_ok( 'test@example.com', 'new, nice & shiny' );
+subtest "password recovery" => sub {
+    $t->recover_account_ok( 'test@example.com', 'new, nice & shiny' );
 
-$t->is_logged_in();
+    $t->logout_ok();
 
-$t->logout_ok();
+    $t->clear_emails();
+};
+
+subtest "password recovery marks e-mail address verified" => sub {
+    my $test2 = $SCHEMA->resultset('User')->find( { name => 'test2' } );
+
+    is $test2->email_verified => undef,
+      "email_verified IS NULL";
+
+    $t->recover_account_ok( 'test2@example.com', 'sUpEr s3cUr3' );
+
+    $test2->discard_changes;
+    isnt $test2->email_verified => undef,
+      "email_verified IS NOT NULL";
+
+    $t->logout_ok();
+};
 
 $t->login_ok( 'test', 'new, nice & shiny' );
 
