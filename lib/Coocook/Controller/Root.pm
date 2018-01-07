@@ -44,7 +44,7 @@ sub auto : Private {
     # is some of this information useful for POST controller code, too?
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
-        if ( !$c->user and $c->model('DB::User')->count == 0 ) {
+        if ( !$c->user and !$c->model('DB::User')->exists ) {
             my $message = "There are currently no users registered at this Coocook installation."
               . " The first user you register will be global admin!";
 

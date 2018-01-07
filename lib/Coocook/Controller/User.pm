@@ -68,7 +68,7 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
         push @errors, "username must not be empty";
     }
     else {
-        if ( $c->model('DB::User')->search( { name => $name } )->count > 0 ) {    # TODO case sensitivity?
+        if ( $c->model('DB::User')->exists( { name => $name } ) ) {    # TODO case sensitivity?
             push @errors, "username already in use";
         }
     }
@@ -107,7 +107,7 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
 
     my $token = $c->model('Token')->new();
 
-    my $is_1st_user = $c->model('DB::User')->count == 0;
+    my $is_1st_user = !$c->model('DB::User')->exists;
 
     my $user = $c->model('DB::User')->create(
         {
