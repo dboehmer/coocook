@@ -23,7 +23,16 @@ $t->register_ok(
     }
 );
 
-$t->verify_email_ok();
+subtest "verify e-mail address" => sub {
+    $t->verify_email_ok();
+
+    $t->title_like( qr/login/i, "got redirected to login page" );
+
+    # TODO replace evil HTML "parser" hackery by reasonable HTML parser
+    $t->content_like( qr/ <input [^<>]+ name="username" [^<>]+ value="test" /x,
+        "username is prefilled in login form" )
+      or note $t->uri, $t->content;
+};
 
 $t->clear_emails();
 

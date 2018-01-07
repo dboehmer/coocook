@@ -1,5 +1,5 @@
 <form method="POST" action="[% post_login_url %]">
-    <input type="text"     name="username" value="coocook">
+    <input type="text"     name="username" value="[% username | xml %]">
     <input type="password" name="password" value="">
     <input type="submit" value="Login">
 </form>

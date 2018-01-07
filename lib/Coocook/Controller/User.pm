@@ -213,7 +213,7 @@ sub verify : GET Chained('base') PathPart('verify') Args(1) {
         );
     }
 
-    $c->response->redirect( $c->uri_for_action('/login') );
+    $c->response->redirect( $c->uri_for_action( '/login', { username => $user->name } ) );
     $c->detach;
 }
 
