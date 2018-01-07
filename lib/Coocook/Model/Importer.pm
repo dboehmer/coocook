@@ -170,7 +170,7 @@ sub import_data {    # import() is used by 'use'
                     my $resultset = $rs->result_source->name;    # e.g. 'projects'
 
                     # Speeeeeeeed
-                    my $hash_rs = $rs->inflate_hashes;
+                    my $hash_rs = $rs->hri;
 
                     # code that is used in both loop variants: update columns of $row following %translate
                     my $translator = sub {

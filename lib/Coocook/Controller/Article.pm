@@ -34,7 +34,7 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
 
         my %shop_sections = map { $_->id => $_ } @{ $c->stash->{shop_sections} };
 
-        my $articles = $c->project->articles->sorted->inflate_hashes;
+        my $articles = $c->project->articles->sorted->hri;
 
         while ( my $article = $articles->next ) {
             $article->{url}        = $c->project_uri( $edit_action,   $article->{id} );
@@ -50,7 +50,7 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     my @units = map { $_->units->all } @{ $c->stash->{quantities} };
     my %units = map { $_->id => $_ } @units;
 
-    my $articles_units = $c->project->articles->articles_units->inflate_hashes;
+    my $articles_units = $c->project->articles->articles_units->hri;
 
     while ( my $article_unit = $articles_units->next ) {
         my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };
@@ -110,7 +110,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
                     items_count              => $units->correlate('items')->count_rs->as_query,
                 },
             }
-        )->inflate_hashes;
+        )->hri;
 
       UNIT: while ( my $unit = $units->next ) {
             $selected_units{ $unit->{id} } = 1;

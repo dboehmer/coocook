@@ -12,6 +12,7 @@ __PACKAGE__->load_components(
       Helper::ResultSet::CorrelateRelationship
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
+      Helper::ResultSet::Shortcut::HRI
       >
 );
 
@@ -22,10 +23,6 @@ sub exists {
 
     # inspired from DBIx::Class::ResultSet::Void but that is low quality and obsolete
     !!$self->search( $search, { rows => 1, select => [ \1 ] } )->single;
-}
-
-sub inflate_hashes {
-    shift->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
 }
 
 1;
