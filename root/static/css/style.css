@@ -41,16 +41,16 @@ header {
     background-color: #4CAF50;
 }
 
-nav {
+header nav {
     background: #333333;
 }
 
-nav ul {
+header nav ul {
     list-style-type: none;
     padding-left: 10px;
 }
 
-nav ul li {
+header nav li {
     display: inline-table;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -60,19 +60,19 @@ nav ul li {
     line-height: 2em;
 }
 
-nav ul li:hover{
+header nav li:hover{
     background-color:#f5f5ef;
     -webkit-box-shadow: 0px 2px 3px grey;
     -moz-box-shadow: 0px 2px 3px grey;
     box-shadow: 0px 2px 3px grey;
 }
 
-header nav a {
+header nav li a {
     text-decoration:none;
     color: #f5f5ef;
 }
 
-header nav a:hover{
+header nav li:hover a {
     color: #333333;
 }
 
