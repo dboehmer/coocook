@@ -1,5 +1,11 @@
+[% MACRO numerus(number, singular, plural) BLOCK; # apply correct grammatical number
+    number;
+    ' ';
+    number == 1 ? singular : plural;
+END %]
+
 <ul>
-    <li>[% statistics.dishes_served %] dishes served until today</li>
-    <li>[% statistics.projects %] projects</li>
-    <li>[% statistics.users %] users</li>
+    <li>approx. [% numerus(statistics.dishes_served, 'dish', 'dishes') %] served until today</li>
+    <li>[% numerus(statistics.projects, 'project', 'projects') %]</li>
+    <li>[% numerus(statistics.users, 'user', 'users') %]</li>
 </ul>
