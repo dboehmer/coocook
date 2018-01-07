@@ -1,6 +1,6 @@
 <p>Username: [% user.name %]</p>
 
-<p>Global role: [% user.role %]</p>
+<p>Global roles: [% user.roles.join(', ') %]</p>
 
 <p>Projects:</p>
 

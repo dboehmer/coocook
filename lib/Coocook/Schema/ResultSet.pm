@@ -17,6 +17,13 @@ __PACKAGE__->load_components(
 
 __PACKAGE__->meta->make_immutable;
 
+sub exists {
+    my ( $self, $search ) = @_;
+
+    # inspired from DBIx::Class::ResultSet::Void but that is low quality and obsolete
+    !!$self->search( $search, { rows => 1, select => [ \1 ] } )->single;
+}
+
 sub inflate_hashes {
     shift->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
 }

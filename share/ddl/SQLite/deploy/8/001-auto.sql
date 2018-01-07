@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sat Jan  6 00:27:48 2018
+-- Created on Sun Jan  7 11:07:59 2018
 -- 
 
 ;
@@ -13,7 +13,6 @@ CREATE TABLE users (
   name text NOT NULL,
   password_hash text NOT NULL,
   display_name text NOT NULL,
-  role text NOT NULL,
   email text NOT NULL,
   email_verified datetime,
   token_hash text,
@@ -38,6 +37,16 @@ CREATE INDEX projects_idx_owner ON projects (owner);
 CREATE UNIQUE INDEX projects_name ON projects (name);
 CREATE UNIQUE INDEX projects_url_name ON projects (url_name);
 CREATE UNIQUE INDEX projects_url_name_fc ON projects (url_name_fc);
+--
+-- Table: roles_users
+--
+CREATE TABLE roles_users (
+  role text NOT NULL,
+  user int NOT NULL,
+  PRIMARY KEY (role, user),
+  FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX roles_users_idx_user ON roles_users (user);
 --
 -- Table: meals
 --

@@ -1,6 +1,7 @@
 PRAGMA foreign_keys = ON;
-INSERT INTO 'users' VALUES(1,'john_doe','P@ssw0rd','John Doe','admin','john.doe@example.com',DATETIME('now'),NULL,NULL);
-INSERT INTO 'users' VALUES(2,'other','other','Other User','user','other@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(1,'john_doe','P@ssw0rd','John Doe','john.doe@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(2,'other','other','Other User','other@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'roles_users' VALUES('admin',1);
 INSERT INTO 'projects' VALUES(1,'Test','test','test',1,1);
 INSERT INTO 'projects' VALUES(2,'Other Project','other-project','other-project',0,1);
 INSERT INTO 'projects_users' VALUES(1,1,'owner');

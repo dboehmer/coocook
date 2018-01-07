@@ -125,11 +125,9 @@ subtest "create project" => sub {
 
 my $users = $SCHEMA->resultset('User');
 
-is $users->find( { name => 'test' } )->role => 'admin',
-  "1st user created has 'admin' role";
+ok $users->find( { name => 'test' } )->has_role('admin'), "1st user created has 'admin' role";
 
-is $users->find( { name => 'test2' } )->role => 'user',
-  "2nd user created has 'user' role";
+ok !$users->find( { name => 'test2' } )->has_role('admin'), "2nd user created hasn't 'admin' role";
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";

@@ -14,7 +14,6 @@ __PACKAGE__->add_columns(
     name           => { data_type => 'text' },
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
-    role           => { data_type => 'text' },
     email          => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable       => 1 },
     token_hash     => { data_type => 'text',     is_nullable       => 1 },
@@ -24,6 +23,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['name'], ['email'], ['token_hash'] );
+
+__PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
 
 __PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
 
@@ -60,6 +61,18 @@ sub check_base64_token {
     }
 
     return Coocook::Model::Token->from_base64($token)->verify_salted_hash( $self->token_hash );
+}
+
+sub has_role {
+    my ( $self, $role ) = @_;
+
+    $self->roles_users->exists( { role => $role } );
+}
+
+sub roles {
+    my $self = shift;
+
+    $self->roles_users->get_column('role')->all;
 }
 
 1;

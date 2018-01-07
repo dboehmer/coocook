@@ -107,19 +107,22 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
 
     my $token = $c->model('Token')->new();
 
-    my $role = $c->model('DB::User')->count > 0 ? 'user' : 'admin';
+    my $is_1st_user = $c->model('DB::User')->count == 0;
 
     my $user = $c->model('DB::User')->create(
         {
             name         => $name,
             password     => $password,
-            role         => $role,
             display_name => scalar $c->req->param('display_name'),
             email        => scalar $c->req->param('email'),
             token_hash   => $token->to_salted_hash,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );
+
+    if ($is_1st_user) {
+        $user->create_related( roles_users => { role => 'admin' } );
+    }
 
     $c->visit( '/email/verification', [ $user, $token ] );
 
