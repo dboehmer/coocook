@@ -1,7 +1,10 @@
 <form action="[% rename_url %]" method="POST">
     <fieldset>
         <legend>Rename project <em>[% project.name | html %]</em></legend>
-        <p><strong>Existing web links and bookmarks will break when you rename the project!</strong></p>
+        <p>
+            <strong>Existing web links and bookmarks will break when you rename the project!</strong>
+            Except for special characters and changing lower/upper case.
+        </p>
         <input type="text" name="name" value="[% project.name | html %]">
         <input type="submit" value="Rename project">
     </fieldset>
