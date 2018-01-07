@@ -46,6 +46,11 @@ sub show : GET Chained('base') PathPart('') Args(0) {
 sub register : GET Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
+    push @{ $c->stash->{js} }, qw<
+      js/user/register.js
+      lib/zxcvbn.js
+    >;
+
     $c->stash( post_register_url => $c->uri_for( $self->action_for('post_register') ) );
 }
 
