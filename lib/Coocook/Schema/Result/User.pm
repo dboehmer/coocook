@@ -63,6 +63,18 @@ sub check_base64_token {
     return Coocook::Model::Token->from_base64($token)->verify_salted_hash( $self->token_hash );
 }
 
+sub add_roles {
+    my ( $self, @roles ) = @_;
+
+    if ( @roles == 1 and ref $roles[0] eq 'ARRAY' ) {
+        @roles = @{ $roles[0] };
+    }
+
+    for my $role (@roles) {
+        $self->create_related( roles_users => { role => $role } );
+    }
+}
+
 sub has_role {
     my ( $self, $role ) = @_;
 

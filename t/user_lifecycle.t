@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 22;
+use Test::Most tests => 24;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -125,9 +125,15 @@ subtest "create project" => sub {
 
 my $users = $SCHEMA->resultset('User');
 
-ok $users->find( { name => 'test' } )->has_role('admin'), "1st user created has 'admin' role";
+for my $user1 ( $users->find( { name => 'test' } ) ) {
+    ok $user1->has_role('admin'),            "1st user created has 'admin' role";
+    ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
+}
 
-ok !$users->find( { name => 'test2' } )->has_role('admin'), "2nd user created hasn't 'admin' role";
+for my $user2 ( $users->find( { name => 'test2' } ) ) {
+    ok !$user2->has_role('admin'), "2nd user created hasn't 'admin' role";
+    ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
+}
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";

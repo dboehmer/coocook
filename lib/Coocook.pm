@@ -72,6 +72,10 @@ __PACKAGE__->config(
     # https://en.wikipedia.org/w/index.php?title=Calendar_date&oldid=799176855
     date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
 
+    new_user_default_roles => [
+        'private_projects',                    # disable to prohibit new users creating private projects
+    ],
+
     homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
         open my $fh, '<', __FILE__;    # read abstract from this file
         my $abstract;
