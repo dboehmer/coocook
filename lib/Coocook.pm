@@ -73,7 +73,7 @@ __PACKAGE__->config(
     date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
 
     homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
-        open my $fh, __FILE__;    # read abstract from this file
+        open my $fh, '<', __FILE__;    # read abstract from this file
         my $abstract;
         while (<$fh>) {
             /^# ?ABSTRACT: (.+)$/ or next;

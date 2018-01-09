@@ -84,11 +84,13 @@ sub _resultset_class {
             my $pm_filename = $1;
             $INC{$pm_filename} = 1;
 
-            no strict 'refs';
-            @{"${resultset_class}::ISA"} = ('Coocook::Schema::ResultSet');
+            {
+                no strict 'refs';
+                @{"${resultset_class}::ISA"} = ('Coocook::Schema::ResultSet');
+            }
         }
         else {
-            die $@;                               # raise unexpected error
+            die $@;    # raise unexpected error
         }
     }
 
@@ -98,8 +100,10 @@ sub _resultset_class {
 sub _add_sub {
     my ( $subname, $coderef ) = @_;
 
-    no strict 'refs';
-    *$subname = subname $subname => $coderef;
+    {
+        no strict 'refs';
+        *$subname = subname $subname => $coderef;
+    }
 
     $DEBUG
       and warn "Created $subname\n";

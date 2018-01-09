@@ -1,10 +1,10 @@
 package Coocook::Schema;
 
-our $VERSION = 8;    # version of schema definition, not software version!
-
-use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use DateTime;
+
+our $VERSION = 8;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 
