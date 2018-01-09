@@ -50,6 +50,12 @@ sub role_exists {
     return exists $roles2permissions{$role};
 }
 
+sub roles_with_permission {
+    my ( $self, $permission ) = @_;
+
+    return [ keys %{ $permissions2roles{$permission} } ];
+}
+
 sub role_has_permission {
     my ( $self, $role => $permission ) = @_;
 
