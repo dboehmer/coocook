@@ -53,7 +53,9 @@ sub role_exists {
 sub roles_with_permission {
     my ( $self, $permission ) = @_;
 
-    return [ keys %{ $permissions2roles{$permission} } ];
+    my @roles = keys %{ $permissions2roles{$permission} };
+
+    return wantarray ? @roles : \@roles;
 }
 
 sub role_has_permission {
