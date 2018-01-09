@@ -80,14 +80,14 @@ sub create : POST Chained('/project/base') PathPart('tags/create') Args(0) {
     my ( $self, $c ) = @_;
 
     my $group;    # might be no group
-    if ( my $id = scalar $c->req->param('tag_group') ) {
+    if ( my $id = $c->req->params->get('tag_group') ) {
         $group = $c->project->tag_groups->find($id);
     }
 
     my $tag = $c->project->create_related(
         tags => {
             tag_group => $group,
-            name      => scalar $c->req->param('name'),
+            name      => $c->req->params->get('name'),
         }
     );
     $c->forward('redirect');
@@ -98,8 +98,8 @@ sub create_group : POST Chained('/project/base') PathPart('tag_groups/create') A
 
     $c->project->create_related(
         tag_groups => {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
     $c->forward('redirect');
@@ -109,14 +109,14 @@ sub update : POST Chained('tag') Args(0) {
     my ( $self, $c ) = @_;
 
     my $group;    # might be no group
-    if ( my $id = scalar $c->req->param('tag_group') ) {
+    if ( my $id = $c->req->params->get('tag_group') ) {
         $group = $c->project->tag_groups->find($id);
     }
 
     my $tag = $c->stash->{tag};
     $tag->update(
         {
-            name      => scalar $c->req->param('name'),
+            name      => $c->req->params->get('name'),
             tag_group => $group,
         }
     );
@@ -128,8 +128,8 @@ sub update_group : POST Chained('tag_group') PathPart('update') Args(0) {
 
     $c->stash->{tag_group}->update(
         {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
 }

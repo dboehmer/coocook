@@ -37,7 +37,7 @@ sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args
 
     $c->project->create_related(
         shop_sections => {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
 
@@ -55,7 +55,7 @@ sub update : POST Chained('base') Args(0) {
 
     $c->stash->{shop_section}->update(
         {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
 

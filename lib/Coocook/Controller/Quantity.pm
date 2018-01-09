@@ -60,7 +60,7 @@ sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
 sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->project->create_related( quantities => { name => scalar $c->req->param('name') } );
+    $c->project->create_related( quantities => { name => $c->req->params->get('name') } );
     $c->detach('redirect');
 }
 
@@ -82,7 +82,7 @@ sub update : POST Chained('base') Args(0) {
 
     $c->stash->{quantity}->update(
         {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
     $c->detach('redirect');

@@ -109,6 +109,11 @@ EOT
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header
+    use_hash_multivalue_in_request              => 1,    # safer return value for $c->req->params()
+
+    request_class_traits => [
+        'DisableParam',                                  # disable old, unsafe interface to request params
+    ],
 
     'Model::DB' => {
         connect_info => {

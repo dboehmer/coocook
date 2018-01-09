@@ -117,12 +117,12 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
 sub add_permission : POST Chained('base') PathPart('permissions/add') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $user = $c->model('DB::User')->find( { name => scalar $c->req->param('user') } );
+    my $user = $c->model('DB::User')->find( { name => $c->req->params->get('user') } );
 
     $c->project->create_related(
         projects_users => {
             user => $user->id,
-            role => scalar $c->req->param('role'),
+            role => $c->req->params->get('role'),
         }
     );
 
@@ -140,7 +140,7 @@ sub permission_base : Chained('base') PathPart('permissions') CaptureArgs(1) {
 sub edit_permission : POST Chained('permission_base') PathPart('edit') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash->{permission}->update( { role => scalar $c->req->param('role') } );
+    $c->stash->{permission}->update( { role => $c->req->params->get('role') } );
 
     $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
@@ -195,12 +195,12 @@ sub post_import : POST Chained('base') PathPart('import') Args(0) { # import() a
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
-    my $source   = $c->model('DB::Project')->find( scalar $c->req->param('source_project') );
+    my $source   = $c->model('DB::Project')->find( $c->req->params->get('source_project') );
     my $target   = $c->project;
 
     # extract properties selected in form
     my @properties =
-      grep { $c->req->param("property_$_") } map { $_->{key} } @{ $importer->properties };
+      grep { $c->req->params->get("property_$_") } map { $_->{key} } @{ $importer->properties };
 
     $importer->import_data( $source => $target, \@properties );
 
@@ -213,23 +213,24 @@ sub edit_dishes : POST Chained('base') Args(0) {
     my $project = $c->project;
 
     # filter selected IDs from possible dish IDs
-    my @dish_ids = grep { $c->req->param("dish$_") } $project->meals->dishes->get_column('id')->all;
+    my @dish_ids =
+      grep { $c->req->params->get("dish$_") } $project->meals->dishes->get_column('id')->all;
 
     # select dishes from valid ID list
     my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );
 
-    if ( $c->req->param('update') ) {
-        if ( $c->req->param('edit_comment') ) {
-            $dishes->update( { comment => scalar $c->req->param('new_comment') } );
+    if ( $c->req->params->get('update') ) {
+        if ( $c->req->params->get('edit_comment') ) {
+            $dishes->update( { comment => $c->req->params->get('new_comment') } );
         }
 
-        if ( $c->req->param('edit_servings') ) {
+        if ( $c->req->params->get('edit_servings') ) {
             for my $dish ( $dishes->all ) {
-                $dish->recalculate( scalar $c->req->param('new_servings') );
+                $dish->recalculate( $c->req->params->get('new_servings') );
             }
         }
     }
-    elsif ( $c->req->param('delete') ) {
+    elsif ( $c->req->params->get('delete') ) {
         $dishes->delete_all();
     }
 
@@ -239,7 +240,7 @@ sub edit_dishes : POST Chained('base') Args(0) {
 sub create : POST Chained('/enforce_ssl') PathPart('project/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $name = $c->req->param('name');
+    my $name = $c->req->params->get('name');
 
     length $name > 0
       or
@@ -249,7 +250,7 @@ sub create : POST Chained('/enforce_ssl') PathPart('project/create') Args(0) {
         sub {
             my $project = $c->model('DB::Project')->create(
                 {
-                    name  => scalar $c->req->param('name'),
+                    name  => $c->req->params->get('name'),
                     owner => $c->user->id,
 
                     # project will be public unless $c->user has permission for private projects
@@ -275,7 +276,7 @@ sub rename : POST Chained('base') Args(0) {
 
     my $project = $c->stash->{project};
 
-    $project->update( { name => scalar $c->req->param('name') } );
+    $project->update( { name => $c->req->params->get('name') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
@@ -285,7 +286,7 @@ sub visibility : POST Chained('base') Args(0) {
 
     my $project = $c->stash->{project};
 
-    $project->update( { is_public => scalar $c->req->param('public') ? 1 : 0 } );
+    $project->update( { is_public => $c->req->params->get('public') ? 1 : 0 } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
@@ -293,7 +294,7 @@ sub visibility : POST Chained('base') Args(0) {
 sub delete : POST Chained('base') Args(0) {
     my ( $self, $c ) = @_;
 
-    if ( $c->req->param('confirmation') eq $c->config->{project_deletion_confirmation} ) {
+    if ( $c->req->params->get('confirmation') eq $c->config->{project_deletion_confirmation} ) {
         $c->project->delete;
         $c->response->redirect( $c->uri_for_action('/index') );
     }

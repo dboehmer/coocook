@@ -189,7 +189,7 @@ sub redirect : Private {
 sub update_or_insert : Private {
     my ( $self, $c, $article ) = @_;
 
-    my $name = $c->req->param('name');
+    my $name = $c->req->params->get('name');
 
     # $name contains nothing more than whitespace
     # TODO preserve form input
@@ -197,22 +197,23 @@ sub update_or_insert : Private {
       or $c->redirect_detach(
         $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
 
-    my $units = $c->project->units->search( { id => { -in => [ $c->req->param('units') ] } } );
+    my $units =
+      $c->project->units->search( { id => { -in => [ $c->req->params->get_all('units') ] } } );
 
-    my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
+    my $tags = $c->project->tags->from_names( $c->req->params->get('tags') );
 
     my $shop_section;
-    if ( my $id = $c->req->param('shop_section') ) {
+    if ( my $id = $c->req->params->get('shop_section') ) {
         $shop_section = $c->project->shop_sections->find($id);
     }
 
     $c->txn_do(
         sub {
-            if ( scalar $c->req->param('preorder') ) {
+            if ( $c->req->params->get('preorder') ) {
                 $article->set_columns(
                     {
-                        preorder_servings => scalar $c->req->param('preorder_servings'),
-                        preorder_workdays => scalar $c->req->param('preorder_workdays'),
+                        preorder_servings => $c->req->params->get('preorder_servings'),
+                        preorder_workdays => $c->req->params->get('preorder_workdays'),
                     }
                 );
             }
@@ -222,11 +223,12 @@ sub update_or_insert : Private {
 
             $article->set_columns(
                 {
-                    name         => $name,
-                    comment      => scalar $c->req->param('comment'),
-                    shop_section => $shop_section ? $shop_section->id : undef,
-                    shelf_life_days =>
-                      scalar( $c->req->param('shelf_life') ? $c->req->param('shelf_life_days') : undef ),
+                    name            => $name,
+                    comment         => $c->req->params->get('comment'),
+                    shop_section    => $shop_section ? $shop_section->id : undef,
+                    shelf_life_days => $c->req->params->get('shelf_life')
+                    ? $c->req->params->get('shelf_life_days')
+                    : undef,
                 }
             );
 

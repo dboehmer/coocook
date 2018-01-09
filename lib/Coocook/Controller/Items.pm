@@ -63,7 +63,7 @@ sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) 
             for my $ingredient ( @{ $c->stash->{ingredients} } ) {
                 my $id = $ingredient->id;
 
-                if ( my $list = scalar $c->req->param("assign$id") ) {
+                if ( my $list = $c->req->params->get("assign$id") ) {
                     $ingredient->assign_to_purchase_list($list);
                 }
             }
@@ -78,7 +78,7 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1) {
 
     my $item = $c->project->purchase_lists->items->find($item_id);    # TODO error handling
 
-    my $unit = $c->project->units->find( scalar $c->req->param('unit') );    # TODO error handling
+    my $unit = $c->project->units->find( $c->req->params->get('unit') );    # TODO error handling
 
     $item->convert($unit);
 

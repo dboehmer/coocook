@@ -114,9 +114,9 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $short_name          = scalar $c->req->param('short_name');
-    my $long_name           = scalar $c->req->param('long_name');
-    my $to_quantity_default = scalar $c->req->param('to_quantity_default');
+    my $short_name          = $c->req->params->get('short_name');
+    my $long_name           = $c->req->params->get('long_name');
+    my $to_quantity_default = $c->req->params->get('to_quantity_default');
     my $input_okay          = $self->check_input(
         $c,
         {
@@ -131,9 +131,9 @@ sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
             units => {
                 short_name          => $short_name,
                 long_name           => $long_name,
-                quantity            => scalar $c->req->param('quantity') || undef,
+                quantity            => $c->req->params->get('quantity') || undef,
                 to_quantity_default => $to_quantity_default || undef,
-                space               => scalar $c->req->param('space') ? '1' : '0',
+                space               => $c->req->params->get('space') ? '1' : '0',
             }
         );
         $c->detach( 'redirect', [$unit] );
@@ -162,9 +162,9 @@ sub update : POST Chained('base') Args(0) {
 
     my $unit = $c->stash->{unit};
 
-    my $short_name          = scalar $c->req->param('short_name');
-    my $long_name           = scalar $c->req->param('long_name');
-    my $to_quantity_default = scalar $c->req->param('to_quantity_default');
+    my $short_name          = $c->req->params->get('short_name');
+    my $long_name           = $c->req->params->get('long_name');
+    my $to_quantity_default = $c->req->params->get('to_quantity_default');
     my $input_okay          = $self->check_input(
         $c,
         {
@@ -180,7 +180,7 @@ sub update : POST Chained('base') Args(0) {
                 short_name          => $short_name,
                 long_name           => $long_name,
                 to_quantity_default => $to_quantity_default || undef,
-                space               => scalar $c->req->param('space') ? '1' : '0',
+                space               => $c->req->params->get('space') ? '1' : '0',
             }
         );
         $c->detach( 'redirect', [$unit] );

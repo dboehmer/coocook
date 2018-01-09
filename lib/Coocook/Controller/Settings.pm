@@ -23,7 +23,7 @@ sub change_display_name : POST Chained('base') Args(0) {
 
     my $user = $c->stash->{user};
 
-    $user->update( { display_name => scalar $c->req->param('display_name') } );
+    $user->update( { display_name => $c->req->params->get('display_name') } );
 
     $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }
@@ -34,12 +34,12 @@ sub change_password : POST Chained('base') Args(0) {
     my $user = $c->user
       or die;
 
-    $user->check_password( $c->req->param('old_password') )
+    $user->check_password( $c->req->params->get('old_password') )
       or die "wrong old password";    # TODO error handling
 
-    my $new_password = $c->req->param('new_password');
+    my $new_password = $c->req->params->get('new_password');
 
-    $c->req->param('new_password2') eq $new_password
+    $c->req->params->get('new_password2') eq $new_password
       or die "new passwords don't match";    # TODO error handling
 
     $user->update( { password => $new_password } );

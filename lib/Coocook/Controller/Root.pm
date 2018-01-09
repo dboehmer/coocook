@@ -68,12 +68,7 @@ sub auto : Private {
       or $c->stash( wrapper => 'wrapper.tt' );
 
     if ( not defined $c->stash->{errors} ) {
-        my $errors = $c->req->query_params->{error} || [];
-
-        ref $errors eq 'ARRAY'
-          or $errors = [$errors];
-
-        $c->stash( errors => $errors );
+        $c->stash( errors => [ $c->req->query_params->get_all('error') ] );
     }
 
     if ( my $about = $c->config->{about_page_title} ) {

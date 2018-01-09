@@ -57,10 +57,10 @@ sub register : GET Chained('/enforce_ssl') Args(0) {
 sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $name         = $c->req->param('name');
-    my $password     = $c->req->param('password');
-    my $display_name = $c->req->param('display_name');
-    my $email        = $c->req->param('email');
+    my $name         = $c->req->params->get('name');
+    my $password     = $c->req->params->get('password');
+    my $display_name = $c->req->params->get('display_name');
+    my $email        = $c->req->params->get('email');
 
     my @errors;
 
@@ -77,7 +77,7 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
         push @errors, "password must not be empty";
     }
     else {
-        if ( $password ne $c->req->param('password2') ) {
+        if ( $password ne $c->req->params->get('password2') ) {
             push @errors, "password's don't match";
         }
     }
@@ -113,8 +113,8 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
         {
             name         => $name,
             password     => $password,
-            display_name => scalar $c->req->param('display_name'),
-            email        => scalar $c->req->param('email'),
+            display_name => $c->req->params->get('display_name'),
+            email        => $c->req->params->get('email'),
             token_hash   => $token->to_salted_hash,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
@@ -140,7 +140,7 @@ sub recover : GET Chained('/enforce_ssl') Args(0) {
 sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $email = $c->req->param('email');
+    my $email = $c->req->params->get('email');
 
     is_email($email)
       or $c->redirect_detach(
@@ -180,9 +180,9 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     ( $user->token_expires and $user->check_base64_token($base64_token) )
       or die;
 
-    my $new_password = $c->req->param('password');
+    my $new_password = $c->req->params->get('password');
 
-    $c->req->param('password2') eq $new_password
+    $c->req->params->get('password2') eq $new_password
       or die "new passwords don't match";    # TODO error handling
 
     $user->set_columns(

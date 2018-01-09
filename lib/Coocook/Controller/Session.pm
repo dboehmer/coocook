@@ -11,7 +11,7 @@ sub login : GET Chained('/enforce_ssl') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        username       => scalar $c->req->param('username'),
+        username       => $c->req->params->get('username'),
         post_login_url => $c->uri_for( $self->action_for('post_login') ),
         recover_url    => $c->uri_for_action('/user/recover'),
         title          => "Login",
@@ -21,14 +21,11 @@ sub login : GET Chained('/enforce_ssl') Args(0) {
 sub post_login : POST Chained('/enforce_ssl') PathPart('login') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $username = $c->req->param('username');
-    my $password = $c->req->param('password');
-
     my $user = $c->authenticate(
         {
-            name           => $username,
-            password_hash  => $password,
-            email_verified => { '!=' => undef }
+            name           => $c->req->params->get('username'),
+            password_hash  => $c->req->params->get('password'),
+            email_verified => { '!=' => undef },
         }
     );
 

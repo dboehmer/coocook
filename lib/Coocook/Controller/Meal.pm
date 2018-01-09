@@ -22,9 +22,9 @@ sub create : POST Chained('/project/base') PathPart('meals/create') Args(0) {
 
     my $meal = $c->project->create_related(
         meals => {
-            date    => scalar $c->req->param('date'),
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            date    => $c->req->params->get('date'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
     $c->detach('redirect');
@@ -41,8 +41,8 @@ sub update : POST Chained('base') Args(0) {
 
     $c->stash->{meal}->update(
         {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
 

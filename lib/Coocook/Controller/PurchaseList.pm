@@ -96,8 +96,8 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
 
     $c->project->create_related(
         purchase_lists => {
-            date => scalar $c->req->param('date'),
-            name => scalar $c->req->param('name'),
+            date => $c->req->params->get('date'),
+            name => $c->req->params->get('name'),
         }
     );
 
@@ -109,7 +109,7 @@ sub update : POST Chained('base') Args(0) {
 
     $c->stash->{list}->update(
         {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
 
