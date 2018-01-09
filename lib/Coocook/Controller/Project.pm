@@ -251,9 +251,11 @@ sub create : POST Chained('/enforce_ssl') PathPart('project/create') Args(0) {
         sub {
             my $project = $c->model('DB::Project')->create(
                 {
-                    name      => scalar $c->req->param('name'),
-                    owner     => $c->user->id,
-                    is_public => 1,
+                    name  => scalar $c->req->param('name'),
+                    owner => $c->user->id,
+
+                    # project will be public unless $c->user has permission for private projects
+                    is_public => $c->user->has_permission('make_project_private') ? 0 : 1,
                 }
             );
 

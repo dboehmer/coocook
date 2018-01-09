@@ -1,6 +1,7 @@
 package Coocook::Schema::Result::User;
 
 use Coocook::Model::Token;
+use Coocook::Model::Roles;
 use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -73,6 +74,14 @@ sub add_roles {
     for my $role (@roles) {
         $self->create_related( roles_users => { role => $role } );
     }
+}
+
+sub has_permission {
+    my ( $self, $permission ) = @_;
+
+    my @roles = Coocook::Model::Roles->roles_with_permission($permission);
+
+    $self->roles_users->exists( { role => { -in => \@roles } } );
 }
 
 sub has_role {

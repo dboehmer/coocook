@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 24;
+use Test::Most tests => 28;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -22,6 +22,11 @@ $t->register_ok(
         password2    => "s3cr3t",
     }
 );
+
+for my $user1 ( $SCHEMA->resultset('User')->find( { name => 'test' } ) ) {
+    ok $user1->has_role('admin'),            "1st user created has 'admin' role";
+    ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
+}
 
 subtest "verify e-mail address" => sub {
     $t->verify_email_ok();
@@ -45,6 +50,11 @@ $t->register_ok(
         password2    => "s3cr3t",
     }
 );
+
+for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
+    ok !$user2->has_role('admin'), "2nd user created hasn't 'admin' role";
+    ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
+}
 
 $t->clear_emails();
 
@@ -107,39 +117,24 @@ subtest "password recovery marks e-mail address verified" => sub {
 
 $t->login_ok( 'test', 'new, nice & shiny' );
 
-subtest "create project" => sub {
-    $t->get_ok('/');
+$t->create_project_ok("Test Project");
 
-    $t->submit_form_ok(
-        {
-            with_fields  => { name => "Test Project" },
-            strict_forms => 1,
-        },
-        "submit create project form"
-    );
+note "remove all roles from user";
+$SCHEMA->resultset('RoleUser')->search( { user => '1' } )->delete;
 
-    $t->get_ok('/');
-    $t->content_like(qr/Test Project/)
-      or note $t->content;
-};
-
-my $users = $SCHEMA->resultset('User');
-
-for my $user1 ( $users->find( { name => 'test' } ) ) {
-    ok $user1->has_role('admin'),            "1st user created has 'admin' role";
-    ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
-}
-
-for my $user2 ( $users->find( { name => 'test2' } ) ) {
-    ok !$user2->has_role('admin'), "2nd user created hasn't 'admin' role";
-    ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
-}
+$t->create_project_ok("Test Project 2");
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";
+
+ok !$project->is_public, "1st project is private";
 
 is $project->owner->name => 'test',
   "new project is owned by new user";
 
 is $project->users->first->name => 'test',
   "owner relationship is also stored via table 'projects_users'";
+
+ok my $project2 = $SCHEMA->resultset('Project')->find( { name => "Test Project 2" } );
+
+ok $project2->is_public, "2nd project is public";
