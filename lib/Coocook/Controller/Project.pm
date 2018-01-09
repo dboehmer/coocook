@@ -230,9 +230,7 @@ sub edit_dishes : POST Chained('base') Args(0) {
         }
     }
     elsif ( $c->req->param('delete') ) {
-        while ( my $dish = $dishes->next ) {    # fetch objects for cascade delete of ingredients
-            $dish->delete();
-        }
+        $dishes->delete_all();
     }
 
     $c->detach( redirect => [$project] );
