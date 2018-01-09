@@ -20,15 +20,17 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-use Catalyst qw/
-  ConfigLoader
-  Session
-  Session::Store::DBIC
-  Session::State::Cookie
-  Authentication
-  StackTrace
-  Static::Simple
-  /;
+use Catalyst (
+    qw<
+      ConfigLoader
+      Session
+      Session::Store::DBIC
+      Session::State::Cookie
+      Authentication
+      Static::Simple
+      >,
+    ( eval "require Catalyst::Plugin::StackTrace; 1" ? 'StackTrace' : () ),
+);
 
 extends 'Catalyst';
 
