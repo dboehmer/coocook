@@ -1,10 +1,19 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sun Jan  7 11:07:59 2018
+-- Created on Tue Jan  9 09:23:40 2018
 -- 
 
 ;
 BEGIN TRANSACTION;
+--
+-- Table: sessions
+--
+CREATE TABLE sessions (
+  id text NOT NULL,
+  expires int,
+  session_data text,
+  PRIMARY KEY (id)
+);
 --
 -- Table: users
 --

@@ -23,7 +23,7 @@ use Catalyst::Runtime 5.80;
 use Catalyst qw/
   ConfigLoader
   Session
-  Session::Store::FastMmap
+  Session::Store::DBIC
   Session::State::Cookie
   Authentication
   StackTrace
@@ -122,6 +122,11 @@ EOT
                 user_model => 'DB::User',
             },
         }
+    },
+
+    session => {
+        dbic_class => 'DB::Session',
+        expires    => 24 * 60 * 60,    # 24h
     },
 
     default_view => 'TT',

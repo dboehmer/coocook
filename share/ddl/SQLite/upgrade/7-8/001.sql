@@ -2,6 +2,13 @@
 
 BEGIN;
 
+CREATE TABLE sessions (
+  id text NOT NULL,
+  expires int,
+  session_data text,
+  PRIMARY KEY (id)
+);
+
 CREATE TABLE users (
   id INTEGER PRIMARY KEY NOT NULL,
   name text NOT NULL,
