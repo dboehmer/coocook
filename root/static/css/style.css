@@ -67,13 +67,26 @@ header nav li:hover{
     box-shadow: 0px 2px 3px grey;
 }
 
+header nav li input[name="logout"],
 header nav li a {
     text-decoration:none;
     color: #f5f5ef;
 }
 
+header nav li:hover input[name="logout"],
 header nav li:hover a {
     color: #333333;
+}
+
+header nav li input[name="logout"],
+header nav li input[name="logout"] :hover {
+    border: 0;
+    background:         none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow:    none !important;
+    box-shadow:         none !important;
+    font-family: inherit;
+    font-size:   inherit;
 }
 
 /******** content part ********/

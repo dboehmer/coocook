@@ -1,9 +1,5 @@
 <p>Logged in as <a href="[% c.uri_for_action('/user/show', [user.name]) %]">[% user.display_name | html %]</a>.</p>
 
-<form method="POST" action="[% logout_url %]">
-    <input type="submit" name="logout" value="Logout">
-</form>
-
 <h2>My projects</h2>
 
 <ul>
