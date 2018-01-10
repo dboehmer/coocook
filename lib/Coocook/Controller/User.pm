@@ -123,7 +123,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     $user->add_roles( $c->config->{new_user_default_roles} );
 
     if ($is_1st_user) {
-        $user->add_roles('admin');
+        $user->add_roles('site_admin');
     }
 
     $c->visit( '/email/verification', [ $user, $token ] );

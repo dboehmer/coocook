@@ -10,9 +10,9 @@ my %permissions2roles = (
 );
 
 # transform scalars/arrays into hashrefs
-# role 'admin' has every permissions
+# role 'site_admin' has every permission
 for ( values %permissions2roles ) {
-    $_ = { map { $_ => 1 } ( 'admin', ref eq 'ARRAY' ? @$_ : $_ ) };
+    $_ = { map { $_ => 1 } ( 'site_admin', ref eq 'ARRAY' ? @$_ : $_ ) };
 }
 
 my %roles2permissions;

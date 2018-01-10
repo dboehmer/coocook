@@ -24,7 +24,7 @@ $t->register_ok(
 );
 
 for my $user1 ( $SCHEMA->resultset('User')->find( { name => 'test' } ) ) {
-    ok $user1->has_role('admin'),            "1st user created has 'admin' role";
+    ok $user1->has_role('site_admin'),       "1st user created has 'site_admin' role";
     ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
@@ -52,7 +52,7 @@ $t->register_ok(
 );
 
 for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
-    ok !$user2->has_role('admin'), "2nd user created hasn't 'admin' role";
+    ok !$user2->has_role('site_admin'), "2nd user created hasn't 'site_admin' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 

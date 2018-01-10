@@ -74,7 +74,7 @@ INSERT INTO projects
 SELECT id,name,url_name,url_name_fc,1,1
 FROM alter_projects;
 
--- create default admin user for existing installations
+-- create default site admin user for existing installations
 -- to avoid orphaned projects
 INSERT INTO users VALUES (
   1,
@@ -89,7 +89,7 @@ INSERT INTO users VALUES (
   NULL
 );
 
-INSERT INTO roles_users VALUES('admin',1);
+INSERT INTO roles_users VALUES('site_admin',1);
 
 INSERT INTO projects_users
 SELECT id,1,'owner'
