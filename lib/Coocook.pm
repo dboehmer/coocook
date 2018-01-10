@@ -136,8 +136,10 @@ EOT
     },
 
     session => {
-        dbic_class => 'DB::Session',
-        expires    => 24 * 60 * 60,    # 24h
+        dbic_class      => 'DB::Session',
+        expires         => 24 * 60 * 60, # 24h
+        cookie_secure   => 2,            # deliver and accept only via HTTPS
+        cookie_httponly => 1,            # make browser send cookie only via HTTP(S), not to JavaScript code
     },
 
     default_view => 'TT',
