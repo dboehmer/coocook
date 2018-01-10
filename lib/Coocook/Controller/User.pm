@@ -19,7 +19,7 @@ Catalyst Controller.
 
 =cut
 
-sub base : Chained('/enforce_ssl') PathPart('user') CaptureArgs(1) {
+sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
     $c->stash( user => $c->model('DB::User')->find( { name => $name } ) );
@@ -43,7 +43,7 @@ sub show : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( User => $user->display_name );
 }
 
-sub register : GET Chained('/enforce_ssl') Args(0) {
+sub register : GET Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     push @{ $c->stash->{js} }, qw<
@@ -54,7 +54,7 @@ sub register : GET Chained('/enforce_ssl') Args(0) {
     $c->stash( post_register_url => $c->uri_for( $self->action_for('post_register') ) );
 }
 
-sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
+sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     my ( $self, $c ) = @_;
 
     my $name         = $c->req->params->get('name');
@@ -131,13 +131,13 @@ sub post_register : POST Chained('/enforce_ssl') PathPart('register') Args(0) {
     $c->redirect_detach( $c->uri_for('/') );
 }
 
-sub recover : GET Chained('/enforce_ssl') Args(0) {
+sub recover : GET Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( recover_url => $c->uri_for( $self->action_for('post_recover') ) );
 }
 
-sub post_recover : POST Chained('/enforce_ssl') PathPart('recover') Args(0) {
+sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
     my ( $self, $c ) = @_;
 
     my $email = $c->req->params->get('email');
