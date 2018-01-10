@@ -34,7 +34,15 @@ sub post_login : POST Chained('/enforce_ssl') PathPart('login') Args(0) {
     }
     else {
         $c->logout();
-        $c->response->redirect( $c->uri_for_action( '/login', { error => "Login failed!" } ) );
+        $c->response->redirect(
+            $c->uri_for_action(
+                '/login',
+                {
+                    error    => "Login failed!",
+                    username => $c->req->params->get('username'),
+                }
+            )
+        );
     }
 }
 
