@@ -61,8 +61,9 @@ if ( $ENV{CATALYST_DEBUG} ) {
 # with an external configuration file acting as an override for
 # local deployment.
 
+__PACKAGE__->config( name => 'Coocook' );
+
 __PACKAGE__->config(
-    name => 'Coocook',
 
     # reasoning: if tab title bar in browser is short,
     #            display most important information first
@@ -111,6 +112,8 @@ EOT
 
         $username . '@' . $hostname;
     },
+
+    email_sender_name => __PACKAGE__->config->{name},
 
     email_signature => sub {
         my $c = shift;
