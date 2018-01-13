@@ -4,7 +4,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 # BEGIN-block necessary to make method attributes work
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 #
 # Sets the actions in this controller to be registered with no prefix

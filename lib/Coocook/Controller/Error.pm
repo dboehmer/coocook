@@ -3,7 +3,7 @@ package Coocook::Controller::Error;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 sub forbidden : Private {
     my ( $self, $c ) = @_;

@@ -4,9 +4,7 @@ use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
-
-__PACKAGE__->config( action_roles => ['~RequiresCapability'] );
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 

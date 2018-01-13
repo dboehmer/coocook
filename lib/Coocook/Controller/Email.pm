@@ -4,7 +4,7 @@ use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 sub begin : Private {
     my ( $self, $c ) = @_;

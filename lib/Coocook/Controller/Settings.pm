@@ -3,7 +3,7 @@ package Coocook::Controller::Settings;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 __PACKAGE__->config( namespace => '' );
 
