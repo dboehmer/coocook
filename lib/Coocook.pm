@@ -95,11 +95,22 @@ EOT
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
-    email_from_address => getpwuid($<) . '@'
-      . (
-        eval "require Sys::Hostname::FQDN; 1" ? Sys::Hostname::FQDN::fqdn() : map { chomp; $_ }
-          `hostname --fqdn` || 'localhost'
-      ),
+    email_from_address => do {
+        my $username = getpwuid($<);
+
+        my $hostname = do {
+            if ( eval "require Sys::Hostname::FQDN; 1" ) {
+                Sys::Hostname::FQDN::fqdn();
+            }
+            elsif ( my $fqdn = `hostname --fqdn` ) {
+                chomp $fqdn;
+                $fqdn;
+            }
+            else { 'localhost' }
+        };
+
+        $username . '@' . $hostname;
+    },
 
     email_signature => sub {
         my $c = shift;
