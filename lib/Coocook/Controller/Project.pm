@@ -102,7 +102,8 @@ sub get_import : GET Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my @projects = $c->project->other_projects->all;
+    my @projects = grep { $c->has_capability( import_from_project => { project => $_ } ) }
+      $c->project->other_projects->all;
 
     my $importer = $c->model('Importer');
 
@@ -123,6 +124,9 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
     my $importer = $c->model('Importer');
     my $source   = $c->model('DB::Project')->find( $c->req->params->get('source_project') );
     my $target   = $c->project;
+
+    $c->has_capability( import_from_project => { project => $source } )
+      or $c->detach('/error/forbidden');
 
     # extract properties selected in form
     my @properties =
