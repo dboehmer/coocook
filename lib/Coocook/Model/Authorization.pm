@@ -79,7 +79,18 @@ my @rules = (
     {
         needs_input  => 'user',
         rule         => sub { shift->{user}->has_any_role( 'site_admin', 'private_projects' ) },
-        capabilities => [qw< create_private_project make_project_private edit_project_visibility >],
+        capabilities => 'create_private_project',
+    },
+    {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            return (
+                $user->has_role('site_admin')
+                  or ( $user->has_role('private_projects') and $user->has_project_role( $project, 'owner' ) )
+            );
+        },
+        capabilities => [qw< make_project_private edit_project_visibility >],
     },
     {
         needs_input => [ 'user', 'project', 'permission' ],
