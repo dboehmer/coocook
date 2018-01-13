@@ -1,3 +1,5 @@
+<p>You will receive a verification e-mail with a web link to verify your e-mail address.</p>
+
 <form method="POST" action="[% post_register_url %]">
 <table>
     <tr>
@@ -14,11 +16,11 @@
     </tr>
     <tr>
         <th><label for="password">Password</label></th>
-        <td><input  id="password" type="password" name="password"></td>
+        <td><input  id="password"  type="password" placeholder="password" name="password"></td>
     </tr>
     <tr>
         <th><label for="password2">Confirm password</label></th>
-        <td><input  id="password2" type="password" name="password2"></td>
+        <td><input  id="password2" type="password" placeholder="password" name="password2"></td>
     </tr>
 </table>
 

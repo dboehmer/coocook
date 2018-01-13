@@ -1,7 +1,5 @@
 [% USE Markdown; c.config.homepage_text_md | $Markdown %]
 
-<p><a href="[% login_url %]">Login</a></p>
-
 <h2>Public Projects</h2>
 
 <ul>
