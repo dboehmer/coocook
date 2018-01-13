@@ -1,5 +1,14 @@
-<a href="[% permissions_url %]">Permissions</a>
-<a href="[%    settings_url %]">Project settings</a>
+[% IF permissions_url %]
+    <a href="[% permissions_url %]">Permissions</a>
+[% ELSE;
+    'Permissions';
+END %]
+
+[% IF settings_url %]
+    <a href="[%    settings_url %]">Project settings</a>
+[% ELSE;
+    'Project settings';
+END %]
 
 <form action="[% edit_dishes_url %]" method="POST">
 

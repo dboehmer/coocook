@@ -69,12 +69,18 @@ sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_pro
         default_date         => $default_date,
         recipes              => [ $c->project->recipes->sorted->all ],
         days                 => $days,
-        permissions_url      => $c->project_uri('/permission/index'),
-        settings_url         => $c->project_uri('/project/settings'),
         edit_dishes_url      => $c->project_uri('/project/edit_dishes'),
         dish_create_url      => $c->project_uri('/dish/create'),
         dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
         meal_create_url      => $c->project_uri('/meal/create'),
+
+        permissions_url => $c->has_capability('view_project_permissions')
+        ? $c->project_uri('/permission/index')
+        : undef,
+
+        settings_url => $c->has_capability('view_project_settings')
+        ? $c->project_uri('/project/settings')
+        : undef,
     );
 }
 
