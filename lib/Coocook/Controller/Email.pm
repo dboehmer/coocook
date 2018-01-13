@@ -38,7 +38,6 @@ sub recovery_link : Private {
 
     $c->stash(
         email => {
-            from     => $c->config->{email_from_address},
             to       => $user->email,
             subject  => "Account recovery at " . $c->config->{name},
             template => 'email/recovery_link.tt',
@@ -54,7 +53,6 @@ sub recovery_unregistered : Private {
 
     $c->stash(
         email => {
-            from     => $c->config->{email_from_address},
             to       => $email,
             subject  => "Account recovery at " . $c->config->{name},
             template => 'email/recovery_unregistered.tt',
@@ -68,8 +66,7 @@ sub verification : Private {
 
     $c->stash(
         email => {
-            from => sprintf( '"%s" <%s>', $c->config->{email_sender_name}, $c->config->{email_from_address} ),
-            to   => $user->email,
+            to       => $user->email,
             subject  => "Verify your Account at " . $c->config->{name},
             template => 'email/verify.tt',
         },
@@ -79,6 +76,10 @@ sub verification : Private {
 
 sub end : Private {
     my ( $self, $c ) = @_;
+
+    $c->stash->{email}{from} ||= sprintf '"%s" <%s>',
+      $c->config->{email_sender_name},
+      $c->config->{email_from_address};
 
     $c->forward( $c->view('Email::Template') );
 }
