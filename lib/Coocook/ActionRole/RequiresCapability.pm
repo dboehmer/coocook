@@ -25,7 +25,7 @@ around execute => sub {
 
     if ( my $capabilities = $self->attributes->{RequiresCapability} ) {
         for my $capability (@$capabilities) {
-            $c->has_capability($capability)
+            $c->has_capability( $capability, $c->stash )
               or $c->detach('/error/forbidden');
         }
     }

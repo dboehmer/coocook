@@ -70,7 +70,8 @@ my @rules = (
         needs_input => [ 'project', 'permission', 'user' ],
         rule        => sub {
             my ( $project, $permission, $user ) = @{ +shift }{ 'project', 'permission', 'user' };
-            return ( $permission->get_column('user') != $user->id
+            return (  $permission->user->id != $user->id
+                  and $permission->role ne 'owner'
                   and ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) ) );
         },
         capabilities => [qw< edit_project_permission revoke_project_permission >],
@@ -81,16 +82,20 @@ my @rules = (
         capabilities => [qw< create_private_project make_project_private edit_project_visibility >],
     },
     {
-        needs_input => [ 'user', 'project', 'new_owner' ],
+        needs_input => [ 'user', 'project', 'permission' ],
         rule        => sub {
-            my $input = shift;
-            return (
-                (
-                         $input->{user}->has_role('site_admin')
-                      or $input->{user}->has_project_role( $input->{project}, 'owner' )
-                )
-                  and $input->{new_owner}->has_project_role( $input->{project}, 'admin' )
-            );
+            my ( $project, $user, $permission ) = @{ +shift }{ 'project', 'user', 'permission' };
+
+            # can be transferred only to admin
+            $permission->role eq 'admin' or return;
+
+            # allow transfer from current owner
+            return 1 if $user->has_project_role( $project, 'owner' );
+
+            # allow transfer from site admin
+            return 1 if $user->has_role('site_admin');
+
+            return;
         },
         capabilities => 'transfer_project_ownership',
     },

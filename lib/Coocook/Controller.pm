@@ -1,5 +1,6 @@
 package Coocook::Controller;
 
+use Carp;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -13,6 +14,16 @@ sub COMPONENT {
 
     return $class->new( $app, $args );
 }
+
+around action_for => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $action = $self->$orig(@_)
+      or croak "No such action: @_";
+
+    return $action;
+};
 
 __PACKAGE__->meta->make_immutable;
 
