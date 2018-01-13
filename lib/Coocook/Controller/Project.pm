@@ -112,8 +112,8 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
 
     $c->stash(
         permissions => \@permissions,
-        roles       => [qw< admin user >],    # TODO define roles, define them globally
-        title       => "Permissions",
+        roles => [ grep { $_ ne 'owner' } $c->model('Authorization')->project_roles ],
+        title => "Permissions",
     );
 }
 
