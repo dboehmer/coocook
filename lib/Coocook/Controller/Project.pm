@@ -253,8 +253,8 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0) {
                     name  => $c->req->params->get('name'),
                     owner => $c->user->id,
 
-                    # project will be public unless $c->user has permission for private projects
-                    is_public => $c->user->has_permission('make_project_private') ? 0 : 1,
+                    # project will be public unless $c->user has capability to create private projects
+                    is_public => $c->has_capability('create_private_project') ? 0 : 1,
                 }
             );
 

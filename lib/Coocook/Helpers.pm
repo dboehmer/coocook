@@ -20,6 +20,15 @@ sub escape_title {
     );
 }
 
+sub has_capability {
+    my ( $c, $capability, $input ) = @_;
+
+    $input //= {};
+    $input->{user} //= $c->user;
+
+    $c->model('Authorization')->has_capability( $capability, $input );
+}
+
 sub project_uri {
     my $c      = shift;
     my $action = shift;

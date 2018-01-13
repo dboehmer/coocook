@@ -1,7 +1,6 @@
 package Coocook::Schema::Result::User;
 
 use Coocook::Model::Token;
-use Coocook::Model::Roles;
 use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -76,24 +75,39 @@ sub add_roles {
     }
 }
 
-sub has_permission {
-    my ( $self, $permission ) = @_;
-
-    my @roles = Coocook::Model::Roles->roles_with_permission($permission);
-
-    $self->roles_users->exists( { role => { -in => \@roles } } );
-}
-
 sub has_role {
     my ( $self, $role ) = @_;
 
-    $self->roles_users->exists( { role => $role } );
+    return $self->roles_users->exists( { role => $role } );
+}
+
+sub has_any_role {
+    my $self = shift;
+
+    my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
+
+    return $self->roles_users->exists( { role => { -in => $roles } } );
+}
+
+sub has_project_role {
+    my ( $self, $project, $role ) = @_;
+
+    return $self->projects_users->exists( { project => $project->id, role => $role } );
+}
+
+sub has_any_project_role {
+    my $self    = shift;
+    my $project = shift;
+
+    my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
+
+    return $self->projects_users->exists( { project => $project->id, role => { -in => $roles } } );
 }
 
 sub roles {
     my $self = shift;
 
-    $self->roles_users->get_column('role')->all;
+    return $self->roles_users->get_column('role')->all;
 }
 
 1;
