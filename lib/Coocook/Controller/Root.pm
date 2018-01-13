@@ -3,6 +3,7 @@ package Coocook::Controller::Root;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+# BEGIN-block necessary to make method attributes work
 BEGIN { extends 'Catalyst::Controller' }
 
 #
@@ -144,18 +145,6 @@ sub about : GET Chained('/base') Args(0) {
         title => $c->config->{about_page_title} || "About",
         about_page_md => $c->config->{about_page_md},
     );
-}
-
-=head2 default
-
-Standard 404 error page
-
-=cut
-
-sub default : Chained('/base') {
-    my ( $self, $c ) = @_;
-    $c->response->body('Page not found');
-    $c->response->status(404);
 }
 
 =head2 end
