@@ -223,21 +223,21 @@ sub recover_account_ok {
 }
 
 sub create_project_ok {
-    my ( $self, $project_name, $test_name ) = @_;
+    my ( $self, $fields, $name ) = @_;
 
-    subtest $test_name || "create project '$project_name'", sub {
+    subtest $name || "create project '$fields->{name}'", sub {
         $self->get_ok('/');
 
         $self->submit_form_ok(
             {
-                with_fields  => { name => $project_name },
+                with_fields  => $fields,
                 strict_forms => 1,
             },
             "submit create project form"
         );
 
         $self->get_ok('/');
-        $self->content_contains($project_name)
+        $self->content_contains( $fields->{name} )
           or note $self->content;
     };
 }

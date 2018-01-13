@@ -117,12 +117,12 @@ subtest "password recovery marks e-mail address verified" => sub {
 
 $t->login_ok( 'test', 'new, nice & shiny' );
 
-$t->create_project_ok("Test Project");
+$t->create_project_ok( { name => "Test Project" } );
 
 note "remove all roles from user";
 $SCHEMA->resultset('RoleUser')->search( { user => '1' } )->delete;
 
-$t->create_project_ok("Test Project 2");
+$t->create_project_ok( { name => "Test Project 2" } );
 
 ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
   "project is in database";

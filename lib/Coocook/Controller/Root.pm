@@ -123,9 +123,10 @@ sub dashboard : Private {
     );
 
     $c->stash(
-        my_projects        => [ $my_projects->all ],
-        other_projects     => [ $other_projects->all ],
-        project_create_url => $c->uri_for_action('/project/create'),
+        my_projects                => [ $my_projects->all ],
+        other_projects             => [ $other_projects->all ],
+        project_create_url         => $c->uri_for_action('/project/create'),
+        can_create_private_project => $c->has_capability('create_private_project'),
     );
 }
 

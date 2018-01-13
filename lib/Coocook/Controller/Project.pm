@@ -249,15 +249,19 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0) {
       or
       $c->redirect_detach( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
 
+    my $is_public = $c->req->params->get('is_public') ? 1 : 0;
+
+    ( $is_public or $c->has_capability('create_private_project') )
+      or $c->redirect_detach(
+        $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
+
     $c->txn_do(
         sub {
             my $project = $c->model('DB::Project')->create(
                 {
-                    name  => $c->req->params->get('name'),
-                    owner => $c->user->id,
-
-                    # project will be public unless $c->user has capability to create private projects
-                    is_public => $c->has_capability('create_private_project') ? 0 : 1,
+                    name      => $c->req->params->get('name'),
+                    owner     => $c->user->id,
+                    is_public => $is_public,
                 }
             );
 
