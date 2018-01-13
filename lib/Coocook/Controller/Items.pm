@@ -18,7 +18,8 @@ Catalyst Controller.
 
 =cut
 
-sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(0) {
+sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->project;
@@ -51,7 +52,8 @@ sub unassigned : GET Chained('/project/base') PathPart('items/unassigned') Args(
     );
 }
 
-sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) {
+sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('unassigned');
@@ -73,7 +75,8 @@ sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0) 
     $c->response->redirect( $c->project_uri( $self->action_for('unassigned') ) );
 }
 
-sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1) {
+sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $item_id ) = @_;
 
     my $item = $c->project->purchase_lists->items->find($item_id);    # TODO error handling

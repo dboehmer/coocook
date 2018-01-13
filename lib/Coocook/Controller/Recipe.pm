@@ -22,7 +22,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('recipes') Args(0) {
+sub index : GET Chained('/project/base') PathPart('recipes') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -37,7 +38,7 @@ sub base : Chained('/project/base') PathPart('recipe') CaptureArgs(1) {
     $c->stash( recipe => $c->project->recipes->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe};
@@ -84,7 +85,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( Recipe => $recipe->name );
 }
 
-sub add : POST Chained('base') Args(0) {
+sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe};
@@ -102,7 +103,7 @@ sub add : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $recipe->id, '#ingredients' ] );
 }
 
-sub create : POST Chained('/project/base') Args(0) {
+sub create : POST Chained('/project/base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $name = $c->req->params->get('name');
@@ -121,7 +122,7 @@ sub create : POST Chained('/project/base') Args(0) {
 
 }
 
-sub duplicate : POST Chained('base') Args(0) {
+sub duplicate : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe}->duplicate( { name => $c->req->params->get('name') } );
@@ -129,14 +130,14 @@ sub duplicate : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $recipe->id ] );
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe}->delete;
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe};
@@ -184,7 +185,8 @@ sub update : POST Chained('base') Args(0) {
 
 }
 
-sub reposition : POST Chained('/project/base') PathPart('recipe_ingredient/reposition') Args(1) {
+sub reposition : POST Chained('/project/base') PathPart('recipe_ingredient/reposition') Args(1)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     my $ingredient = $c->project->recipes->ingredients->find($id);

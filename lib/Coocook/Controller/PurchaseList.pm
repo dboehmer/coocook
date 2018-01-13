@@ -24,7 +24,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('purchase_lists') Args(0) {
+sub index : GET Chained('/project/base') PathPart('purchase_lists') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $lists = $c->project->purchase_lists;
@@ -53,7 +54,7 @@ sub base : Chained('/project/base') PathPart('purchase_list') CaptureArgs(1) {
     $c->stash( list => $c->project->purchase_lists->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $list = $c->model('PurchaseList')->new( list => $c->stash->{list} );
@@ -76,7 +77,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 }
 
 sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/remove_ingredient')
-  Args(1) {
+  Args(1) RequiresCapability('edit_project') {
     my ( $self, $c, $ingredient_id ) = @_;
 
     my $ingredient = $c->project->dishes->ingredients->find($ingredient_id)
@@ -91,7 +92,8 @@ sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/re
         $c->project_uri( $self->action_for('edit'), $item->get_column('purchase_list') ) );
 }
 
-sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->project->create_related(
@@ -104,7 +106,7 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{list}->update(
@@ -116,7 +118,7 @@ sub update : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{list}->delete();

@@ -21,7 +21,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
+sub index : GET Chained('/project/base') PathPart('articles') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');
@@ -69,7 +70,7 @@ sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');
@@ -136,19 +137,20 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
 ### CRUD ###
 
-sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('articles/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->detach( update_or_insert => [ $c->project->new_related( articles => {} ) ] );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->detach( update_or_insert => [ $c->stash->{article} ] );
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{article}->delete();

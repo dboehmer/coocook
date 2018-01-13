@@ -29,7 +29,8 @@ sub auto : Private {
     push @{ $c->stash->{css} }, 'lib/print.css';
 }
 
-sub index : GET Chained('/project/base') PathPart('print') Args(0) {
+sub index : GET Chained('/project/base') PathPart('print') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     # TODO find a way to exclude this method when adding 'lib/print.css' (5 lines above)
@@ -78,7 +79,8 @@ sub index : GET Chained('/project/base') PathPart('print') Args(0) {
     );
 }
 
-sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
+sub day : GET Chained('/project/base') PathPart('print/day') Args(3)
+  RequiresCapability('view_project') {
     my ( $self, $c, $year, $month, $day ) = @_;
 
     my $dt = DateTime->new(
@@ -114,7 +116,8 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3) {
     );
 }
 
-sub project : GET Chained('/project/base') PathPart('print/project') Args(0) {
+sub project : GET Chained('/project/base') PathPart('print/project') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my @extra_columns = grep { defined and length } $c->req->params->get_all('extra_column');
@@ -126,7 +129,8 @@ sub project : GET Chained('/project/base') PathPart('print/project') Args(0) {
     );
 }
 
-sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list') Args(1) {
+sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list') Args(1)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);

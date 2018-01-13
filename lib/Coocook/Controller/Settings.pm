@@ -9,7 +9,8 @@ __PACKAGE__->config( namespace => '' );
 
 sub settings_base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
 
-sub settings : GET Chained('settings_base') PathPart('') Args(0) {
+sub settings : GET Chained('settings_base') PathPart('') Args(0)
+  RequiresCapability('view_user_settings') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -18,7 +19,8 @@ sub settings : GET Chained('settings_base') PathPart('') Args(0) {
     );
 }
 
-sub change_display_name : POST Chained('settings_base') Args(0) {
+sub change_display_name : POST Chained('settings_base') Args(0)
+  RequiresCapability('change_display_name') {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
@@ -28,7 +30,7 @@ sub change_display_name : POST Chained('settings_base') Args(0) {
     $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }
 
-sub change_password : POST Chained('settings_base') Args(0) {
+sub change_password : POST Chained('settings_base') Args(0) RequiresCapability('change_password') {
     my ( $self, $c ) = @_;
 
     my $user = $c->user

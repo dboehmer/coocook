@@ -102,7 +102,7 @@ sub auto : Private {
 sub index : GET Chained('/base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->go( $c->user ? 'dashboard' : 'homepage' );
+    $c->go( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
 }
 
 sub homepage : Private {

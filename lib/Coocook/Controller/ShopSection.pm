@@ -23,7 +23,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
+sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -32,7 +33,8 @@ sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
     );
 }
 
-sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->project->create_related(
@@ -50,7 +52,7 @@ sub base : Chained('/project/base') PathPart('shop_sections') CaptureArgs(1) {
     $c->stash( shop_section => $c->project->shop_sections->find($id) );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{shop_section}->update(
@@ -62,7 +64,7 @@ sub update : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{shop_section}->delete;

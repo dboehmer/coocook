@@ -15,12 +15,22 @@ use Carp;
 # - how to define lexical variables like $project before calling the anonymous sub?
 my @rules = (
     {
+        needs_input => ['user'],
+        rule        => sub { !!shift->{user} },
+        capabilities =>
+          [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
+    },
+    {
         needs_input => ['project'],    # optional: user
         rule        => sub {
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return (
                 $project->is_public
-                  or ( $user and $user->has_any_project_role( $project, qw< viewer editor admin owner > ) )
+                  or (
+                    $user
+                    and (  $user->has_role('site_admin')
+                        or $user->has_any_project_role( $project, qw< viewer editor admin owner > ) )
+                  )
             );
         },
         capabilities => 'view_project',
@@ -34,7 +44,18 @@ my @rules = (
                   or $user->has_any_project_role( $project, qw< editor admin owner > )
             );
         },
-        capabilities => 'edit_project',
+        capabilities => [qw< edit_project import_into_project >],
+    },
+    {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            return (
+                     $user->has_role('site_admin')
+                  or $user->has_any_project_role( $project, qw< admin owner > )
+            );
+        },
+        capabilities => 'view_project_permissions',
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -42,12 +63,22 @@ my @rules = (
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) );
         },
-        capabilities => [qw< view_project_settings rename_project delete_project >],
+        capabilities =>
+          [qw< view_project_settings create_project_permission rename_project delete_project >],
     },
     {
-        needs_input => 'user',
-        rule        => sub { shift->{user}->has_any_role( 'site_admin', 'private_projects' ) },
-        capabilities => [ 'create_private_project', 'make_project_private' ],
+        needs_input => [ 'project', 'permission', 'user' ],
+        rule        => sub {
+            my ( $project, $permission, $user ) = @{ +shift }{ 'project', 'permission', 'user' };
+            return ( $permission->get_column('user') != $user->id
+                  and ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) ) );
+        },
+        capabilities => [qw< edit_project_permission revoke_project_permission >],
+    },
+    {
+        needs_input  => 'user',
+        rule         => sub { shift->{user}->has_any_role( 'site_admin', 'private_projects' ) },
+        capabilities => [qw< create_private_project make_project_private edit_project_visibility >],
     },
     {
         needs_input => [ 'user', 'project', 'new_owner' ],

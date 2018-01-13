@@ -21,7 +21,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
+sub index : GET Chained('/project/base') PathPart('quantities') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my @quantities;
@@ -57,7 +58,8 @@ sub index : GET Chained('/project/base') PathPart('quantities') Args(0) {
     );
 }
 
-sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->project->create_related( quantities => { name => $c->req->params->get('name') } );
@@ -70,14 +72,14 @@ sub base : Chained('/project/base') CaptureArgs(1) {
     $c->stash( quantity => $c->project->quantities->find($id) );    # TODO error handling
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{quantity}->delete();
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{quantity}->update(

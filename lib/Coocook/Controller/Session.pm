@@ -46,7 +46,7 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     }
 }
 
-sub logout : POST Chained('/base') Args(0) {
+sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
     my ( $self, $c ) = @_;
 
     $c->logout();

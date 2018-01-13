@@ -44,7 +44,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
 
 =cut
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->has_capability('view_project')
@@ -78,7 +78,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     );
 }
 
-sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
+sub permissions : GET Chained('base') PathPart('permissions') Args(0)
+  RequiresCapability('view_project_permissions') {
     my ( $self, $c ) = @_;
 
     my @permissions;
@@ -117,7 +118,8 @@ sub permissions : GET Chained('base') PathPart('permissions') Args(0) {
     );
 }
 
-sub add_permission : POST Chained('base') PathPart('permissions/add') Args(0) {
+sub add_permission : POST Chained('base') PathPart('permissions/add') Args(0)
+  RequiresCapability('create_project_permission') {
     my ( $self, $c ) = @_;
 
     my $user = $c->model('DB::User')->find( { name => $c->req->params->get('user') } );
@@ -140,7 +142,8 @@ sub permission_base : Chained('base') PathPart('permissions') CaptureArgs(1) {
       ->single;
 }
 
-sub edit_permission : POST Chained('permission_base') PathPart('edit') Args(0) {
+sub edit_permission : POST Chained('permission_base') PathPart('edit') Args(0)
+  RequiresCapability('edit_project_permission') {
     my ( $self, $c ) = @_;
 
     $c->stash->{permission}->update( { role => $c->req->params->get('role') } );
@@ -148,7 +151,8 @@ sub edit_permission : POST Chained('permission_base') PathPart('edit') Args(0) {
     $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
 
-sub make_owner : POST Chained('permission_base') PathPart('make_owner') Args(0) {
+sub make_owner : POST Chained('permission_base') PathPart('make_owner') Args(0)
+  RequiresCapability('transfer_project_ownership') {
     my ( $self, $c ) = @_;
 
     $c->stash->{permission}->make_owner;
@@ -156,7 +160,8 @@ sub make_owner : POST Chained('permission_base') PathPart('make_owner') Args(0) 
     $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
 
-sub revoke_permission : POST Chained('permission_base') PathPart('revoke') Args(0) {
+sub revoke_permission : POST Chained('permission_base') PathPart('revoke') Args(0)
+  RequiresCapability('revoke_project_permission') {
     my ( $self, $c ) = @_;
 
     $c->stash->{permission}->delete;
@@ -178,7 +183,8 @@ sub settings : GET Chained('base') PathPart('settings') RequiresCapability('view
     $c->escape_title( "Project settings" => $c->project->name );
 }
 
-sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() already used by 'use'
+sub get_import : GET Chained('base') PathPart('import') Args(0)
+  RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
     my @projects = $c->project->other_projects->all;
@@ -195,7 +201,8 @@ sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() a
     );
 }
 
-sub post_import : POST Chained('base') PathPart('import') Args(0) { # import() already used by 'use'
+sub post_import : POST Chained('base') PathPart('import') Args(0)
+  RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
@@ -211,7 +218,7 @@ sub post_import : POST Chained('base') PathPart('import') Args(0) { # import() a
     $c->detach( redirect => [$target] );
 }
 
-sub edit_dishes : POST Chained('base') Args(0) {
+sub edit_dishes : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->project;
@@ -241,7 +248,8 @@ sub edit_dishes : POST Chained('base') Args(0) {
     $c->detach( redirect => [$project] );
 }
 
-sub create : POST Chained('/base') PathPart('project/create') Args(0) {
+sub create : POST Chained('/base') PathPart('project/create') Args(0)
+  RequiresCapability('create_project') {
     my ( $self, $c ) = @_;
 
     my $name = $c->req->params->get('name');
@@ -279,7 +287,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0) {
     );
 }
 
-sub rename : POST Chained('base') Args(0) {
+sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->stash->{project};
@@ -289,7 +297,7 @@ sub rename : POST Chained('base') Args(0) {
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
 
-sub visibility : POST Chained('base') Args(0) {
+sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_visibility') {
     my ( $self, $c ) = @_;
 
     my $project = $c->stash->{project};
@@ -299,7 +307,7 @@ sub visibility : POST Chained('base') Args(0) {
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
     my ( $self, $c ) = @_;
 
     if ( $c->req->params->get('confirmation') eq $c->config->{project_deletion_confirmation} ) {

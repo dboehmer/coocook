@@ -24,7 +24,7 @@ sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id) );
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
@@ -57,7 +57,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( Dish => $dish->name );
 }
 
-sub delete : POST Chained('base') PathPart('delete') Args(0) {
+sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{dish}->delete;
@@ -65,7 +65,8 @@ sub delete : POST Chained('base') PathPart('delete') Args(0) {
     $c->response->redirect( $c->project_uri('/project/edit') );
 }
 
-sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $meal = $c->project->meals->find( $c->req->params->get('meal') );
@@ -84,7 +85,8 @@ sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0) {
     $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0) {
+sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $meal   = $c->project->meals->find( $c->req->params->get('meal') );
@@ -102,7 +104,7 @@ sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') A
     $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub recalculate : POST Chained('base') Args(0) {
+sub recalculate : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
@@ -112,7 +114,7 @@ sub recalculate : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub add : POST Chained('base') Args(0) {
+sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
@@ -130,7 +132,7 @@ sub add : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
@@ -177,7 +179,8 @@ sub update : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposition') Args(1) {
+sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposition') Args(1)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     my $ingredient = $c->project->dishes->ingredients->find($id);
