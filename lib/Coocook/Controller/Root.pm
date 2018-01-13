@@ -90,10 +90,10 @@ sub auto : Private {
         );
     }
     else {
-        $c->stash(
-            login_url    => $c->uri_for_action('/login'),
-            register_url => $c->uri_for_action('/user/register'),
-        );
+        $c->stash( login_url => $c->uri_for_action('/login') );
+
+        $c->user_registration_enabled
+          and $c->stash( register_url => $c->uri_for_action('/user/register') );
     }
 
     return 1;    # important

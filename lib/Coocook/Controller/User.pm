@@ -46,6 +46,9 @@ sub show : GET Chained('base') PathPart('') Args(0) {
 sub register : GET Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->user_registration_enabled
+      or $c->detach('/error/forbidden');
+
     push @{ $c->stash->{js} }, qw<
       js/user/register.js
       lib/zxcvbn.js
@@ -56,6 +59,9 @@ sub register : GET Chained('/base') Args(0) {
 
 sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->user_registration_enabled
+      or $c->detach('/error/forbidden');
 
     my $name         = $c->req->params->get('name');
     my $password     = $c->req->params->get('password');

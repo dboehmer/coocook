@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 28;
+use Test::Most tests => 29;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -40,6 +40,15 @@ subtest "verify e-mail address" => sub {
 };
 
 $t->clear_emails();
+
+$t->content_lacks('Register');
+
+# rebuild app with user registration enabled
+Coocook->setup_finished(0);
+Coocook->config( enable_user_registration => 1 );
+Coocook->setup_finished(1);
+$t = Test::Coocook->new();
+$t->get('/');
 
 $t->register_ok(
     {

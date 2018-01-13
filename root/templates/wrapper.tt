@@ -36,6 +36,9 @@
     </li>
 [% ELSIF login_url %]
     <li><a href="[% login_url %]">Login</a></li>
+[% END %]
+
+[% IF register_url %]
     <li><a href="[% register_url %]">Register</a></li>
 [% END %]
 

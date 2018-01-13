@@ -58,4 +58,21 @@ sub redirect_detach {
 # proxy
 sub txn_do { shift->model('DB')->schema->txn_do(@_) }
 
+=head2 $c->user_registration_enabled()
+
+Returns boolean value if new users are allowed to register. That is
+defined by config value C<enable_user_registration> and always true
+until the first user (site admin) is registered.
+
+=cut
+
+sub user_registration_enabled {
+    my $c = shift;
+
+    $c->model('DB::User')->exists
+      or return 1;
+
+    return !!$c->config->{enable_user_registration};
+}
+
 1;

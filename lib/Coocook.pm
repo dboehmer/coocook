@@ -92,6 +92,9 @@ __PACKAGE__->config(
 This is an instance of the Coocook food planning software.
 EOT
 
+    # enable registration as self service, defaults to false
+    enable_user_registration => 0,
+
     email_from_address => getpwuid($<) . '@'
       . (
         eval "require Sys::Hostname::FQDN; 1" ? Sys::Hostname::FQDN::fqdn() : map { chomp; $_ }
