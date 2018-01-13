@@ -95,6 +95,12 @@ sub new {
     return $singleton ||= bless {}, __PACKAGE__;
 }
 
+sub capability_exists {
+    my ( $self, $capability ) = @_;
+
+    return exists $capabilities{$capability};
+}
+
 sub has_capability {
     my ( $self, $capability, $input ) = @_;
 
