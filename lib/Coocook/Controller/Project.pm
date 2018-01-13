@@ -47,6 +47,9 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
 sub edit : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->has_capability('view_project')
+      or $c->detach('/error/forbidden');
+
     my $default_date = DateTime->today;
 
     my $days = $c->model('Plan')->project( $c->project );

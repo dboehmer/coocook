@@ -23,8 +23,9 @@ sub escape_title {
 sub has_capability {
     my ( $c, $capability, $input ) = @_;
 
-    $input //= {};
-    $input->{user} //= $c->user;
+    $input            //= {};
+    $input->{project} //= $c->project;
+    $input->{user}    //= $c->user;
 
     $c->model('Authorization')->has_capability( $capability, $input );
 }
