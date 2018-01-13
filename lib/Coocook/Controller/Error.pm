@@ -22,7 +22,7 @@ Standard 404 error page
 
 =cut
 
-sub not_found : Chained('/base') PathPart('') {
+sub not_found : AnyMethod Chained('/base') PathPart('') {
     my ( $self, $c ) = @_;
 
     $c->response->status(404);

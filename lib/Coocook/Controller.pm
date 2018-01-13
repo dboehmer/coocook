@@ -6,11 +6,16 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Catalyst::Controller' }
 
-# TODO is this the best way to apply ActionRole::RequiresCapability?
+# TODO is this the best way to apply action roles?
 sub COMPONENT {
     my ( $class, $app, $args ) = @_;
 
-    $class->config( action_roles => ['~RequiresCapability'] );
+    $class->config(
+        action_roles => [    #perltidy
+            ( $ENV{CATALYST_DEBUG} ? '~RequireHttpMethod' : () ),
+            '~RequiresCapability',
+        ]
+    );
 
     return $class->new( $app, $args );
 }
