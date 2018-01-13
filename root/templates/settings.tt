@@ -9,9 +9,9 @@
 <form method="POST" action="[% change_password_url %]">
 <fieldset>
     <legend>Change your password</legend>
-    <input type="password" name="old_password">
-    <input type="password" name="new_password">
-    <input type="password" name="new_password2">
+    <input type="password" name="old_password"  placeholder="old password">
+    <input type="password" name="new_password"  placeholder="new password">
+    <input type="password" name="new_password2" placeholder="new password">
 
     <input type="submit" value="Change password">
 </fieldset>
