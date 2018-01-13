@@ -6,6 +6,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Catalyst::Controller' }
 
+__PACKAGE__->config( action_roles => ['~RequiresCapability'] );
+
 =head1 NAME
 
 Coocook::Controller::Project - Catalyst Controller
@@ -164,7 +166,8 @@ sub revoke_permission : POST Chained('permission_base') PathPart('revoke') Args(
     $c->response->redirect( $c->project_uri( $self->action_for('permissions') ) );
 }
 
-sub settings : GET Chained('base') PathPart('settings') Args(0) {
+sub settings : GET Chained('base') PathPart('settings') RequiresCapability('view_project_settings')
+  Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(

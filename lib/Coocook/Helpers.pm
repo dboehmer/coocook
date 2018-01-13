@@ -27,7 +27,7 @@ sub has_capability {
     $input->{project} //= $c->project;
     $input->{user}    //= $c->user;
 
-    $c->model('Authorization')->has_capability( $capability, $input );
+    return $c->model('Authorization')->has_capability( $capability, $input );
 }
 
 sub project_uri {

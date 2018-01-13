@@ -28,10 +28,21 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my $input = shift;
-            return $input->{user}->has_any_project_role( $input->{project}, qw< editor admin owner > );
+            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            return (
+                     $user->has_role('site_admin')
+                  or $user->has_any_project_role( $project, qw< editor admin owner > )
+            );
         },
         capabilities => 'edit_project',
+    },
+    {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            return ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) );
+        },
+        capabilities => [qw< view_project_settings rename_project delete_project >],
     },
     {
         needs_input => 'user',
