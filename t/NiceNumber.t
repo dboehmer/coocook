@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::Most;
+use Test::Most tests => 16;
 
 use_ok 'Coocook::Filter::NiceNumber';
 
@@ -24,8 +24,13 @@ t( 12345.6789 => "12300" );
 t( 1 / 3      => "0.333" );
 t( 0.999999   => "1" );
 t( 123456789  => "123000000" );
+t( 0.0101     => "0.0101" );
+t( 0.000001   => "0.000001" );
 
-done_testing;
+{
+    local $TODO = 'sprintf("%f") cuts digits off this string--how to fix that?';
+    t( 0.0000012345 => "0.00000123" );
+}
 
 sub t {
     my ( $input, $expected, $name ) = @_;
