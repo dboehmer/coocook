@@ -66,17 +66,8 @@ sub fk_checks_off_do {
 sub statistics {
     my $self = shift;
 
-    my $dishes = $self->resultset('Dish')->search(
-        {
-            'meal.date' => { '<=' => $self->storage->datetime_parser->format_date( DateTime->today ) },
-        },
-        {
-            join => 'meal',
-        }
-    );
-
     return {
-        dishes_served   => $dishes->get_column('servings')->sum,
+        dishes_served   => $self->resultset('Dish')->count_served,
         public_projects => $self->resultset('Project')->public->count,
         users           => $self->resultset('User')->count,
     };
