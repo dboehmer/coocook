@@ -49,7 +49,6 @@ sub index : GET Chained('/project/base') PathPart('units') Args(0)
 
     my @units;
 
-    # add delete_url to deletable units
     {
         my $action = $self->action_for('delete');
 
@@ -57,9 +56,6 @@ sub index : GET Chained('/project/base') PathPart('units') Args(0)
             { join => 'quantity', order_by => [ 'quantity.name', 'long_name' ] } );
 
         while ( my $unit = $units->next ) {
-            exists $units_in_use{ $unit->id }
-              and next;
-
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
 
             my %unit = (
@@ -79,11 +75,11 @@ sub index : GET Chained('/project/base') PathPart('units') Args(0)
 
             push @units, \%unit;
 
-            if ( $unit->is_quantity_default and $unit->convertible_into > 0 ) {
-                next;
-            }
-
-            $unit{delete_url} = $c->project_uri( $action, $unit{id} );
+            # add delete_url to deletable units
+            exists $units_in_use{ $unit->id }    # in use, for ingredient
+              or (  $unit->is_quantity_default
+                and $unit->convertible_into > 0 )    # need to make other unit quantity default
+              or $unit{delete_url} = $c->project_uri( $action, $unit{id} );    # can be deleted
         }
     }
 

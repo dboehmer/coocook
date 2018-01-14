@@ -56,7 +56,7 @@
 </td>
 [% IF unit.to_quantity_default AND NOT unit.is_quantity_default %]
     <td>[% display_value_unit(1, unit, {html=>1}) %] = [% display_value_unit(unit.to_quantity_default, default_unit, {html=>1}) %]</td>
-    <td>[% display_value_unit(unit.from_quantity_default, unit, {html=>1}) %] = [% display_value_unit(1, default_unit, {html=>1}) %]</td>
+    <td style="text-align:right">[% display_value_unit(unit.from_quantity_default, unit, {html=>1}) %] = [% display_value_unit(1, default_unit, {html=>1}) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
     <td>
 [% IF unit.quantity AND NOT unit.is_quantity_default %]
