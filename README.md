@@ -1,7 +1,7 @@
 # Coocook
 
 [![build status](https://travis-ci.org/dboehmer/coocook.svg?branch=master)](https://travis-ci.org/dboehmer/coocook)
-![dishes served: 6.5k](https://img.shields.io/badge/dishes_served-6.5k-blue.svg) <!-- TODO replace by API -->
+[![dishes served](https://coocook.org/badge/dishes_served.svg)](https://coocook.org/statistics)
 [![license](https://img.shields.io/github/license/dboehmer/coocook.svg)](https://github.com/dboehmer/coocook/blob/master/LICENSE)
 
 Web application for collecting recipes and making food plans
