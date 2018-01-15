@@ -31,10 +31,10 @@ Prerequisites:
 Get source code:
 
     git clone https://github.com/dboehmer/coocook.git
+    cd coocook/
 
 Install dependencies:
 
-    perl Makefile.PL
     cpanm --installdeps .
 
 Install database into local SQLite and start development server:
