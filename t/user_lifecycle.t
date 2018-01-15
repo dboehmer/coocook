@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 29;
+use Test::Most tests => 32;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -126,14 +126,22 @@ subtest "password recovery marks e-mail address verified" => sub {
 
 $t->login_ok( 'test', 'new, nice & shiny' );
 
-$t->create_project_ok( { name => "Test Project" } );
+$t->create_project_ok( { name => "Test Project 1" } );
+
+unlike $t->uri => qr/import/,
+  "not redirected to importer for first project";
 
 note "remove all roles from user";
 $SCHEMA->resultset('RoleUser')->search( { user => '1' } )->delete;
 
 $t->create_project_ok( { name => "Test Project 2" } );
 
-ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project" } ),
+like $t->uri => qr/import/,
+  "redirected to importer";
+
+$t->content_contains("Test Project 1");
+
+ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project 1" } ),
   "project is in database";
 
 ok !$project->is_public, "1st project is private";

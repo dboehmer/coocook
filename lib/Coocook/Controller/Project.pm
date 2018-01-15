@@ -98,17 +98,21 @@ sub settings : GET Chained('base') PathPart('settings') RequiresCapability('view
     $c->escape_title( "Project settings" => $c->project->name );
 }
 
+sub importable_projects : Private {
+    my ( $self, $c ) = @_;
+
+    return [ grep { $c->has_capability( import_from_project => { project => $_ } ) }
+          $c->project->other_projects->all ];
+}
+
 sub get_import : GET Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my @projects = grep { $c->has_capability( import_from_project => { project => $_ } ) }
-      $c->project->other_projects->all;
-
     my $importer = $c->model('Importer');
 
     $c->stash(
-        projects        => \@projects,
+        projects        => $c->forward('importable_projects'),
         properties      => $importer->properties,
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
@@ -185,7 +189,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
 
     $c->txn_do(
         sub {
-            my $project = $c->model('DB::Project')->create(
+            my $project = $c->stash->{project} = $c->model('DB::Project')->create(
                 {
                     name      => $c->req->params->get('name'),
                     owner     => $c->user->id,
@@ -199,11 +203,13 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
                     role => 'owner',
                 }
             );
-
-            $c->response->redirect(
-                $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
         }
     );
+
+    my $importable_projects = $c->forward('importable_projects');
+
+    $c->response->redirect(
+        $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'edit' ) ) );
 }
 
 sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {

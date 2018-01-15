@@ -236,7 +236,6 @@ sub create_project_ok {
             "submit create project form"
         );
 
-        $self->get_ok('/');
         $self->content_contains( $fields->{name} )
           or note $self->content;
     };
