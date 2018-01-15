@@ -3,7 +3,7 @@ package Coocook::Controller::Tag;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
@@ -21,7 +21,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('tags') Args(0) {
+sub index : GET Chained('/project/base') PathPart('tags') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $groups = $c->project->tag_groups->search(
@@ -38,19 +39,21 @@ sub index : GET Chained('/project/base') PathPart('tags') Args(0) {
     );
 }
 
-sub tag : Chained('/project/base') PathPart('tag') CaptureArgs(1) {
+sub tag : GET Chained('/project/base') PathPart('tag') CaptureArgs(1)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( tag => $c->project->tags->find($id) );    # TODO error handling
 }
 
-sub tag_group : Chained('/project/base') PathPart('tag_group') CaptureArgs(1) {
+sub tag_group : GET Chained('/project/base') PathPart('tag_group') CaptureArgs(1)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( tag_group => $c->project->tag_groups->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('tag') PathPart('') Args(0) {
+sub edit : GET Chained('tag') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
@@ -58,7 +61,7 @@ sub edit : GET Chained('tag') PathPart('') Args(0) {
     $c->escape_title( Tag => $c->stash->{tag}->name );
 }
 
-sub delete : POST Chained('tag') Args(0) {
+sub delete : POST Chained('tag') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $tag = $c->stash->{tag};
@@ -67,7 +70,8 @@ sub delete : POST Chained('tag') Args(0) {
     $c->forward('redirect');
 }
 
-sub delete_group : POST Chained('tag_group') PathPart('delete') Args(0) {
+sub delete_group : POST Chained('tag_group') PathPart('delete') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $group = $c->stash->{tag_group};
@@ -76,60 +80,63 @@ sub delete_group : POST Chained('tag_group') PathPart('delete') Args(0) {
     $c->forward('redirect');
 }
 
-sub create : POST Chained('/project/base') PathPart('tags/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('tags/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $group;    # might be no group
-    if ( my $id = scalar $c->req->param('tag_group') ) {
+    if ( my $id = $c->req->params->get('tag_group') ) {
         $group = $c->project->tag_groups->find($id);
     }
 
     my $tag = $c->project->create_related(
         tags => {
             tag_group => $group,
-            name      => scalar $c->req->param('name'),
+            name      => $c->req->params->get('name'),
         }
     );
     $c->forward('redirect');
 }
 
-sub create_group : POST Chained('/project/base') PathPart('tag_groups/create') Args(0) {
+sub create_group : POST Chained('/project/base') PathPart('tag_groups/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->project->create_related(
         tag_groups => {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
     $c->forward('redirect');
 }
 
-sub update : POST Chained('tag') Args(0) {
+sub update : POST Chained('tag') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $group;    # might be no group
-    if ( my $id = scalar $c->req->param('tag_group') ) {
+    if ( my $id = $c->req->params->get('tag_group') ) {
         $group = $c->project->tag_groups->find($id);
     }
 
     my $tag = $c->stash->{tag};
     $tag->update(
         {
-            name      => scalar $c->req->param('name'),
+            name      => $c->req->params->get('name'),
             tag_group => $group,
         }
     );
     $c->forward( redirect => [$tag] );
 }
 
-sub update_group : POST Chained('tag_group') PathPart('update') Args(0) {
+sub update_group : POST Chained('tag_group') PathPart('update') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash->{tag_group}->update(
         {
-            name    => scalar $c->req->param('name'),
-            comment => scalar $c->req->param('comment'),
+            name    => $c->req->params->get('name'),
+            comment => $c->req->params->get('comment'),
         }
     );
 }

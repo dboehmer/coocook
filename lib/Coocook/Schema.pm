@@ -1,9 +1,12 @@
 package Coocook::Schema;
 
-our $VERSION = 7;    # version of schema definition, not software version!
+# ABSTRACT: DBIx::Class-based SQL database representation
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use DateTime;
+
+our $VERSION = 8;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 
@@ -12,6 +15,26 @@ __PACKAGE__->load_components(
       Helper::Schema::QuoteNames
       >
 );
+
+# enable faking connect() by setting our $SCHEMA = ... in test files
+around connection => sub {
+    my $orig  = shift;
+    my $class = shift;
+
+    if ( my $schema = $main::SCHEMA ) {
+
+        # Catalyst::Model::DBIC::Schema composes a schema itself
+        # and simply applies the new schema's storage
+        if ( ref $class ) {
+            my $self = $class;
+            $self->storage( $schema->storage );
+        }
+
+        return $schema;
+    }
+
+    return $class->$orig(@_);
+};
 
 __PACKAGE__->meta->make_immutable;
 
@@ -40,6 +63,16 @@ sub fk_checks_off_do {
     $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = OFF;') } );
     $cb->();
     $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = ON;') } );
+}
+
+sub statistics {
+    my $self = shift;
+
+    return {
+        dishes_served   => $self->resultset('Dish')->count_served,
+        public_projects => $self->resultset('Project')->public->count,
+        users           => $self->resultset('User')->count,
+    };
 }
 
 1;

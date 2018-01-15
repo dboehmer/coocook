@@ -1,5 +1,6 @@
 package Coocook::Schema::ResultSet::Dish;
 
+use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -42,6 +43,27 @@ sub from_recipe {
             return $dish;
         }
     );
+}
+
+=head2 count_served
+
+Returns the approximate number of dishes served until today.
+That is the sum of the number of servings all dishes of all meals
+scheduled for the past or today.
+
+=cut
+
+sub count_served {
+    my $self = shift;
+
+    return $self->search(
+        {
+            'meal.date' => { '<=' => $self->format_date( DateTime->today ) },
+        },
+        {
+            join => 'meal',
+        }
+    )->get_column('servings')->sum;
 }
 
 1;

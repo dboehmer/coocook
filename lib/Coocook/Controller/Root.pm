@@ -3,7 +3,8 @@ package Coocook::Controller::Root;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+# BEGIN-block necessary to make method attributes work
+BEGIN { extends 'Coocook::Controller' }
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -29,12 +30,12 @@ The root page (/)
 
 =cut
 
+sub base : Chained('/') PathPart('') CaptureArgs(0) Does('RequireSSL') { }
+
 sub begin : Private {
     my ( $self, $c ) = @_;
 
-    if ( my $user = $c->user ) {
-        $c->stash( user => { name => $user->id } );
-    }
+    $c->stash( user => $c->user );
 }
 
 sub auto : Private {
@@ -42,6 +43,15 @@ sub auto : Private {
 
     # TODO distinguish GET and POST requests
     # is some of this information useful for POST controller code, too?
+
+    if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
+        if ( !$c->user and !$c->model('DB::User')->exists ) {
+            my $message = "There are currently no users registered at this Coocook installation."
+              . " The first user you register will be site admin!";
+
+            $c->redirect_detach( $c->uri_for_action( '/user/register', { error => $message } ) );
+        }
+    }
 
     $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
 
@@ -54,56 +64,88 @@ sub auto : Private {
         ],
     );
 
-    my $errors = $c->req->query_params->{error};
-    if ( defined $errors ) {
-        ref $errors or $errors = [$errors];
-    }
-    $c->stash( errors => $errors );
+    # wrapper might be undef, e.g. after /email/begin
+    exists $c->stash->{wrapper}
+      or $c->stash( wrapper => 'wrapper.tt' );
 
-    $c->stash( homepage_url => $c->uri_for_action('/index') );
+    if ( not defined $c->stash->{errors} ) {
+        $c->stash( errors => [ $c->req->query_params->get_all('error') ] );
+    }
+
+    if ( my $about = $c->config->{about_page_title} ) {
+        $c->stash( about_title => $about );
+    }
+
+    $c->stash(
+        homepage_url   => $c->uri_for_action('/index'),
+        statistics_url => $c->uri_for_action('/statistics'),
+        about_url      => $c->uri_for_action('/about'),
+    );
 
     if ( $c->user ) {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
+            settings_url  => $c->uri_for_action('/settings'),
             logout_url    => $c->uri_for_action('/logout'),
         );
     }
     else {
         $c->stash( login_url => $c->uri_for_action('/login') );
+
+        $c->user_registration_enabled
+          and $c->stash( register_url => $c->uri_for_action('/user/register') );
     }
+
+    return 1;    # important
 }
 
-sub index : GET Path Args(0) {
+sub index : GET Chained('/base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->go( $c->user ? 'dashboard' : 'homepage' );
+    $c->go( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
 }
 
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash( projects => [ $c->model('DB::Project')->all ] );
+    $c->stash( public_projects => [ $c->model('DB::Project')->public->all ] );
 }
 
 sub dashboard : Private {
     my ( $self, $c ) = @_;
 
+    my $my_projects = $c->user->projects;
+
+    my $other_projects = $c->model('DB::Project')->public->search(
+        {
+            id => { -not_in => $my_projects->get_column('id')->as_query },
+        }
+    );
+
     $c->stash(
-        project_create_url => $c->uri_for_action('/project/create'),
-        projects           => [ $c->model('DB::Project')->all ],
+        my_projects                => [ $my_projects->all ],
+        other_projects             => [ $other_projects->all ],
+        project_create_url         => $c->uri_for_action('/project/create'),
+        can_create_private_project => $c->has_capability('create_private_project'),
     );
 }
 
-=head2 default
-
-Standard 404 error page
-
-=cut
-
-sub default : Path {
+sub statistics : GET Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
-    $c->response->body('Page not found');
-    $c->response->status(404);
+
+    $c->stash(
+        title      => "Statistics",
+        statistics => $c->model('DB')->statistics,
+    );
+}
+
+sub about : GET Chained('/base') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        title => $c->config->{about_page_title} || "About",
+        about_page_md => $c->config->{about_page_md},
+    );
 }
 
 =head2 end

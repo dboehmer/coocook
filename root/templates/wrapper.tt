@@ -28,8 +28,18 @@
 <ul>
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Dashboard</a></li>
+    <li><a href="[% settings_url %]">Settings</a></li>
+    <li>
+        <form class="inline" method="POST" action="[% logout_url %]">
+            <input type="submit" name="logout" value="Logout">
+        </form>
+    </li>
 [% ELSIF login_url %]
     <li><a href="[% login_url %]">Login</a></li>
+[% END %]
+
+[% IF register_url %]
+    <li><a href="[% register_url %]">Register</a></li>
 [% END %]
 
 [% IF project %]
@@ -45,6 +55,9 @@
     <li><a href="[% c.project_uri('/unit/index') %]">Units</a></li>
     <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
 [% END %]
+
+<li><a href="[% statistics_url %]">Statistics</a></li>
+<li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
 </ul>
 </nav>
 </header>

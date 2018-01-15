@@ -3,7 +3,7 @@ package Coocook::Controller::Article;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
@@ -21,7 +21,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
+sub index : GET Chained('/project/base') PathPart('articles') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');
@@ -34,7 +35,7 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
 
         my %shop_sections = map { $_->id => $_ } @{ $c->stash->{shop_sections} };
 
-        my $articles = $c->project->articles->sorted->inflate_hashes;
+        my $articles = $c->project->articles->sorted->hri;
 
         while ( my $article = $articles->next ) {
             $article->{url}        = $c->project_uri( $edit_action,   $article->{id} );
@@ -50,7 +51,7 @@ sub index : GET Chained('/project/base') PathPart('articles') Args(0) {
     my @units = map { $_->units->all } @{ $c->stash->{quantities} };
     my %units = map { $_->id => $_ } @units;
 
-    my $articles_units = $c->project->articles->articles_units->inflate_hashes;
+    my $articles_units = $c->project->articles->articles_units->hri;
 
     while ( my $article_unit = $articles_units->next ) {
         my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };
@@ -69,7 +70,7 @@ sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');
@@ -110,7 +111,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
                     items_count              => $units->correlate('items')->count_rs->as_query,
                 },
             }
-        )->inflate_hashes;
+        )->hri;
 
       UNIT: while ( my $unit = $units->next ) {
             $selected_units{ $unit->{id} } = 1;
@@ -136,19 +137,20 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
 
 ### CRUD ###
 
-sub create : POST Chained('/project/base') PathPart('articles/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('articles/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->detach( update_or_insert => [ $c->project->new_related( articles => {} ) ] );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->detach( update_or_insert => [ $c->stash->{article} ] );
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{article}->delete();
@@ -189,29 +191,31 @@ sub redirect : Private {
 sub update_or_insert : Private {
     my ( $self, $c, $article ) = @_;
 
-    my $name = $c->req->param('name');
-    if ( $name !~ m/\S/ ) {    # $name contains nothing more than whitespace
-        $c->response->redirect(
-            $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
-        $c->detach;            # TODO preserve form input
-    }
+    my $name = $c->req->params->get('name');
 
-    my $units = $c->project->units->search( { id => { -in => [ $c->req->param('units') ] } } );
+    # $name contains nothing more than whitespace
+    # TODO preserve form input
+    $name =~ m/\S/
+      or $c->redirect_detach(
+        $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
 
-    my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
+    my $units =
+      $c->project->units->search( { id => { -in => [ $c->req->params->get_all('units') ] } } );
+
+    my $tags = $c->project->tags->from_names( $c->req->params->get('tags') );
 
     my $shop_section;
-    if ( my $id = $c->req->param('shop_section') ) {
+    if ( my $id = $c->req->params->get('shop_section') ) {
         $shop_section = $c->project->shop_sections->find($id);
     }
 
-    $c->model('DB')->schema->txn_do(
+    $c->txn_do(
         sub {
-            if ( scalar $c->req->param('preorder') ) {
+            if ( $c->req->params->get('preorder') ) {
                 $article->set_columns(
                     {
-                        preorder_servings => scalar $c->req->param('preorder_servings'),
-                        preorder_workdays => scalar $c->req->param('preorder_workdays'),
+                        preorder_servings => $c->req->params->get('preorder_servings'),
+                        preorder_workdays => $c->req->params->get('preorder_workdays'),
                     }
                 );
             }
@@ -221,11 +225,12 @@ sub update_or_insert : Private {
 
             $article->set_columns(
                 {
-                    name         => $name,
-                    comment      => scalar $c->req->param('comment'),
-                    shop_section => $shop_section ? $shop_section->id : undef,
-                    shelf_life_days =>
-                      scalar( $c->req->param('shelf_life') ? $c->req->param('shelf_life_days') : undef ),
+                    name            => $name,
+                    comment         => $c->req->params->get('comment'),
+                    shop_section    => $shop_section ? $shop_section->id : undef,
+                    shelf_life_days => $c->req->params->get('shelf_life')
+                    ? $c->req->params->get('shelf_life_days')
+                    : undef,
                 }
             );
 

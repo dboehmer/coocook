@@ -40,5 +40,5 @@ sub upgrade_ok {
     $version
       and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
 
-    ok $dh->upgrade(), $name || "upgrade to version" . $dh->to_version;
+    ok $dh->upgrade(), $name || "upgrade to version " . $dh->to_version;
 }

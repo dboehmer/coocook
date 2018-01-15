@@ -3,7 +3,6 @@ package Coocook;
 # ABSTRACT: Web application for collecting recipes and making food plans
 # VERSION
 
-use HTML::Entities ();
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -21,20 +20,37 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-use Catalyst qw/
-  ConfigLoader
-  Session
-  Session::Store::FastMmap
-  Session::State::Cookie
-  Authentication
-  StackTrace
-  Static::Simple
-  /;
+use Catalyst (
+    qw<
+      ConfigLoader
+      Session
+      Session::Store::DBIC
+      Session::State::Cookie
+      Authentication
+      Static::Simple
+      >,
+    ( eval "require Catalyst::Plugin::StackTrace; 1" ? 'StackTrace' : () ),
+);
 
 extends 'Catalyst';
 
-$ENV{CATALYST_DEBUG}
-  and with 'CatalystX::LeakChecker';    # TODO add as dependency or check if module is installed?
+with 'Coocook::Helpers';
+
+if ( $ENV{CATALYST_DEBUG} ) {
+    if ( eval "require CatalystX::LeakChecker; 1" ) {
+        with 'CatalystX::LeakChecker';
+    }
+
+    # print e-mails on STDOUT in debugging mode
+    $ENV{EMAIL_SENDER_TRANSPORT} = 'Print';
+
+    __PACKAGE__->config(
+        require_ssl => {
+            disabled       => 1,
+            ignore_on_post => 1,    # 'disabled' seems not to apply to POST requests
+        },
+    );
+}
 
 # Configure the application.
 #
@@ -45,8 +61,9 @@ $ENV{CATALYST_DEBUG}
 # with an external configuration file acting as an override for
 # local deployment.
 
+__PACKAGE__->config( name => 'Coocook' );
+
 __PACKAGE__->config(
-    name => 'Coocook',
 
     # reasoning: if tab title bar in browser is short,
     #            display most important information first
@@ -56,8 +73,12 @@ __PACKAGE__->config(
     # https://en.wikipedia.org/w/index.php?title=Calendar_date&oldid=799176855
     date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
 
+    new_user_default_roles => [
+        'private_projects',                    # disable to prohibit new users creating private projects
+    ],
+
     homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
-        open my $fh, __FILE__;    # read abstract from this file
+        open my $fh, '<', __FILE__;    # read abstract from this file
         my $abstract;
         while (<$fh>) {
             /^# ?ABSTRACT: (.+)$/ or next;
@@ -68,11 +89,48 @@ __PACKAGE__->config(
         $abstract;
     },
 
+    about_page_md => <<EOT,
+This is an instance of the Coocook food planning software.
+EOT
+
+    # enable registration as self service, defaults to false
+    enable_user_registration => 0,
+
+    email_from_address => do {
+        my $username = getpwuid($<);
+
+        my $hostname = do {
+            if ( eval "require Sys::Hostname::FQDN; 1" ) {
+                Sys::Hostname::FQDN::fqdn();
+            }
+            elsif ( my $fqdn = `hostname --fqdn` ) {
+                chomp $fqdn;
+                $fqdn;
+            }
+            else { 'localhost' }
+        };
+
+        $username . '@' . $hostname;
+    },
+
+    email_sender_name => __PACKAGE__->config->{name},
+
+    email_signature => sub {
+        my $c = shift;
+
+        return $c->config->{name} . " " . $c->uri_for_action('/index');
+    },
+
     project_deletion_confirmation => "I really want to loose my project",
 
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header
+    use_hash_multivalue_in_request              => 1,    # safer return value for $c->req->params()
+
+    request_class_traits => [
+        'DisableParam',                                  # disable old, unsafe interface to request params
+    ],
 
     'Model::DB' => {
         connect_info => {
@@ -84,57 +142,40 @@ __PACKAGE__->config(
         default => {
             credential => {
                 class          => 'Password',
-                password_field => 'password',
-                password_type  => 'clear',
+                password_field => 'password_hash',
+                password_type  => 'self_check',
             },
             store => {
-                class => 'Minimal',
-                users => {
-                    coocook => { password => "coocook" }
-                },
+                class      => 'DBIx::Class',
+                user_model => 'DB::User',
             },
         }
+    },
+
+    session => {
+        dbic_class      => 'DB::Session',
+        expires         => 24 * 60 * 60, # 24h
+        cookie_secure   => 2,            # deliver and accept only via HTTPS
+        cookie_httponly => 1,            # make browser send cookie only via HTTP(S), not to JavaScript code
+    },
+
+    default_view => 'TT',
+
+    'View::Email::Template' => {
+        default => {
+            view => 'TT',
+
+            content_type => 'text/plain',
+            charset      => 'utf-8',
+            encoding     => 'quoted-printable',
+        },
+        sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
     },
 
     'View::TT' => {
         INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
     },
 );
-
-sub encode_entities {
-    my ( $self, $text ) = @_;
-    return HTML::Entities::encode_entities($text);
-}
-
-sub escape_title {
-    my ( $self, $title, $text ) = @_;
-
-    $self->stash(
-        title      => "$title \"$text\"",
-        html_title => "$title <em>" . $self->encode_entities($text) . "</em>",
-    );
-}
-
-# custom helper
-# TODO maybe move to designated helper module?
-sub project_uri {
-    my $c      = shift;
-    my $action = shift;
-
-    my $project = $c->stash->{project} || die;
-
-    # if last argument is hashref that's the \%query_values argument
-    my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();
-
-    return $c->uri_for_action( $action, [ $project->url_name, @_ ], @query );
-}
-
-# another helper
-sub project {
-    my $c = shift;
-
-    $c->stash->{project};
-}
 
 # Start the application
 __PACKAGE__->setup();

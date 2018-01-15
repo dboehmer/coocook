@@ -33,7 +33,7 @@ sub deletable {
         return $count == 0;
     }
     else {
-        return $self->articles->count == 0;
+        return !$self->articles->exists;
     }
 }
 

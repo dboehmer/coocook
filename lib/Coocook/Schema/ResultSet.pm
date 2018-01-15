@@ -1,5 +1,7 @@
 package Coocook::Schema::ResultSet;
 
+# ABSTRACT: base class for all ResultSet classes
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use MooseX::NonMoose;
@@ -8,28 +10,21 @@ extends 'DBIx::Class::ResultSet';
 
 __PACKAGE__->load_components(
     qw<
+      +Coocook::Schema::Component::DateTimeHelper
       Helper::ResultSet::CorrelateRelationship
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
+      Helper::ResultSet::Shortcut::HRI
       >
 );
 
 __PACKAGE__->meta->make_immutable;
 
-sub format_date {
-    my ( $self, $date ) = @_;
+sub exists {
+    my ( $self, $search ) = @_;
 
-    return $self->result_source->schema->storage->datetime_parser->format_date($date);
-}
-
-sub format_datetime {
-    my ( $self, $datetime ) = @_;
-
-    return $self->result_source->schema->storage->datetime_parser->format_datetime($datetime);
-}
-
-sub inflate_hashes {
-    shift->search( undef, { result_class => 'DBIx::Class::ResultClass::HashRefInflator' } );
+    # inspired from DBIx::Class::ResultSet::Void but that is low quality and obsolete
+    !!$self->search( $search, { rows => 1, select => [ \1 ] } )->single;
 }
 
 1;

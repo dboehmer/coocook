@@ -1,0 +1,18 @@
+<form method="POST" action="[% change_display_name_url %]">
+<fieldset>
+    <legend>Change your user's display name</legend>
+    <input type="text" name="display_name" value="[% user.display_name | html %]">
+    <input type="submit" value="Update user">
+</fieldset>
+</form>
+
+<form method="POST" action="[% change_password_url %]">
+<fieldset>
+    <legend>Change your password</legend>
+    <input type="password" name="old_password"  placeholder="old password">
+    <input type="password" name="new_password"  placeholder="new password">
+    <input type="password" name="new_password2" placeholder="new password">
+
+    <input type="submit" value="Change password">
+</fieldset>
+</form>

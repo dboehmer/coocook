@@ -10,14 +10,24 @@ use_ok 'Coocook::Schema';
 
 ok my $db = TestDB->new;
 
-is $db->count()                   => 54, "count()";
+is $db->count()                   => 60, "count()";
 is $db->count(qw< Article Unit >) => 11, "count(Article Unit)";
+
+subtest statistics => sub {
+    ok my $stats = $db->statistics(), "\$schema->statistics()";
+
+    is_deeply $stats => {
+        public_projects => 1,
+        users           => 2,
+        dishes_served   => 4 + 2 + 4,
+    };
+};
 
 subtest fk_checks_off_do => sub {
     $db = TestDB->new;
 
     {
-        no warnings 'once';
+        no warnings 'once', 'redefine';
         local *DBIx::Class::Storage::DBI::sqlt_type = sub { 'OtherDBMS' };
         throws_ok {
             $db->fk_checks_off_do( sub { } )
@@ -36,7 +46,8 @@ subtest fk_checks_off_do => sub {
                 $row->delete();
             }
         );
-    }, "inserting and deleting invalid FK works inside fk_checks_off_do";
+    }
+    "inserting and deleting invalid FK works inside fk_checks_off_do";
 
     throws_ok { $row->insert } qr/FOREIGN KEY constraint failed/, "inserting doesn't work outside";
 

@@ -1,5 +1,7 @@
 package Coocook::Model::Importer;
 
+# ABSTRACT: business logic for importing data to a project from another
+
 use Carp;
 use JSON::MaybeXS;    # also a dependency of Catalyst
 use Moose;
@@ -170,7 +172,7 @@ sub import_data {    # import() is used by 'use'
                     my $resultset = $rs->result_source->name;    # e.g. 'projects'
 
                     # Speeeeeeeed
-                    my $hash_rs = $rs->inflate_hashes;
+                    my $hash_rs = $rs->hri;
 
                     # code that is used in both loop variants: update columns of $row following %translate
                     my $translator = sub {

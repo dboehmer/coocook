@@ -1,5 +1,7 @@
 package Coocook::Model::Ingredients;
 
+# ABSTRACT: business logic for plain data structures from Dish- or RecipeIngredients
+
 use Moose;
 use Moose::Util::TypeConstraints;
 

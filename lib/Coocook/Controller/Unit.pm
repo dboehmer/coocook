@@ -4,7 +4,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use Scalar::Util qw(looks_like_number);
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
@@ -22,7 +22,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : Chained('/project/base') PathPart('units') Args(0) {
+sub index : GET Chained('/project/base') PathPart('units') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my @quantities =
@@ -48,7 +49,6 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
 
     my @units;
 
-    # add delete_url to deletable units
     {
         my $action = $self->action_for('delete');
 
@@ -56,9 +56,6 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
             { join => 'quantity', order_by => [ 'quantity.name', 'long_name' ] } );
 
         while ( my $unit = $units->next ) {
-            exists $units_in_use{ $unit->id }
-              and next;
-
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
 
             my %unit = (
@@ -78,11 +75,11 @@ sub index : Chained('/project/base') PathPart('units') Args(0) {
 
             push @units, \%unit;
 
-            if ( $unit->is_quantity_default and $unit->convertible_into > 0 ) {
-                next;
-            }
-
-            $unit{delete_url} = $c->project_uri( $action, $unit{id} );
+            # add delete_url to deletable units
+            exists $units_in_use{ $unit->id }    # in use, for ingredient
+              or (  $unit->is_quantity_default
+                and $unit->convertible_into > 0 )    # need to make other unit quantity default
+              or $unit{delete_url} = $c->project_uri( $action, $unit{id} );    # can be deleted
         }
     }
 
@@ -101,7 +98,7 @@ sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
 
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $unit = $c->stash->{unit};
@@ -111,12 +108,13 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( Unit => $unit->long_name );
 }
 
-sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('units/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $short_name          = scalar $c->req->param('short_name');
-    my $long_name           = scalar $c->req->param('long_name');
-    my $to_quantity_default = scalar $c->req->param('to_quantity_default');
+    my $short_name          = $c->req->params->get('short_name');
+    my $long_name           = $c->req->params->get('long_name');
+    my $to_quantity_default = $c->req->params->get('to_quantity_default');
     my $input_okay          = $self->check_input(
         $c,
         {
@@ -131,9 +129,9 @@ sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
             units => {
                 short_name          => $short_name,
                 long_name           => $long_name,
-                quantity            => scalar $c->req->param('quantity') || undef,
+                quantity            => $c->req->params->get('quantity') || undef,
                 to_quantity_default => $to_quantity_default || undef,
-                space               => scalar $c->req->param('space') ? '1' : '0',
+                space               => $c->req->params->get('space') ? '1' : '0',
             }
         );
         $c->detach( 'redirect', [$unit] );
@@ -141,7 +139,7 @@ sub create : POST Chained('/project/base') PathPart('units/create') Args(0) {
 
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{unit}->delete();
@@ -149,7 +147,7 @@ sub delete : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub make_quantity_default : POST Chained('base') Args(0) {
+sub make_quantity_default : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{unit}->make_quantity_default();
@@ -157,14 +155,14 @@ sub make_quantity_default : POST Chained('base') Args(0) {
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $unit = $c->stash->{unit};
 
-    my $short_name          = scalar $c->req->param('short_name');
-    my $long_name           = scalar $c->req->param('long_name');
-    my $to_quantity_default = scalar $c->req->param('to_quantity_default');
+    my $short_name          = $c->req->params->get('short_name');
+    my $long_name           = $c->req->params->get('long_name');
+    my $to_quantity_default = $c->req->params->get('to_quantity_default');
     my $input_okay          = $self->check_input(
         $c,
         {
@@ -180,7 +178,7 @@ sub update : POST Chained('base') Args(0) {
                 short_name          => $short_name,
                 long_name           => $long_name,
                 to_quantity_default => $to_quantity_default || undef,
-                space               => scalar $c->req->param('space') ? '1' : '0',
+                space               => $c->req->params->get('space') ? '1' : '0',
             }
         );
         $c->detach( 'redirect', [$unit] );

@@ -33,7 +33,7 @@ is substr( $importer->properties_json, 0, 3 ) => '[{"',
 dies_ok { $importer->import_data() } "import_data() dies without arguments";
 
 my $source = $db->resultset('Project')->find(1);
-my $target = $db->resultset('Project')->create( { name => "Import Target" } );
+my $target = $db->resultset('Project')->create( { name => "Import Target", owner => 1 } );
 
 throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
 throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;
@@ -53,9 +53,10 @@ subtest "empty import" => sub {
 };
 
 subtest "complete import" => sub {
-    my @not_imported = qw< Dish DishIngredient DishTag Item Meal Project PurchaseList >;
+    my @not_imported =
+      qw< Dish DishIngredient DishTag Item Meal Project ProjectUser PurchaseList User >;
     my %not_imported = map { $_ => 1 } @not_imported;
-    my @imported     = grep { not $not_imported{$_} } $db->sources;
+    my @imported = grep { not $not_imported{$_} } $db->sources;
 
     my $records1 = $db->count(@imported);
 

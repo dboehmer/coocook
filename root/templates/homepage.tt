@@ -1,11 +1,9 @@
 [% USE Markdown; c.config.homepage_text_md | $Markdown %]
 
-<p><a href="[% login_url %]">Login</a></p>
-
-<h2>Projects</h2>
+<h2>Public Projects</h2>
 
 <ul>
-[% FOR proj IN projects # don't overwrite $project! %]
+[% FOR proj IN public_projects # don't overwrite $project! %]
     <li>
         <a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a>
     </li>

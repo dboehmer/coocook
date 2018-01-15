@@ -10,15 +10,22 @@ use feature 'fc';    # Perl v5.16
 __PACKAGE__->table("projects");
 
 __PACKAGE__->add_columns(
-    id          => { data_type => 'int', is_auto_increment => 1 },
+    id          => { data_type => 'int',  is_auto_increment => 1 },
     name        => { data_type => 'text' },
     url_name    => { data_type => 'text' },
     url_name_fc => { data_type => 'text' }, # fold cased
+    is_public   => { data_type => 'bool', default_value     => 1 },
+    owner       => { data_type => 'int' },
 );
 
 __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
+
+__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
+
+__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
+__PACKAGE__->many_to_many( users => projects_users => 'user' );
 
 __PACKAGE__->has_many( articles => 'Coocook::Schema::Result::Article', 'project' );
 __PACKAGE__->has_many( meals    => 'Coocook::Schema::Result::Meal',    'project' );
@@ -50,6 +57,7 @@ before delete => sub {    # TODO solve workaround
     $self->quantities->delete;
     $self->tags->delete;
     $self->tag_groups->delete;
+    $self->projects_users->delete;
 };
 
 # trigger for generating url_name[_fc]
@@ -137,6 +145,24 @@ sub other_projects {
     my $self = shift;
 
     return $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
+}
+
+=head2 other_users
+
+Returns a resultset with all C<Result::User>s without any related C<projects_users> record.
+
+=cut
+
+sub users_without_permission {
+    my $self = shift;
+
+    my $permitted_users = $self->projects_users->get_column('user');
+
+    return $self->result_source->schema->resultset('User')->search(
+        {
+            id => { -not_in => $permitted_users->as_query },
+        }
+    );
 }
 
 1;

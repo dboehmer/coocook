@@ -75,7 +75,7 @@ sub remove_from_purchase_list {
 
             $self->update( { item => undef } );
 
-            if ( $item->ingredients->count > 0 ) {
+            if ( $item->ingredients->exists ) {
                 my $value = $self->value;
 
                 # if item got converted to other unit, convert $value, too

@@ -3,35 +3,50 @@ package Coocook::Controller::Session;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 __PACKAGE__->config( namespace => '' );
 
-sub login : GET Local Args(0) {
+sub login : GET Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
+        username       => $c->req->params->get('username'),
         post_login_url => $c->uri_for( $self->action_for('post_login') ),
+        recover_url    => $c->uri_for_action('/user/recover'),
         title          => "Login",
     );
 }
 
-sub post_login : POST Path('/login') Args(0) {
+sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $username = $c->req->param('username');
-    my $password = $c->req->param('password');
+    my $user = $c->authenticate(
+        {
+            name           => $c->req->params->get('username'),
+            password_hash  => $c->req->params->get('password'),
+            email_verified => { '!=' => undef },
+        }
+    );
 
-    if ( $c->authenticate( { username => $username, password => $password } ) ) {
+    if ($user) {
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
         $c->logout();
-        $c->response->redirect( $c->uri_for_action('/login') );
+        $c->response->redirect(
+            $c->uri_for_action(
+                '/login',
+                {
+                    error    => "Login failed!",
+                    username => $c->req->params->get('username'),
+                }
+            )
+        );
     }
 }
 
-sub logout : POST Local Args(0) {
+sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
     my ( $self, $c ) = @_;
 
     $c->logout();

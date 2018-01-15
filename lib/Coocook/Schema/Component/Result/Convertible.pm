@@ -1,5 +1,7 @@
 package Coocook::Schema::Component::Result::Convertible;
 
+# ABSTRACT: helper method for rows with article
+
 use strict;
 use warnings;
 

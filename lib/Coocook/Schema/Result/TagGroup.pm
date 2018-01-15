@@ -33,7 +33,7 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    return ( $self->tags->count <= 0 );
+    return !$self->tags->exists;
 }
 
 1;

@@ -1,0 +1,31 @@
+<form action="[% rename_url %]" method="POST">
+    <fieldset>
+        <legend>Rename project <em>[% project.name | html %]</em></legend>
+        <p>
+            <strong>Existing web links and bookmarks will break when you rename the project!</strong>
+            Except for special characters and changing lower/upper case.
+        </p>
+        <input type="text" name="name" value="[% project.name | html %]">
+        <input type="submit" value="Rename project">
+    </fieldset>
+</form>
+
+<form method="POST" action="[% visibility_url %]">
+    <fieldset>
+        <legend>Visibility</legend>
+        <p>Project is: <strong>[% project.is_public ? 'public' : '🔒private' %]</strong></p>
+[% IF NOT project.is_public %]
+        <input type="hidden" name="public" value="on">
+[% END %]
+        <input type="submit" value="[% project.is_public ? 'Make 🔒private' : 'Make public' %]">
+    </fieldset>
+</form>
+
+<form method="POST" action="[% delete_url %]">
+    <fieldset>
+        <legend>Delete project <em>[% project.name | html %]</em></legend>
+        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion.</p>
+        <input type="text" name="confirmation">
+        <input type="submit" value="Delete project">
+    </fieldset>
+</form>

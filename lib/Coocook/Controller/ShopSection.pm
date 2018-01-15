@@ -3,7 +3,7 @@ package Coocook::Controller::ShopSection;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 __PACKAGE__->config( namespace => 'shop_section' );
 
@@ -23,7 +23,8 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
+sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -32,12 +33,13 @@ sub index : GET Chained('/project/base') PathPart('shop_sections') Args(0) {
     );
 }
 
-sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->project->create_related(
         shop_sections => {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
 
@@ -50,19 +52,19 @@ sub base : Chained('/project/base') PathPart('shop_sections') CaptureArgs(1) {
     $c->stash( shop_section => $c->project->shop_sections->find($id) );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{shop_section}->update(
         {
-            name => scalar $c->req->param('name'),
+            name => $c->req->params->get('name'),
         }
     );
 
     $c->detach('redirect');
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{shop_section}->delete;

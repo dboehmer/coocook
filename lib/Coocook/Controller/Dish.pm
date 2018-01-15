@@ -3,7 +3,7 @@ package Coocook::Controller::Dish;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
@@ -24,7 +24,7 @@ sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id) );
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
@@ -57,7 +57,7 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     $c->escape_title( Dish => $dish->name );
 }
 
-sub delete : POST Chained('base') PathPart('delete') Args(0) {
+sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{dish}->delete;
@@ -65,95 +65,97 @@ sub delete : POST Chained('base') PathPart('delete') Args(0) {
     $c->response->redirect( $c->project_uri('/project/edit') );
 }
 
-sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0) {
+sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $meal = $c->project->meals->find( scalar scalar $c->req->param('meal') );
+    my $meal = $c->project->meals->find( $c->req->params->get('meal') );
 
     my $dish = $meal->create_related(
         dishes => {
-            servings        => scalar $c->req->param('servings'),
-            name            => scalar $c->req->param('name'),
-            description     => scalar $c->req->param('description') // "",
-            comment         => scalar $c->req->param('comment') // "",
-            preparation     => scalar $c->req->param('preparation') // "",
-            prepare_at_meal => scalar $c->req->param('prepare_at_meal') || undef,
+            servings        => $c->req->params->get('servings'),
+            name            => $c->req->params->get('name'),
+            description     => $c->req->params->get('description') // "",
+            comment         => $c->req->params->get('comment') // "",
+            preparation     => $c->req->params->get('preparation') // "",
+            prepare_at_meal => $c->req->params->get('prepare_at_meal') || undef,
         }
     );
 
     $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0) {
+sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0)
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $meal   = $c->project->meals->find( scalar $c->req->param('meal') );
-    my $recipe = $c->project->recipes->find( scalar $c->req->param('recipe') );
+    my $meal   = $c->project->meals->find( $c->req->params->get('meal') );
+    my $recipe = $c->project->recipes->find( $c->req->params->get('recipe') );
 
     my $dish = $c->model('DB::Dish')->from_recipe(
         $recipe,
         (
             meal     => $meal->id,
-            servings => scalar $c->req->param('servings'),
-            comment  => scalar $c->req->param('comment') // "",
+            servings => $c->req->params->get('servings'),
+            comment  => $c->req->params->get('comment') // "",
         )
     );
 
     $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
 }
 
-sub recalculate : POST Chained('base') Args(0) {
+sub recalculate : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
 
-    $dish->recalculate( scalar $c->req->param('servings') );
+    $dish->recalculate( $c->req->params->get('servings') );
 
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub add : POST Chained('base') Args(0) {
+sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
 
     $dish->create_related(
         ingredients => {
-            article => scalar $c->req->param('article'),
-            value   => scalar $c->req->param('value'),
-            unit    => scalar $c->req->param('unit'),
-            comment => scalar $c->req->param('comment'),
-            prepare => scalar $c->req->param('prepare') ? '1' : '0',
+            article => $c->req->params->get('article'),
+            value   => $c->req->params->get('value'),
+            unit    => $c->req->params->get('unit'),
+            comment => $c->req->params->get('comment'),
+            prepare => $c->req->params->get('prepare') ? '1' : '0',
         }
     );
 
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub update : POST Chained('base') Args(0) {
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};
 
-    $c->model('DB')->schema->txn_do(
+    $c->txn_do(
         sub {
             $dish->update(
                 {
-                    name            => scalar $c->req->param('name'),
-                    comment         => scalar $c->req->param('comment'),
-                    servings        => scalar $c->req->param('servings'),
-                    preparation     => scalar $c->req->param('preparation'),
-                    description     => scalar $c->req->param('description'),
-                    prepare_at_meal => scalar $c->req->param('prepare_at_meal') || undef,
+                    name            => $c->req->params->get('name'),
+                    comment         => $c->req->params->get('comment'),
+                    servings        => $c->req->params->get('servings'),
+                    preparation     => $c->req->params->get('preparation'),
+                    description     => $c->req->params->get('description'),
+                    prepare_at_meal => $c->req->params->get('prepare_at_meal') || undef,
 
                 }
             );
 
-            my $tags = $c->project->tags->from_names( scalar $c->req->param('tags') );
+            my $tags = $c->project->tags->from_names( $c->req->params->get('tags') );
             $dish->set_tags( [ $tags->all ] );
 
             for my $ingredient ( $dish->ingredients->all ) {
-                if ( scalar $c->req->param( 'delete' . $ingredient->id ) ) {
+                if ( $c->req->params->get( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
                     next;
                 }
@@ -161,13 +163,13 @@ sub update : POST Chained('base') Args(0) {
                 $ingredient->update(
                     {
                         prepare => (
-                            scalar $c->req->param( 'prepare' . $ingredient->id )
+                            $c->req->params->get( 'prepare' . $ingredient->id )
                             ? '1'
                             : '0'
                         ),
-                        value   => scalar $c->req->param( 'value' . $ingredient->id ),
-                        unit    => scalar $c->req->param( 'unit' . $ingredient->id ),
-                        comment => scalar $c->req->param( 'comment' . $ingredient->id ),
+                        value   => $c->req->params->get( 'value' . $ingredient->id ),
+                        unit    => $c->req->params->get( 'unit' . $ingredient->id ),
+                        comment => $c->req->params->get( 'comment' . $ingredient->id ),
                     }
                 );
             }
@@ -177,15 +179,16 @@ sub update : POST Chained('base') Args(0) {
     $c->detach( redirect => [ $dish->id, '#ingredients' ] );
 }
 
-sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposition') Args(1) {
+sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposition') Args(1)
+  RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
     my $ingredient = $c->project->dishes->ingredients->find($id);
 
-    if ( $c->req->param('up') ) {
+    if ( $c->req->params->get('up') ) {
         $ingredient->move_previous();
     }
-    elsif ( $c->req->param('down') ) {
+    elsif ( $c->req->params->get('down') ) {
         $ingredient->move_next();
     }
     else {

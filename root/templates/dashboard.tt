@@ -1,14 +1,10 @@
-<p>Logged in as [% user.name | html %].</p>
-
-<form method="POST" action="[% logout_url %]">
-    <input type="submit" value="Logout">
-</form>
+<p>Logged in as <a href="[% c.uri_for_action('/user/show', [user.name]) %]">[% user.display_name | html %]</a>.</p>
 
 <h2>My projects</h2>
 
 <ul>
-[% FOR proj IN projects; # don't overwrite $project! %]
-    <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
+[% FOR proj IN my_projects; # don't overwrite $project! %]
+    <li>[% '🔒' UNLESS proj.is_public %]<a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
 [% END %]
 </ul>
 
@@ -16,6 +12,26 @@
 <fieldset>
     <legend>Create new project</legend>
     <input type="text" name="name" placeholder="name">
+
+[% IF can_create_private_project %]
+    <input type="radio" name="is_public" value="on" id="is_public">          <label for="is_public">public</label>
+    <input type="radio" name="is_public" value=""   id="is_private" checked> <label for="is_private">🔒private</label>
+[% ELSE %]
+    <input type="hidden" name="is_public" value="on">
+[% END %]
+
     <input type="submit" value="Create project">
 </fieldset>
 </form>
+
+<h2>Other public projects</h2>
+
+[% IF other_projects.size == 0 %]
+    <p>None yet.</p>
+[% ELSE %]
+<ul>
+[% FOR proj IN other_projects; # don't overwrite $project! %]
+    <li><a href="[% c.uri_for_action('/project/edit', [proj.url_name]) %]">[% proj.name | html %]</a></li>
+[% END %]
+</ul>
+[% END %]

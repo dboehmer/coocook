@@ -1,0 +1,12 @@
+[% MACRO numerus(number, singular, plural, infix) BLOCK; # apply correct grammatical number
+    number;
+    ' ';
+    infix _ ' ' IF infix;
+    number == 1 ? singular : plural;
+END %]
+
+<ul>
+    <li>approx. [% numerus(statistics.dishes_served, 'dish', 'dishes') %] served until today</li>
+    <li>[% numerus(statistics.public_projects, 'project', 'projects', 'public') %]</li>
+    <li>[% numerus(statistics.users, 'user', 'users') %]</li>
+</ul>

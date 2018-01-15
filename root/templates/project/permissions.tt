@@ -1,0 +1,72 @@
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+[% FOR permission IN permissions %]
+        <tr>
+            <td><a href="[% permission.user_url %]">[% permission.user.display_name | xml %]</a></td>
+            <td>
+    [% IF permission.edit_url %]
+                <form method="POST" action="[% permission.edit_url %]" class="inline">
+                    <select name="role">
+        [% FOR role IN roles %]
+                        <option value="[% role %]" [% 'selected' IF permission.role == role %]>[% role %]</option>
+        [% END %]
+                    </select>
+                    <input type="submit" value="Save">
+                </form>
+    [% ELSE %]
+                [% permission.role %]
+    [% END %]
+            </td>
+            <td>
+    [% IF permission.revoke_url %]
+                <form method="POST" action="[% permission.revoke_url %]" class="inline">
+                    <input type="submit" value="Revoke">
+                </form>
+    [% END %]
+            </td>
+            <td>
+    [% IF permission.make_owner_url %]
+                <form method="POST" action="[% permission.make_owner_url %]" class="inline">
+                    <input type="submit" value="Transfer ownership">
+                </form>
+    [% END %]
+            </td>
+        </tr>
+[% END %]   
+    </tbody>
+</table>
+
+<p>You need another user with role <em>admin</em> to transfer ownership to them.</p>
+
+<fieldset>
+    <legend>Add permission</legend>
+
+[% IF other_users %]
+    <form method="POST" action="[% add_permission_url %]">
+        <select name="user">
+[% FOR other_user IN other_users %]
+            <option value="[% other_user.name %]">[% other_user.name | xml %] ([% other_user.display_name | xml %])</option>
+[% END %]
+        </select>
+
+        as
+
+        <select name="role">
+[% FOR role IN roles %]
+            <option value="[% role %]">[% role %]</option>
+[% END %]
+        </select>
+
+        <input type="submit" value="Add">
+    </form>
+[% ELSE %]
+    <p>No more users. You need to let users register before giving them permission.</p>
+[% END %]
+</fieldset>

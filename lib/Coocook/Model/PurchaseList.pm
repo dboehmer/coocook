@@ -1,5 +1,7 @@
 package Coocook::Model::PurchaseList;
 
+# ABSTRACT: business logic for plain data structure of purchase list
+
 use Moose;
 use Scalar::Util 'weaken';
 
@@ -28,16 +30,16 @@ sub BUILD {
     my $project = $list->project;
 
     # articles
-    my %articles = map { $_->{id} => $_ } $list->articles->inflate_hashes->all;
+    my %articles = map { $_->{id} => $_ } $list->articles->hri->all;
 
     # units: can't narrow down because needs convertible units
-    my %units = map { $_->{id} => $_ } $project->units->inflate_hashes->all;
+    my %units = map { $_->{id} => $_ } $project->units->hri->all;
 
     {
         my %default_unit;    # holds true value for all IDs of default units
         my %convertible;     # holds arrayrefs for convertible units per quantity
 
-        my $quantities = $project->quantities->inflate_hashes;
+        my $quantities = $project->quantities->hri;
 
         while ( my $quantity = $quantities->next ) {
             if ( my $unit = $quantity->{default_unit} ) {
@@ -76,7 +78,7 @@ sub BUILD {
     }
 
     # items
-    my %items = map { $_->{id} => $_ } $list->items->inflate_hashes->all;
+    my %items = map { $_->{id} => $_ } $list->items->hri->all;
     my %items_per_section;
 
     for my $item ( values %items ) {
@@ -91,7 +93,7 @@ sub BUILD {
     {
         my %ingredients_by_dish;
 
-        my $ingredients = $list->items->ingredients->inflate_hashes;
+        my $ingredients = $list->items->ingredients->hri;
 
         while ( my $ingredient = $ingredients->next ) {
             $ingredient->{article} = $articles{ $ingredient->{article} };
@@ -105,8 +107,7 @@ sub BUILD {
         }
 
         my $dishes = $project->dishes;
-        $dishes = $dishes->search( { $dishes->me('id') => { -in => [ keys %ingredients_by_dish ] } } )
-          ->inflate_hashes;
+        $dishes = $dishes->search( { $dishes->me('id') => { -in => [ keys %ingredients_by_dish ] } } )->hri;
 
         while ( my $dish = $dishes->next ) {
             for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
@@ -117,7 +118,7 @@ sub BUILD {
 
     # shop sections
     my @sections = $project->shop_sections->search(
-        { id => { -in => [ grep { length } keys %items_per_section ] } } )->inflate_hashes->all;
+        { id => { -in => [ grep { length } keys %items_per_section ] } } )->hri->all;
 
     for my $section (@sections) {
         $section->{items} = $items_per_section{ $section->{id} };

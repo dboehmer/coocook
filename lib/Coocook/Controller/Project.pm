@@ -4,7 +4,7 @@ use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
@@ -23,7 +23,7 @@ C<Result::Project> object in the stash.
 
 =cut
 
-sub base : Chained('/') PathPart('project') CaptureArgs(1) {
+sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     my ( $self, $c, $url_name ) = @_;
 
     if ( my $project = $c->model('DB::Project')->find_by_url_name($url_name) ) {
@@ -36,8 +36,7 @@ sub base : Chained('/') PathPart('project') CaptureArgs(1) {
         $c->stash( project => $project );
     }
     else {
-        $c->response->redirect( $c->uri_for( '/', { error => "Project not found" } ) );
-        $c->detach;
+        $c->redirect_detach( $c->uri_for( '/', { error => "Project not found" } ) );
     }
 }
 
@@ -45,8 +44,11 @@ sub base : Chained('/') PathPart('project') CaptureArgs(1) {
 
 =cut
 
-sub edit : GET Chained('base') PathPart('') Args(0) {
+sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
+
+    $c->has_capability('view_project')
+      or $c->detach('/error/forbidden');
 
     my $default_date = DateTime->today;
 
@@ -64,22 +66,53 @@ sub edit : GET Chained('base') PathPart('') Args(0) {
     }
 
     $c->stash(
-        default_date          => $default_date,
-        recipes               => [ $c->project->recipes->sorted->all ],
-        days                  => $days,
-        deletion_confirmation => $c->config->{project_deletion_confirmation},
+        default_date         => $default_date,
+        recipes              => [ $c->project->recipes->sorted->all ],
+        days                 => $days,
+        edit_dishes_url      => $c->project_uri('/project/edit_dishes'),
+        dish_create_url      => $c->project_uri('/dish/create'),
+        dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
+        meal_create_url      => $c->project_uri('/meal/create'),
+
+        permissions_url => $c->has_capability('view_project_permissions')
+        ? $c->project_uri('/permission/index')
+        : undef,
+
+        settings_url => $c->has_capability('view_project_settings')
+        ? $c->project_uri('/project/settings')
+        : undef,
     );
 }
 
-sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() already used by 'use'
+sub settings : GET Chained('base') PathPart('settings') RequiresCapability('view_project_settings')
+  Args(0) {
     my ( $self, $c ) = @_;
 
-    my @projects = $c->project->other_projects->all;
+    $c->stash(
+        rename_url            => $c->project_uri('/project/rename'),
+        visibility_url        => $c->project_uri('/project/visibility'),
+        delete_url            => $c->project_uri('/project/delete'),
+        deletion_confirmation => $c->config->{project_deletion_confirmation},
+    );
+
+    $c->escape_title( "Project settings" => $c->project->name );
+}
+
+sub importable_projects : Private {
+    my ( $self, $c ) = @_;
+
+    return [ grep { $c->has_capability( import_from_project => { project => $_ } ) }
+          $c->project->other_projects->all ];
+}
+
+sub get_import : GET Chained('base') PathPart('import') Args(0)
+  RequiresCapability('import_into_project') {    # import() already used by 'use'
+    my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
 
     $c->stash(
-        projects        => \@projects,
+        projects        => $c->forward('importable_projects'),
         properties      => $importer->properties,
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
@@ -88,88 +121,126 @@ sub get_import : GET Chained('base') PathPart('import') Args(0) {   # import() a
     );
 }
 
-sub post_import : POST Chained('base') PathPart('import') Args(0) { # import() already used by 'use'
+sub post_import : POST Chained('base') PathPart('import') Args(0)
+  RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
-    my $source   = $c->model('DB::Project')->find( scalar $c->req->param('source_project') );
+    my $source   = $c->model('DB::Project')->find( $c->req->params->get('source_project') );
     my $target   = $c->project;
+
+    $c->has_capability( import_from_project => { project => $source } )
+      or $c->detach('/error/forbidden');
 
     # extract properties selected in form
     my @properties =
-      grep { $c->req->param("property_$_") } map { $_->{key} } @{ $importer->properties };
+      grep { $c->req->params->get("property_$_") } map { $_->{key} } @{ $importer->properties };
 
     $importer->import_data( $source => $target, \@properties );
 
     $c->detach( redirect => [$target] );
 }
 
-sub edit_dishes : POST Chained('base') Args(0) {
+sub edit_dishes : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->project;
 
     # filter selected IDs from possible dish IDs
-    my @dish_ids = grep { $c->req->param("dish$_") } $project->meals->dishes->get_column('id')->all;
+    my @dish_ids =
+      grep { $c->req->params->get("dish$_") } $project->meals->dishes->get_column('id')->all;
 
     # select dishes from valid ID list
     my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );
 
-    if ( $c->req->param('update') ) {
-        if ( $c->req->param('edit_comment') ) {
-            $dishes->update( { comment => scalar $c->req->param('new_comment') } );
+    if ( $c->req->params->get('update') ) {
+        if ( $c->req->params->get('edit_comment') ) {
+            $dishes->update( { comment => $c->req->params->get('new_comment') } );
         }
 
-        if ( $c->req->param('edit_servings') ) {
+        if ( $c->req->params->get('edit_servings') ) {
             for my $dish ( $dishes->all ) {
-                $dish->recalculate( scalar $c->req->param('new_servings') );
+                $dish->recalculate( $c->req->params->get('new_servings') );
             }
         }
     }
-    elsif ( $c->req->param('delete') ) {
-        while ( my $dish = $dishes->next ) {    # fetch objects for cascade delete of ingredients
-            $dish->delete();
-        }
+    elsif ( $c->req->params->get('delete') ) {
+        $dishes->delete_all();
     }
 
     $c->detach( redirect => [$project] );
 }
 
-sub create : POST Local {
+sub create : POST Chained('/base') PathPart('project/create') Args(0)
+  RequiresCapability('create_project') {
     my ( $self, $c ) = @_;
 
-    if ( length( my $name = $c->req->param('name') ) > 0 ) {
-        my $project = $c->model('DB::Project')->new_result( {} );
-        $project->name( scalar $c->req->param('name') );
-        $project->insert;
+    my $name = $c->req->params->get('name');
 
-        $c->response->redirect(
-            $c->uri_for_action( $self->action_for('get_import'), [ $project->url_name ] ) );
-    }
-    else {
-        $c->response->redirect( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
-    }
+    length $name > 0
+      or
+      $c->redirect_detach( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
+
+    my $is_public = $c->req->params->get('is_public') ? 1 : 0;
+
+    ( $is_public or $c->has_capability('create_private_project') )
+      or $c->redirect_detach(
+        $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
+
+    $c->txn_do(
+        sub {
+            my $project = $c->stash->{project} = $c->model('DB::Project')->create(
+                {
+                    name      => $c->req->params->get('name'),
+                    owner     => $c->user->id,
+                    is_public => $is_public,
+                }
+            );
+
+            $project->create_related(
+                projects_users => {
+                    user => $c->user->id,
+                    role => 'owner',
+                }
+            );
+        }
+    );
+
+    my $importable_projects = $c->forward('importable_projects');
+
+    $c->response->redirect(
+        $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'edit' ) ) );
 }
 
-sub rename : POST Chained('base') Args(0) {
+sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->stash->{project};
 
-    $project->update( { name => scalar $c->req->param('name') } );
+    $project->update( { name => $c->req->params->get('name') } );
 
-    $c->detach( redirect => [$project] );
+    $c->response->redirect( $c->project_uri('/project/settings') );
 }
 
-sub delete : POST Chained('base') Args(0) {
+sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_visibility') {
     my ( $self, $c ) = @_;
 
-    if ( $c->req->param('confirmation') eq $c->config->{project_deletion_confirmation} ) {
+    my $project = $c->stash->{project};
+
+    $project->update( { is_public => $c->req->params->get('public') ? 1 : 0 } );
+
+    $c->response->redirect( $c->project_uri('/project/settings') );
+}
+
+sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
+    my ( $self, $c ) = @_;
+
+    if ( $c->req->params->get('confirmation') eq $c->config->{project_deletion_confirmation} ) {
         $c->project->delete;
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
-        $c->response->redirect( $c->project_uri('/project/edit') );
+        $c->response->redirect( $c->project_uri('/project/settings') );
     }
 }
 
