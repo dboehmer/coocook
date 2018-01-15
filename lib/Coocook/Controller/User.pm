@@ -134,7 +134,15 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     $c->visit( '/email/verification', [ $user, $token ] );
 
-    $c->redirect_detach( $c->uri_for('/') );
+    $c->redirect_detach(
+        $c->uri_for(
+            '/',
+            {
+                error => "You should receive an e-mail with a web link."
+                  . " Please click that link to verify your e-mail address.",
+            }
+        )
+    );
 }
 
 sub recover : GET Chained('/base') Args(0) {

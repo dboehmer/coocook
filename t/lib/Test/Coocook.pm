@@ -44,6 +44,9 @@ sub register_ok {
             },
             "register account"
         );
+
+        $self->content_like(qr/e-mail/)
+          or note $self->content;
     };
 }
 
@@ -188,6 +191,9 @@ sub request_recovery_link_ok {
             },
             "submit e-mail recovery form"
         );
+
+        $self->content_contains('Recovery link sent')
+          or note $self->content;
     };
 }
 

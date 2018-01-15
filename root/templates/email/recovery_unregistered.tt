@@ -7,3 +7,5 @@ Do you want to register an account at [% name %]? Then go to
 [% register_url %]
 
 Otherwise you can ignore this e-mail.
+
+[% name %]
