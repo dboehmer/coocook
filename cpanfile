@@ -74,8 +74,7 @@ on 'test' => sub {
 };
 
 on 'configure' => sub {
-  requires "ExtUtils::MakeMaker" => "0";
-  requires "File::ShareDir::Install" => "0.06";
+  requires "ExtUtils::MakeMaker::CPANfile" => "0";
 };
 
 on 'develop' => sub {
