@@ -1,5 +1,7 @@
 package Coocook::Schema::Component::ResultSet::SortByName;
 
+# ABSTRACT: provide simple $rs->sorted() with predefined sort order
+
 use strict;
 use warnings;
 

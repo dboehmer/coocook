@@ -1,5 +1,7 @@
 package Coocook::Schema::ResultSet;
 
+# ABSTRACT: base class for all ResultSet classes
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use MooseX::NonMoose;

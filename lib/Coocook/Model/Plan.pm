@@ -1,5 +1,7 @@
 package Coocook::Model::Plan;
 
+# ABSTRACT: business logic for plain data structures of project/day plans
+
 use DateTime;
 use Moose;
 use MooseX::NonMoose;

@@ -1,5 +1,7 @@
 package Coocook::Schema;
 
+# ABSTRACT: DBIx::Class-based SQL database representation
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;

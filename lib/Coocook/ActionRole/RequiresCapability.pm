@@ -1,5 +1,7 @@
 package Coocook::ActionRole::RequiresCapability;
 
+# ABSTRACT: role for controller action to assert Model::Authz grants capability
+
 use Coocook::Model::Authorization;
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;

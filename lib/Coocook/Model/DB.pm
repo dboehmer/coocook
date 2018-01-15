@@ -1,5 +1,7 @@
 package Coocook::Model::DB;
 
+# ABSTRACT: adaptor class to provide Coocook::Schema namespace in Coocook app
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 

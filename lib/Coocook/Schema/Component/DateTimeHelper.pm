@@ -1,5 +1,7 @@
 package Coocook::Schema::Component::DateTimeHelper;
 
+# ABSTRACT: provide DateTime formatter/parser in Result[Set] classes
+
 use strict;
 use warnings;
 

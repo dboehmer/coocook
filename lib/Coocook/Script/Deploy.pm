@@ -1,5 +1,7 @@
 package Coocook::Script::Deploy;
 
+# ABSTRACT: script for database maintance based on App::DH
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 

@@ -1,5 +1,7 @@
 package Coocook::Filter::NiceNumber;
 
+# ABSTRACT: Filter module for Template Toolkit to display numbers nicely
+
 use strict;
 use warnings;
 

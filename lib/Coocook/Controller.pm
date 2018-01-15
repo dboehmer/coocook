@@ -1,5 +1,7 @@
 package Coocook::Controller;
 
+# ABSTRACT: base class for all controllers in Coocook
+
 use Carp;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

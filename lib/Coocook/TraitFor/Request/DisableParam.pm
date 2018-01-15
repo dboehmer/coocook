@@ -1,5 +1,7 @@
 package Coocook::TraitFor::Request::DisableParam;
 
+# ABSTRACT: jam $c->req->param() because it's dangerous
+
 use Moose::Role;
 use Carp;
 

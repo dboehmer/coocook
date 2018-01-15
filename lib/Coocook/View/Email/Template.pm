@@ -1,5 +1,7 @@
 package Coocook::View::Email::Template;
 
+# ABSTRACT: create e-mails with TT templates
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 

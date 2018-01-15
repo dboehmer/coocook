@@ -1,5 +1,7 @@
 package Coocook::Model::Importer;
 
+# ABSTRACT: business logic for importing data to a project from another
+
 use Carp;
 use JSON::MaybeXS;    # also a dependency of Catalyst
 use Moose;

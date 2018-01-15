@@ -1,5 +1,7 @@
 package Coocook::View::TT;
 
+# ABSTRACT: view for Coocook to create HTML pages with Template Toolkit
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use MooseX::NonMoose;
