@@ -2,12 +2,12 @@
 
 <p>Global roles: [% user.roles.join(', ') %]</p>
 
-<p>Projects:</p>
+<p>Project permissions:</p>
 
 <ul>
 [% FOR permission IN permissions %]
     <li>
-        <a href="[% c.uri_for_action('/project/edit', [permission.project.url_name]) %]">[% permission.project.name | html %]</a>
+        [% '🔒' UNLESS permission.project.is_public %]<a href="[% c.uri_for_action('/project/edit', [permission.project.url_name]) %]">[% permission.project.name | html %]</a>
         ([% permission.role %])
     </li>
 [% END %]
