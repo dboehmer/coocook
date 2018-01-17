@@ -137,11 +137,7 @@ sub login_fails {
 sub logout_ok {
     my ( $self, $name ) = @_;
 
-    subtest $name || "logout", sub {
-        $self->get_ok('/');    # TODO enable logout from all pages
-
-        $self->click_ok( 'logout', "click logout button" );
-    };
+    $self->click_ok( 'logout', $name || "click logout button" );
 }
 
 sub change_password_ok {
