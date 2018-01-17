@@ -26,7 +26,7 @@ sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     $c->stash( user_object => $c->model('DB::User')->find( { name => $name } ) );
 }
 
-sub show : GET Chained('base') PathPart('') Args(0) {
+sub show : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user_object};

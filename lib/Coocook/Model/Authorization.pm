@@ -15,13 +15,18 @@ use Carp;
 # - how to define lexical variables like $project before calling the anonymous sub?
 my @rules = (
     {
+        needs_input  => [],
+        rule         => sub { 1 },       # currently no actual check required
+        capabilities => ['view_user'],
+    },
+    {
         needs_input => ['user'],
-        rule        => sub { !!shift->{user} },
+        rule        => sub { !!shift->{user} },    # simply: is anyone logged in?
         capabilities =>
           [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
     },
     {
-        needs_input => ['project'],    # optional: user
+        needs_input => ['project'],                # optional: user
         rule        => sub {
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return (
