@@ -27,8 +27,14 @@ around execute => sub {
 
     if ( my $capabilities = $self->attributes->{RequiresCapability} ) {
         for my $capability (@$capabilities) {
-            $c->has_capability( $capability, $c->stash )
-              or $c->detach('/error/forbidden');
+            next if $c->has_capability( $capability, $c->stash );
+
+            # not logged in? try login and redirect here again
+            if ( $c->req->method eq 'GET' and not $c->user ) {
+                $c->redirect_detach( $c->uri_for_action( '/login', { redirect => $c->current_uri_local_part } ) );
+            }
+
+            $c->detach('/error/forbidden');
         }
     }
 

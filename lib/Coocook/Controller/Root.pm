@@ -88,11 +88,11 @@ sub auto : Private {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
             settings_url  => $c->uri_for_action('/settings'),
-            logout_url    => $c->uri_for_action('/logout'),
+            logout_url    => $c->forward('/logout_url'),
         );
     }
     else {
-        $c->stash( login_url => $c->uri_for_action('/login') );
+        $c->stash( login_url => $c->forward('/login_url') );
 
         $c->user_registration_enabled
           and $c->stash( register_url => $c->uri_for_action('/user/register') );

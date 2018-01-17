@@ -6,6 +6,39 @@ use HTML::Entities ();
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;
 
+=head1 METHODS
+
+=head2 $c->current_uri_local_part()
+
+Returns the URI for the current request with only the app-local part
+that can be passed to C<< $c->uri_for($uri_local_part) >.
+
+=cut
+
+# TODO better name?
+# TODO test this
+sub current_uri_local_part {
+    my ($c) = @_;
+
+    my $current_uri = $c->req->uri->rel( $c->req->base );
+    $current_uri =~ s/\.//;
+
+    return $current_uri;
+}
+
+=head2 $c->uri_for_local_part($local_part)
+
+Similar to C<< $c->uri_for() > but accepts query part.
+
+=cut
+
+# TODO test this
+sub uri_for_local_part {
+    my ( $c, $local_part ) = @_;
+
+    return $c->req->base . $local_part;
+}
+
 sub encode_entities {
     my ( $self, $text ) = @_;
     return HTML::Entities::encode_entities($text);

@@ -5,6 +5,17 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
+sub bad_request : Private {
+    my ( $self, $c ) = @_;
+
+    $c->response->status(400);
+
+    $c->stash(
+        title    => "Bad Request",
+        template => 'error/bad_request.tt',    # set explicitly to allow $c->detach('/error/bad_request')
+    );
+}
+
 sub forbidden : Private {
     my ( $self, $c ) = @_;
 
@@ -12,7 +23,7 @@ sub forbidden : Private {
 
     $c->stash(
         title    => "Forbidden",
-        template => 'error/forbidden.tt',    # set explicitly to allow $c->detach('/error/forbidden')
+        template => 'error/forbidden.tt',      # set explicitly to allow $c->detach('/error/forbidden')
     );
 }
 
