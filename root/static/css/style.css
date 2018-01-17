@@ -51,43 +51,48 @@ header nav ul {
 }
 
 header nav li {
-    display: inline-table;
+    display: inline;
+}
+
+header nav input[name="logout"],
+header nav a {
+    display: inline-block;
     padding-left: 0.5em;
     padding-right: 0.5em;
-    background: #333333;
     min-width: 3em;
-    text-align: center;
     line-height: 2em;
-}
 
-header nav li:hover{
-    background-color:#f5f5ef;
-    -webkit-box-shadow: 0px 2px 3px grey;
-    -moz-box-shadow: 0px 2px 3px grey;
-    box-shadow: 0px 2px 3px grey;
-}
-
-header nav li input[name="logout"],
-header nav li a {
-    text-decoration:none;
+    background: #333333;
     color: #f5f5ef;
+    text-align: center;
+    text-decoration:none;
 }
 
-header nav li:hover input[name="logout"],
-header nav li:hover a {
+header nav input[name="logout"]:active,
+header nav input[name="logout"]:hover,
+header nav a:hover {
+    background-color:#f5f5ef;
     color: #333333;
+
+    -webkit-box-shadow: 0px 2px 3px grey;
+    -moz-box-shadow:    0px 2px 3px grey;
+    box-shadow:         0px 2px 3px grey;
 }
 
-header nav li input[name="logout"],
-header nav li input[name="logout"] :hover {
+/* "Logout" must be button for POST request but style like link */
+header nav input[name="logout"]:hover,
+header nav input[name="logout"] {
     border: 0;
-    background:         none !important;
-    -webkit-box-shadow: none !important;
-    -moz-box-shadow:    none !important;
-    box-shadow:         none !important;
     font-family: inherit;
     font-size:   inherit;
+    cursor: pointer;
 }
+
+/*
+ * stop Firefox adding 2px to the submit button's height
+ * see https://stackoverflow.com/questions/12288175/firefox-adds-2px-padding-in-a-submit-button
+ */
+header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
 
 /******** content part ********/
 
