@@ -22,13 +22,14 @@ Catalyst Controller.
 sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
-    $c->stash( user => $c->model('DB::User')->find( { name => $name } ) );
+    # this variable MUST NOT be named 'user' because it collides with $c->user
+    $c->stash( user_object => $c->model('DB::User')->find( { name => $name } ) );
 }
 
 sub show : GET Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $user = $c->stash->{user};
+    my $user = $c->stash->{user_object};
 
     my @permissions = $user->projects_users->search(
         undef,
@@ -173,7 +174,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
 sub reset_password : GET Chained('base') Args(1) {
     my ( $self, $c, $base64_token ) = @_;
 
-    my $user = $c->stash->{user};
+    my $user = $c->stash->{user_object};
 
     # accept only limited tokens
     # because password reset allows hijacking of valueable accounts
@@ -188,7 +189,7 @@ sub reset_password : GET Chained('base') Args(1) {
 sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) {
     my ( $self, $c, $base64_token ) = @_;
 
-    my $user = $c->stash->{user};
+    my $user = $c->stash->{user_object};
 
     # for rationale see reset_password()
     ( $user->token_expires and $user->check_base64_token($base64_token) )
@@ -222,7 +223,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
 sub verify : GET Chained('base') PathPart('verify') Args(1) {
     my ( $self, $c, $base64_token ) = @_;
 
-    my $user = $c->stash->{user};
+    my $user = $c->stash->{user_object};
 
     if ( !$user->email_verified ) {
         $user->check_base64_token($base64_token)
