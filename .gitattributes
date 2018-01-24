@@ -1,5 +1,17 @@
+# for documentation see
+# https://github.com/github/linguist#overrides
+
 *.pl  linguist-language=Perl
 *.pm  linguist-language=Perl
 *.t   linguist-language=Perl
 *.tt  linguist-language=HTML
 *.sql linguist-language=SQL
+
+/cpanfile                                          linguist-generated=true
+/share/ddl/*/deploy/*/001-auto.sql                 linguist-generated=true
+/share/ddl/*/deploy/*/001-auto-__VERSION.sql       linguist-generated=true
+/share/ddl/*/upgrade/*-*/001-auto.sql              linguist-generated=true
+/share/ddl/_source/deploy/*/001-auto.yml           linguist-generated=true
+/share/ddl/_source/deploy/*/001-auto-__VERSION.yml linguist-generated=true
+
+/root/static/lib/    linguist-vendored=true
