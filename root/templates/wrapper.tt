@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>
@@ -63,7 +64,9 @@
 </header>
 
 <div class="content">
-<h2>[% IF html_title; html_title; ELSE; title | html; END %]</h2>
+[% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
+[% ELSIF   title %]<h2>[% title | html %]</h2>
+[% END %]
 
 [% FOREACH error IN errors %]
     <p class="error">[% error | xml %]</p>
