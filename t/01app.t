@@ -4,19 +4,19 @@ use strict;
 use warnings;
 
 use lib 't/lib';
+
 use TestDB;
-use Test::More;
+use Test::Coocook;
+use Test::Most tests => 2;
 
-BEGIN { our $SCHEMA = TestDB->new() }
+our $SCHEMA = TestDB->new();
 
-use Catalyst::Test 'Coocook';
+my $t = Test::Coocook->new( max_redirect => 0 );
 
-ok( !request('/')->is_error, 'Request should succeed' );
+subtest "HTTP redirects to HTTPS" => sub {
+    $t->get('http://localhost/');
+    $t->status_is(302);
+    $t->header_is( Location => 'https://localhost/' );
+};
 
-ok my $res = request('http://localhost/'), "request http://localhost/";
-
-is $res->code => 302, "... HTTP response code is 302";
-
-is $res->header('Location') => 'https://localhost/', "Location header is HTTPS";
-
-done_testing();
+$t->get_ok('https://localhost');

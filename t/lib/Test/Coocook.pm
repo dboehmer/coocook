@@ -243,4 +243,11 @@ sub create_project_ok {
     };
 }
 
+sub status_is {
+    my ( $self, $expected, $name ) = @_;
+
+    is $self->response->code => $expected,
+      $name || "Response has status code $expected";
+}
+
 1;
