@@ -51,6 +51,8 @@ sub change_password : POST Chained('settings_base') Args(0) RequiresCapability('
 
     $user->update( { password => $new_password } );
 
+    $c->visit( '/email/password_changed', [$user] );
+
     $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
 }
 

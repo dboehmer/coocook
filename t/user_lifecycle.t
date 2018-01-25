@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 33;
+use Test::Most tests => 34;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -83,6 +83,10 @@ $t->change_password_ok(
         new_password2 => 'P@ssw0rd',
     },
 );
+
+$t->email_like(qr/ password .+ changed /x);
+
+$t->clear_emails;
 
 $t->change_display_name_ok('John Doe');
 

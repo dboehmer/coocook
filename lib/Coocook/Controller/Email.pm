@@ -37,6 +37,19 @@ sub notify_admin_about_registration : Private {
     );
 }
 
+sub password_changed : Private {
+    my ( $self, $c, $user ) = @_;
+
+    $c->stash(
+        email => {
+            to       => $user->email,
+            subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
+            template => 'email/password_changed.tt',
+        },
+        user => $user,
+    );
+}
+
 sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 
