@@ -149,7 +149,10 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 sub recover : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash( recover_url => $c->uri_for( $self->action_for('post_recover') ) );
+    $c->stash(
+        email       => $c->req->params->get('email'),
+        recover_url => $c->uri_for( $self->action_for('post_recover') ),
+    );
 }
 
 sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
