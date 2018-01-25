@@ -54,29 +54,15 @@ sub get_email_link_ok {
     my ( $self, $url_regex, $name ) = @_;
 
     subtest $name || "GET link from last e-mail", sub {
-        my $emails = $self->emails;
+        my @urls = $self->email_like($url_regex);
 
-        if ( @$emails == 0 ) {
-            fail "no e-mails stored";
-        }
-        else {
-            @$emails > 1
-              and warn "More than 1 e-mail stored";
+        is scalar @urls => 1,
+          "found 1 URL"
+          or return;
 
-            my $email = $emails->[-1]->{email};    # use last e-mail
+        my $verification_url = $urls[0];
 
-            note $email->as_string;
-
-            my @urls = ( $email->get_body =~ m/$url_regex/g );
-
-            is scalar @urls => 1,
-              "found 1 URL"
-              or return;
-
-            my $verification_url = $urls[0];
-
-            $self->get_ok($verification_url);
-        }
+        $self->get_ok($verification_url);
     };
 }
 
@@ -87,6 +73,33 @@ sub verify_email_ok {
         qr/http\S+verify\S+/,    # TODO regex is very simple and will break easily
         $name || "verify e-mail address"
     );
+}
+
+sub email_like {
+    my ( $self, $regex, $name ) = @_;
+
+    $name ||= "last e-mail like $regex";
+
+    my $emails = $self->emails;
+
+    if ( @$emails == 0 ) {
+        fail $name;
+        note "no e-mails stored";
+        return;
+    }
+
+    @$emails > 1
+      and warn "More than 1 e-mail stored";
+
+    my $email = $emails->[-1]->{email};    # use last e-mail
+
+    note $email->as_string;
+
+    my @matches = ( $email->get_body =~ m/$regex/g );
+
+    ok @matches >= 1, $name;
+
+    return @matches;
 }
 
 sub is_logged_in {
