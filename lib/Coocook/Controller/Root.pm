@@ -108,7 +108,11 @@ sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash( public_projects => [ $c->model('DB::Project')->public->all ] );
+    $c->stash(
+        meta_description => $c->config->{homepage_meta_description},
+        meta_keywords    => $c->config->{homepage_meta_keywords},
+        public_projects  => [ $c->model('DB::Project')->public->all ],
+    );
 }
 
 sub dashboard : Private {
