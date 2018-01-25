@@ -1,6 +1,6 @@
-<p>Username: [% user.name %]</p>
+<p>Username: [% user_object.name %]</p>
 
-<p>Global roles: [% user.roles.join(', ') %]</p>
+<p>Global roles: [% user_object.roles.join(', ') %]</p>
 
 <p>Project permissions:</p>
 
