@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 32;
+use Test::Most tests => 33;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -59,6 +59,9 @@ $t->register_ok(
         password2    => "s3cr3t",
     }
 );
+
+$t->shift_emails();
+$t->email_like(qr/registered/);
 
 for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_admin'), "2nd user created hasn't 'site_admin' role";

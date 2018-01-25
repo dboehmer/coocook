@@ -23,6 +23,20 @@ sub begin : Private {
     );
 }
 
+sub notify_admin_about_registration : Private {
+    my ( $self, $c, $user, $admin ) = @_;
+
+    $c->stash(
+        email => {
+            to       => $admin->email,
+            subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
+            template => 'email/notify_admin_about_registration.tt',
+        },
+        admin => $admin,
+        user  => $user,
+    );
+}
+
 sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 

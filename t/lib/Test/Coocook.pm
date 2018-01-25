@@ -27,9 +27,8 @@ sub emails {
     return [ Email::Sender::Simple->default_transport->deliveries ];
 }
 
-sub clear_emails {
-    Email::Sender::Simple->default_transport->clear_deliveries;
-}
+sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
+sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
 
 sub register_ok {
     my ( $self, $field_values, $name ) = @_;
@@ -53,7 +52,7 @@ sub register_ok {
 sub get_email_link_ok {
     my ( $self, $url_regex, $name ) = @_;
 
-    subtest $name || "GET link from last e-mail", sub {
+    subtest $name || "GET link from first e-mail", sub {
         my @urls = $self->email_like($url_regex);
 
         is scalar @urls => 1,
@@ -78,7 +77,7 @@ sub verify_email_ok {
 sub email_like {
     my ( $self, $regex, $name ) = @_;
 
-    $name ||= "last e-mail like $regex";
+    $name ||= "first e-mail like $regex";
 
     my $emails = $self->emails;
 
@@ -91,7 +90,7 @@ sub email_like {
     @$emails > 1
       and warn "More than 1 e-mail stored";
 
-    my $email = $emails->[-1]->{email};    # use last e-mail
+    my $email = $emails->[0]->{email};    # use first e-mail
 
     note $email->as_string;
 

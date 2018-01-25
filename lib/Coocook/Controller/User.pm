@@ -127,13 +127,22 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     );
 
+    # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
+    $password = 'x' x length $password;
+    undef $password;
+
+    $c->visit( '/email/verification', [ $user, $token ] );
+
     $user->add_roles( $c->config->{new_user_default_roles} );
 
     if ($is_1st_user) {
         $user->add_roles('site_admin');
     }
-
-    $c->visit( '/email/verification', [ $user, $token ] );
+    elsif ( $c->config->{notify_site_admins_about_registrations} ) {
+        for my $admin ( $c->model('DB::User')->site_admins->all ) {
+            $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
+        }
+    }
 
     $c->redirect_detach(
         $c->uri_for(

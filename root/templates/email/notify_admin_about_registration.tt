@@ -1,0 +1,12 @@
+Hi [% admin.display_name %],
+
+somebody registered an account at [% name %].
+
+Username:       "[% user.name %]"
+Display name:   "[% user.display_name %]"
+
+This is just a notification. Everything is probably fine.
+
+You received this e-mail because you are a site admin at [% name %].
+
+[% name %]
