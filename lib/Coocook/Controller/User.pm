@@ -114,8 +114,6 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     my $token = $c->model('Token')->new();
 
-    my $is_1st_user = !$c->model('DB::User')->exists;
-
     my $user = $c->model('DB::User')->create(
         {
             name         => $name,
@@ -133,16 +131,20 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     $c->visit( '/email/verification', [ $user, $token ] );
 
-    $user->add_roles( $c->config->{new_user_default_roles} );
+    my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
 
-    if ($is_1st_user) {
-        $user->add_roles('site_admin');
-    }
-    elsif ( $c->config->{notify_site_admins_about_registrations} ) {
+    if ( $site_admins_exist and $c->config->{notify_site_admins_about_registrations} ) {
         for my $admin ( $c->model('DB::User')->site_admins->all ) {
             $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
         }
     }
+
+    my @roles = @{ $c->config->{new_user_default_roles} || [] };
+
+    $site_admins_exist
+      or push @roles, 'site_admin';
+
+    $user->add_roles( \@roles );
 
     $c->redirect_detach(
         $c->uri_for(
