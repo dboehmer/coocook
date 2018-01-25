@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 2;
+use Test::Most tests => 3;
 
 our $SCHEMA = TestDB->new();
 
@@ -20,3 +20,29 @@ subtest "HTTP redirects to HTTPS" => sub {
 };
 
 $t->get_ok('https://localhost');
+
+subtest "public actions are either GET or POST" => sub {
+    my $app = $t->catalyst_app;
+
+    for ( $app->controllers ) {
+        my $controller = $app->controller($_);
+
+        for my $action ( $controller->get_action_methods ) {
+            my %attrs = map { s/\(.+//; $_ => 1 } @{ $action->attributes };
+
+            exists $attrs{Private}
+              and next;
+
+            exists $attrs{CaptureArgs}   # actions with CaptureArgs are chain elements and automatically private
+              and next;
+
+            exists $attrs{AnyMethod}     # special keyword indicating any method will be ok
+              and next;
+
+            $action->name eq 'end'
+              and next;
+
+            ok( ( exists $attrs{GET} xor $attrs{POST} ), $action->package_name . "::" . $action->name . "()" );
+        }
+    }
+};

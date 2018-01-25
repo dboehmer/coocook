@@ -14,7 +14,6 @@ sub COMPONENT {
 
     $class->config(
         action_roles => [    #perltidy
-            ( $ENV{CATALYST_DEBUG} ? '~RequireHttpMethod' : () ),
             '~RequiresCapability',
         ]
     );
