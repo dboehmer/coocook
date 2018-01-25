@@ -26,7 +26,7 @@ sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     $c->stash( user_object => $c->model('DB::User')->find( { name => $name } ) );
 }
 
-sub show : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
+sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user_object};
@@ -44,7 +44,7 @@ sub show : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_use
     $c->escape_title( User => $user->display_name );
 }
 
-sub register : GET Chained('/base') Args(0) {
+sub register : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->user_registration_enabled
@@ -146,7 +146,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     );
 }
 
-sub recover : GET Chained('/base') Args(0) {
+sub recover : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash( recover_url => $c->uri_for( $self->action_for('post_recover') ) );
@@ -171,7 +171,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
     $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
 }
 
-sub reset_password : GET Chained('base') Args(1) {
+sub reset_password : GET HEAD Chained('base') Args(1) {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};
@@ -220,7 +220,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     $c->response->redirect( $c->uri_for_action('/index') );
 }
 
-sub verify : GET Chained('base') PathPart('verify') Args(1) {
+sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};

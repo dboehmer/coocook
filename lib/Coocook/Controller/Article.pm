@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('articles') Args(0)
+sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -70,7 +70,7 @@ sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');

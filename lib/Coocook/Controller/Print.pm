@@ -29,7 +29,7 @@ sub auto : Private {
     push @{ $c->stash->{css} }, 'lib/print.css';
 }
 
-sub index : GET Chained('/project/base') PathPart('print') Args(0)
+sub index : GET HEAD Chained('/project/base') PathPart('print') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -79,7 +79,7 @@ sub index : GET Chained('/project/base') PathPart('print') Args(0)
     );
 }
 
-sub day : GET Chained('/project/base') PathPart('print/day') Args(3)
+sub day : GET HEAD Chained('/project/base') PathPart('print/day') Args(3)
   RequiresCapability('view_project') {
     my ( $self, $c, $year, $month, $day ) = @_;
 
@@ -116,7 +116,7 @@ sub day : GET Chained('/project/base') PathPart('print/day') Args(3)
     );
 }
 
-sub project : GET Chained('/project/base') PathPart('print/project') Args(0)
+sub project : GET HEAD Chained('/project/base') PathPart('print/project') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
@@ -129,7 +129,7 @@ sub project : GET Chained('/project/base') PathPart('print/project') Args(0)
     );
 }
 
-sub purchase_list : GET Chained('/project/base') PathPart('print/purchase_list') Args(1)
+sub purchase_list : GET HEAD Chained('/project/base') PathPart('print/purchase_list') Args(1)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 

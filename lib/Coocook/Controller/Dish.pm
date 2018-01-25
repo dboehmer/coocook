@@ -24,7 +24,7 @@ sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id) );
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $dish = $c->stash->{dish};

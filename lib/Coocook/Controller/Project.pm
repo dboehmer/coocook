@@ -44,7 +44,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
 
 =cut
 
-sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     $c->has_capability('view_project')
@@ -84,8 +84,8 @@ sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('view_pro
     );
 }
 
-sub settings : GET Chained('base') PathPart('settings') RequiresCapability('view_project_settings')
-  Args(0) {
+sub settings : GET HEAD Chained('base') PathPart('settings') Args(0)
+  RequiresCapability('view_project_settings') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -105,7 +105,7 @@ sub importable_projects : Private {
           $c->project->other_projects->all ];
 }
 
-sub get_import : GET Chained('base') PathPart('import') Args(0)
+sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 

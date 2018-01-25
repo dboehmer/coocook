@@ -11,7 +11,7 @@ __PACKAGE__->config( namespace => '' );
 # because controller is explicitly set to namespace '' like Controller::Root
 sub settings_base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
 
-sub settings : GET Chained('settings_base') PathPart('') Args(0)
+sub settings : GET HEAD Chained('settings_base') PathPart('') Args(0)
   RequiresCapability('view_user_settings') {
     my ( $self, $c ) = @_;
 

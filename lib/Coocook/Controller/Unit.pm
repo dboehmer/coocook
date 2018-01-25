@@ -22,7 +22,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET Chained('/project/base') PathPart('units') Args(0)
+sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -98,7 +98,7 @@ sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
 
 }
 
-sub edit : GET Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $unit = $c->stash->{unit};

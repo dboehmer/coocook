@@ -99,7 +99,7 @@ sub auto : Private {
     return 1;    # important
 }
 
-sub index : GET Chained('/base') PathPart('') Args(0) {
+sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->go( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
@@ -130,7 +130,7 @@ sub dashboard : Private {
     );
 }
 
-sub statistics : GET Chained('/base') Args(0) {
+sub statistics : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -139,7 +139,7 @@ sub statistics : GET Chained('/base') Args(0) {
     );
 }
 
-sub about : GET Chained('/base') Args(0) {
+sub about : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(

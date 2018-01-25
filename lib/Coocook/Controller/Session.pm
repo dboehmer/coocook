@@ -7,7 +7,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 __PACKAGE__->config( namespace => '' );
 
-sub login : GET Chained('/base') Args(0) {
+sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(

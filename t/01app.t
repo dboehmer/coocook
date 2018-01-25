@@ -42,7 +42,11 @@ subtest "public actions are either GET or POST" => sub {
             $action->name eq 'end'
               and next;
 
-            ok( ( exists $attrs{GET} xor $attrs{POST} ), $action->package_name . "::" . $action->name . "()" );
+            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
+            ok(
+                ( $methods eq 'GET+HEAD' or $methods eq 'POST' ),
+                $action->package_name . "::" . $action->name . "()"
+            ) or note "HTTP methods: " . $methods;
         }
     }
 };
