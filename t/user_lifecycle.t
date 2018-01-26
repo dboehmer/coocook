@@ -11,6 +11,9 @@ our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
 my $t = Test::Coocook->new();
 
+$ENV{TEST_VERBOSE}
+  or Coocook->log->disable('info');    # don't spill STDERR with info messages
+
 $t->get_ok('/');
 
 $t->register_ok(

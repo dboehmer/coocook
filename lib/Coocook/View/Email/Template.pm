@@ -17,6 +17,20 @@ Catalyst View.
 
 =cut
 
+before process => sub {
+    my ( $self, $c ) = @_;
+
+    my $stash_key = $self->stash_key;
+
+    $c->log->info(
+        sprintf(
+            "Sending e-mail to <%s> with subject '%s'",
+            $c->stash->{$stash_key}{to},
+            $c->stash->{$stash_key}{subject},
+        )
+    );
+};
+
 __PACKAGE__->meta->make_immutable;
 
 1;
