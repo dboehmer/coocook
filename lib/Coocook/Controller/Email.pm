@@ -46,7 +46,8 @@ sub password_changed : Private {
             subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
             template => 'email/password_changed.tt',
         },
-        user => $user,
+        user         => $user,
+        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email } ),
     );
 }
 
