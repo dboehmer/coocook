@@ -149,8 +149,10 @@ EOT
                 password_type  => 'self_check',
             },
             store => {
-                class      => 'DBIx::Class',
-                user_model => 'DB::User',
+                class         => 'DBIx::Class',
+                user_model    => 'DB::User',
+                role_relation => 'roles_users',
+                role_field    => 'role',
             },
         }
     },
