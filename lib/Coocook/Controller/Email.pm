@@ -30,7 +30,7 @@ sub notify_admin_about_registration : Private {
         email => {
             to       => $admin->email,
             subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
-            template => 'email/notify_admin_about_registration.tt',
+            template => 'notify_admin_about_registration.tt',
         },
         admin => $admin,
         user  => $user,
@@ -44,7 +44,7 @@ sub password_changed : Private {
         email => {
             to       => $user->email,
             subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
-            template => 'email/password_changed.tt',
+            template => 'password_changed.tt',
         },
         user         => $user,
         recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email } ),
@@ -68,7 +68,7 @@ sub recovery_link : Private {
         email => {
             to       => $user->email,
             subject  => "Account recovery at " . $c->config->{name},
-            template => 'email/recovery_link.tt',
+            template => 'recovery_link.tt',
         },
         user         => $user,
         expires      => $expires,
@@ -83,7 +83,7 @@ sub recovery_unregistered : Private {
         email => {
             to       => $email,
             subject  => "Account recovery at " . $c->config->{name},
-            template => 'email/recovery_unregistered.tt',
+            template => 'recovery_unregistered.tt',
         },
         register_url => $c->uri_for_action('/user/register'),
     );
@@ -96,7 +96,7 @@ sub verification : Private {
         email => {
             to       => $user->email,
             subject  => "Verify your Account at " . $c->config->{name},
-            template => 'email/verify.tt',
+            template => 'verify.tt',
         },
         verification_url => $c->uri_for_action( '/user/verify', [ $user->name, $token->to_base64 ] ),
     );

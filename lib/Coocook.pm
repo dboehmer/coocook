@@ -175,6 +175,7 @@ EOT
             encoding     => 'quoted-printable',
         },
         sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
+        template_prefix => 'email',
     },
 
     'View::TT' => {
