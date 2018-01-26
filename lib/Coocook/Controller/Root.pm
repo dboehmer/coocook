@@ -6,21 +6,9 @@ use MooseX::MarkAsMethods autoclean => 1;
 # BEGIN-block necessary to make method attributes work
 BEGIN { extends 'Coocook::Controller' }
 
-#
 # Sets the actions in this controller to be registered with no prefix
-# so they function identically to actions created in MyApp.pm
-#
+# so they function identically to actions created in Coocook.pm
 __PACKAGE__->config( namespace => '' );
-
-=encoding utf-8
-
-=head1 NAME
-
-Coocook::Controller::Root - Root Controller for Coocook
-
-=head1 DESCRIPTION
-
-[enter your description here]
 
 =head1 METHODS
 

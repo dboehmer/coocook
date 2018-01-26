@@ -186,16 +186,6 @@ EOT
 # Start the application
 __PACKAGE__->setup();
 
-=encoding utf8
-
-=head1 SYNOPSIS
-
-    script/coocook_server.pl
-
-=head1 DESCRIPTION
-
-[enter your description here]
-
 =head1 SEE ALSO
 
 L<Coocook::Controller::Root>, L<Catalyst>
