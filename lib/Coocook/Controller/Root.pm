@@ -72,6 +72,12 @@ sub auto : Private {
         ],
     );
 
+    for my $key (qw< css js >) {
+        if ( my $config = $c->config->{$key} ) {
+            push @{ $c->stash->{$key} }, ref $config eq 'ARRAY' ? @$config : $config;
+        }
+    }
+
     # wrapper might be undef, e.g. after /email/begin
     exists $c->stash->{wrapper}
       or $c->stash( wrapper => 'wrapper.tt' );
