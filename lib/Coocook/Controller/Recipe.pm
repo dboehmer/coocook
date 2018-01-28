@@ -189,7 +189,7 @@ sub reposition : POST Chained('/project/base') PathPart('recipe_ingredient/repos
   RequiresCapability('edit_project') {
     my ( $self, $c, $id ) = @_;
 
-    my $ingredient = $c->project->recipes->ingredients->find($id);
+    my $ingredient = $c->project->recipes->search_related('ingredients')->find($id);
 
     if ( $c->req->params->get('up') ) {
         $ingredient->move_previous();

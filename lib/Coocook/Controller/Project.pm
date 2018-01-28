@@ -147,8 +147,8 @@ sub edit_dishes : POST Chained('base') Args(0) RequiresCapability('edit_project'
     my $project = $c->project;
 
     # filter selected IDs from possible dish IDs
-    my @dish_ids =
-      grep { $c->req->params->get("dish$_") } $project->meals->dishes->get_column('id')->all;
+    my @dish_ids = grep { $c->req->params->get("dish$_") }
+      $project->meals->search_related('dishes')->get_column('id')->all;
 
     # select dishes from valid ID list
     my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );

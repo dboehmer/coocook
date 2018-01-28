@@ -51,7 +51,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
     my @units = map { $_->units->all } @{ $c->stash->{quantities} };
     my %units = map { $_->id => $_ } @units;
 
-    my $articles_units = $c->project->articles->articles_units->hri;
+    my $articles_units = $c->project->articles->search_related('articles_units')->hri;
 
     while ( my $article_unit = $articles_units->next ) {
         my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };

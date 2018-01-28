@@ -40,15 +40,15 @@ __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 before delete => sub {    # TODO solve workaround
     my $self = shift;
 
-    $self->purchase_lists->items->delete;
+    $self->purchase_lists->search_related('items')->delete;
     $self->purchase_lists->delete;
-    $self->articles->article_tags->delete;
-    $self->articles->articles_units->delete;
-    $self->meals->dishes->ingredients->delete;
-    $self->meals->dishes->delete;
+    $self->articles->search_related('articles_tags')->delete;
+    $self->articles->search_related('articles_units')->delete;
+    $self->meals->search_related('dishes')->search_related('ingredients')->delete;
+    $self->meals->search_related('dishes')->delete;
     $self->meals->delete;
-    $self->recipes->ingredients->delete;
-    $self->recipes->recipe_tags->delete;
+    $self->recipes->search_related('ingredients')->delete;
+    $self->recipes->search_related('recipes_tags')->delete;
     $self->recipes->delete;
     $self->articles->delete;
     $self->shop_sections->delete;
@@ -106,7 +106,7 @@ sub articles_cached_units {
     my %articles_units;
 
     {
-        my $articles_units = $articles->articles_units;
+        my $articles_units = $articles->search_related('articles_units');
 
         while ( my $a_u = $articles_units->next ) {
             my $a = $a_u->get_column('article');

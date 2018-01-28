@@ -38,7 +38,9 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         key        => 'articles_units',
         auto       => 1,
         depends_on => [ 'articles', 'units' ],
-        import     => sub { shift->articles->articles_units, { article => 'articles', unit => 'units' } },
+        import     => sub {
+            shift->articles->search_related('articles_units'), { article => 'articles', unit => 'units' };
+        },
     },
     {
         key        => 'recipes',
@@ -47,7 +49,7 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         import     => [
             sub { shift->recipes },
             sub {
-                shift->recipes->ingredients,
+                shift->recipes->search_related('ingredients'),
                   { project => 'projects', article => 'articles', recipe => 'recipes', unit => 'units' };
             },
         ],
@@ -64,13 +66,16 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         key        => 'articles_tags',
         auto       => 1,
         depends_on => [ 'articles', 'tags' ],
-        import     => sub { shift->articles->article_tags, { article => 'articles', tag => 'tags' } },
+        import =>
+          sub { shift->articles->search_related('articles_tags'), { article => 'articles', tag => 'tags' } }
+        ,
     },
     {
         key        => 'recipes_tags',
         auto       => 1,
         depends_on => [ 'recipes', 'tags' ],
-        import     => sub { shift->recipes->recipe_tags, { recipe => 'recipes', tag => 'tags' } },
+        import =>
+          sub { shift->recipes->search_related('recipes_tags'), { recipe => 'recipes', tag => 'tags' } },
     },
 );
 

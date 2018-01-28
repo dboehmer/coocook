@@ -24,7 +24,8 @@ sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') 
 
     my $project = $c->project;
 
-    my $ingredients = $project->meals->dishes->ingredients->unassigned->search(
+    my $ingredients =
+      $project->meals->search_related('dishes')->search_related('ingredients')->unassigned->search(
         undef,
         {
             prefetch => [ 'article', { 'dish' => 'meal' }, 'unit' ],
@@ -36,9 +37,10 @@ sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') 
                   >
             ],
         }
-    );
+      );
 
-    my $lists = $project->purchase_lists->search(
+    my $lists = $project->search_related(
+        'purchase_lists',
         undef,
         {
             order_by => 'date',
@@ -79,9 +81,10 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1)
   RequiresCapability('edit_project') {
     my ( $self, $c, $item_id ) = @_;
 
-    my $item = $c->project->purchase_lists->items->find($item_id);    # TODO error handling
+    my $item =
+      $c->project->purchase_lists->search_related('items')->find($item_id);    # TODO error handling
 
-    my $unit = $c->project->units->find( $c->req->params->get('unit') );    # TODO error handling
+    my $unit = $c->project->units->find( $c->req->params->get('unit') );       # TODO error handling
 
     $item->convert($unit);
 

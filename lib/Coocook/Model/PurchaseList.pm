@@ -93,7 +93,7 @@ sub BUILD {
     {
         my %ingredients_by_dish;
 
-        my $ingredients = $list->items->ingredients->hri;
+        my $ingredients = $list->items->search_related('ingredients')->hri;
 
         while ( my $ingredient = $ingredients->next ) {
             $ingredient->{article} = $articles{ $ingredient->{article} };

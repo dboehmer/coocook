@@ -13,7 +13,6 @@ __PACKAGE__->load_components(
       InflateColumn::DateTime
       +Coocook::Schema::Component::DateTimeHelper
       +Coocook::Schema::Component::Result::Boolify
-      +Coocook::Schema::Component::Result::ResultsetRelationships
       >
 );
 

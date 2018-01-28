@@ -34,16 +34,16 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
 
     {
         my @resultsets = (
-            $c->project->units->articles_units,    #perltidy
-            $c->project->purchase_lists->items,
-            $c->project->dishes->ingredients,
-            $c->project->recipes->ingredients,
+            $c->project->units->search_related('articles_units'),
+            $c->project->purchase_lists->search_related('items'),
+            $c->project->dishes->search_related('ingredients'),
+            $c->project->recipes->search_related('ingredients'),
         );
 
         for my $resultset (@resultsets) {
             my $ids = $resultset->get_column( { distinct => 'unit' } );
 
-            @units_in_use{ $ids->all } = ();       # set all keys to undef
+            @units_in_use{ $ids->all } = ();    # set all keys to undef
         }
     }
 

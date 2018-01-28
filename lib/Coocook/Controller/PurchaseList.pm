@@ -80,7 +80,7 @@ sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/re
   Args(1) RequiresCapability('edit_project') {
     my ( $self, $c, $ingredient_id ) = @_;
 
-    my $ingredient = $c->project->dishes->ingredients->find($ingredient_id)
+    my $ingredient = $c->project->dishes->search_related('ingredients')->find($ingredient_id)
       or die "ingredient not found";
 
     my $item = $ingredient->item
