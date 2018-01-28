@@ -53,7 +53,15 @@ sub auto : Private {
         }
     }
 
-    $c->stash( map { $_ => $c->config->{$_} } qw< date_format_short date_format_long > );
+    $c->stash(
+        map { $_ => $c->config->{$_} }
+          qw<
+          date_format_short
+          date_format_long
+          icon_type
+          icon_url
+          >
+    );
 
     $c->stash(
         css => ['css/style.css'],

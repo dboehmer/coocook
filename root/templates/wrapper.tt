@@ -12,6 +12,10 @@
     <meta name="description" content="[% meta_description %]">
     <meta name="keywords"    content="[% meta_keywords %]">
 
+[% IF icon_url %]
+    <link rel="icon" type="[% icon_type %]" href="[% icon_url %]">
+[% END %]
+
 [% FOREACH path IN css %]
     <link rel="stylesheet" href="[% path %]">
 [% END %]

@@ -2,7 +2,7 @@
 /coocook.sqlite
 
 # custom config file
-/coocook_local.conf
+/coocook_local.*
 
 # build files
 /blib/
