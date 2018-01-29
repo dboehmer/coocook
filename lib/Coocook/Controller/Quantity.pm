@@ -69,7 +69,7 @@ sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
 sub base : Chained('/project/base') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( quantity => $c->project->quantities->find($id) );    # TODO error handling
+    $c->stash( quantity => $c->project->quantities->find($id) || $c->detach('/error/not_found') );
 }
 
 sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {

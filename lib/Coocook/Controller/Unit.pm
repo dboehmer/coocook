@@ -94,8 +94,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
 sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( unit => $c->project->units->find($id) );    # TODO error handling
-
+    $c->stash( unit => $c->project->units->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {

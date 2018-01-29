@@ -35,7 +35,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('recipes') Args(0)
 sub base : Chained('/project/base') PathPart('recipe') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( recipe => $c->project->recipes->find($id) );    # TODO error handling
+    $c->stash( recipe => $c->project->recipes->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {

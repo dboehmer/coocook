@@ -43,14 +43,14 @@ sub tag : GET HEAD Chained('/project/base') PathPart('tag') CaptureArgs(1)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( tag => $c->project->tags->find($id) );    # TODO error handling
+    $c->stash( tag => $c->project->tags->find($id) || $c->detach('/error/not_found') );
 }
 
 sub tag_group : GET HEAD Chained('/project/base') PathPart('tag_group') CaptureArgs(1)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( tag_group => $c->project->tag_groups->find($id) );    # TODO error handling
+    $c->stash( tag_group => $c->project->tag_groups->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view_project') {

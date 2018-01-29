@@ -51,7 +51,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('purchase_lists') Args(0)
 sub base : Chained('/project/base') PathPart('purchase_list') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( list => $c->project->purchase_lists->find($id) );    # TODO error handling
+    $c->stash( list => $c->project->purchase_lists->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {

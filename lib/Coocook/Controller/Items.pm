@@ -81,10 +81,11 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1)
   RequiresCapability('edit_project') {
     my ( $self, $c, $item_id ) = @_;
 
-    my $item =
-      $c->project->purchase_lists->search_related('items')->find($item_id);    # TODO error handling
+    my $item = $c->project->purchase_lists->search_related('items')->find($item_id)
+      || $c->detach('/error/not_found');
 
-    my $unit = $c->project->units->find( $c->req->params->get('unit') );       # TODO error handling
+    my $unit = $c->project->units->find( $c->req->params->get('unit') )
+      || $c->detach('/error/not_found');
 
     $item->convert($unit);
 

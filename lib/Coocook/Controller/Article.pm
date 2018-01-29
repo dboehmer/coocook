@@ -67,7 +67,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
 sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
+    $c->stash( article => $c->project->articles->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project')
@@ -77,7 +77,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->forward('fetch_project_data');
 
     my $article = $c->stash->{article}
-      or die "Can't find article";                               # TODO serious error message
+      || $c->detach('/error/not_found');
 
     # collect related recipes linked to dishes and independent dishes
     my $dishes = $article->dishes;

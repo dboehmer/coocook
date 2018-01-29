@@ -20,8 +20,8 @@ Catalyst Controller.
 sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    # TODO error handling
-    $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id) );
+    $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id)
+          || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {

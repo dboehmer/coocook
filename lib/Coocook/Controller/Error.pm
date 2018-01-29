@@ -27,7 +27,10 @@ sub not_found : AnyMethod Chained('/base') PathPart('') {
 
     $c->response->status(404);
 
-    $c->stash->{title} = "Not found";
+    $c->stash(
+        title    => "Not found",
+        template => 'error/not_found.tt',    # set explicitly to allow $c->detach('/error/not_found')
+    );
 }
 
 __PACKAGE__->meta->make_immutable;
