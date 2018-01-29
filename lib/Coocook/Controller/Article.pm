@@ -70,7 +70,8 @@ sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     $c->stash( article => $c->project->articles->find($id) );    # TODO error handling
 }
 
-sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project')
+  Does('~HasJS') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');

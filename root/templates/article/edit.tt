@@ -8,7 +8,7 @@
             <td>
     [% FOR unit IN quantity.units.all;
         id = unit.id %]
-        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'disabled' IF units_in_use.$id %] [% 'checked' IF selected_units.$id %]>
+        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'title="article is used with this unit" disabled' IF units_in_use.$id %] [% 'checked' IF selected_units.$id %]>
         <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {html=>1}) %]</label>
     [% END %]
             </td>
@@ -21,8 +21,8 @@
         if <input type="number" name="preorder_servings" value="[% article.preorder_servings OR default_preorder_servings %]"> servings or more
     </p>
     <p>Shelf life:
-        <input type="checkbox" name="shelf_life" id="shelf_life[% article.id %]" [% 'checked' IF article.shelf_life_days.defined %]>
-        <label for="shelf_life[% article.id %]">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
+        <input type="checkbox" name="shelf_life" id="shelf_life" [% 'checked' IF article.shelf_life_days.defined %]>
+        <label for="shelf_life">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
     </p>
     <p>Name: <input type="text" name="name" value="[% article.name | xml %]"></p>
     <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
