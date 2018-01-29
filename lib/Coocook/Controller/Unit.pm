@@ -111,38 +111,86 @@ sub create : POST Chained('/project/base') PathPart('units/create') Args(0)
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $short_name          = $c->req->params->get('short_name');
-    my $long_name           = $c->req->params->get('long_name');
-    my $to_quantity_default = $c->req->params->get('to_quantity_default');
-    my $input_okay          = $self->check_input(
-        $c,
+    $c->stash( unit => $c->project->new_related( units => {} ) );
+    $c->detach('update_or_insert');
+}
+
+sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    $c->detach('update_or_insert');
+}
+
+sub update_or_insert : Private {
+    my ( $self, $c ) = @_;
+
+    my $unit = $c->stash->{unit};
+
+    $unit->set_columns(
         {
-            short_name          => $short_name,
-            long_name           => $long_name,
-            to_quantity_default => $to_quantity_default,
-            current_page        => '/units'
+            short_name => $c->req->params->get('short_name'),
+            long_name  => $c->req->params->get('long_name'),
+            space      => $c->req->params->get('space') ? '1' : '0',
         }
     );
-    if ($input_okay) {
-        my $unit = $c->project->create_related(
-            units => {
-                short_name          => $short_name,
-                long_name           => $long_name,
-                quantity            => $c->req->params->get('quantity') || undef,
-                to_quantity_default => $to_quantity_default || undef,
-                space               => $c->req->params->get('space') ? '1' : '0',
-            }
-        );
-        $c->detach( 'redirect', [$unit] );
+
+    my @errors;
+
+    if ( not $unit->in_storage ) {    # about to be created
+        my $quantity = $c->req->params->get('quantity');
+
+        if ( $c->project->quantities->exists( { id => $quantity } ) ) {
+            $unit->set_column( quantity => $quantity );
+        }
+        else {
+            push @errors, "Invalid quantity selected!";
+        }
     }
 
+    if ( $unit->in_storage and $unit->is_quantity_default ) {
+        $unit->set_column( to_quantity_default => 1 );
+    }
+    else {
+        $unit->set_column( to_quantity_default => $c->req->params->get('to_quantity_default') );
+
+        ( $unit->to_quantity_default eq '' or looks_like_number( $unit->to_quantity_default ) )
+          or push @errors, "Factor to quantity's default unit must be empty or a valid number!";
+    }
+
+    length $unit->short_name
+      or push @errors, "Short name must be set!";
+
+    if ( length $unit->long_name ) {
+        my $is_unique = not $c->project->units->exists(
+            { ( $unit->in_storage ? ( id => { '!=' => $unit->id } ) : () ), long_name => $unit->long_name } );
+
+        $is_unique or push @errors, "Another unit with that long name already exists!";
+    }
+    else {
+        push @errors, "Long name must be set!";
+    }
+
+    # TODO keep input values
+    @errors and $c->redirect_detach(
+        $c->project_uri(
+            (
+                $unit->in_storage
+                ? ( $self->action_for('edit'), $unit->id )
+                : $self->action_for('index')
+            ),
+            { error => "@errors" }
+        )
+    );
+
+    $unit->update_or_insert();
+
+    $c->detach('redirect');
 }
 
 sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash->{unit}->delete();
-
     $c->detach('redirect');
 }
 
@@ -150,80 +198,13 @@ sub make_quantity_default : POST Chained('base') Args(0) RequiresCapability('edi
     my ( $self, $c ) = @_;
 
     $c->stash->{unit}->make_quantity_default();
-
     $c->detach('redirect');
 }
 
-sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
+sub redirect : Private {
     my ( $self, $c ) = @_;
 
-    my $unit = $c->stash->{unit};
-
-    my $short_name          = $c->req->params->get('short_name');
-    my $long_name           = $c->req->params->get('long_name');
-    my $to_quantity_default = $c->req->params->get('to_quantity_default');
-    my $input_okay          = $self->check_input(
-        $c,
-        {
-            short_name          => $short_name,
-            long_name           => $long_name,
-            to_quantity_default => $to_quantity_default,
-            current_page        => "/unit/" . $unit->id,
-        }
-    );
-    if ($input_okay) {
-        $unit->update(
-            {
-                short_name          => $short_name,
-                long_name           => $long_name,
-                to_quantity_default => $to_quantity_default || undef,
-                space               => $c->req->params->get('space') ? '1' : '0',
-            }
-        );
-        $c->detach( 'redirect', [$unit] );
-    }
-}
-
-sub redirect : Private {
-    my ( $self, $c, $unit ) = @_;
-
-    $c->response->redirect(
-        $c->project_uri(
-            $unit
-            ? ( $self->action_for('edit'), $unit->id )
-            : $self->action_for('index')
-        )
-    );
-}
-
-#check input of unit when creating and updating a unit
-sub check_input : Private {
-    my ( $self, $c, $args ) = @_;
-    my $shortname           = $args->{short_name};
-    my $longname            = $args->{long_name};
-    my $to_quantity_default = $args->{to_quantity_default};
-    my $current_page        = $args->{current_page};
-    my $result              = 0;
-    if ( length($shortname) <= 0 ) {
-        $c->response->redirect(
-            $c->uri_for( $current_page, { error => "Cannot create unit with empty short name!" } ) );
-    }
-    elsif ( length($longname) <= 0 ) {
-        $c->response->redirect(
-            $c->uri_for( $current_page, { error => "Cannot create unit with empty long name!" } ) );
-    }
-    elsif ( !( $to_quantity_default eq '' or looks_like_number($to_quantity_default) ) ) {
-        $c->response->redirect(
-            $c->uri_for(
-                $current_page,
-                { error => "Please supply a valid number in 'Factor to quantity's default unit'.\n E.g.: 1.33" }
-            )
-        );
-    }
-    else {
-        $result = 1;
-    }
-    return $result;
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 __PACKAGE__->meta->make_immutable;
