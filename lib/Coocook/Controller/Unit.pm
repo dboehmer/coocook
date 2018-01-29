@@ -213,7 +213,7 @@ sub check_input : Private {
         $c->response->redirect(
             $c->uri_for( $current_page, { error => "Cannot create unit with empty long name!" } ) );
     }
-    elsif ( !( looks_like_number($to_quantity_default) ) ) {
+    elsif ( !( $to_quantity_default eq '' or looks_like_number($to_quantity_default) ) ) {
         $c->response->redirect(
             $c->uri_for(
                 $current_page,
