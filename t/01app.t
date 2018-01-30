@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 3;
+use Test::Most tests => 4;
 
 our $SCHEMA = TestDB->new();
 
@@ -25,6 +25,27 @@ subtest "HTTP redirects to HTTPS" => sub {
 };
 
 $t->get_ok('https://localhost');
+
+subtest "HTTP Strict Transport Security" => sub {
+    $t->get_ok('https://localhost');
+    $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
+
+    Coocook->setup_finished(0);
+    Coocook->config(
+        'Plugin::StrictTransportSecurity' => {
+            max_age             => 63072000,
+            include_sub_domains => 1,
+            preload             => 1
+        }
+    );
+    Coocook->setup_finished(1);
+
+    $t->get_ok('https://localhost');
+    $t->header_is(
+        'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
+        "with configuration"
+    );
+};
 
 subtest "public actions are either GET or POST" => sub {
     my $app = $t->catalyst_app;

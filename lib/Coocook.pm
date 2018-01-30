@@ -23,6 +23,7 @@ use Catalyst::Runtime 5.80;
 use Catalyst (
     qw<
       ConfigLoader
+      +Coocook::Plugin::StrictTransportSecurity
       Session
       Session::Store::DBIC
       Session::State::Cookie
@@ -155,6 +156,10 @@ EOT
                 role_field    => 'role',
             },
         }
+    },
+
+    'Plugin::StrictTransportSecurity' => {
+        enabled => 1,
     },
 
     session => {
