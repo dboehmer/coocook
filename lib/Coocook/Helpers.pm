@@ -11,7 +11,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 =head2 $c->current_uri_local_part()
 
 Returns the URI for the current request with only the app-local part
-that can be passed to C<< $c->uri_for($uri_local_part) >.
+that can be passed to C<< $c->uri_for($uri_local_part) >>.
 
 =cut
 
@@ -28,7 +28,7 @@ sub current_uri_local_part {
 
 =head2 $c->uri_for_local_part($local_part)
 
-Similar to C<< $c->uri_for() > but accepts query part.
+Similar to C<< $c->uri_for() >> but accepts query part.
 
 =cut
 
