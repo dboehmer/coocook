@@ -3,6 +3,8 @@ package Test::Coocook;
 use strict;
 use warnings;
 
+our $DEBUG;
+
 use Email::Sender::Simple;
 use FindBin;
 use Test::Most;
@@ -21,6 +23,20 @@ sub new {
     my $class = shift;
 
     return $class->SUPER::new( catalyst_app => 'Coocook', @_ );
+}
+
+sub request {
+    my $self = shift;
+    my ($request) = @_;
+
+    my $response = $self->SUPER::request(@_);
+
+    if ($DEBUG) {
+        note map { s/^/> /gm; $_ } $request->as_string;
+        note map { s/^/< /gm; $_ } $response->as_string;
+    }
+
+    return $response;
 }
 
 sub emails {
