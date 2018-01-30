@@ -27,6 +27,9 @@ subtest "HTTP redirects to HTTPS" => sub {
 $t->get_ok('https://localhost');
 
 subtest "HTTP Strict Transport Security" => sub {
+    $t->get('http://localhost');
+    $t->lacks_header_ok( 'Strict-Transport-Security', "no header for plain HTTP" );
+
     $t->get_ok('https://localhost');
     $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
 

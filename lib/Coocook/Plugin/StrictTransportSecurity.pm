@@ -12,6 +12,9 @@ after prepare_action => sub {
         return;
     }
 
+    $c->request->uri->scheme eq 'https'
+      or return;
+
     my $config = $c->config->{'Plugin::StrictTransportSecurity'} || {};
 
     if ( 1 or $config->{enabled} ) {
