@@ -23,6 +23,20 @@ sub begin : Private {
     );
 }
 
+sub email_address_reused : Private {
+    my ( $self, $c, $user ) = @_;
+
+    $c->stash(
+        email => {
+            to       => $user->email,
+            subject  => "Your e-mail address was registered at " . $c->config->{name},
+            template => 'email_address_reused.tt',
+        },
+        user         => $user,
+        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email } ),
+    );
+}
+
 sub notify_admin_about_registration : Private {
     my ( $self, $c, $user, $admin ) = @_;
 

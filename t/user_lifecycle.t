@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 35;
+use Test::Most tests => 36;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -65,13 +65,32 @@ $t->register_ok(
 
 $t->shift_emails();
 $t->email_like(qr/registered/);
+$t->clear_emails();
+
+my $content_after_registration = $t->content;
+
+subtest "registration of existing e-mail address triggers e-mail" => sub {
+    $t->register_ok(
+        {
+            name         => 'test_other',
+            display_name => "Other user with same e-mail address",
+            email        => 'test2@example.com',
+            password     => 's3cr3t',
+            password2    => 's3cr3t',
+        }
+    );
+
+    $t->content_is( $content_after_registration, "content is same as with new e-mail address" );
+
+    $t->email_like(qr/ (try|tried) .+ register /x);
+
+    $t->clear_emails();
+};
 
 for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_admin'), "2nd user created hasn't 'site_admin' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
-
-$t->clear_emails();
 
 subtest "registration of existing username fails" => sub {
     $t->follow_link_ok( { text => 'Register' } );

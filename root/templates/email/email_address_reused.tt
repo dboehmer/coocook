@@ -1,0 +1,11 @@
+Hi [% user.display_name %],
+
+somebody tried to register an account at [% name %] with your e-mail address
+<[% user.email %]> but this e-mail address is already used for an existing account.
+
+If it was you and you want to recover your existing account,
+you can do so at [% recovery_url %]
+
+If you didn't try to register a new account, you can safely ignore this e-mail.
+
+[% name %]

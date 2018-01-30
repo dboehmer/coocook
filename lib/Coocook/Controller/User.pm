@@ -118,39 +118,44 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         $c->go('register');
     }
 
-    my $token = $c->model('Token')->new();
-
-    my $user = $c->model('DB::User')->create(
-        {
-            name         => $name,
-            password     => $password,
-            display_name => $c->req->params->get('display_name'),
-            email        => $c->req->params->get('email'),
-            token_hash   => $token->to_salted_hash,
-            token_expires => undef,    # never: token only for verification, doesn't allow password reset
-        }
-    );
-
-    # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
-    $password = 'x' x length $password;
-    undef $password;
-
-    $c->visit( '/email/verification', [ $user, $token ] );
-
-    my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
-
-    if ( $site_admins_exist and $c->config->{notify_site_admins_about_registrations} ) {
-        for my $admin ( $c->model('DB::User')->site_admins->all ) {
-            $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
-        }
+    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
+        $c->visit( '/email/email_address_reused' => [$user] );
     }
+    else {    # e-mail address is unique
+        my $token = $c->model('Token')->new();
 
-    my @roles = @{ $c->config->{new_user_default_roles} || [] };
+        my $user = $c->model('DB::User')->create(
+            {
+                name         => $name,
+                password     => $password,
+                display_name => $c->req->params->get('display_name'),
+                email        => $c->req->params->get('email'),
+                token_hash   => $token->to_salted_hash,
+                token_expires => undef,    # never: token only for verification, doesn't allow password reset
+            }
+        );
 
-    $site_admins_exist
-      or push @roles, 'site_admin';
+        # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
+        $password = 'x' x length $password;
+        undef $password;
 
-    $user->add_roles( \@roles );
+        $c->visit( '/email/verification', [ $user, $token ] );
+
+        my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
+
+        if ( $site_admins_exist and $c->config->{notify_site_admins_about_registrations} ) {
+            for my $admin ( $c->model('DB::User')->site_admins->all ) {
+                $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
+            }
+        }
+
+        my @roles = @{ $c->config->{new_user_default_roles} || [] };
+
+        $site_admins_exist
+          or push @roles, 'site_admin';
+
+        $user->add_roles( \@roles );
+    }
 
     $c->redirect_detach(
         $c->uri_for(
