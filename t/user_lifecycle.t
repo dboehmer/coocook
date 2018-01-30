@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 34;
+use Test::Most tests => 35;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -72,6 +72,17 @@ for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
 }
 
 $t->clear_emails();
+
+subtest "registration of existing username fails" => sub {
+    $t->follow_link_ok( { text => 'Register' } );
+
+    $t->submit_form_ok(
+        { with_fields => { name => 'TEST2', display_name => "Same as test2 with other case" }, },
+        "register account 'TEST2'" );
+
+    $t->content_like(qr/username/)
+      or note $t->content;
+};
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 

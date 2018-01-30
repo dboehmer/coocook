@@ -5,24 +5,27 @@ use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use feature 'fc';    # Perl v5.16
+
 extends 'Coocook::Schema::Result';
 
 __PACKAGE__->table('users');
 
 __PACKAGE__->add_columns(
-    id             => { data_type => 'int',      is_auto_increment => 1 },
-    name           => { data_type => 'text' },
+    id   => { data_type => 'int', is_auto_increment => 1 },
+    name => { data_type => 'text' },
+    name_fc        => { data_type => 'text' },                         # fold cased
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     email          => { data_type => 'text' },
-    email_verified => { data_type => 'datetime', is_nullable       => 1 },
-    token_hash     => { data_type => 'text',     is_nullable       => 1 },
-    token_expires  => { data_type => 'datetime', is_nullable       => 1 },
+    email_verified => { data_type => 'datetime', is_nullable => 1 },
+    token_hash     => { data_type => 'text', is_nullable => 1 },
+    token_expires  => { data_type => 'datetime', is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraints( ['name'], ['email'], ['token_hash'] );
+__PACKAGE__->add_unique_constraints( ['name'], ['name_fc'], ['email'], ['token_hash'] );
 
 __PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
 
@@ -35,7 +38,10 @@ __PACKAGE__->many_to_many( projects => projects_users => 'project' );
 around [ 'set_column', 'store_column' ] => sub {
     my ( $orig, $self, $column => $value ) = @_;
 
-    if ( $column eq 'password' ) {
+    if ( $column eq 'name' ) {
+        $self->$orig( name_fc => fc($value) );
+    }
+    elsif ( $column eq 'password' ) {
         my $password = Coocook::Model::Token->from_string($value);
 
         ( $column => $value ) = ( password_hash => $password->to_salted_hash );

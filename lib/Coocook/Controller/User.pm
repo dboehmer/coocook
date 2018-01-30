@@ -5,6 +5,8 @@ use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use feature 'fc';
+
 BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
@@ -23,7 +25,11 @@ sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
     # this variable MUST NOT be named 'user' because it collides with $c->user
-    $c->stash( user_object => $c->model('DB::User')->find( { name => $name } ) );
+    # TODO maybe store $c->user as $c->stash->{logged_in_user} or similar
+    #      and use $c->stash->{user} here?
+    $c->stash( user_object => $c->model('DB::User')->find( { name_fc => fc($name) } ) );
+
+    # TODO redirect if case of $name doesn't match $user->name
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
@@ -75,7 +81,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         push @errors, "username must not be empty";
     }
     else {
-        if ( $c->model('DB::User')->exists( { name => $name } ) ) {    # TODO case sensitivity?
+        if ( $c->model('DB::User')->exists( { name_fc => fc($name) } ) ) {
             push @errors, "username already in use";
         }
     }
