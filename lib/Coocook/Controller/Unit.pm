@@ -53,7 +53,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
         my $action = $self->action_for('delete');
 
         my $units = $c->project->units->search( undef,
-            { join => 'quantity', order_by => [ 'quantity.name', 'long_name' ] } );
+            { join => 'quantity', order_by => [ 'quantity.name', 'to_quantity_default', 'long_name' ] } );
 
         while ( my $unit = $units->next ) {
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
