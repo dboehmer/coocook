@@ -10,11 +10,11 @@ use feature 'fc';    # Perl v5.16
 __PACKAGE__->table("projects");
 
 __PACKAGE__->add_columns(
-    id          => { data_type => 'int',  is_auto_increment => 1 },
-    name        => { data_type => 'text' },
-    url_name    => { data_type => 'text' },
-    url_name_fc => { data_type => 'text' }, # fold cased
-    is_public   => { data_type => 'bool', default_value     => 1 },
+    id       => { data_type => 'int', is_auto_increment => 1 },
+    name     => { data_type => 'text' },
+    url_name => { data_type => 'text' },
+    url_name_fc => { data_type => 'text' },                       # fold cased
+    is_public   => { data_type => 'bool', default_value => 1 },
     owner       => { data_type => 'int' },
 );
 
@@ -133,6 +133,31 @@ sub articles_cached_units {
     else {
         return \@articles;
     }
+}
+
+=head2 inventory()
+
+Returns a hashref with counts for related object.
+
+=cut
+
+sub inventory {
+    my $self = shift;
+
+    return $self->result_source->resultset->search(
+        undef,
+        {
+            columns => {
+                quantities    => $self->quantities->count_rs->as_query,
+                units         => $self->units->count_rs->as_query,
+                articles      => $self->articles->count_rs->as_query,
+                recipes       => $self->recipes->count_rs->as_query,
+                shop_sections => $self->shop_sections->count_rs->as_query,
+                meals         => $self->meals->count_rs->as_query,
+                dishes        => $self->meals->search_related('dishes')->count_rs->as_query,
+            },
+        }
+    )->hri->first;    # use single() and make outer query not SELECT from a table
 }
 
 =head2 other_projects

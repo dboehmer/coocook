@@ -5,7 +5,24 @@ use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
 use Test::Memory::Cycle;
-use Test::Most;
+use Test::Most tests => 3;
+
+subtest inventory => sub {
+    my $db = TestDB->new();
+
+    my $inventory = $db->resultset('Project')->find(1)->inventory();
+
+    is_deeply $inventory => {
+        quantities    => 2,
+        units         => 5,
+        shop_sections => 2,
+        articles      => 5,
+        recipes       => 1,
+        meals         => 3,
+        dishes        => 3,
+      }
+      or explain $inventory;
+};
 
 subtest articles_cached_units => sub {
     my $db = TestDB->new;
@@ -64,5 +81,3 @@ subtest delete => sub {
 
     note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
 };
-
-done_testing;
