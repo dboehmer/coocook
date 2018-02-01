@@ -27,7 +27,8 @@ sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     # this variable MUST NOT be named 'user' because it collides with $c->user
     # TODO maybe store $c->user as $c->stash->{logged_in_user} or similar
     #      and use $c->stash->{user} here?
-    $c->stash( user_object => $c->model('DB::User')->find( { name_fc => fc($name) } ) );
+    $c->stash( user_object => $c->model('DB::User')->find( { name_fc => fc($name) } )
+          || $c->detach('/error/not_found') );
 
     # TODO redirect if case of $name doesn't match $user->name
 }
