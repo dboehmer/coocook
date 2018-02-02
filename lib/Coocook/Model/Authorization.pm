@@ -115,6 +115,11 @@ my @rules = (
         },
         capabilities => 'transfer_project_ownership',
     },
+    {
+        needs_input  => ['user'],
+        rule         => sub { shift->{user}->has_role('site_admin') },
+        capabilities => 'admin_view',
+    },
 );
 
 my %capabilities;

@@ -25,3 +25,10 @@ MACRO display_value_unit(value, unit, opts) BLOCK;
     '&nbsp;' IF unit.space;
     display_unit(unit, opts);
 END ~%]
+
+[%~ MACRO numerus(number, singular, plural, infix) BLOCK; # apply correct grammatical number
+    number;
+    ' ';
+    infix _ ' ' IF infix;
+    number == 1 ? singular : plural;
+END ~%]

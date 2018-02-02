@@ -64,8 +64,12 @@
     <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
 [% END %]
 
-<li><a href="[% statistics_url %]">Statistics</a></li>
-<li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
+[% IF admin_url %]
+    <li><a href="[% admin_url %]">Admin</a></li>
+[% END %]
+
+    <li><a href="[% statistics_url %]">Statistics</a></li>
+    <li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
 </ul>
 </nav>
 </header>

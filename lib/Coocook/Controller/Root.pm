@@ -98,6 +98,10 @@ sub auto : Private {
           and $c->stash( register_url => $c->uri_for_action('/user/register') );
     }
 
+    if ( $c->has_capability('admin_view') ) {
+        $c->stash( admin_url => $c->uri_for_action('/admin') );
+    }
+
     return 1;    # important
 }
 
