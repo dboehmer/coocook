@@ -1,20 +1,38 @@
 <h3>Projects</h3>
 
-<ul>
+<table>
+<thead>
+    <tr>
+        <th>Project</th>
+        <th>Owner</th>
+    </tr>
+</thead>
+<tbody>
 [% FOR proj IN projects %]
-    <li><a href="[% proj.url %]">[% '🔒' UNLESS proj.is_public; proj.name | html %]</a></li>
+    <tr>
+        <td><a href="[% proj.url %]">[% '🔒' UNLESS proj.is_public; proj.name | html %]</a></td>
+        <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
+    </tr>
 [% END %]
 </ul>
 
 <h3>Users</h3>
 
-<ul>
+<table>
+<thead>
+    <tr>
+        <th>User</th>
+        <th>Display Name</th>
+        <th>Owned projects</th>
+    </tr>
+</thead>
+<tbody>
 [% FOR u IN users %]
-    <li>
-        <a href="[% u.url %]">[% u.display_name | html %] ([% u.name %])</a>
-[% IF u.projects_count > 0 %]
-        (owns [% numerus(u.projects_count, 'project', 'projects') %])
+    <tr>
+        <td><a href="[% u.url %]">[% u.name %]</a></td>
+        <td><a href="[% u.url %]">[% u.display_name | html %]</a></td>
+        <td style="text-align:center">[% u.projects_count %]</td>
+    </tr>
 [% END %]
-    </li>
-[% END %]
-</ul>
+</tbody>
+</table>
