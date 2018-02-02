@@ -45,10 +45,10 @@ sub make_owner {
     $self->result_source->schema->txn_do(
         sub {
             # demote other owner to admin
-            $self->other_projects_users->search_related('owners')->update( { role => 'admin' } );
+            $self->other_projects_users->owners->update( { role => 'admin' } );
 
             # store new owner in project
-            $self->project->update( { owner => $self->id + 0 } );
+            $self->project->update( { owner => $self->get_column('user') } );
 
             # promote $self to owner
             $self->update( { role => 'owner' } );
