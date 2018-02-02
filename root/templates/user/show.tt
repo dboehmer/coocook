@@ -1,3 +1,7 @@
+[% IF my_settings_url %]
+    <a href="[% my_settings_url %]">Edit your profile</a>
+[% END %]
+
 <p>Username: [% user_object.name %]</p>
 
 <p>Global roles: [% user_object.roles.join(', ') %]</p>

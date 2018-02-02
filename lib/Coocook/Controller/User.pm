@@ -48,6 +48,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     $c->stash( permissions => \@permissions );
 
+    if ( $c->user and $c->user->id == $user->id ) {
+        $c->stash( my_settings_url => $c->uri_for_action('/settings') );
+    }
+
     $c->escape_title( User => $user->display_name );
 }
 
