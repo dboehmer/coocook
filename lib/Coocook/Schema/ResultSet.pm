@@ -33,4 +33,16 @@ sub exists_rs {
     return $self->search( $search, { rows => 1, select => [ \1 ] } );
 }
 
+=head2 only_id_col($id_column_name?)
+
+Returns new resultset with only the column 'id' selected.
+
+=cut
+
+sub only_id_col {
+    my ( $self, $id_column_name ) = @_;
+
+    return $self->search( undef, { columns => [ $id_column_name || 'id' ] } );
+}
+
 1;

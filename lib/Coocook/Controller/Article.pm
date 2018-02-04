@@ -37,11 +37,15 @@ sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
 
         my $articles = $c->project->articles->sorted->hri;
 
+        # TODO fetch as '+column' with $articles
+        my %articles_in_use = map { $_ => 1 } $articles->in_use->get_column('id')->all;
+
         while ( my $article = $articles->next ) {
-            $article->{url}        = $c->project_uri( $edit_action,   $article->{id} );
-            $article->{delete_url} = $c->project_uri( $delete_action, $article->{id} );
-            $article->{units}      = [];
             $article->{shop_section} &&= $shop_sections{ $article->{shop_section} };
+            $article->{units}      = [];
+            $article->{edit_url}   = $c->project_uri( $edit_action, $article->{id} );
+            $article->{delete_url} = $c->project_uri( $delete_action, $article->{id} )
+              unless $articles_in_use{ $article->{id} };
 
             push @articles, $articles{ $article->{id} } = $article;
         }
@@ -74,69 +78,25 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
   Does('~HasJS') {
     my ( $self, $c ) = @_;
 
+    my $article = $c->stash->{article};
+
     $c->forward('fetch_project_data');
+    $c->forward('dishes_recipes');
 
-    my $article = $c->stash->{article}
-      || $c->detach('/error/not_found');
-
-    # collect related recipes linked to dishes and independent dishes
-    my $dishes = $article->dishes;
-    $dishes = $dishes->search( undef, { order_by => $dishes->me('name'), prefetch => 'meal' } );
-    my $recipes = $article->recipes->sorted;
-
-    my @dishes;
-    my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
-    my %recipes = map { $$_{recipe}->id => $_ } @recipes;                # by ID
-
-    while ( my $dish = $dishes->next ) {
-        my $recipe = $dish->from_recipe;
-
-        if ( defined $recipe and exists $recipes{$recipe} ) {
-            push @{ $recipes{$recipe}{dishes} }, $dish;
-        }
-        else {
-            push @dishes, $dish;
-        }
-    }
-
-    my ( %selected_units, %units_in_use );
-    {
-        my $units = $article->units;
-        $units = $units->search(
-            undef,
-            {
-                'columns'  => ['id'],
-                '+columns' => {
-                    dish_ingredients_count   => $units->correlate('dish_ingredients')->count_rs->as_query,
-                    recipe_ingredients_count => $units->correlate('recipe_ingredients')->count_rs->as_query,
-                    items_count              => $units->correlate('items')->count_rs->as_query,
-                },
-            }
-        )->hri;
-
-      UNIT: while ( my $unit = $units->next ) {
-            $selected_units{ $unit->{id} } = 1;
-
-            for (qw< dish_ingredients_count recipe_ingredients_count items_count >) {
-                if ( $unit->{$_} ) {
-                    $units_in_use{ $unit->{id} } = 1;
-                    next UNIT;
-                }
-            }
-        }
-    }
+    my $units        = $article->units;
+    my $units_in_use = $article->units_in_use;
 
     $c->stash(
-        selected_units => \%selected_units,
-        units_in_use   => \%units_in_use,
-        dishes         => \@dishes,
-        recipes        => \@recipes,
+        selected_units => { map { $_ => 1 } $units->get_column('id')->all },
+        units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
 
     $c->escape_title( Article => $article->name );
 }
 
-### CRUD ###
+=head1 CRUD ENDPOINTS
+
+=cut
 
 sub create : POST Chained('/project/base') PathPart('articles/create') Args(0)
   RequiresCapability('edit_project') {
@@ -154,11 +114,25 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
+    $c->forward('dishes_recipes');
+
+    for ( 'dishes', 'recipes' ) {
+        if ( @{ $c->stash->{$_} } > 0 ) {
+            $c->log->warn( sprintf "article is used in %i %s", scalar @{ $c->stash->{$_} }, $_ );
+
+            $c->detach('/error/bad_request');    # TODO add error text
+        }
+    }
+
     $c->stash->{article}->delete();
     $c->detach('redirect');
 }
 
-### private helpers ###
+=head1 PRIVATE HELPER METHODS
+
+=head2 fetch_project_data()
+
+=cut
 
 sub fetch_project_data : Private {
     my ( $self, $c ) = @_;
@@ -183,10 +157,40 @@ sub fetch_project_data : Private {
     );
 }
 
-sub redirect : Private {
+=head2 dishes_recipes()
+
+collect related recipes linked to dishes and independent dishes
+
+=cut
+
+sub dishes_recipes : Private {
     my ( $self, $c ) = @_;
 
-    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
+    my $article = $c->stash->{article};
+
+    my $dishes = $article->dishes;
+    $dishes = $dishes->search( undef, { order_by => $dishes->me('name'), prefetch => 'meal' } );
+    my $recipes = $article->recipes->sorted;
+
+    my @dishes;
+    my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
+    my %recipes = map { $$_{recipe}->id => $_ } @recipes;                # by ID
+
+    while ( my $dish = $dishes->next ) {
+        my $recipe = $dish->from_recipe;
+
+        if ( defined $recipe and exists $recipes{$recipe} ) {
+            push @{ $recipes{$recipe}{dishes} }, $dish;
+        }
+        else {
+            push @dishes, $dish;
+        }
+    }
+
+    $c->stash(
+        dishes  => \@dishes,
+        recipes => \@recipes,
+    );
 }
 
 sub update_or_insert : Private {
@@ -200,10 +204,23 @@ sub update_or_insert : Private {
       or $c->redirect_detach(
         $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
 
-    my $units =
-      $c->project->units->search( { id => { -in => [ $c->req->params->get_all('units') ] } } );
+    my @tags = $c->project->tags->from_names( $c->req->params->get('tags') )->only_id_col->all;
 
-    my $tags = $c->project->tags->from_names( $c->req->params->get('tags') );
+    my @units =
+      $c->project->units->search( { id => { -in => [ $c->req->params->get_all('units') ] } } )
+      ->only_id_col->all;
+
+    my $missing_units = $article->units_in_use->search(
+        {
+            id => { -not_in => [ map { $_->id } @units ] },
+        }
+    );
+
+    if ( $missing_units->count > 0 ) {
+        $c->log->warn("missing used unit $_") for $missing_units->get_column('id')->all;
+
+        $c->detach('/error/bad_request');    # TODO add error text
+    }
 
     my $shop_section;
     if ( my $id = $c->req->params->get('shop_section') ) {
@@ -238,12 +255,18 @@ sub update_or_insert : Private {
             $article->update_or_insert;
 
             # works only after update_or_insert()
-            $article->set_tags(  [ $tags->all ] );
-            $article->set_units( [ $units->all ] );
+            $article->set_tags( \@tags );
+            $article->set_units( \@units );
         }
     );
 
     $c->detach('redirect');
+}
+
+sub redirect : Private {
+    my ( $self, $c ) = @_;
+
+    $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
 }
 
 __PACKAGE__->meta->make_immutable;
