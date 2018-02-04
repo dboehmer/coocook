@@ -1,5 +1,5 @@
 <ul>
-    <li>approx. [% numerus(statistics.dishes_served, 'dish', 'dishes') %] served until today</li>
-    <li>[% numerus(statistics.public_projects, 'project', 'projects', 'public') %]</li>
+    <li>approx. [% numerus(statistics.dishes_served, 'dish', 'dishes', { nice_number => 1 } ) %] served until today</li>
+    <li>[% numerus(statistics.public_projects, 'project', 'projects', { infix => 'public' } ) %]</li>
     <li>[% numerus(statistics.users, 'user', 'users') %]</li>
 </ul>

@@ -26,9 +26,14 @@ MACRO display_value_unit(value, unit, opts) BLOCK;
     display_unit(unit, opts);
 END ~%]
 
-[%~ MACRO numerus(number, singular, plural, infix) BLOCK; # apply correct grammatical number
-    number;
+[%~ MACRO numerus(number, singular, plural, opts) BLOCK; # apply correct grammatical number
+    IF opts.nice_number;
+        USE NiceNumber;
+        number | $NiceNumber;
+    ELSE;
+        number;
+    END;
     ' ';
-    infix _ ' ' IF infix;
+    opts.infix _ ' ' IF opts.infix;
     number == 1 ? singular : plural;
 END ~%]
