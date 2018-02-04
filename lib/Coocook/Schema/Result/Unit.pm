@@ -41,14 +41,15 @@ __PACKAGE__->has_many(
 );
 
 __PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'unit' );
+__PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
 __PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient', 'unit' );
+__PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
 
 __PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient', 'unit' );
+__PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item', 'unit' );
-
-__PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
 before delete => sub {
     my $self = shift;
@@ -105,8 +106,8 @@ sub make_quantity_default {
     # collect convertible units of this quantity except $self and $orig
     my $others = $quantity->units->search(
         {
-            id                  => { -not_in => [ $self->id, $orig->id ] },
-            to_quantity_default => { '!='    => undef },     # IS NOT NULL
+            id => { -not_in => [ $self->id, $orig->id ] },
+            to_quantity_default => { '!=' => undef },    # IS NOT NULL
         }
     );
 

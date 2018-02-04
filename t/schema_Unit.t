@@ -4,7 +4,29 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
-use Test::Most;
+use Test::Most tests => 7;
+
+subtest "ResultSet::Unit->in_use()" => sub {
+    my $db = TestDB->new;
+
+    is join( ',', sort $db->resultset('Unit')->in_use->get_column('short_name')->all ) => 'g,kg,l',
+      "with units";
+
+    is
+      join( ',',
+        sort $db->resultset('Article')->find(1)->units->in_use->get_column('short_name')->all ) => 'g,kg',
+      "only units belonging to 1 article";
+
+    is
+      join( ',',
+        sort $db->resultset('Article')->find(4)->units_in_use->get_column('short_name')->all ) => 'g',
+      "units belonging to 1 article when not all are in use";
+
+    $db->resultset($_)->delete for qw< DishIngredient RecipeIngredient Item >;
+
+    is join( ',', $db->resultset('Unit')->in_use->get_column('short_name')->all ) => '',
+      "without any used units";
+};
 
 my $db = TestDB->new;
 
@@ -41,5 +63,3 @@ ok $kg->delete, "default unit can be deleted if last remaining unit";
 
 is $db->resultset('Quantity')->find( { name => 'Mass' } )->default_unit => undef,
   "default unit of quantity changed to NULL";
-
-done_testing;

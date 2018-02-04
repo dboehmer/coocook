@@ -45,11 +45,17 @@ __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;
 
-sub unit_ids_joined {
+sub unit_ids_joined { # TODO move to ResultSet::Unit or optimize for non-cached 'units' relationship
     my $self = shift;
     my $seperator = shift || ',';
 
     return join $seperator, map { $_->id } $self->units;
+}
+
+sub units_in_use {
+    my $self = shift;
+
+    return $self->units->in_use( { article => $self->id } );
 }
 
 sub tags_joined {

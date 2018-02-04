@@ -21,10 +21,16 @@ __PACKAGE__->load_components(
 __PACKAGE__->meta->make_immutable;
 
 sub exists {
+    my $self = shift;
+
+    return !!$self->exists_rs(@_)->single;
+}
+
+sub exists_rs {
     my ( $self, $search ) = @_;
 
     # inspired from DBIx::Class::ResultSet::Void but that is low quality and obsolete
-    !!$self->search( $search, { rows => 1, select => [ \1 ] } )->single;
+    return $self->search( $search, { rows => 1, select => [ \1 ] } );
 }
 
 1;
