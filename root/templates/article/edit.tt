@@ -7,7 +7,10 @@
             <th>[% quantity.name | html %]</th>
             <td>
     [% FOR unit IN quantity.units.all;
-        id = unit.id %]
+        id = unit.id;
+        IF units_in_use.$id; # pass ID of used unit as hidden field because value of disabled checkbox isn't sent %]
+        <input type="hidden" name="units" value="[% id %]">
+        [% END %]
         <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'title="article is used with this unit" disabled' IF units_in_use.$id %] [% 'checked' IF selected_units.$id %]>
         <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {html=>1}) %]</label>
     [% END %]
