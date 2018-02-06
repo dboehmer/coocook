@@ -29,7 +29,7 @@ sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapabili
 
     for my $project (@projects) {
         $project->{owner} = $users{ $project->{owner} };
-        $project->{url} = $c->uri_for_action( '/project/edit', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
     }
 
     for my $user (@users) {

@@ -38,15 +38,38 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     $c->stash( project => $project );
 }
 
-=head2 index
-
-=cut
-
-sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
-    $c->has_capability('view_project')
-      or $c->detach('/error/forbidden');
+    my $days = $c->model('Plan')->project( $c->project );
+
+    for my $day (@$days) {
+        for my $meal ( @{ $day->{meals} } ) {
+            for my $dish ( @{ $meal->{dishes} } ) {
+                $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+            }
+        }
+    }
+
+    $c->stash(
+        days => $days,
+
+        edit_url => $c->has_capability('edit_project')
+        ? $c->project_uri( $self->action_for('edit') )
+        : undef,
+
+        permissions_url => $c->has_capability('view_project_permissions')
+        ? $c->project_uri('/permission/index')
+        : undef,
+
+        settings_url => $c->has_capability('view_project_settings')
+        ? $c->project_uri('/project/settings')
+        : undef,
+    );
+}
+
+sub edit : GET HEAD Chained('base') PathPart('edit') Args(0) RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
 
     my $default_date = DateTime->today;
 
@@ -70,14 +93,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         dish_create_url      => $c->project_uri('/dish/create'),
         dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
         meal_create_url      => $c->project_uri('/meal/create'),
-
-        permissions_url => $c->has_capability('view_project_permissions')
-        ? $c->project_uri('/permission/index')
-        : undef,
-
-        settings_url => $c->has_capability('view_project_settings')
-        ? $c->project_uri('/project/settings')
-        : undef,
     );
 }
 
@@ -176,7 +191,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
     my $importable_projects = $c->forward('importable_projects');
 
     $c->response->redirect(
-        $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'edit' ) ) );
+        $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'show' ) ) );
 }
 
 sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
@@ -214,7 +229,7 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
 sub redirect : Private {
     my ( $self, $c, $project ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('edit'), [ $project->url_name ] ) );
+    $c->response->redirect( $c->uri_for_action( $self->action_for('show'), [ $project->url_name ] ) );
 }
 
 __PACKAGE__->meta->make_immutable;

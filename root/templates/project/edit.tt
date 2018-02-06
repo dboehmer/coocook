@@ -1,16 +1,3 @@
-[% submenu_items = [
-    { url => permissions_url, text => "Permissions" },
-    { url => settings_url,    text => "Project settings" },
-];
-
-FOR item IN submenu_items;
-    IF item.url %]
-        <a href="[% item.url %]">[% item.text %]</a>
-    [% ELSE %]
-        [% item.text %]
-    [% END;
-END %]
-
 <table>
     <thead>
         <tr>

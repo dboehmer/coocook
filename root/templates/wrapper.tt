@@ -28,7 +28,7 @@
     <a href="[% homepage_url %]">[% c.config.name | html %]</a>
 [%~ IF project ~%]
     :
-    <a href="[% c.project_uri('/project/edit') %]">[% project.name | html %]</a>
+    <a href="[% c.project_uri('/project/show') %]">[% project.name | html %]</a>
 [% END %]
 </h1>
 
@@ -51,7 +51,7 @@
 [% END %]
 
 [% IF project %]
-    <li><a href="[% c.project_uri('/project/edit') %]">Meals &amp; Dishes</a></li>
+    <li><a href="[% c.project_uri('/project/show') %]">Meals &amp; Dishes</a></li>
     <li><a href="[% c.project_uri('/recipe/index') %]">Recipes</a></li>
     <li><a href="[% c.project_uri('/article/index') %]">Articles</a></li>
     <li><a href="[% c.project_uri('/tag/index') %]">Tags</a></li>
