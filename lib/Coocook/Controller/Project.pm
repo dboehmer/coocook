@@ -128,6 +128,7 @@ sub settings : GET HEAD Chained('base') PathPart('settings') Args(0)
     my ( $self, $c ) = @_;
 
     $c->stash(
+        update_url            => $c->project_uri('/project/update'),
         rename_url            => $c->project_uri('/project/rename'),
         visibility_url        => $c->project_uri('/project/visibility'),
         delete_url            => $c->project_uri('/project/delete'),
@@ -200,9 +201,10 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
         sub {
             my $project = $c->stash->{project} = $c->model('DB::Project')->create(
                 {
-                    name      => $c->req->params->get('name'),
-                    owner     => $c->user->id,
-                    is_public => $is_public,
+                    name        => $c->req->params->get('name'),
+                    description => '',
+                    owner       => $c->user->id,
+                    is_public   => $is_public,
                 }
             );
 
@@ -221,12 +223,23 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
         $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'show' ) ) );
 }
 
+sub update : POST Chained('base') Args(0) RequiresCapability('update_project') {
+    my ( $self, $c ) = @_;
+
+    my $project = $c->stash->{project};
+
+    $project->update(
+        { description => $c->req->params->get('description') // $c->detach('/error/bad_request') } );
+
+    $c->response->redirect( $c->project_uri('/project/settings') );
+}
+
 sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
     my ( $self, $c ) = @_;
 
     my $project = $c->stash->{project};
 
-    $project->update( { name => $c->req->params->get('name') } );
+    $project->update( { name => $c->req->params->get('name') // $c->detach('/error/bad_request') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }

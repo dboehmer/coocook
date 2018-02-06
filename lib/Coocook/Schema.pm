@@ -6,7 +6,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
 
-our $VERSION = 9;    # version of schema definition, not software version!
+our $VERSION = 10;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 

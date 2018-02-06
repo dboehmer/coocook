@@ -14,6 +14,7 @@ __PACKAGE__->add_columns(
     name     => { data_type => 'text' },
     url_name => { data_type => 'text' },
     url_name_fc => { data_type => 'text' },                       # fold cased
+    description => { data_type => 'text' },
     is_public   => { data_type => 'bool', default_value => 1 },
     owner       => { data_type => 'int' },
 );

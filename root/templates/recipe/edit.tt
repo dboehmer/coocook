@@ -4,10 +4,10 @@
 <p>Tags: <input type="text" name="tags" value="[% recipe.tags_rs.joined %]"></p>
 
 <h3>Preparation</h3>
-<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% recipe.preparation %]</textarea>
+<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% recipe.preparation | html %]</textarea>
 
 <h3>Description</h3>
-<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% recipe.description %]</textarea>
+<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% recipe.description | html %]</textarea>
 
 <p><input type="submit" value="Update Recipe"></p>
 

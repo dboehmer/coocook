@@ -33,7 +33,8 @@ is substr( $importer->properties_json, 0, 3 ) => '[{"',
 dies_ok { $importer->import_data() } "import_data() dies without arguments";
 
 my $source = $db->resultset('Project')->find(1);
-my $target = $db->resultset('Project')->create( { name => "Import Target", owner => 1 } );
+my $target =
+  $db->resultset('Project')->create( { name => "Import Target", description => "", owner => 1 } );
 
 throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
 throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;

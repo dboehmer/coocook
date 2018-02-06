@@ -68,8 +68,8 @@ my @rules = (
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) );
         },
-        capabilities =>
-          [qw< view_project_settings create_project_permission rename_project delete_project >],
+        capabilities => [
+            qw< view_project_settings create_project_permission update_project rename_project delete_project >],
     },
     {
         needs_input => [ 'project', 'permission', 'user' ],

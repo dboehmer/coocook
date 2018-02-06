@@ -23,10 +23,10 @@
 </p>
 
 <h3>Preparation</h3>
-<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation %]</textarea>
+<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation | html %]</textarea>
 
 <h3>Description</h3>
-<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description %]</textarea>
+<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description | html %]</textarea>
 
 <p><input type="submit" value="Update Dish"></p>
 

@@ -1,3 +1,6 @@
+[% USE Markdown;
+project.description | $Markdown %]
+
 <table id="days">
 <thead>
     <tr>
