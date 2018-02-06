@@ -10,17 +10,10 @@ END %]
     'Project settings';
 END %]
 
-<form action="[% edit_dishes_url %]" method="POST">
-
-<!-- Firefox claims nested forms are not allowed and ignores the 1st form
-    but any more forms work well -->
-<form></form>
-
 <table>
     <thead>
         <tr>
             <th>Day</th>
-            <th id="mass-selector"></th>
             <th>Meals and Dishes</th>
         </tr>
     </thead>
@@ -30,7 +23,6 @@ END %]
         [% IF loop.first  %]
         <th rowspan="[% day.dishes + day.meals.size * 4 + 1 %]" style="vertical-align:top">[% display_date(day.date, {html=>1}) %]</th>
         [% END %]
-        <td></td>
         <th colspan="1" style="text-align:left">
             [% meal.name | html %]
         [% IF meal.deletable %]
@@ -41,14 +33,12 @@ END %]
         </th>
     </tr>
     <tr>
-        <td></td>
         <td>
             [% meal.comment %]
 	    ([% meal.dishes.size %] [% meal.dishes.size == 1 ? 'dish' : 'dishes' %])
         </td>
     </tr>
     <tr>
-        <td></td>
         <td>
             <form action="[% c.project_uri('/meal/update', meal.id) %]" method="POST">
                 <input type="text" name="name"    value="[% meal.name | html %]">
@@ -59,7 +49,6 @@ END %]
     </tr>
         [% FOREACH dish IN meal.dishes %]
     <tr>
-        <td><input type="checkbox" class="dish-checkbox" name="dish[% dish.id %]"></td>
         <td>
             <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)
             [%~ IF dish.comment; ': '; dish.comment | html; END %]
@@ -67,7 +56,6 @@ END %]
     </tr>
         [% END %]
     <tr>
-        <td></td>
         <td>
             <form action="[% dish_create_url %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
@@ -89,7 +77,6 @@ END %]
     </tr>
     [% END %]
     <tr>
-        <td></td>
         <td>
             <form action="[% meal_create_url %]" method="POST">
 		<input type="hidden" name="date" value="[% day.date.ymd %]">
@@ -105,30 +92,6 @@ END %]
 [% END %]
 </table>
 
-<p>
-    <input type="submit" name="delete" value="Delete selected dishes"> <!-- TODO: JavaScript confirm -->
-</p>
-
-<fieldset>
-    <legend>Manipulate selected dishes</legend>
-    <p>Edit selected dishes and update their properties selected below with the respective value:</p>
-
-    <p>
-	<input type="checkbox" name="edit_servings" id="edit_servings">
-	<label for="edit_servings">servings:</label>
-	<input type="number" name="new_servings" value="4" oninput="document.getElementById('edit_servings').checked = true"> <em>Automatically recalculates values.</em>
-    </p>
-
-    <p>
-	<input type="checkbox" name="edit_comment" id="edit_comment">
-	<label for="edit_comment">comment:</label>
-	<input type="text" name="new_comment" placeholder="comment" oninput="document.getElementById('edit_comment').checked = true">
-    </p>
-
-    <input type="submit" name="update" value="Update selected dishes">
-</fieldset>
-</form>
-
 <form action="[% meal_create_url %]" method="POST">
     <fieldset>
         <legend>Add meal</legend>
@@ -138,59 +101,3 @@ END %]
         <input type="submit" value="Add meal">
     </fieldset>
 </form>
-
-<form>
-<fieldset>
-    <legend>Mass create meals</legend>
-    <p><strong>TODO This feature is broken and does nothing at all!</strong></p>
-    <p>Create each meal entered below for all dates between <em>from date</em> and <em>until date</em> inclusively.</p>
-    <input type="date" name="from"  placeholder="from date">
-    <input type="date" name="until" placeholder="until date">
-    <p><input type="text" name="meal1" placeholder="meal"></p>
-    <p><input type="text" name="meal2" placeholder="meal"></p>
-    <p><input type="text" name="meal3" placeholder="meal"></p>
-    <p><input type="text" name="meal4" placeholder="meal"></p>
-    <p><input type="text" name="meal5" placeholder="meal"></p>
-    <p><input type="text" name="meal6" placeholder="meal"></p>
-    <p><input type="text" name="meal7" placeholder="meal"></p>
-    <p><input type="text" name="meal8" placeholder="meal"></p>
-    <input type="submit" value="Mass create">
-</fieldset>
-</form>
-
-<script>
-var checkbox = document.createElement('input');
-checkbox.type  = 'checkbox';
-checkbox.title = "Toggle all dishes";
-
-document.getElementById('mass-selector').appendChild(checkbox);
-
-var checkboxes = Array.from( document.getElementsByClassName('dish-checkbox') );
-
-function checkboxesChecked() {
-    var checked = 0;
-    checkboxes.forEach( function(box) { if( box.checked ) { checked++ } } );
-    return checked;
-}
-
-checkbox.addEventListener( 'click', function() {
-    if( checkboxesChecked() < checkboxes.length ) {
-        checkboxes.forEach(function(box) { box.checked = true });
-    }
-    else {
-        checkboxes.forEach(function(box) { box.checked = false });
-    }
-});
-
-var updateCheckbox = function() {
-    var checked = checkboxesChecked();
-
-    checkbox.checked = checked == checkboxes.length;
-    checkbox.indeterminate = 0 < checked && checked < checkboxes.length;
-};
-
-// run once at document load time
-updateCheckbox();
-
-checkboxes.forEach( function(box) { box.addEventListener( 'click', updateCheckbox ) } );
-</script>

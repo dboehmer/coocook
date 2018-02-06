@@ -67,7 +67,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         default_date         => $default_date,
         recipes              => [ $c->project->recipes->sorted->all ],
         days                 => $days,
-        edit_dishes_url      => $c->project_uri('/project/edit_dishes'),
         dish_create_url      => $c->project_uri('/dish/create'),
         dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
         meal_create_url      => $c->project_uri('/meal/create'),
@@ -137,36 +136,6 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
     $importer->import_data( $source => $target, \@properties );
 
     $c->detach( redirect => [$target] );
-}
-
-sub edit_dishes : POST Chained('base') Args(0) RequiresCapability('edit_project') {
-    my ( $self, $c ) = @_;
-
-    my $project = $c->project;
-
-    # filter selected IDs from possible dish IDs
-    my @dish_ids = grep { $c->req->params->get("dish$_") }
-      $project->meals->search_related('dishes')->get_column('id')->all;
-
-    # select dishes from valid ID list
-    my $dishes = $c->model('DB::Dish')->search( { id => { -in => \@dish_ids } } );
-
-    if ( $c->req->params->get('update') ) {
-        if ( $c->req->params->get('edit_comment') ) {
-            $dishes->update( { comment => $c->req->params->get('new_comment') } );
-        }
-
-        if ( $c->req->params->get('edit_servings') ) {
-            for my $dish ( $dishes->all ) {
-                $dish->recalculate( $c->req->params->get('new_servings') );
-            }
-        }
-    }
-    elsif ( $c->req->params->get('delete') ) {
-        $dishes->delete_all();
-    }
-
-    $c->detach( redirect => [$project] );
 }
 
 sub create : POST Chained('/base') PathPart('project/create') Args(0)
