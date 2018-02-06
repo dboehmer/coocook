@@ -2,7 +2,7 @@
 <h3>[% meal.name | html %]</h3>
 
 [% IF meal.comment %]
-    <p>[% meal.comment | html %]</p>
+    <p class="comment">[% meal.comment | html %]</p>
 [% END %]
 
     [% FOR dish IN meal.dishes %]
@@ -10,6 +10,10 @@
 <div class="dish">
 
 <h4><a href="[% dish.url %]">[% dish.name | html %]</a> ([% dish.servings %] servings)</h4>
+
+[% IF dish.comment %]
+    <p class="comment">[% dish.comment | html %]</p>
+[% END %]
 
 [% PROCESS table prepare = 0 %]
 
