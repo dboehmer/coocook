@@ -26,18 +26,16 @@ C<Result::Project> object in the stash.
 sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     my ( $self, $c, $url_name ) = @_;
 
-    if ( my $project = $c->model('DB::Project')->find_by_url_name($url_name) ) {
-        if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {
+    my $project = $c->model('DB::Project')->find_by_url_name($url_name)
+      or $c->detach('/error/not_found');
 
-            # TODO redirect to same URL with $url_name in exact case
-            # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
-        }
+    if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {
 
-        $c->stash( project => $project );
+        # TODO redirect to same URL with $url_name in exact case
+        # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
     }
-    else {
-        $c->redirect_detach( $c->uri_for( '/', { error => "Project not found" } ) );
-    }
+
+    $c->stash( project => $project );
 }
 
 =head2 index
