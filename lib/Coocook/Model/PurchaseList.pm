@@ -47,8 +47,7 @@ sub BUILD {
         push @{ $items_per_section{ $item->{article}{shop_section} } }, $item;
     }
 
-    # ingredients
-    {
+    {    # add ingredients to each item
         my %ingredients_by_dish;
 
         my $ingredients = $list->items->search_related('ingredients')->hri;
@@ -64,8 +63,9 @@ sub BUILD {
               );
         }
 
-        my $dishes = $project->dishes;
-        $dishes = $dishes->search( { $dishes->me('id') => { -in => [ keys %ingredients_by_dish ] } } )->hri;
+        my $dishes =
+          $list->items->search_related('ingredients')->search_related( 'dish', undef, { distinct => 1 } )
+          ->hri;
 
         while ( my $dish = $dishes->next ) {
             for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
@@ -74,7 +74,7 @@ sub BUILD {
         }
     }
 
-    {    # convertible_into
+    {    # add convertible_into units to each item
         my $articles_units = $list->articles->search_related(
             'articles_units',
             {
@@ -108,8 +108,7 @@ sub BUILD {
     }
 
     # shop sections
-    my @sections = $project->shop_sections->search(
-        { id => { -in => [ grep { length } keys %items_per_section ] } } )->hri->all;
+    my @sections = $list->articles->search_related('shop_section')->hri->all;
 
     for my $section (@sections) {
         $section->{items} = $items_per_section{ $section->{id} };
