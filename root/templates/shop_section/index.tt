@@ -16,16 +16,16 @@
 [% FOREACH section IN shop_sections %]
     <tr>
         <td>[% section.name | html %]</td>
-        <td class="right-align">[% section.get_column('article_count') %]</td>
+        <td class="right-align">[% section.article_count %]</td>
         <td>
-        <form method="POST" action="[% c.project_uri('/shop_section/update', section.id) %]" class="inline">
+        <form method="POST" action="[% section.update_url %]" class="inline">
             <input type="text" name="name" value="[% section.name | html %]">
             <input type="submit" value="Rename">
         </form>
         </td>
         <td>
-    [% IF section.deletable %]
-        <form method="POST" action="[% c.project_uri('/shop_section/delete', section.id) %]" class="inline">
+    [% IF section.delete_url %]
+        <form method="POST" action="[% section.delete_url %]" class="inline">
             <input type="submit" value="Delete">
         </form>
     [% END %]

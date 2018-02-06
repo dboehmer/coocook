@@ -29,8 +29,8 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    if ( defined( my $count = $self->get_column('article_count') ) ) {
-        return $count == 0;
+    if ( $self->has_column_loaded('article_count') ) {
+        return $self->get_column('article_count') == 0;
     }
     else {
         return !$self->articles->exists;
