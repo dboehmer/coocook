@@ -44,6 +44,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('purchase_lists') Args(0)
     $c->stash(
         default_date => $default_date,
         lists        => [ $lists->sorted->all ],
+        create_url   => $c->project_uri( $self->action_for('create') ),
         title        => "Purchase lists",
     );
 }

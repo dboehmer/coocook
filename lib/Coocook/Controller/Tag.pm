@@ -33,9 +33,11 @@ sub index : GET HEAD Chained('/project/base') PathPart('tags') Args(0)
     );
 
     $c->stash(
-        groups     => [ $groups->all ],
-        other_tags => [ $c->project->tags->ungrouped->sorted->all ],
-        title      => "Tags",
+        groups               => [ $groups->all ],
+        other_tags           => [ $c->project->tags->ungrouped->sorted->all ],
+        create_tag_url       => $c->project_uri( $self->action_for('create') ),
+        create_tag_group_url => $c->project_uri( $self->action_for('create_group') ),
+        title                => "Tags",
     );
 }
 
@@ -56,9 +58,28 @@ sub tag_group : Chained('/project/base') PathPart('tag_group') CaptureArgs(1)
 sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
+    my $tag = $c->stash->{tag};
+
     $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
 
-    $c->escape_title( Tag => $c->stash->{tag}->name );
+    my %relationships = (
+        articles => '/article/edit',
+        dishes   => '/dish/edit',
+        recipes  => '/recipe/edit',
+    );
+
+    while ( my ( $rel => $path ) = each %relationships ) {
+        my @hashrefs = $tag->$rel()->hri->all;    # TODO how to avoid calling the method by name?
+                                                  #      the many-to-many rel is not a real relationship
+
+        for my $hashref (@hashrefs) {
+            $hashref->{url} = $c->project_uri( $path, $hashref->{id} ),;
+        }
+
+        $c->stash( $rel => \@hashrefs );
+    }
+
+    $c->escape_title( Tag => $tag->name );
 }
 
 sub delete : POST Chained('tag') Args(0) RequiresCapability('edit_project') {

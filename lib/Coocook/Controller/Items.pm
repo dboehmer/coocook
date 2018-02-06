@@ -50,6 +50,7 @@ sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') 
     $c->stash(
         ingredients => [ $ingredients->all ],
         lists       => [ $lists->all ],
+        assign_url  => $c->project_uri( $self->action_for('assign') ),
         title       => "Unassigned items",
     );
 }

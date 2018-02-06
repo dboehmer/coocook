@@ -1,4 +1,4 @@
-<form action="[% c.project_uri('/purchase_list/create') %]" method="POST">
+<form method="POST" action="[% create_url %]">
     <fieldset>
         <legend>Create purchase list</legend>
 

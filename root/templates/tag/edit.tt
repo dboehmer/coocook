@@ -22,7 +22,7 @@
 
 <ul>
 [% FOREACH article IN articles %]
-    <li><a href="[% c.project_uri('/article/index') %]">[% article.name | html %]</a></li>
+    <li><a href="[% article.url %]">[% article.name | html %]</a></li>
 [% END %]
 </ul>
 
@@ -30,7 +30,7 @@
 
 <ul>
 [% FOREACH dish IN dishes %]
-    <li><a href="[% c.project_uri('/meal/edit', dish.meal.id) %]">[% dish.name | html %]</a></li>
+    <li><a href="[% dish.url %]">[% dish.name | html %]</a></li>
 [% END %]
 </ul>
 
@@ -38,7 +38,7 @@
 
 <ul>
 [% FOREACH recipe IN recipes %]
-    <li><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name | html %]</a></li>
+    <li><a href="[% recipe.url %]">[% recipe.name | html %]</a></li>
 [% END %]
 </ul>
 

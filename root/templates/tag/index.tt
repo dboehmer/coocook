@@ -1,4 +1,4 @@
-<form action="[% c.project_uri('/tag/create_group') %]" method="POST">
+<form action="[% create_tag_group_url %]" method="POST">
     <fieldset>
         <legend>New Tag Group</legend>
         <p>
@@ -43,7 +43,7 @@
     [% END %]
 </p>
 
-<form action="[% c.project_uri('/tag/create') %]" method="POST">
+<form action="[% create_tag_url %]" method="POST">
     <input type="hidden" name="tag_group" value="[% group.id %]">
     <fieldset>
         <legend>New Tag</legend>
@@ -61,7 +61,7 @@
 [% END %]
 </p>
 
-<form action="[% c.project_uri('/tag/create') %]" method="POST">
+<form action="[% create_tag_url %]" method="POST">
     <fieldset>
         <legend>New Tag</legend>
         <input type="text" name="name" placeholder="name">

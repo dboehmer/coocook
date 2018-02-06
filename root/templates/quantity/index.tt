@@ -25,7 +25,7 @@
 </tbody>
 </table>
 
-<form action="[% c.project_uri('/quantity/create') %]" method="POST">
+<form action="[% create_url %]" method="POST">
 <fieldset>
     <legend>Create new quantity</legend>
     <input type="text" name="name" placeholder="name">

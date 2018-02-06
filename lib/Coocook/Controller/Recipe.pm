@@ -27,8 +27,9 @@ sub index : GET HEAD Chained('/project/base') PathPart('recipes') Args(0)
     my ( $self, $c ) = @_;
 
     $c->stash(
-        recipes => $c->project->recipes->sorted,
-        title   => "Recipes",
+        recipes    => $c->project->recipes->sorted,
+        create_url => $c->project_uri( $self->action_for('create') ),
+        title      => "Recipes",
     );
 }
 
