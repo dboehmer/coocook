@@ -73,6 +73,11 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
                   >
             );
 
+            if ( $unit->quantity and not $unit->is_quantity_default ) {
+                $unit{make_quantity_default_url} =
+                  $c->project_uri( $self->action_for('make_quantity_default'), $unit{id} );
+            }
+
             push @units, \%unit;
 
             # add delete_url to deletable units
@@ -102,7 +107,16 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
 
     my $unit = $c->stash->{unit};
 
-    $c->stash( articles => [ $unit->articles->sorted->all ] );
+    my @articles = $unit->articles->sorted->hri->all;
+
+    for my $article (@articles) {
+        $article->{url} = $c->project_uri( '/article/edit', $article->{id} );
+    }
+
+    $c->stash(
+        articles   => \@articles,
+        update_url => $c->project_uri( $self->action_for('update'), $unit->id ),
+    );
 
     $c->escape_title( Unit => $unit->long_name );
 }

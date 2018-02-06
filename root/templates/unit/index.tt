@@ -59,8 +59,8 @@
     <td style="text-align:right">[% display_value_unit(unit.from_quantity_default, unit, {html=>1}) %] = [% display_value_unit(1, default_unit, {html=>1}) %]</td>
 [% ELSE; '<td></td><td></td>'; END %]
     <td>
-[% IF unit.quantity AND NOT unit.is_quantity_default %]
-        <form action="[% c.project_uri('/unit/make_quantity_default', unit.id) %]" method="POST" class="inline">
+[% IF unit.make_quantity_default_url %]
+        <form action="[% unit.make_quantity_default_url %]" method="POST" class="inline">
             <input type="submit" value="Make quantity's default">
         </form>
 [% END %]
