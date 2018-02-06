@@ -59,19 +59,29 @@ subtest "public actions are either GET or POST" => sub {
         for my $action ( $controller->get_action_methods ) {
             my %attrs = map { s/\(.+//; $_ => 1 } @{ $action->attributes };
 
+            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
+
             exists $attrs{Private}
               and next;
 
-            exists $attrs{CaptureArgs}   # actions with CaptureArgs are chain elements and automatically private
-              and next;
+            if ( exists $attrs{CaptureArgs} )
+            {    # actions with CaptureArgs are chain elements and automatically private
+                $methods eq ''
+                  or warn "Chain action "
+                  . $action->package_name . "::"
+                  . $action->name
+                  . " is restricted to HTTP methods "
+                  . $methods . "\n";
 
-            exists $attrs{AnyMethod}     # special keyword indicating any method will be ok
+                next;
+            }
+
+            exists $attrs{AnyMethod}    # special keyword indicating any method will be ok
               and next;
 
             $action->name eq 'end'
               and next;
 
-            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
             ok(
                 ( $methods eq 'GET+HEAD' or $methods eq 'POST' ),
                 $action->package_name . "::" . $action->name . "()"
