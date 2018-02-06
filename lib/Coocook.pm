@@ -37,7 +37,7 @@ extends 'Catalyst';
 
 with 'Coocook::Helpers';
 
-if ( $ENV{CATALYST_DEBUG} ) {
+if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always returns false
     if ( eval "require CatalystX::LeakChecker; 1" ) {
         with 'CatalystX::LeakChecker';
     }
