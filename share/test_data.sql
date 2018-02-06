@@ -41,7 +41,7 @@ INSERT INTO 'recipe_ingredients' VALUES(2,2,1,0,3,3,0.5,'');
 INSERT INTO 'recipe_ingredients' VALUES(3,3,1,0,2,1,25.0,'');
 INSERT INTO 'dishes' VALUES(1,1,NULL,'pancakes',4,NULL,'','Make them really sweet!','');
 INSERT INTO 'dishes' VALUES(2,2,1,'pizza',2,NULL,'','','');
-INSERT INTO 'dishes' VALUES(3,3,NULL,'bread',4,2,'','Bake bread!','');
+INSERT INTO 'dishes' VALUES(3,3,NULL,'bread',4,2,'Bake bread!','','');
 INSERT INTO 'dish_ingredients' VALUES(1,1,1,0,1,1,500.0,'',NULL);
 INSERT INTO 'dish_ingredients' VALUES(2,2,1,0,2,1,5.0,'',NULL);
 INSERT INTO 'dish_ingredients' VALUES(3,3,1,0,3,3,0.5,'',NULL);

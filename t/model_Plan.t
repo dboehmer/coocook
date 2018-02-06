@@ -78,17 +78,30 @@ is_deeply $day => [
   "day()"
   or explain $day;
 
-my $project_plan = $plan->project($project);
-$_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
-is_deeply $project_plan => [
+my $expected = [
     {
         date  => '2000-01-01T00:00:00',
         meals => [
             {
                 id      => 1,
+                project => 1,
+                date    => '2000-01-01T00:00:00',
                 name    => 'breakfast',
-                dishes  => [ { id => 1, name => 'pancakes', comment => '', servings => 4 } ],
-                comment => 'Best meal of the day!',
+                dishes  => [
+                    {
+                        id              => 1,
+                        meal            => 1,
+                        prepare_at_meal => undef,
+                        from_recipe     => undef,
+                        name            => 'pancakes',
+                        preparation     => '',
+                        description     => 'Make them really sweet!',
+                        comment         => '',
+                        servings        => 4
+                    }
+                ],
+                prepared_dishes => [],
+                comment         => 'Best meal of the day!',
             }
         ]
     },
@@ -97,9 +110,24 @@ is_deeply $project_plan => [
         meals => [
             {
                 id      => 2,
+                project => 1,
+                date    => '2000-01-02T00:00:00',
                 name    => 'lunch',
-                dishes  => [ { id => 2, name => 'pizza', comment => '', servings => 2 } ],
-                comment => '',
+                dishes  => [
+                    {
+                        id              => 2,
+                        meal            => 2,
+                        prepare_at_meal => undef,
+                        from_recipe     => 1,
+                        name            => 'pizza',
+                        preparation     => '',
+                        description     => '',
+                        comment         => '',
+                        servings        => 2
+                    }
+                ],
+                prepared_dishes => '!!! this should become an arrayref before is_deeply() !!!',
+                comment         => '',
             }
         ]
     },
@@ -108,13 +136,32 @@ is_deeply $project_plan => [
         meals => [
             {
                 id      => 3,
+                project => 1,
+                date    => '2000-01-03T00:00:00',
                 name    => 'dinner',
-                dishes  => [ { id => 3, name => 'bread', comment => '', servings => 4 } ],
-                comment => '',
+                dishes  => [
+                    {
+                        id              => 3,
+                        meal            => 3,
+                        prepare_at_meal => 2,
+                        from_recipe     => undef,
+                        name            => 'bread',
+                        preparation     => 'Bake bread!',
+                        description     => '',
+                        comment         => '',
+                        servings        => 4
+                    }
+                ],
+                prepared_dishes => [],
+                comment         => '',
             }
         ]
     }
-  ],
+];
+$expected->[1]{meals}[0]{prepared_dishes} = [ $expected->[2]{meals}[0]{dishes}[0] ];
+my $project_plan = $plan->project($project);
+$_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
+is_deeply $project_plan => $expected,
   "project()"
   or explain $project_plan;
 
