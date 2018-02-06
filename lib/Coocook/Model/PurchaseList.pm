@@ -32,50 +32,8 @@ sub BUILD {
     # articles
     my %articles = map { $_->{id} => $_ } $list->articles->hri->all;
 
-    # units: can't narrow down because needs convertible units
+    # units: need to select all of project's units because of convertibility
     my %units = map { $_->{id} => $_ } $project->units->hri->all;
-
-    {
-        my %default_unit;    # holds true value for all IDs of default units
-        my %convertible;     # holds arrayrefs for convertible units per quantity
-
-        my $quantities = $project->quantities->hri;
-
-        while ( my $quantity = $quantities->next ) {
-            if ( my $unit = $quantity->{default_unit} ) {
-                $default_unit{$unit} = 1;
-            }
-
-            $convertible{ $quantity->{id} } = [];
-        }
-
-        for my $unit ( values %units ) {
-            if ( $default_unit{ $unit->{id} } ) {
-                $unit->{is_default_quantity} = 1;
-            }
-            elsif ( $unit->{to_quantity_default} ) {
-                $unit->{can_be_quantity_default} = 1;
-            }
-            else {
-                next;
-            }
-
-            # unit is either quantity default or can be converted to
-            push @{ $convertible{ $unit->{quantity} } }, $unit;
-        }
-
-        # clone list of convertibles and exclude unit itself
-        for my $units ( values %convertible ) {
-            for my $unit (@$units) {
-                my @convertible = grep { $_->{id} != $unit->{id} } @$units;
-
-                # avoid circular references
-                weaken $_ for @convertible;
-
-                $unit->{convertible_into} = \@convertible;
-            }
-        }
-    }
 
     # items
     my %items = map { $_->{id} => $_ } $list->items->hri->all;
@@ -112,6 +70,39 @@ sub BUILD {
         while ( my $dish = $dishes->next ) {
             for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
                 $ingredient->{dish} = $dish;
+            }
+        }
+    }
+
+    {    # convertible_into
+        my $articles_units = $list->articles->search_related(
+            'articles_units',
+            {
+                'unit.to_quantity_default' => { '!=' => undef },    # w/o conversion factor no conversion possible
+            },
+            {
+                distinct => 1,        # otherwise sometimes returns (article_id, unit_id) twice
+                join     => 'unit',
+            }
+        )->hri;
+
+        my %convertible_units;        # units by article, quantity
+
+        while ( my $article_unit = $articles_units->next ) {
+            my $article = $articles{ $article_unit->{article} } || die $article_unit->{article};
+            my $unit    = $units{ $article_unit->{unit} }       || die $article_unit->{unit};
+
+            push @{ $convertible_units{ $article->{id} }{ $unit->{quantity} } }, $unit;
+        }
+
+        for my $item ( values %items ) {
+            my $units = $convertible_units{ $item->{article}{id} }{ $item->{unit}{quantity} };
+
+            if ( $units and @$units > 1 ) {
+                $item->{convertible_into} = [ grep { $_->{id} != $item->{unit}{id} } @$units ];
+            }
+            else {
+                $item->{convertible_into} = [];
             }
         }
     }

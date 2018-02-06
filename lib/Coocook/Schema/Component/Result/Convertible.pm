@@ -11,7 +11,7 @@ sub convertible_into {
     return $self->article->units->search(
         {
             id       => { '!=' => $self->unit->id },
-            quantity => $self->unit->quantity->id,
+            quantity => $self->unit->get_column('quantity'),
         }
     );
 }
