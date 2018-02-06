@@ -1,4 +1,4 @@
-<table>
+<table id="days">
 <thead>
     <tr>
         <th>Day</th>
@@ -16,10 +16,23 @@
         [% IF loop.first %]
         <td rowspan="[% day.meals.size %]">[% display_date(day.date, {html=>1}) %]</td>
         [% END %]
-        <td>[% meal.name | html %]</td>
+        <td>
+            [% meal.name | html %]
+            <br>
+            <span class="comment">[% meal.comment | html %]</span>
+        </td>
         <td><ul>
         [% FOREACH dish IN meal.dishes %]
-            <li>[% dish.name | html %]</li>
+            <li>
+            [% IF dish.url %]
+                <a href="[% dish.url %]">[% dish.name | html %]</a>
+            [% ELSE;
+                dish.name | html;
+            END %]
+                ([% numerus(dish.servings, 'serving', 'servings') %])
+                <br>
+                <span class="comment">[% dish.comment | html %]</span>
+            </li>
         [% END %]
         </ul></td>
         [% FOR column IN extra_columns %]
@@ -30,3 +43,21 @@
 END %]
 </tbody>
 </table>
+
+<style>
+/* TODO move to global CSS or page-specific CSS */
+
+table#days {
+    border-collapse: collapse;
+}
+
+table#days th,
+table#days td {
+    border: solid 1px black;
+}
+
+.comment {
+    color: DarkGrey;
+    font-style: italic;
+}
+</style>

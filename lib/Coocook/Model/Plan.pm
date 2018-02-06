@@ -54,6 +54,7 @@ sub day {
             my %dish = (
                 id          => $dish->id,
                 name        => $dish->name,
+                comment     => $dish->comment,
                 servings    => $dish->servings,
                 preparation => $dish->preparation,
                 description => $dish->description,
@@ -149,6 +150,7 @@ sub project {
               {
                 id       => $dish->id,
                 name     => $dish->name,
+                comment  => $dish->comment,
                 servings => $dish->servings,
               };
         }

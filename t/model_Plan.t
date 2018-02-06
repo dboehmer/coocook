@@ -24,8 +24,12 @@ is_deeply $day => [
         prepared_dishes => [],
         dishes          => [
             {
-                'description' => 'Make them really sweet!',
                 'id'          => 1,
+                'name'        => 'pancakes',
+                'comment'     => '',
+                'servings'    => 4,
+                'preparation' => '',
+                'description' => 'Make them really sweet!',
                 'ingredients' => [
                     {
                         'article' => {
@@ -67,9 +71,6 @@ is_deeply $day => [
                         'value' => '0.5'
                     }
                 ],
-                'name'        => 'pancakes',
-                'preparation' => '',
-                'servings'    => 4
             }
         ],
     }
@@ -86,7 +87,7 @@ is_deeply $project_plan => [
             {
                 id      => 1,
                 name    => 'breakfast',
-                dishes  => [ { id => 1, name => 'pancakes', servings => 4 } ],
+                dishes  => [ { id => 1, name => 'pancakes', comment => '', servings => 4 } ],
                 comment => 'Best meal of the day!',
             }
         ]
@@ -97,7 +98,7 @@ is_deeply $project_plan => [
             {
                 id      => 2,
                 name    => 'lunch',
-                dishes  => [ { id => 2, name => 'pizza', servings => 2 } ],
+                dishes  => [ { id => 2, name => 'pizza', comment => '', servings => 2 } ],
                 comment => '',
             }
         ]
@@ -108,7 +109,7 @@ is_deeply $project_plan => [
             {
                 id      => 3,
                 name    => 'dinner',
-                dishes  => [ { id => 3, name => 'bread', servings => 4 } ],
+                dishes  => [ { id => 3, name => 'bread', comment => '', servings => 4 } ],
                 comment => '',
             }
         ]
