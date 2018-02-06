@@ -5,6 +5,7 @@ use DateTime;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
+use Test::Memory::Cycle;
 use Test::MockObject;
 use Test::Most;
 
@@ -78,6 +79,8 @@ is_deeply $day => [
   "day()"
   or explain $day;
 
+memory_cycle_ok $day;
+
 my $expected = [
     {
         date  => '2000-01-01T00:00:00',
@@ -90,7 +93,6 @@ my $expected = [
                 dishes  => [
                     {
                         id              => 1,
-                        meal            => 1,
                         prepare_at_meal => undef,
                         from_recipe     => undef,
                         name            => 'pancakes',
@@ -116,7 +118,6 @@ my $expected = [
                 dishes  => [
                     {
                         id              => 2,
-                        meal            => 2,
                         prepare_at_meal => undef,
                         from_recipe     => 1,
                         name            => 'pizza',
@@ -142,7 +143,6 @@ my $expected = [
                 dishes  => [
                     {
                         id              => 3,
-                        meal            => 3,
                         prepare_at_meal => 2,
                         from_recipe     => undef,
                         name            => 'bread',
@@ -159,10 +159,18 @@ my $expected = [
     }
 ];
 $expected->[1]{meals}[0]{prepared_dishes} = [ $expected->[2]{meals}[0]{dishes}[0] ];
+
+for (@$expected) {
+    for my $meal ( @{ $_->{meals} } ) {
+        $_->{meal} = $meal for @{ $meal->{dishes} };
+    }
+}
 my $project_plan = $plan->project($project);
 $_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
 is_deeply $project_plan => $expected,
   "project()"
   or explain $project_plan;
+
+memory_cycle_ok $project_plan;
 
 done_testing;

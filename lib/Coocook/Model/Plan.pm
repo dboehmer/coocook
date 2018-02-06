@@ -5,6 +5,7 @@ package Coocook::Model::Plan;
 use DateTime;
 use Moose;
 use MooseX::NonMoose;
+use Scalar::Util 'weaken';
 
 __PACKAGE__->meta->make_immutable;
 
@@ -144,7 +145,11 @@ sub project {
     my $dishes = $meals->search_related('dishes')->hri;
 
     for my $dish ( $dishes->all ) {
-        push @{ $meals{ $dish->{meal} }{dishes} }, $dish;
+        $_ = $meals{$_} for $dish->{meal};
+
+        weaken $dish->{meal};
+
+        push @{ $dish->{meal}{dishes} }, $dish;
 
         if ( my $prepare_meal_id = $dish->{prepare_at_meal} ) {
             push @{ $meals{$prepare_meal_id}{prepared_dishes} }, $dish;

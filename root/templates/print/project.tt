@@ -34,6 +34,18 @@
                 <span class="comment">[% dish.comment | html %]</span>
             </li>
         [% END %]
+        [% FOREACH dish IN meal.prepared_dishes %]
+            <li>
+                prepare
+            [% IF dish.url %]
+                <a href="[% dish.url %]">[% dish.name | html %]</a>
+            [% ELSE;
+                dish.name | html;
+            END %]
+                for [% dish.meal.name | html %]
+                on [% display_date(dish.meal.date, {html=>1}) %]
+            </li>
+        [% END %]
         </ul></td>
         [% FOR column IN extra_columns %]
         <td>&nbsp;</td>
