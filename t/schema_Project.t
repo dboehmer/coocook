@@ -13,13 +13,16 @@ subtest inventory => sub {
     my $inventory = $db->resultset('Project')->find(1)->inventory();
 
     is_deeply $inventory => {
-        quantities    => 2,
-        units         => 5,
-        shop_sections => 2,
-        articles      => 5,
-        recipes       => 1,
-        meals         => 3,
-        dishes        => 3,
+        articles         => 5,
+        dishes           => 3,
+        meals            => 3,
+        purchase_lists   => 1,
+        quantities       => 2,
+        recipes          => 1,
+        shop_sections    => 2,
+        tags             => 3,
+        units            => 5,
+        unassigned_items => 8,
       }
       or explain $inventory;
 };

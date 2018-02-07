@@ -26,34 +26,7 @@ C<Result::Project> object in the stash.
 sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     my ( $self, $c, $url_name ) = @_;
 
-    my $projects = $c->model('DB::Project');
-
-    # TODO move this to end() action and do only if template is rendered
-    # TODO maybe use $project->inventory
-    # TODO allow setting variable in controller actions to speed things up
-    # TODO use stash variables instead of using get_column() in TT code
-    my $project = $projects->search(
-        undef,
-        {
-            '+columns' => {
-                unassigned_items_count =>
-                  $projects->correlate('meals')->search_related('dishes')->search_related('ingredients')
-                  ->unassigned->count_rs->as_query,
-                dishes_count => $projects->correlate('meals')->search_related('dishes')->count_rs->as_query,
-                map { $_ . '_count' => $projects->correlate($_)->count_rs->as_query }
-                  qw<
-                  articles
-                  meals
-                  purchase_lists
-                  quantities
-                  recipes
-                  shop_sections
-                  tags
-                  units
-                  >,
-            },
-        }
-    )->find_by_url_name($url_name)
+    my $project = $c->model('DB::Project')->find_by_url_name($url_name)
       or $c->detach('/error/not_found');
 
     if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {

@@ -51,16 +51,16 @@
 [% END %]
 
 [% IF project %]
-    <li><a href="[% c.project_uri('/project/show') %]">Meals ([% project.get_column('meals_count') %]) &amp; Dishes ([% project.get_column('dishes_count') %])</a></li>
-    <li><a href="[% c.project_uri('/recipe/index') %]">Recipes ([% project.get_column('recipes_count') %])</a></li>
-    <li><a href="[% c.project_uri('/article/index') %]">Articles ([% project.get_column('articles_count') %])</a></li>
-    <li><a href="[% c.project_uri('/tag/index') %]">Tags ([% project.get_column('tags_count') %])</a></li>
-    <li><a href="[% c.project_uri('/items/unassigned') %]">Unassigned Items ([% project.get_column('unassigned_items_count') %])</a></li>
-    <li><a href="[% c.project_uri('/purchase_list/index') %]">Purchase Lists ([% project.get_column('purchase_lists_count') %])</a></li>
+    <li><a href="[% c.project_uri('/project/show') %]">Meals ([% inventory.meals %]) &amp; Dishes ([% inventory.dishes %])</a></li>
+    <li><a href="[% c.project_uri('/recipe/index') %]">Recipes ([% inventory.recipes %])</a></li>
+    <li><a href="[% c.project_uri('/article/index') %]">Articles ([% inventory.articles %])</a></li>
+    <li><a href="[% c.project_uri('/tag/index') %]">Tags ([% inventory.tags %])</a></li>
+    <li><a href="[% c.project_uri('/items/unassigned') %]">Unassigned Items ([% inventory.unassigned_items %])</a></li>
+    <li><a href="[% c.project_uri('/purchase_list/index') %]">Purchase Lists ([% inventory.purchase_lists %])</a></li>
     <li><a href="[% c.project_uri('/print/index') %]">Printing</a></li>
-    <li><a href="[% c.project_uri('/shop_section/index') %]">Shop sections ([% project.get_column('shop_sections_count') %])</a></li>
-    <li><a href="[% c.project_uri('/quantity/index') %]">Quantities ([% project.get_column('quantities_count') %])</a></li>
-    <li><a href="[% c.project_uri('/unit/index') %]">Units ([% project.get_column('units_count') %])</a></li>
+    <li><a href="[% c.project_uri('/shop_section/index') %]">Shop sections ([% inventory.shop_sections %])</a></li>
+    <li><a href="[% c.project_uri('/quantity/index') %]">Quantities ([% inventory.quantities %])</a></li>
+    <li><a href="[% c.project_uri('/unit/index') %]">Units ([% inventory.units %])</a></li>
     <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
 [% END %]
 

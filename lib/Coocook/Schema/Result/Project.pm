@@ -149,13 +149,17 @@ sub inventory {
         undef,
         {
             columns => {
-                quantities    => $self->quantities->count_rs->as_query,
-                units         => $self->units->count_rs->as_query,
-                articles      => $self->articles->count_rs->as_query,
-                recipes       => $self->recipes->count_rs->as_query,
-                shop_sections => $self->shop_sections->count_rs->as_query,
-                meals         => $self->meals->count_rs->as_query,
-                dishes        => $self->meals->search_related('dishes')->count_rs->as_query,
+                articles         => $self->articles->count_rs->as_query,
+                dishes           => $self->meals->search_related('dishes')->count_rs->as_query,
+                meals            => $self->meals->count_rs->as_query,
+                purchase_lists   => $self->purchase_lists->count_rs->as_query,
+                quantities       => $self->quantities->count_rs->as_query,
+                recipes          => $self->recipes->count_rs->as_query,
+                shop_sections    => $self->shop_sections->count_rs->as_query,
+                tags             => $self->tags->count_rs->as_query,
+                unassigned_items => $self->meals->search_related('dishes')->search_related('ingredients')
+                  ->unassigned->count_rs->as_query,
+                units => $self->units->count_rs->as_query,
             },
         }
     )->hri->first;    # use single() and make outer query not SELECT from a table
