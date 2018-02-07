@@ -26,8 +26,16 @@ sub index : GET HEAD Chained('/project/base') PathPart('recipes') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
+    my @recipes = $c->project->recipes->sorted->hri->all;
+
+    for my $recipe (@recipes) {
+        $recipe->{edit_url}      = $c->project_uri( $self->action_for('edit'),      $recipe->{id} );
+        $recipe->{duplicate_url} = $c->project_uri( $self->action_for('duplicate'), $recipe->{id} );
+        $recipe->{delete_url}    = $c->project_uri( $self->action_for('delete'),    $recipe->{id} );
+    }
+
     $c->stash(
-        recipes    => $c->project->recipes->sorted,
+        recipes    => \@recipes,
         create_url => $c->project_uri( $self->action_for('create') ),
         title      => "Recipes",
     );
@@ -76,7 +84,8 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         articles           => $ingredients->all_articles,
         units              => $ingredients->all_units,
         dishes             => \@dishes,
-        add_ingredient_url => $c->project_uri( '/recipe/add', $recipe->id ),
+        update_url         => $c->project_uri( $self->action_for('update'), $recipe->id ),
+        add_ingredient_url => $c->project_uri( $self->action_for('add'), $recipe->id ),
     );
 
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {

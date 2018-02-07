@@ -1,10 +1,10 @@
-[% IF tag.deletable %]
-<form action="[% c.project_uri('/tag/delete', tag.id) %]" method="POST">
+[% IF delete_url %]
+<form method="POST" action="[% delete_url %]">
     <input type="submit" value="Delete Tag">
 </form>
 [% END %]
 
-<form action="[% c.project_uri('/tag/update', tag.id) %]" method="POST">
+<form method="POST" action="[% update_url %]">
     <fieldset>
         <legend>Edit Tag</legend>
         <input type="text" name="name" value="[% tag.name | html %]">

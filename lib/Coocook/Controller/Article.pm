@@ -88,6 +88,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     my $units_in_use = $article->units_in_use;
 
     $c->stash(
+        update_url => $c->project_uri( $self->action_for('update'), $article->id ),
         selected_units => { map { $_ => 1 } $units->get_column('id')->all },
         units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
@@ -171,14 +172,24 @@ sub dishes_recipes : Private {
 
     my $dishes = $article->dishes;
     $dishes = $dishes->search( undef, { order_by => $dishes->me('name'), prefetch => 'meal' } );
-    my $recipes = $article->recipes->sorted;
+
+    my $recipes = $article->recipes->sorted->hri;
+    my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
+    my %recipes = map { $_->{recipe}{id} => $_ } @recipes;               # by recipe ID
+
+    for my $r (@recipes) {
+        $r->{recipe}{url} = $c->project_uri( '/recipe/edit', $r->{recipe}{id} );
+    }
 
     my @dishes;
-    my @recipes = map +{ recipe => $_, dishes => [] }, $recipes->all;    # sorted hashrefs
-    my %recipes = map { $$_{recipe}->id => $_ } @recipes;                # by ID
 
     while ( my $dish = $dishes->next ) {
         my $recipe = $dish->from_recipe;
+
+        my $meal = $dish->meal;
+        $dish = $dish->as_hashref;
+        $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+        $dish->{meal} = $meal;
 
         if ( defined $recipe and exists $recipes{$recipe} ) {
             push @{ $recipes{$recipe}{dishes} }, $dish;

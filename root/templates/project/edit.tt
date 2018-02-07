@@ -13,8 +13,8 @@
         [% END %]
         <th colspan="1" style="text-align:left">
             [% meal.name | html %]
-        [% IF meal.deletable %]
-            <form action="[% c.project_uri('/meal/delete', meal.id) %]" method="POST" class="inline">
+        [% IF meal.delete_url %]
+            <form class="inline" method="POST" action="[% meal.delete_url %]">
                 <input type="submit" value="Delete meal">
             </form>
         [% END %]
@@ -28,7 +28,7 @@
     </tr>
     <tr>
         <td>
-            <form action="[% c.project_uri('/meal/update', meal.id) %]" method="POST">
+            <form method="POST" action="[% meal.update_url %]">
                 <input type="text" name="name"    value="[% meal.name | html %]">
                 <input type="text" name="comment" value="[% meal.comment | html %]" placeholder="comment">
                 <input type="submit" value="Update meal">
@@ -38,7 +38,7 @@
         [% FOREACH dish IN meal.dishes %]
     <tr>
         <td>
-            <a href="[% c.project_uri('/dish/edit', dish.id) %]">[% dish.name | html %]</a> ([% dish.servings %] servings)
+            <a href="[% dish.url %]">[% dish.name | html %]</a> ([% dish.servings %] servings)
             [%~ IF dish.comment; ': '; dish.comment | html; END %]
         </td>
     </tr>

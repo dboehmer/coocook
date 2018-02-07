@@ -21,11 +21,11 @@
         <th>Recipe</th>
         <th colspan="2">Actions</th>
     </tr>
-[% FOR recipe IN recipes.all %]
+[% FOR recipe IN recipes %]
     <tr>
-    <td><a href="[% c.project_uri('/recipe/edit', recipe.id) %]">[% recipe.name | html %]</a></td>
+    <td><a href="[% recipe.edit_url %]">[% recipe.name | html %]</a></td>
     <td>
-        <form class="inline" action="[% c.project_uri('/recipe/duplicate', recipe.id) %]" method="POST">
+        <form class="inline" method="POST" action="[% recipe.duplicate_url %]">
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name | html %]">
             <input type="submit" value="Duplicate">
             <div class="tooltip">?
@@ -34,7 +34,7 @@
         </form>
     </td>
     <td>
-        <form class="inline" action="[% c.project_uri('/recipe/delete', recipe.id) %]" method="POST">
+        <form class="inline" method="POST" action="[% recipe.delete_url %]">
             <input type="submit" value="Delete">
         </form>
     </td>

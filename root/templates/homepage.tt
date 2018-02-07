@@ -1,11 +1,12 @@
-[% USE Markdown; c.config.homepage_text_md | $Markdown %]
+[% USE Markdown;
+homepage_text_md | $Markdown %]
 
 <h2>Public Projects</h2>
 
 <ul>
 [% FOR proj IN public_projects # don't overwrite $project! %]
     <li>
-        <a href="[% c.uri_for_action('/project/show', [proj.url_name]) %]">[% proj.name | html %]</a>
+        <a href="[% proj.url %]">[% proj.name | html %]</a>
     </li>
 [% END %]
 </ul>

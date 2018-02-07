@@ -79,6 +79,11 @@ sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view
         $c->stash( $rel => \@hashrefs );
     }
 
+    $c->stash(
+        update_url => $c->project_uri( $self->action_for('update'), $tag->id ),
+        delete_url => $tag->deletable ? $c->project_uri( $self->action_for('delete'), $tag->id ) : undef,
+    );
+
     $c->escape_title( Tag => $tag->name );
 }
 

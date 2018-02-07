@@ -16,6 +16,12 @@ __PACKAGE__->load_components(
       >
 );
 
+sub as_hashref {
+    my $self = shift;
+
+    return { $self->get_inflated_columns };   # TODO is there a method for getting a hashref right away?
+}
+
 # set default of cascade_copy to false
 sub has_many {
     my $class = shift;

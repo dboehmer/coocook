@@ -38,15 +38,27 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     my $user = $c->stash->{user_object};
 
-    my @permissions = $user->projects_users->search(
+    my $permissions = $user->projects_users->search(
         undef,
         {
             prefetch => 'project',
             order_by => 'project.url_name_fc',
         }
-    )->all;
+    );
 
-    $c->stash( permissions => \@permissions );
+    $c->stash( permissions => \my @permissions );
+
+    while ( my $permission = $permissions->next ) {
+        my $project = $permission->project->as_hashref;
+
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+
+        push @permissions,
+          {
+            role    => $permission->role,
+            project => $project,
+          };
+    }
 
     if ( $c->user and $c->user->id == $user->id ) {
         $c->stash( my_settings_url => $c->uri_for_action('/settings') );

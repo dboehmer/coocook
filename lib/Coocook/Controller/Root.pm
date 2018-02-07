@@ -23,7 +23,10 @@ sub base : Chained('/') PathPart('') CaptureArgs(0) Does('RequireSSL') { }
 sub begin : Private {
     my ( $self, $c ) = @_;
 
-    $c->stash( user => $c->user );
+    $c->stash(
+        name => $c->config->{name},
+        user => $c->user,
+    );
 }
 
 sub auto : Private {
@@ -114,10 +117,17 @@ sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
+    my @public_projects = $c->model('DB::Project')->public->hri->all;
+
+    for my $project (@public_projects) {
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+    }
+
     $c->stash(
         meta_description => $c->config->{homepage_meta_description},
         meta_keywords    => $c->config->{homepage_meta_keywords},
-        public_projects  => [ $c->model('DB::Project')->public->all ],
+        homepage_text_md => $c->config->{homepage_text_md},
+        public_projects  => \@public_projects,
     );
 }
 

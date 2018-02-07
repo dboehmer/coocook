@@ -4,7 +4,7 @@
     <title>
         [% title        _ ' · ' | html IF title %]
         [% project.name _ ' · ' | html IF project %]
-        [% c.config.name | html %]
+        [% name | html %]
     </title>
 
     <meta charset="UTF-8">
@@ -25,7 +25,7 @@
 
 <header>
 <h1>
-    <a href="[% homepage_url %]">[% c.config.name | html %]</a>
+    <a href="[% homepage_url %]">[% name | html %]</a>
 [%~ IF project ~%]
     :
     <a href="[% c.project_uri('/project/show') %]">[% project.name | html %]</a>

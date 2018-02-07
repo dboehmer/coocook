@@ -107,9 +107,18 @@ sub edit : GET HEAD Chained('base') PathPart('edit') Args(0) RequiresCapability(
         $day->{dishes} = 0;
 
         for my $meal ( @{ $day->{meals} } ) {
-            my $dishes = @{ $meal->{dishes} };
-            $day->{dishes} += $dishes;
-            $meal->{deletable} = not $dishes;
+            my $dishes = $meal->{dishes};
+
+            for my $dish (@$dishes) {
+                $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+            }
+
+            $day->{dishes} += @$dishes;
+
+            $meal->{update_url} = $c->project_uri( '/meal/update', $meal->{id} );
+
+            $meal->{delete_url} = $c->project_uri( '/meal/delete', $meal->{id} )
+              unless @$dishes > 0;
         }
     }
 
