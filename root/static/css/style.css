@@ -96,7 +96,7 @@ header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
 
 /******** content part ********/
 
-.content{
+main {
     padding: 15px;
 }
 
@@ -105,12 +105,13 @@ a {
     color: #333333;
 }
 
-.content a {
+main a {
     text-decoration:none;
     color: #4CAF50;
 }
 
-.content a:hover, .content a:active {
+main a:hover,
+main a:active {
     color: #333333;
 }
 

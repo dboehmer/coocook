@@ -74,7 +74,7 @@
 </nav>
 </header>
 
-<div class="content">
+<main>
 [% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
 [% ELSIF   title %]<h2>[% title | html %]</h2>
 [% END %]
@@ -84,7 +84,7 @@
 [% END %]
 
 [% content %]
-</div>
+</main>
 
 <footer>
 Coocook&mdash;Web application for collecting recipes and making food plans<br>
