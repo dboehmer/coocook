@@ -9,9 +9,10 @@ use TestDB;
 use Test::Coocook;
 use Test::Most tests => 4;
 
-our $SCHEMA = TestDB->new();
-
-my $t = Test::Coocook->new( max_redirect => 0 );
+my $t = Test::Coocook->new(
+    max_redirect => 0,
+    schema       => TestDB->new(),
+);
 
 subtest "HTTP redirects to HTTPS" => sub {
     $t->get('http://localhost/');

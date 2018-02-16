@@ -4,15 +4,15 @@ use warnings;
 use DBICx::TestDatabase;
 use Test::Most;
 
-our $SCHEMA;
-BEGIN { $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema') }
-
 use Catalyst::Test 'Coocook';
 
-$SCHEMA->resultset('User')
+my $schema = DBICx::TestDatabase->new('Coocook::Schema');
+Coocook->model('DB')->schema->storage( $schema->storage );
+
+$schema->resultset('User')
   ->create( { map { $_ => '' } qw< name display_name password_hash email > } );
 
-my $meal = $SCHEMA->resultset('Meal')->create(
+my $meal = $schema->resultset('Meal')->create(
     {
         project => 99999,
         date    => '2000-01-01',

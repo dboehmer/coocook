@@ -7,9 +7,7 @@ use DBICx::TestDatabase;
 use Test::Coocook;
 use Test::Most tests => 37;
 
-our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
-
-my $t = Test::Coocook->new();
+my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
 
 $ENV{TEST_VERBOSE}
   or Coocook->log->disable('info');    # don't spill STDERR with info messages
@@ -26,7 +24,7 @@ $t->register_ok(
     }
 );
 
-for my $user1 ( $SCHEMA->resultset('User')->find( { name => 'test' } ) ) {
+for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
     ok $user1->has_role('site_admin'),       "1st user created has 'site_admin' role";
     ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
 }
@@ -87,7 +85,7 @@ subtest "registration of existing e-mail address triggers e-mail" => sub {
     $t->clear_emails();
 };
 
-for my $user2 ( $SCHEMA->resultset('User')->find( { name => 'test2' } ) ) {
+for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_admin'), "2nd user created hasn't 'site_admin' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
@@ -144,7 +142,7 @@ $t->logout_ok();
 subtest "expired password reset token URL" => sub {
     $t->request_recovery_link_ok('test@example.com');
 
-    $SCHEMA->resultset('User')->update( { token_expires => '2000-01-01 00:00:00' } );
+    $schema->resultset('User')->update( { token_expires => '2000-01-01 00:00:00' } );
 
     $t->get_email_link_ok(qr/http\S+reset_password\S+/);
 
@@ -162,7 +160,7 @@ subtest "password recovery" => sub {
 };
 
 subtest "password recovery marks e-mail address verified" => sub {
-    my $test2 = $SCHEMA->resultset('User')->find( { name => 'test2' } );
+    my $test2 = $schema->resultset('User')->find( { name => 'test2' } );
 
     is $test2->email_verified => undef,
       "email_verified IS NULL";
@@ -184,7 +182,7 @@ unlike $t->uri => qr/import/,
   "not redirected to importer for first project";
 
 note "remove all roles from user";
-$SCHEMA->resultset('RoleUser')->search( { user => '1' } )->delete;
+$schema->resultset('RoleUser')->search( { user => '1' } )->delete;
 
 $t->create_project_ok( { name => "Test Project 2" } );
 
@@ -193,7 +191,7 @@ like $t->uri => qr/import/,
 
 $t->content_contains("Test Project 1");
 
-ok my $project = $SCHEMA->resultset('Project')->find( { name => "Test Project 1" } ),
+ok my $project = $schema->resultset('Project')->find( { name => "Test Project 1" } ),
   "project is in database";
 
 ok !$project->is_public, "1st project is private";
@@ -204,6 +202,6 @@ is $project->owner->name => 'test',
 is $project->users->first->name => 'test',
   "owner relationship is also stored via table 'projects_users'";
 
-ok my $project2 = $SCHEMA->resultset('Project')->find( { name => "Test Project 2" } );
+ok my $project2 = $schema->resultset('Project')->find( { name => "Test Project 2" } );
 
 ok $project2->is_public, "2nd project is public";

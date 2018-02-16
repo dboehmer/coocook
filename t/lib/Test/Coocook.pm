@@ -20,9 +20,17 @@ BEGIN {
 use parent 'Test::WWW::Mechanize::Catalyst';
 
 sub new {
-    my $class = shift;
+    my ( $class, %args ) = @_;
 
-    return $class->SUPER::new( catalyst_app => 'Coocook', @_ );
+    my $schema = delete $args{schema};
+
+    my $self = $class->SUPER::new( catalyst_app => 'Coocook', %args );
+
+    if ($schema) {
+        Coocook->model('DB')->schema->storage( $schema->storage );
+    }
+
+    return $self;
 }
 
 sub request {
