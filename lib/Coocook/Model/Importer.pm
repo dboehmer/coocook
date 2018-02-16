@@ -224,9 +224,14 @@ sub import_data {    # import() is used by 'use'
             my $quantities = $target->quantities->search( { default_unit => { '!=' => undef } },
                 { columns => [ 'id', 'default_unit' ] } );
 
-            while ( my $quantity = $quantities->next ) {
-                $quantity->update(
-                    { default_unit => $new_id{units}{ $quantity->get_column('default_unit') } || die } );
+            if ( $requested_props{units} ) {
+                while ( my $quantity = $quantities->next ) {
+                    $quantity->update(
+                        { default_unit => $new_id{units}{ $quantity->get_column('default_unit') } || die } );
+                }
+            }
+            else {
+                $quantities->update( { default_unit => undef } );
             }
         }
     );
