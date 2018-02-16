@@ -15,12 +15,7 @@ my $t = Test::Coocook->new( max_redirect => 0 );
 
 subtest "HTTP redirects to HTTPS" => sub {
     $t->get('http://localhost/');
-
-    {
-        local $TODO = "fix https://github.com/papercreatures/Catalyst-ActionRole-RequireSSL/issues/1";
-        $t->status_is(301);    # moved permanently
-    }
-
+    $t->status_is(301);    # moved permanently
     $t->header_is( Location => 'https://localhost/' );
 };
 

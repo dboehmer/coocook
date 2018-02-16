@@ -3,6 +3,9 @@ package Coocook::Controller::Root;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+# version 1.0.0 changed HTTP status code for SSL redirects to 301
+use Catalyst::ActionRole::RequireSSL v1.0.0;
+
 # BEGIN-block necessary to make method attributes work
 BEGIN { extends 'Coocook::Controller' }
 
