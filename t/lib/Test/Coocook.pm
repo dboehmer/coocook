@@ -57,7 +57,7 @@ sub register_ok {
                 with_fields  => $field_values,
                 strict_forms => 1,
             },
-            "register account '$field_values->{name}'"
+            "register account '$field_values->{username}'"
         );
 
         $self->content_like(qr/e-mail/)

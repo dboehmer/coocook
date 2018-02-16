@@ -9,7 +9,12 @@ $( function() {
     $password.on( 'change input', function() {
         var result = zxcvbn( $password.val() );
 
-        $meter.text( 'strength: ' + result.score + ' of 4' );
+        var html = 'strength: ';
+        html += '&#x2605;'.repeat( 1 + result.score );
+        html += '&#x2606;'.repeat( 4 - result.score );
+
+        $meter.html( html );
+        $meter.attr( 'title', ( 1 + result.score ) + ' of 5' );
     });
 
     $password.change();

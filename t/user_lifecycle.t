@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 36;
+use Test::Most tests => 37;
 
 our $SCHEMA = DBICx::TestDatabase->new('Coocook::Schema');
 
@@ -18,7 +18,7 @@ $t->get_ok('/');
 
 $t->register_ok(
     {
-        name         => "test",
+        username     => "test",
         display_name => "Test User",
         email        => "test\@example.com",
         password     => "s3cr3t",
@@ -55,7 +55,7 @@ $t->get('/');
 
 $t->register_ok(
     {
-        name         => "test2",
+        username     => "test2",
         display_name => "Other User",
         email        => "test2\@example.com",
         password     => "s3cr3t",
@@ -72,7 +72,7 @@ my $content_after_registration = $t->content;
 subtest "registration of existing e-mail address triggers e-mail" => sub {
     $t->register_ok(
         {
-            name         => 'test_other',
+            username     => 'test_other',
             display_name => "Other user with same e-mail address",
             email        => 'test2@example.com',
             password     => 's3cr3t',
@@ -96,8 +96,20 @@ subtest "registration of existing username fails" => sub {
     $t->follow_link_ok( { text => 'Register' } );
 
     $t->submit_form_ok(
-        { with_fields => { name => 'TEST2', display_name => "Same as test2 with other case" }, },
+        { with_fields => { username => 'TEST2', display_name => "Same as test2 with other case" }, },
         "register account 'TEST2'" );
+
+    $t->content_like(qr/username/)
+      or note $t->content;
+};
+
+subtest "registration with invalid username fails" => sub {
+    $t->follow_link_ok( { text => 'Register' } );
+
+    $t->submit_form_ok(
+        { with_fields => { username => $_, display_name => "Username with trailing space" }, },
+        "register account '$_'" )
+      for "foobar ";
 
     $t->content_like(qr/username/)
       or note $t->content;

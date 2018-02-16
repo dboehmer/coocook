@@ -6,6 +6,8 @@ package Coocook;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use utf8;
+
 use Catalyst::Runtime 5.80;
 
 # Set flags and add plugins for the application.
@@ -96,6 +98,9 @@ EOT
 
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
+
+    registration_example_username     => 'daniel_boehmer42',
+    registration_example_display_name => "Daniel Böhmer",
 
     email_from_address => do {
         my $username = getpwuid($<);
