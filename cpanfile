@@ -38,7 +38,6 @@ requires "Net::SSLeay" => "0";
 requires "Scalar::Util" => "0";
 requires "Template::Plugin::Filter" => "0";
 requires "Template::Plugin::Markdown" => "0";
-requires "URI" => "0";
 requires "feature" => "0";
 requires "lib" => "0";
 requires "parent" => "0";

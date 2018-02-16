@@ -2,7 +2,6 @@ package Coocook::Controller::Session;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
-use URI;
 
 BEGIN { extends 'Coocook::Controller' }
 
