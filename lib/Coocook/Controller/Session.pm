@@ -18,7 +18,7 @@ sub login : GET HEAD Chained('/base') Args(0) {
 
     $c->stash(
         title          => "Login",
-        username       => $c->req->params->get('username'),
+        username       => $c->req->params->get('username') || $c->session->{username},
         recover_url    => $c->uri_for_action('/user/recover'),
         post_login_url => $c->uri_for(
             $self->action_for('post_login'),
@@ -41,6 +41,8 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     );
 
     if ($user) {
+        $c->session->{username} = $user->name;
+
         if ( my $redirect = $c->req->params->get('redirect') ) {
             $c->forward( _check_redirect_uri => [$redirect] );
 

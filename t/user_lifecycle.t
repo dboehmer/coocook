@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 37;
+use Test::Most tests => 38;
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
 
@@ -134,6 +134,9 @@ $t->clear_emails;
 $t->change_display_name_ok('John Doe');
 
 $t->logout_ok();
+
+$t->content_like( qr/ name="username" .+ value="test" /x,
+    "last username is prefilled in login form" );
 
 $t->login_ok( 'test', 'P@ssw0rd' );
 
