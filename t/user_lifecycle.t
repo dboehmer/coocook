@@ -44,11 +44,8 @@ $t->clear_emails();
 
 $t->content_lacks('Register');
 
-# rebuild app with user registration enabled
-Coocook->setup_finished(0);
-Coocook->config( enable_user_registration => 1 );
-Coocook->setup_finished(1);
-$t = Test::Coocook->new();
+Coocook->reload_config( enable_user_registration => 1 );
+
 $t->get('/');
 
 $t->register_ok(

@@ -17,6 +17,21 @@ BEGIN {
     $ENV{COOCOOK_CONFIG} = "$FindBin::Bin";
 }
 
+use Coocook;
+
+*Coocook::reload_config = sub {
+    my $class = shift;
+
+    $class->setup_finished(0);
+
+    # Plugin::Static::Simple warns if $c->config->{static} exists
+    # but creates this hash key itself in before(setup_finalize => sub {...})
+    delete $class->config->{static};
+
+    $class->config(@_);
+    $class->setup_finalize();
+};
+
 use parent 'Test::WWW::Mechanize::Catalyst';
 
 sub new {

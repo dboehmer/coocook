@@ -69,15 +69,13 @@ subtest "HTTP Strict Transport Security" => sub {
     $t->get_ok('https://localhost');
     $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
 
-    Coocook->setup_finished(0);
-    Coocook->config(
+    Coocook->reload_config(
         'Plugin::StrictTransportSecurity' => {
             max_age             => 63072000,
             include_sub_domains => 1,
             preload             => 1
         }
     );
-    Coocook->setup_finished(1);
 
     $t->get_ok('https://localhost');
     $t->header_is(
