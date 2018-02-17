@@ -203,9 +203,17 @@ sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
 
     my $importer = $c->model('ProjectImporter');
 
+    my $inventory  = $c->project->inventory;
+    my $properties = $importer->properties;
+    my %properties = map { $_->{key} => $_ } @$properties;
+
+    for my $property ( $importer->unimportable_properties( $c->project ) ) {
+        $properties{ $property->{key} }->{disabled} = 1;
+    }
+
     $c->stash(
         projects        => $c->forward('exportable_projects'),
-        properties      => $importer->properties,
+        properties      => $properties,
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
         template        => 'project/import.tt',
