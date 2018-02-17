@@ -14,38 +14,6 @@ my $t = Test::Coocook->new(
     schema       => TestDB->new(),
 );
 
-subtest "HTTP redirects to HTTPS" => sub {
-    $t->get('http://localhost/');
-    $t->status_is(301);    # moved permanently
-    $t->header_is( Location => 'https://localhost/' );
-};
-
-$t->get_ok('https://localhost');
-
-subtest "HTTP Strict Transport Security" => sub {
-    $t->get('http://localhost');
-    $t->lacks_header_ok( 'Strict-Transport-Security', "no header for plain HTTP" );
-
-    $t->get_ok('https://localhost');
-    $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
-
-    Coocook->setup_finished(0);
-    Coocook->config(
-        'Plugin::StrictTransportSecurity' => {
-            max_age             => 63072000,
-            include_sub_domains => 1,
-            preload             => 1
-        }
-    );
-    Coocook->setup_finished(1);
-
-    $t->get_ok('https://localhost');
-    $t->header_is(
-        'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
-        "with configuration"
-    );
-};
-
 subtest "public actions are either GET or POST" => sub {
     my $app = $t->catalyst_app;
 
@@ -84,4 +52,36 @@ subtest "public actions are either GET or POST" => sub {
             ) or note "HTTP methods: " . $methods;
         }
     }
+};
+
+subtest "HTTP redirects to HTTPS" => sub {
+    $t->get('http://localhost/');
+    $t->status_is(301);    # moved permanently
+    $t->header_is( Location => 'https://localhost/' );
+};
+
+$t->get_ok('https://localhost');
+
+subtest "HTTP Strict Transport Security" => sub {
+    $t->get('http://localhost');
+    $t->lacks_header_ok( 'Strict-Transport-Security', "no header for plain HTTP" );
+
+    $t->get_ok('https://localhost');
+    $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
+
+    Coocook->setup_finished(0);
+    Coocook->config(
+        'Plugin::StrictTransportSecurity' => {
+            max_age             => 63072000,
+            include_sub_domains => 1,
+            preload             => 1
+        }
+    );
+    Coocook->setup_finished(1);
+
+    $t->get_ok('https://localhost');
+    $t->header_is(
+        'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
+        "with configuration"
+    );
 };
