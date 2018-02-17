@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 4;
+use Test::Most tests => 5;
 
 my $t = Test::Coocook->new(
     max_redirect => 0,
@@ -82,4 +82,13 @@ subtest "HTTP Strict Transport Security" => sub {
         'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
         "with configuration"
     );
+};
+
+subtest "static URIs" => sub {
+    $t->get('/');
+    $t->content_contains('https://localhost/static/css/style.css');
+
+    Coocook->reload_config( static_base_uri => 'https://coocook-cdn.example/' );
+    $t->get('/');
+    $t->content_contains('https://coocook-cdn.example/css/style.css');
 };

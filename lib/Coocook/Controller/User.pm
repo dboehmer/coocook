@@ -74,8 +74,8 @@ sub register : GET HEAD Chained('/base') Args(0) {
       or $c->detach('/error/forbidden');
 
     push @{ $c->stash->{js} }, qw<
-      js/user/register.js
-      lib/zxcvbn.js
+      /js/user/register.js
+      /lib/zxcvbn.js
     >;
 
     $c->stash(

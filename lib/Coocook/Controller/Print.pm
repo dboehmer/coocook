@@ -26,16 +26,16 @@ Catalyst Controller.
 sub auto : Private {
     my ( $self, $c ) = @_;
 
-    push @{ $c->stash->{css} }, 'lib/print.css';
+    push @{ $c->stash->{css} }, '/lib/print.css';
 }
 
 sub index : GET HEAD Chained('/project/base') PathPart('print') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
-    # TODO find a way to exclude this method when adding 'lib/print.css' (5 lines above)
+    # TODO find a way to exclude this method when adding '/lib/print.css' (5 lines above)
     my $css = $c->stash->{css};
-    @$css = grep { $_ ne 'lib/print.css' } @$css;    # remove 'lib/print.css' again :-/
+    @$css = grep { $_ ne '/lib/print.css' } @$css;    # remove '/lib/print.css' again :-/
 
     my $project = $c->stash->{project} || die;
 

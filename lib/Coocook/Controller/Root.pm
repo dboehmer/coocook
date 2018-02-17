@@ -58,11 +58,11 @@ sub auto : Private {
     );
 
     $c->stash(
-        css => ['css/style.css'],
+        css => ['/css/style.css'],
         js  => [
-            'lib/jquery-3.2.1' .  ( $c->debug ? '.js' : '.min.js' ),
-            'lib/marked/marked' . ( $c->debug ? '.js' : '.min.js' ),
-            'js/script.js',
+            '/lib/jquery-3.2.1' .  ( $c->debug ? '.js' : '.min.js' ),
+            '/lib/marked/marked' . ( $c->debug ? '.js' : '.min.js' ),
+            '/js/script.js',
         ],
     );
 
@@ -181,7 +181,7 @@ sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
-        $_ = $c->uri_for( '/static/' . $_ );
+        $_ = $c->uri_for_static($_);
     }
 
     if ( my $project = $c->stash->{project} ) {

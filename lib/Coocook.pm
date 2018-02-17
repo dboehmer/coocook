@@ -26,6 +26,7 @@ use Catalyst (
     qw<
       ConfigLoader
       +Coocook::Plugin::StrictTransportSecurity
+      +Coocook::Plugin::UriForStatic
       Session
       Session::Store::DBIC
       Session::State::Cookie

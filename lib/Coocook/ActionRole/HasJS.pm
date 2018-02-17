@@ -13,7 +13,7 @@ has js_path => (
 after BUILD => sub {
     my ( $self, $args ) = @_;
 
-    $self->js_path( "js/" . $args->{reverse} . ".js" );
+    $self->js_path( '/js/' . $args->{reverse} . '.js' );
 
     # TODO check if file exists
 };
