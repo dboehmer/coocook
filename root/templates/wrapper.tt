@@ -26,9 +26,9 @@
 <header>
 <h1>
     <a href="[% homepage_url %]">[% name | html %]</a>
-[%~ IF project ~%]
+[%~ IF project_urls ~%]
     :
-    <a href="[% c.project_uri('/project/show') %]">[% project.name | html %]</a>
+    <a href="[% project_urls.project %]">[% project.name | html %]</a>
 [% END %]
 </h1>
 
@@ -50,18 +50,18 @@
     <li><a href="[% register_url %]">Register</a></li>
 [% END %]
 
-[% IF project %]
-    <li><a href="[% c.project_uri('/project/show') %]">Meals ([% inventory.meals %]) &amp; Dishes ([% inventory.dishes %])</a></li>
-    <li><a href="[% c.project_uri('/recipe/index') %]">Recipes ([% inventory.recipes %])</a></li>
-    <li><a href="[% c.project_uri('/article/index') %]">Articles ([% inventory.articles %])</a></li>
-    <li><a href="[% c.project_uri('/tag/index') %]">Tags ([% inventory.tags %])</a></li>
-    <li><a href="[% c.project_uri('/items/unassigned') %]">Unassigned Items ([% inventory.unassigned_items %])</a></li>
-    <li><a href="[% c.project_uri('/purchase_list/index') %]">Purchase Lists ([% inventory.purchase_lists %])</a></li>
-    <li><a href="[% c.project_uri('/print/index') %]">Printing</a></li>
-    <li><a href="[% c.project_uri('/shop_section/index') %]">Shop sections ([% inventory.shop_sections %])</a></li>
-    <li><a href="[% c.project_uri('/quantity/index') %]">Quantities ([% inventory.quantities %])</a></li>
-    <li><a href="[% c.project_uri('/unit/index') %]">Units ([% inventory.units %])</a></li>
-    <li><a href="[% c.project_uri('/project/get_import') %]">Import</a></li>
+[% IF project_urls %]
+    <li><a href="[% project_urls.project %]">Meals ([% inventory.meals %]) &amp; Dishes ([% inventory.dishes %])</a></li>
+    <li><a href="[% project_urls.recipes %]">Recipes ([% inventory.recipes %])</a></li>
+    <li><a href="[% project_urls.articles %]">Articles ([% inventory.articles %])</a></li>
+    <li><a href="[% project_urls.tags %]">Tags ([% inventory.tags %])</a></li>
+    <li><a href="[% project_urls.unassigned_items %]">Unassigned Items ([% inventory.unassigned_items %])</a></li>
+    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists ([% inventory.purchase_lists %])</a></li>
+    <li><a href="[% project_urls.print %]">Printing</a></li>
+    <li><a href="[% project_urls.shop_sections %]">Shop sections ([% inventory.shop_sections %])</a></li>
+    <li><a href="[% project_urls.quantities %]">Quantities ([% inventory.quantities %])</a></li>
+    <li><a href="[% project_urls.units %]">Units ([% inventory.units %])</a></li>
+    <li><a href="[% project_urls.import %]">Import</a></li>
 [% END %]
 
 [% IF admin_url %]

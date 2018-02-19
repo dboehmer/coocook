@@ -36,6 +36,22 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     }
 
     $c->stash( project => $project );
+
+    $c->stash(
+        project_urls => {
+            project          => $c->project_uri('/project/show'),
+            recipes          => $c->project_uri('/recipe/index'),
+            articles         => $c->project_uri('/article/index'),
+            tags             => $c->project_uri('/tag/index'),
+            unassigned_items => $c->project_uri('/items/unassigned'),
+            purchase_lists   => $c->project_uri('/purchase_list/index'),
+            print            => $c->project_uri('/print/index'),
+            shop_sections    => $c->project_uri('/shop_section/index'),
+            quantities       => $c->project_uri('/quantity/index'),
+            units            => $c->project_uri('/unit/index'),
+            import           => $c->project_uri('/project/get_import'),
+        },
+    );
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
