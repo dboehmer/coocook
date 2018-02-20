@@ -14,4 +14,33 @@ FOR item IN submenu_items;
 END %]
 </p>
 
+<p>
+[% IF inventory.quantities == 0 AND inventory.articles == 0 AND inventory.shop_sections == 0 AND inventory.tags == 0 %]
+    This is a fresh project without any data.
+    You can <a href="[% project_urls.import %]">import data</a> from other projects
+    or start from scratch, e.g. by <a href="[% project_urls.quantities %]">creating quantities</a>.
+[% ELSIF inventory.quantities == 0 %]
+    This project lacks any quantities. You can <a href="[% project_urls.import %]">import them</a>
+    or <a href="[% project_urls.quantities %]">create some</a> from scratch.
+[% ELSIF inventory.units == 0 %]
+    This project lacks any units. You can <a href="[% project_urls.units %]">create some</a>.
+[% ELSIF inventory.articles == 0 %]
+    This project lacks any articles. You can <a href="[% project_urls.import %]">import them</a>
+    or <a href="[% project_urls.articles %]">create some</a> from scratch.
+[% ELSIF inventory.meals == 0 OR inventory.dishes == 0 %]
+    This project lacks any [% inventory.meals == 0 ? 'meals' : 'dishes' %].
+    You can <a href="[% edit_url %]">create some</a> now.
+    [% IF inventory.recipes == 0 %]
+    You can also <a href="[% project_urls.recipes %]">create a recipe</a> for dishes.
+    [% END %]
+[% ELSIF inventory.purchase_lists == 0 %]
+    This project lacks any purchase lists. You can <a href="[% project_urls.purchase_lists %]">create some</a>.
+[% ELSIF inventory.unassigned_items > 0 %]
+    There are some ingredient items not yet assigned to a purchase list.
+    You can <a href="[% project_urls.unassigned_items %]">assign items to purchase lists</a> now.
+[% ELSE %]
+    Once you've finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
+[% END %]
+</p>
+
 [% INCLUDE 'print/project.tt' %]
