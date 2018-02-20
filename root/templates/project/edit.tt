@@ -51,16 +51,18 @@
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Create dish">
             </form>
+        [% IF recipes.size %]
             <form action="[% dish_from_recipe_url %]" method="POST">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <select name="recipe">
-        [% FOREACH recipe IN recipes %]
+            [% FOREACH recipe IN recipes %]
                     <option value="[% recipe.id %]">[% recipe.name | html %]</option>
-        [% END %]
+            [% END %]
                 </select>
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Import recipe">
             </form>
+        [% END %]
 	</td>
     </tr>
     [% END %]
