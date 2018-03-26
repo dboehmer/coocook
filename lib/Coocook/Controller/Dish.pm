@@ -41,7 +41,26 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         { order_by => 'date' } );
 
     $c->stash(
-        dish               => $dish,
+        dish => {
+            name        => $dish->name,
+            comment     => $dish->comment,
+            servings    => $dish->servings,
+            preparation => $dish->preparation,
+            description => $dish->description,
+            tags_joined => $dish->tags_rs->joined,
+            meal        => $dish->meal,
+
+            recipe => {
+                name => $dish->recipe->name,
+                url  => $c->project_uri( '/recipe/edit', $dish->recipe->id ),
+            },
+
+            # undef or hashref with only 'id' property for comparisons
+            prepare_at_meal => map( { $_ ? { id => $_ } : undef } $dish->get_column('prepare_at_meal') ),
+
+            recalculate_url => $c->project_uri( $self->action_for('recalculate'), $dish->id ),
+            update_url      => $c->project_uri( $self->action_for('update'),      $dish->id ),
+        },
         ingredients        => $ingredients->as_arrayref,
         articles           => $ingredients->all_articles,
         units              => $ingredients->all_units,

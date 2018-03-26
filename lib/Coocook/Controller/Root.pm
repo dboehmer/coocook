@@ -27,8 +27,9 @@ sub begin : Private {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        name => $c->config->{name},
-        user => $c->user,
+        name     => $c->config->{name},
+        user     => $c->user,
+        user_url => $c->user ? $c->uri_for_action( '/user/show', [ $c->user->name ] ) : undef,
     );
 }
 
@@ -139,15 +140,21 @@ sub dashboard : Private {
 
     my $my_projects = $c->user->projects;
 
-    my $other_projects = $c->model('DB::Project')->public->search(
+    my @my_projects = $my_projects->hri->all;
+
+    my @other_projects = $c->model('DB::Project')->public->search(
         {
             id => { -not_in => $my_projects->get_column('id')->as_query },
         }
-    );
+    )->hri->all;
+
+    for my $project ( @my_projects, @other_projects ) {
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+    }
 
     $c->stash(
-        my_projects                => [ $my_projects->all ],
-        other_projects             => [ $other_projects->all ],
+        my_projects                => \@my_projects,
+        other_projects             => \@other_projects,
         project_create_url         => $c->uri_for_action('/project/create'),
         can_create_private_project => $c->has_capability('create_private_project'),
     );

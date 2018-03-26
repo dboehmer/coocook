@@ -24,31 +24,42 @@ sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') 
 
     my $project = $c->project;
 
-    my $ingredients =
-      $project->meals->search_related('dishes')->search_related('ingredients')->unassigned->search(
-        undef,
-        {
-            prefetch => [ 'article', { 'dish' => 'meal' }, 'unit' ],
-            order_by => [
-                qw<
-                  meal.date
-                  article.shop_section
-                  article.name
-                  >
-            ],
-        }
-      );
+    my $lists = $project->search_related( purchase_lists => undef, { order_by => 'date' } );
 
-    my $lists = $project->search_related(
-        'purchase_lists',
-        undef,
-        {
-            order_by => 'date',
+    my @ingredients;
+
+    {
+        my $ingredients =
+          $project->meals->search_related('dishes')->search_related('ingredients')->unassigned;
+
+        my %articles = map { $_->id => $_ } $ingredients->search_related('article')->all;
+        my %units    = map { $_->id => $_ } $ingredients->search_related('unit')->all;
+        my %dishes =
+          map { $_->id => $_ } $ingredients->search_related( dish => undef, { prefetch => 'meal' } )->all;
+
+        @ingredients = $ingredients->search(
+            undef,
+            {
+                join     => [ 'article', { 'dish' => 'meal' } ],
+                order_by => [
+                    qw<
+                      meal.date
+                      article.shop_section
+                      article.name
+                      >
+                ],
+            }
+        )->hri->all;
+
+        for my $ingredient (@ingredients) {
+            $ingredient->{article} = $articles{ $ingredient->{article} };
+            $ingredient->{unit}    = $units{ $ingredient->{unit} };
+            $ingredient->{dish}    = $dishes{ $ingredient->{dish} };
         }
-    );
+    }
 
     $c->stash(
-        ingredients => [ $ingredients->all ],
+        ingredients => \@ingredients,
         lists       => [ $lists->all ],
         assign_url  => $c->project_uri( $self->action_for('assign') ),
         title       => "Unassigned items",

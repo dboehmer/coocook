@@ -41,9 +41,19 @@ sub index : GET HEAD Chained('/project/base') PathPart('purchase_lists') Args(0)
       ? $max_date->add( days => 1 )
       : DateTime->today;
 
+    my @lists = $lists->sorted->hri->all;
+
+    for my $list (@lists) {
+        $list->{date} = $lists->parse_date( $list->{date} );
+
+        $list->{edit_url}   = $c->project_uri( $self->action_for('edit'),   $list->{id} );
+        $list->{update_url} = $c->project_uri( $self->action_for('update'), $list->{id} );
+        $list->{delete_url} = $c->project_uri( $self->action_for('delete'), $list->{id} );
+    }
+
     $c->stash(
         default_date => $default_date,
-        lists        => [ $lists->sorted->all ],
+        lists        => \@lists,
         create_url   => $c->project_uri( $self->action_for('create') ),
         title        => "Purchase lists",
     );

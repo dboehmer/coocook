@@ -16,13 +16,13 @@
 [% FOR group IN groups %]
 <h3>Tag Group [% group.name | html %]</h3>
 
-[% IF group.deletable %]
-<form action="[% c.project_uri('/tag/delete_group', group.id) %]" method="POST">
+[% IF group.delete_url %]
+<form action="[% group.delete_url %]" method="POST">
     <input type="submit" value="Delete Tag Group">
 </form>
 [% END %]
 
-<form action="[% c.project_uri('/tag/update_group', group.id) %]" method="POST">
+<form action="[% group.update_url %]" method="POST">
     <fieldset>
         <legend>Edit Tag Group</legend>
         <p>
@@ -38,8 +38,8 @@
 </form>
 
 <p>Tags:
-    [% FOR tag IN group.tags_rs.all %]
-    <a href="[% c.project_uri('/tag/edit', tag.id) %]">[% tag.name | html %]</a>
+    [% FOR tag IN group.tags %]
+    <a href="[% tag.edit_url %]">[% tag.name | html %]</a>
     [% END %]
 </p>
 
@@ -57,7 +57,7 @@
 
 <p>Tags:
 [% FOR tag IN other_tags %]
-    <a href="[% c.project_uri('/tag/edit', tag.id) %]">[% tag.name | html %]</a>
+    <a href="[% tag.edit_url %]">[% tag.name | html %]</a>
 [% END %]
 </p>
 

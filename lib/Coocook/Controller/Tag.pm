@@ -32,9 +32,22 @@ sub index : GET HEAD Chained('/project/base') PathPart('tags') Args(0)
         },
     );
 
+    my @groups = $groups->hri->all;
+
+    for my $group (@groups) {
+        $group->{update_url} = $c->project_uri( $self->action_for('update_group'), $group->{id} );
+        $group->{delete_url} = $c->project_uri( $self->action_for('delete_group'), $group->{id} );
+    }
+
+    my @other_tags = $c->project->tags->ungrouped->sorted->hri->all;
+
+    for my $tag (@other_tags) {
+        $tag->{edit_url} = $c->project_uri( $self->action_for('edit'), $tag->{id} );
+    }
+
     $c->stash(
-        groups               => [ $groups->all ],
-        other_tags           => [ $c->project->tags->ungrouped->sorted->all ],
+        groups               => \@groups,
+        other_tags           => \@other_tags,
         create_tag_url       => $c->project_uri( $self->action_for('create') ),
         create_tag_group_url => $c->project_uri( $self->action_for('create_group') ),
         title                => "Tags",
