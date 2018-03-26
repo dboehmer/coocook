@@ -165,6 +165,8 @@ sub update_group : POST Chained('tag_group') PathPart('update') Args(0)
             comment => $c->req->params->get('comment'),
         }
     );
+
+    $c->forward('redirect');
 }
 
 sub redirect : Private {
