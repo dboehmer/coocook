@@ -14,7 +14,8 @@
         <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
     </tr>
 [% END %]
-</ul>
+</tbody>
+</table>
 
 <h3>Users</h3>
 
