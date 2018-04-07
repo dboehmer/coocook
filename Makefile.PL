@@ -7,5 +7,5 @@ use utf8;
 WriteMakefile(
     NAME    => 'Coocook',
     AUTHOR  => 'Daniel Böhmer <post@daniel-boehmer.de>',
-    LICENSE => 'GPL_3',
+    LICENSE => 'AGPL_3',
 );
