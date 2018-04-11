@@ -38,8 +38,7 @@ subtest "successfully assign items" => sub {
 
     $t->submit_form_ok(
         {
-            with_fields  => { assign2 => 1 },
-            strict_forms => 1,
+            with_fields => { assign2 => 1 },
         },
         "assign first item to purchase list 1"
     );

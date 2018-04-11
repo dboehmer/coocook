@@ -75,13 +75,8 @@ sub register_ok {
     subtest $name || "register", sub {
         $self->follow_link_ok( { text => 'Register' } );
 
-        $self->submit_form_ok(
-            {
-                with_fields  => $field_values,
-                strict_forms => 1,
-            },
-            "register account '$field_values->{username}'"
-        );
+        $self->submit_form_ok( { with_fields => $field_values },
+            "register account '$field_values->{username}'" );
 
         $self->content_like(qr/e-mail/)
           or note $self->content;
@@ -158,7 +153,6 @@ sub login {
                 username => $username,
                 password => $password,
             },
-            strict_forms => 1,
         },
         "submit login form"
     );
@@ -197,13 +191,7 @@ sub change_password_ok {
     subtest $name || "change password", sub {
         $self->follow_link_ok( { text => 'Settings' } );
 
-        $self->submit_form_ok(
-            {
-                with_fields  => $field_values,
-                strict_forms => 1,
-            },
-            "submit change password form"
-        );
+        $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
     };
 }
 
@@ -215,8 +203,9 @@ sub change_display_name_ok {
 
         $self->submit_form_ok(
             {
-                with_fields  => { display_name => $display_name },
-                strict_forms => 1,
+                with_fields => {
+                    display_name => $display_name,
+                },
             },
             "submit change display name form"
         );
@@ -233,8 +222,9 @@ sub request_recovery_link_ok {
 
         $self->submit_form_ok(
             {
-                with_fields  => { email => $email },
-                strict_forms => 1,
+                with_fields => {
+                    email => $email,
+                },
             },
             "submit e-mail recovery form"
         );
@@ -259,7 +249,6 @@ sub reset_password_ok {
                     password  => $password,
                     password2 => $password,
                 },
-                strict_forms => 1,
             },
             "submit password reset form"
         );
@@ -281,13 +270,7 @@ sub create_project_ok {
     subtest $name || "create project '$fields->{name}'", sub {
         $self->get_ok('/');
 
-        $self->submit_form_ok(
-            {
-                with_fields  => $fields,
-                strict_forms => 1,
-            },
-            "submit create project form"
-        );
+        $self->submit_form_ok( { with_fields => $fields }, "submit create project form" );
 
         $self->content_contains( $fields->{name} )
           or note $self->content;
@@ -299,6 +282,21 @@ sub status_is {
 
     is $self->response->code => $expected,
       $name || "Response has status code $expected";
+}
+
+=head2 submit_form(...)
+
+Overrides the method from L<WWW::Mechanize> to set C<strict_forms> to true by default.
+
+=cut
+
+sub submit_form {
+    my ( $self, %args ) = @_;
+
+    exists $args{strict_forms}
+      or $args{strict_forms} = 1;
+
+    return $self->SUPER::submit_form(%args);
 }
 
 1;
