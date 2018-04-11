@@ -108,7 +108,8 @@ sub BUILD {
     }
 
     # shop sections
-    my @sections = $list->articles->search_related('shop_section')->hri->all;
+    my @sections =
+      $list->articles->search_related( shop_section => undef, { distinct => 1 } )->hri->all;
 
     for my $section (@sections) {
         $section->{items} = $items_per_section{ $section->{id} };

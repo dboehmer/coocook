@@ -20,16 +20,19 @@ sub article_has_items {    # value + unit->short_name joined with space: "420g 4
 
     my $items = join " ", @items;
 
-    is $items => $expected, $name || sprintf( "article %i has items '%s'", $article->id, $expected );
+    is $items => $expected,
+      $name || sprintf( "article %i '%s' has items '%s'", $article->id, $article->name, $expected );
 }
 
-my $list            = $db->resultset('PurchaseList')->single    || die;
-my $next_ingredient = $db->resultset('DishIngredient')->find(4) || die;
-my $article         = $next_ingredient->article;
+my $list            = $db->resultset('PurchaseList')->find(1)   || die;
+my $next_ingredient = $db->resultset('DishIngredient')->find(7) || die;
+my $flour           = $db->resultset('Article')->find(1)        || die;
+
+article_has_items $flour => "1000g";
 
 ok my $item = $next_ingredient->assign_to_purchase_list($list), "assign_to_purchase_list";
 
-article_has_items $article => "500g 0.5kg";
+article_has_items $flour => "1000g 1kg";
 
 {
     my $liters = $db->resultset('Unit')->find( { short_name => 'l' } );
@@ -41,10 +44,10 @@ ok $item->convert($grams), "convert item to grams";
 
 $next_ingredient->discard_changes;
 
-article_has_items $article => "1000g";
+article_has_items $flour => "2000g";
 
 ok $next_ingredient->remove_from_purchase_list, "DishIngredient->remove_from_purchase_list";
 
-article_has_items $article => "500g";
+article_has_items $flour => "1000g";
 
 done_testing;

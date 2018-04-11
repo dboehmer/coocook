@@ -20,67 +20,37 @@ my $list = new_ok 'Coocook::Model::PurchaseList',
 ok my $sections = $list->shop_sections;
 
 cmp_deeply $sections => [
-    {
-        id      => 1,
-        project => 1,
-        name    => 'bakery products',
-        items   => [
-            {
-                id            => 1,
-                comment       => '',
-                purchase_list => 1,
-                purchased     => 0,
-                value         => 500,
-                offset        => 0.0,
-                unit          => {
-                    id                  => 1,
-                    long_name           => 'grams',
-                    project             => 1,
-                    quantity            => 1,
-                    short_name          => 'g',
-                    space               => 0,
-                    to_quantity_default => 0.001,
-                },
-                convertible_into => [ignore],
-                article          => {
-                    id                  => 1,
-                    name                => 'flour',
-                    comment             => '',
-                    project             => 1,
-                    shop_section        => 1,
-                    'preorder_servings' => undef,
-                    preorder_workdays   => undef,
-                    shelf_life_days     => undef,
-                },
-                ingredients => [
+    superhashof(
+        {
+            name  => "bakery products",
+            items => [
+                superhashof(
                     {
-                        id       => 1,
-                        comment  => '',
-                        item     => 1,
-                        position => 1,
-                        prepare  => 0,
-                        value    => 500,
-                        unit     => ignore,
-                        article  => ignore,
-                        dish     => {
-                            id              => 1,
-                            comment         => '',
-                            description     => 'Make them really sweet!',
-                            from_recipe     => undef,
-                            meal            => 1,
-                            name            => 'pancakes',
-                            preparation     => '',
-                            prepare_at_meal => undef,
-                            servings        => 4
-                        },
-                    },
-                    ignore,
-                ],
-            },
-        ],
-    },
+                        value       => 1000,
+                        unit        => superhashof( { short_name => "g" } ),
+                        article     => superhashof( { name => "flour" } ),
+                        ingredients => [                                       #perltidy
+                            superhashof( { id => 1 } ),
+                            superhashof( { id => 4 } ),
+                        ],
+                    }
+                ),
+                superhashof(
+                    {
+                        value       => 37.5,
+                        unit        => superhashof( { short_name => "g" } ),
+                        article     => superhashof( { name => "salt" } ),
+                        ingredients => [                                       #perltidy
+                            superhashof( { id => 6 } ),
+                            superhashof( { id => 8 } ),
+                        ],
+                    }
+                ),
+            ],
+        }
+    ),
   ],
-  "by_section()"
+  "->shop_sections()"
   or explain $sections;
 
 memory_cycle_ok $sections, "result of by_section() is free of memory cycles";
