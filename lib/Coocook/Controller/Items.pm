@@ -29,8 +29,7 @@ sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') 
     my @ingredients;
 
     {
-        my $ingredients =
-          $project->meals->search_related('dishes')->search_related('ingredients')->unassigned;
+        my $ingredients = $project->dish_ingredients->unassigned;
 
         my %articles = map { $_->id => $_ } $ingredients->search_related('article')->all;
         my %units    = map { $_->id => $_ } $ingredients->search_related('unit')->all;
@@ -70,16 +69,17 @@ sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0)
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->forward('unassigned');
-
-    my %lists = map { $_->id => $_ } @{ $c->stash->{lists} };
+    my $ingredients = $c->project->dish_ingredients->unassigned;
+    my %lists = map { $_->id => $_ } $c->project->search_related('purchase_lists')->all;
 
     $c->txn_do(
         sub {
-            for my $ingredient ( @{ $c->stash->{ingredients} } ) {
+            while ( my $ingredient = $ingredients->next ) {
                 my $id = $ingredient->id;
 
                 if ( my $list = $c->req->params->get("assign$id") ) {
+                    $lists{$list} or $c->detach('/error/bad_request');
+
                     $ingredient->assign_to_purchase_list($list);
                 }
             }
