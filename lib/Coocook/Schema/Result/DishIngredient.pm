@@ -46,7 +46,7 @@ sub assign_to_purchase_list {
 
     my $item;
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             $item = $self->result_source->schema->resultset('Item')->add_or_create(
                 {
@@ -67,7 +67,7 @@ sub assign_to_purchase_list {
 sub remove_from_purchase_list {
     my $self = shift;
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             my $item = $self->item
               or return

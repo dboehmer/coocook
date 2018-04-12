@@ -133,7 +133,7 @@ sub import_data {    # import() is used by 'use'
     # map of source-related IDs to target-related IDs
     my %new_id = ( projects => { $source->id => $target->id } );
 
-    $source->result_source->storage->txn_do(
+    $source->txn_do(
         sub {
             for my $property (@internal_properties) {
                 if ( $property->{auto} ) {    # auto: skip if not all dependencies requested

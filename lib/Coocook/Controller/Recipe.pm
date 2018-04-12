@@ -155,7 +155,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my $input_okay =
       $self->check_name( $c, { name => $name, current_page => "/recipe/" . $recipe->id } );
     if ($input_okay) {
-        $c->txn_do(
+        $recipe->txn_do(
             sub {
                 $recipe->update(
                     {

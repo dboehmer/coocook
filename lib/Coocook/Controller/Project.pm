@@ -195,23 +195,18 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
       or $c->redirect_detach(
         $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
 
-    $c->txn_do(
-        sub {
-            my $project = $c->stash->{project} = $c->model('DB::Project')->create(
+    my $project = $c->stash->{project} = $c->model('DB::Project')->create(
+        {
+            name           => $c->req->params->get('name'),
+            description    => '',
+            owner          => $c->user->id,
+            is_public      => $is_public,
+            projects_users => [                               # relationship automatically triggers transaction
                 {
-                    name        => $c->req->params->get('name'),
-                    description => '',
-                    owner       => $c->user->id,
-                    is_public   => $is_public,
-                }
-            );
-
-            $project->create_related(
-                projects_users => {
                     user => $c->user->id,
                     role => 'owner',
                 }
-            );
+            ],
         }
     );
 

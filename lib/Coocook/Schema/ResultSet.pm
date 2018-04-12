@@ -10,7 +10,7 @@ extends 'DBIx::Class::ResultSet';
 
 __PACKAGE__->load_components(
     qw<
-      +Coocook::Schema::Component::DateTimeHelper
+      +Coocook::Schema::Component::ProxyMethods
       Helper::ResultSet::CorrelateRelationship
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me

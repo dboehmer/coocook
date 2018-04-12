@@ -44,7 +44,7 @@ __PACKAGE__->meta->make_immutable;
 sub convert {
     my ( $self => $unit2 ) = @_;
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             my $unit1 = $self->unit;
 

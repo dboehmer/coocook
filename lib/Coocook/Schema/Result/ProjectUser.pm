@@ -42,7 +42,7 @@ sub make_owner {
     $self->role eq 'admin'
       or die "ownership can be transferred only to admins";
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             # demote other owner to admin
             $self->other_projects_users->owners->update( { role => 'admin' } );

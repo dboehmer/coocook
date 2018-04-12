@@ -11,7 +11,7 @@ extends 'DBIx::Class::Core';
 __PACKAGE__->load_components(
     qw<
       InflateColumn::DateTime
-      +Coocook::Schema::Component::DateTimeHelper
+      +Coocook::Schema::Component::ProxyMethods
       +Coocook::Schema::Component::Result::Boolify
       >
 );

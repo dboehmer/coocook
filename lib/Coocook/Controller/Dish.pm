@@ -156,7 +156,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
     my $dish = $c->stash->{dish};
 
-    $c->txn_do(
+    $dish->txn_do(
         sub {
             $dish->update(
                 {

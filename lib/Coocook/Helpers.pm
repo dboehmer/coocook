@@ -88,9 +88,6 @@ sub redirect_detach {
     $c->detach;
 }
 
-# proxy
-sub txn_do { shift->model('DB')->schema->txn_do(@_) }
-
 =head2 $c->user_registration_enabled()
 
 Returns boolean value if new users are allowed to register. That is

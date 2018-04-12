@@ -11,7 +11,7 @@ __PACKAGE__->meta->make_immutable;
 sub from_recipe {
     my ( $self, $recipe, %args ) = @_;
 
-    return $self->result_source->schema->txn_do(
+    return $self->txn_do(
         sub {
             my $dish = $self->create(
                 {

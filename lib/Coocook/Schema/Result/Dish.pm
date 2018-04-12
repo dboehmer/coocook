@@ -65,7 +65,7 @@ sub recalculate {
     my $servings1 = $self->servings;
     my $servings2 = shift || die "servings undefined";
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             for my $ingredient ( $self->ingredients->all ) {
                 my $value1 = $ingredient->value;

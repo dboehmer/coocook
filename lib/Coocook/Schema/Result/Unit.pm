@@ -111,7 +111,7 @@ sub make_quantity_default {
         }
     );
 
-    $self->result_source->schema->txn_do(
+    $self->txn_do(
         sub {
             for my $unit ( $others->all ) {
                 $unit->update(
