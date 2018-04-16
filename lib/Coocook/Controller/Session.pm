@@ -17,8 +17,12 @@ sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        title          => "Login",
-        username       => $c->req->params->get('username') || $c->session->{username},
+        title    => "Login",
+        username => (
+                 $c->req->params->get('username')
+              || $c->session->{username}    # session is more trustworthy than plaintext cookie
+              || $c->req->cookie('username')
+        ),
         recover_url    => $c->uri_for_action('/user/recover'),
         post_login_url => $c->uri_for(
             $self->action_for('post_login'),
@@ -42,6 +46,14 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
 
     if ($user) {
         $c->session->{username} = $user->name;
+
+        $c->res->cookies->{username} = {
+            value    => $user->name,
+            expires  => '+12M',        # in 12 months (syntax supported by CGI::Simple)
+            path     => '/login',
+            secure   => 1,             # only via HTTPS
+            httponly => 1,             # not accessible by client-side JavaScript
+        };
 
         if ( my $redirect = $c->req->params->get('redirect') ) {
             $c->forward( _check_redirect_uri => [$redirect] );

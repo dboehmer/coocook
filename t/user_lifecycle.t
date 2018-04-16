@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 38;
+use Test::Most tests => 42;
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
 
@@ -132,8 +132,20 @@ $t->change_display_name_ok('John Doe');
 
 $t->logout_ok();
 
+$t->get_ok('/login');
+
 $t->content_like( qr/ name="username" .+ value="test" /x,
     "last username is prefilled in login form" );
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
+  "'username' cookie contains username 'test'";
+
+ok $t->cookie_jar->clear( $t->base, 'session' ), "delete 'session' cookie";
+
+$t->reload();
+$t->content_like( qr/ name="username" .+ value="test" /x,
+    "... but last username is still prefilled in login form" )
+  or diag $t->content;
 
 $t->login_ok( 'test', 'P@ssw0rd' );
 
