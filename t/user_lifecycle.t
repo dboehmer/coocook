@@ -5,7 +5,8 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 42;
+use Test::Most tests => 43;
+use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
 
@@ -114,7 +115,13 @@ $t->login_fails( 'test', 'invalid' );    # wrong password
 
 $t->login_fails( 'test2', 's3cr3t' );    # not verified
 
-$t->login_ok( 'test', 's3cr3t' );
+{
+    my $t1 = time();
+    $t->login_ok( 'test', 's3cr3t' );
+    my $t2 = time();
+
+    cmp_ok $t2 - $t1, '>', 1, "login request took more than 1 second";
+}
 
 $t->change_password_ok(
     {

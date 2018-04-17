@@ -36,6 +36,13 @@ sub login : GET HEAD Chained('/base') Args(0) {
 sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     my ( $self, $c ) = @_;
 
+    # slow down brute-force-attacks by sleeping for a while
+    # before even analyzing the request
+    # ALWAYS SLEEP EVEN IF CREDENTIALS ARE CORRECT!
+    # Otherwise a client can assume failure if the request
+    # is not answered in 0.x seconds ...
+    sleep 1;
+
     my $user = $c->authenticate(
         {
             name           => $c->req->params->get('username'),
