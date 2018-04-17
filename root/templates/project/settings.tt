@@ -30,8 +30,8 @@
 <form method="POST" action="[% delete_url %]">
     <fieldset>
         <legend>Delete project <em>[% project.name | html %]</em></legend>
-        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion.</p>
-        <input type="text" name="confirmation">
+        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion of project <em>[% project.name | html %]</em>.</p>
+        <input type="text" name="confirmation" autocomplete="off">
         <input type="submit" value="Delete project">
     </fieldset>
 </form>
