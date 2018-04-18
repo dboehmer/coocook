@@ -37,12 +37,26 @@ sub count {
 sub fk_checks_off_do {
     my ( $self, $cb ) = @_;
 
+    $self->disable_fk_checks();
+    $cb->();
+    $self->enable_fk_checks();    # TODO restore original setting instead of always enable
+}
+
+sub enable_fk_checks  { shift->_toggle_fk_checks( 1, @_ ) }
+sub disable_fk_checks { shift->_toggle_fk_checks( 0, @_ ) }
+
+sub _toggle_fk_checks {
+    my ( $self, $enable ) = @_;
+
     $self->storage->sqlt_type eq 'SQLite'
       or die "only implemented for SQLite";
 
-    $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = OFF;') } );
-    $cb->();
-    $self->storage->dbh_do( sub { $_[1]->do('PRAGMA foreign_keys = ON;') } );
+    my $sql = 'PRAGMA foreign_keys = ' . ( $enable ? 'ON' : 'OFF' );
+
+    $ENV{DBIC_TRACE}
+      and warn "$sql\n";
+
+    $self->storage->dbh_do( sub { $_[1]->do($sql) } );
 }
 
 sub statistics {
