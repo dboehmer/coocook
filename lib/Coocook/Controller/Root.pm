@@ -99,7 +99,9 @@ sub auto : Private {
         );
     }
     else {
-        $c->stash( login_url => $c->forward('/login_url') );
+        # login URI with current application path as query parameter or current login URI itself
+        $c->stash(
+            login_url => $c->req->path =~ m{ ^ login /? $ }x ? $c->req->uri : $c->forward('/login_url') );
 
         $c->user_registration_enabled
           and $c->stash( register_url => $c->uri_for_action('/user/register') );
