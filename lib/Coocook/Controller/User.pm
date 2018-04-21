@@ -79,6 +79,7 @@ sub register : GET HEAD Chained('/base') Args(0) {
     >;
 
     $c->stash(
+        title                => "Register",
         example_username     => $c->config->{registration_example_username},
         example_display_name => $c->config->{registration_example_display_name},
         post_register_url    => $c->uri_for( $self->action_for('post_register') ),
