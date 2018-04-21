@@ -3,7 +3,7 @@
 <form method="POST" action="[% post_register_url %]">
 <table>
     <tr>
-        <th><label for="name">Name</label></th>
+        <th><label for="name">Login name</label></th>
         <td>
             <input id="name" type="text" name="username" placeholder="name" value="[% last_input.username | html %]" pattern="[0-9a-zA-Z_]+">
             only 0-9, a-z, A-Z and <code>_</code> allowed
