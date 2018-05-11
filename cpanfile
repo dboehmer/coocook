@@ -63,10 +63,12 @@ on 'test' => sub {
   requires "Test::More" => "0";
   requires "Test::Most" => "0";
   requires "Test::WWW::Mechanize::Catalyst" => "0";
+  requires "Time::HiRes" => "0";
 };
 
 on 'test' => sub {
   recommends "CPAN::Meta" => "2.120900";
+  recommends "Test::Pod::Coverage" => "0";
 };
 
 on 'configure' => sub {
