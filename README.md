@@ -10,14 +10,14 @@ Web application for collecting recipes and making food plans
 
 * collect recipes
 * create food plans
-  * simply import dishes from your recipes
+    * simply import dishes from your recipes
 * gather purchase lists
-  * convert units to summarize list items
+    * convert units to summarize list items
 * print views for whole project and each day
-  * including ingredients, cooking instructions
+    * including ingredients, cooking instructions
 * special features
-  * define maximum shelf life or limit for need to preorder of articles
-  * select some ingredients and part of cooking instructions to be done at an earlier meals
+    * define maximum shelf life or limit for need to preorder of articles
+    * select some ingredients and part of cooking instructions to be done at an earlier meals
 
 ## Quick start
 
@@ -28,25 +28,32 @@ Prerequisites:
   with [`DBD::SQLite`](https://metacpan.org/pod/DBD::SQLite)
   or some other RDBMS
 
+With Ubuntu or Debian Linux:
+
+    $ sudo apt-get install cpanminus libdbd-sqlite3-perl sqlite3
+
 Get source code:
 
-    git clone https://github.com/dboehmer/coocook.git
-    cd coocook/
+    $ git clone https://github.com/dboehmer/coocook.git
 
-Install dependencies:
+Install Perl5 dependencies:
 
-    cpanm --installdeps .
+    $ cd coocook/
+    $ cpanm --installdeps .
 
-Install database into local SQLite and start development server:
+Install database into a local SQLite file and start development server in development mode:
 
-    script/coocook_deploy.pl install
-    script/coocook_server.pl
+    $ script/coocook_deploy.pl install
+    $ script/coocook_server.pl --debug
+    ...
+    HTTP::Server::PSGI: Accepting connections at http://0:3000/
 
 ## Mailing list
 
-* coocook@lists.coocook.org
-* subscribe at http://lists.coocook.org/mailman/listinfo/coocook
-* or send e-mail with subject `subscribe` to coocook-request@lists.coocook.org
+* <coocook@lists.coocook.org>
+* subscribe at [lists.coocook.org/mailman/listinfo/coocook](https://lists.coocook.org/mailman/listinfo/coocook)
+* or send e-mail with subject `subscribe` to
+[coocook-request@lists.coocook.org](mailto:coocook-request@lists.coocook.org?subject=subscribe)
 
 ## Terminology
 
