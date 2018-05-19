@@ -11,7 +11,7 @@ my $db = TestDB->new;
 
 subtest "Dish->delete" => sub {
     my $a = count('DishIngredient');
-    ok $db->resultset('Dish')->first->delete, "delete()";
+    ok $db->resultset('Dish')->one_row->delete, "delete()";
     my $b = count('DishIngredient');
 
     cmp_ok $a, '>', $b, "also deleted dish_ingredients";
@@ -19,7 +19,7 @@ subtest "Dish->delete" => sub {
 
 subtest "Recipe->delete" => sub {
     my $a = count('RecipeIngredient');
-    ok $db->resultset('Recipe')->first->delete, "delete()";
+    ok $db->resultset('Recipe')->one_row->delete, "delete()";
     my $b = count('RecipeIngredient');
 
     cmp_ok $a, '>', $b, "also deleted recipe_ingredients";

@@ -5,6 +5,7 @@ package Coocook::Schema::ResultSet;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use MooseX::NonMoose;
+use Carp;
 
 extends 'DBIx::Class::ResultSet';
 
@@ -14,9 +15,16 @@ __PACKAGE__->load_components(
       Helper::ResultSet::CorrelateRelationship
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
+      Helper::ResultSet::OneRow
       Helper::ResultSet::Shortcut::HRI
       >
 );
+
+# discourage use of first() but don't just die()
+# because $c->user() indirectly calls first()
+before first => sub {
+    carp "You probably want next(), one_row() or single()";
+};
 
 __PACKAGE__->meta->make_immutable;
 
