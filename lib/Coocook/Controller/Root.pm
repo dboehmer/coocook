@@ -115,6 +115,11 @@ sub auto : Private {
         $c->stash( admin_url => $c->uri_for_action('/admin/index') );
     }
 
+    # has current terms or has any terms (valid in future then)
+    if ( $c->model('DB::Terms')->valid_today_rs->exists or $c->model('DB::Terms')->exists ) {
+        $c->stash( terms_url => $c->uri_for_action('/terms/index') );
+    }
+
     return 1;    # important
 }
 

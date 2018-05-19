@@ -1,0 +1,11 @@
+[% IF previous_url %]
+    <a href="[% previous_url %]">previous</a>
+[% END %]
+[% IF next_url %]
+    <a href="[% next_url %]">next</a>
+[% END %]
+
+<p>valid from [% terms.valid_from.ymd %]</p>
+
+[% USE Markdown;
+terms.content_md | $Markdown %]

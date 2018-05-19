@@ -18,12 +18,8 @@ __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['valid_from'] );
 
-__PACKAGE__->has_many( users => 'Coocook::Schema::Result::User' );
-
-__PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
-
-__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
-__PACKAGE__->many_to_many( projects => projects_users => 'project' );
+__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
+__PACKAGE__->many_to_many( users => terms_users => 'user' );
 
 __PACKAGE__->meta->make_immutable;
 

@@ -4,7 +4,7 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
-use Test::Most;    #tests => 7;
+use Test::Most tests => 17;
 
 my $db = TestDB->new;
 
@@ -12,6 +12,8 @@ ok my $rs = $db->resultset('Terms'), "new resultset";
 
 is $rs->valid_on_date('2001-01-01') => undef, "valid_on_date() on empty database";
 is $rs->valid_today()               => undef, "valid_today() on empty database";
+
+ok !$rs->valid_today_rs->exists, "valid_today_rs()->exists returns false";
 
 ok $rs->populate(
     [
@@ -27,6 +29,8 @@ ok $rs->populate(
 
 throws_ok { $rs->create( { valid_from => '2001-01-01', content_md => "" } ) } qr/UNIQUE/,
   "INSERT with non-unique date fails";
+
+ok $rs->valid_today_rs->exists, "valid_today_rs()->exists returns true";
 
 subtest "valid_on_date() with string" => sub {
     is $rs->valid_on_date('2000-01-01')             => undef, "undef for previous dates";
@@ -50,5 +54,3 @@ is $c->next(99)            => undef, "next(99)";
 is $c->previous()->content_md => "B", "previous()";
 is $c->previous($_)->content_md => "A",   "previous($_)" for -2,  2;
 is $c->previous($_)             => undef, "previous($_)" for -99, 99;
-
-done_testing;

@@ -125,7 +125,9 @@ END %]
             <h4>Legal information</h4>
             <li><a>Imprint</a></li>
             <li><a>Privacy Policy</a></li>
-            <li><a>GTC</a></li>
+[% IF terms_url %]
+            <li><a href="[% terms_url %]">Terms</a></li>
+[% END %]
             <li><a>Contact</a></li>
         </ul>
     </nav>
