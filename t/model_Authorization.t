@@ -15,6 +15,17 @@ use_ok 'Coocook::Model::Authorization';
 
 my $authz = new_ok 'Coocook::Model::Authorization';
 
+sub has_cap_ok   { _test_has_capability( 1, @_ ) }
+sub hasnt_cap_ok { _test_has_capability( 0, @_ ) }
+
+sub _test_has_capability {
+    my ( $expects_true, $capability, $input, $name ) = @_;
+
+    $input->{user} //= undef;    # make sure key is always present
+
+    ok( ( $authz->has_capability( $capability, $input ) xor !$expects_true ), $name );
+}
+
 is $authz->new => $authz, "is a singleton";
 
 throws_ok { $authz->has_capability( foobar => {} ) } qr/capability/, "invalid capability";
@@ -23,18 +34,6 @@ throws_ok { $authz->has_capability( view_project => {} ) } qr/missing/, "missing
 
 throws_ok { $authz->has_capability( view_project => { project => $project1 } ) } qr/missing/,
   "input key 'user' is always required, even if value is optional";
-
-sub _test_has_capability {
-    my ( $expects_true, $capability, $input, $name ) = @_;
-
-    $input->{user} //= undef;    # make sure key is always present
-
-    ok map( { $expects_true ? $_ : !$_ } $authz->has_capability( $capability, $input ) ), $name
-      or explain \@_;
-}
-
-sub has_cap_ok   { _test_has_capability( 1, @_ ) }
-sub hasnt_cap_ok { _test_has_capability( 0, @_ ) }
 
 subtest view_project => sub {
     has_cap_ok
@@ -46,6 +45,10 @@ subtest view_project => sub {
       "private project";
 
     has_cap_ok
-      view_project => { project => $project2 },
+      view_project => { project => $project2, user => $user1 },
       "owner of private project";
+
+    hasnt_cap_ok
+      view_project => { project => $project2, user => $user2 },
+      "other user for private project";
 };
