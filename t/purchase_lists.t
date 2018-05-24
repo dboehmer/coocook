@@ -12,6 +12,8 @@ my $db = TestDB->new;
 sub article_has_items {    # value + unit->short_name joined with space: "420g 42kg"
     my ( $article, $expected, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     my @items;
 
     for my $item ( $article->items->search( undef, { order_by => 'short_name' } )->all ) {

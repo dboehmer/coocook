@@ -34,6 +34,8 @@ my $dish = $meal->create_related(
 sub redirect_is {
     my ( $number, $url ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $dish->update( { servings => $number } );
 
     my $res = request('https://localhost/badge/dishes_served.svg');

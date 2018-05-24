@@ -102,6 +102,8 @@ sub get_email_link_ok {
 sub verify_email_ok {
     my ( $self, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $self->get_email_link_ok(
         qr/http\S+verify\S+/,    # TODO regex is very simple and will break easily
         $name || "verify e-mail address"
@@ -111,13 +113,15 @@ sub verify_email_ok {
 sub email_like {
     my ( $self, $regex, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $name ||= "first e-mail like $regex";
 
     my $emails = $self->emails;
 
     if ( @$emails == 0 ) {
         fail $name;
-        note "no e-mails stored";
+        diag "no e-mails stored";
         return;
     }
 
@@ -137,6 +141,8 @@ sub email_like {
 
 sub is_logged_in {
     my ( $self, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $self->content_like( qr/Dashboard/, $name || "client is logged in" )
       or note $self->content;

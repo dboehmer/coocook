@@ -21,6 +21,9 @@ sub hasnt_cap_ok { _test_has_capability( 0, @_ ) }
 sub _test_has_capability {
     my ( $expects_true, $capability, $input, $name ) = @_;
 
+    # +1 from has[nt]_cap_ok wrapper
+    local $Test::Builder::Level = $Test::Builder::Level + 2;
+
     $input->{user} //= undef;    # make sure key is always present
 
     ok( ( $authz->has_capability( $capability, $input ) xor !$expects_true ), $name );

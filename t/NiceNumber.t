@@ -35,6 +35,8 @@ t( 0.000001   => "0.000001" );
 sub t {
     my ( $input, $expected, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     my $output = $filter->filter($input);
 
     is $output => $expected, $name || "$input = '$expected'";

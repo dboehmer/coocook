@@ -19,6 +19,8 @@ done_testing;
 sub install_ok {
     my ( $version, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $version
       and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
 
@@ -27,6 +29,8 @@ sub install_ok {
 
 sub upgrade_ok {
     my ( $version, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $version
       and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
