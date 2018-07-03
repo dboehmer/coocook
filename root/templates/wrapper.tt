@@ -84,6 +84,9 @@
 [% ELSIF homepage_url %]
     <li><a href="[% homepage_url %]">Start</a></li>
 [% END %]
+
+    <li><a href="[% public_recipes_url %]">Public Recipes</a></li>
+
 [% IF project_urls %]
     |
     <li><a href="[% project_urls.project %]">Project</a></li>

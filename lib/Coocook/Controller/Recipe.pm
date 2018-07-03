@@ -18,6 +18,33 @@ Catalyst Controller.
 
 =cut
 
+sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipes = $c->model('DB::Recipe')->public;
+
+    my @recipes = $recipes->hri->all;
+
+    {
+        my %projects = map { $_->{id} => $_ } $recipes->search_related('project')->hri->all;
+
+        for my $recipe (@recipes) {
+            my $project = $projects{ $recipe->{project} }
+              or die "Project for project ID not found";
+
+            $recipe->{project} = $project;
+
+            $recipe->{url} =
+              $c->uri_for( $self->action_for('edit'), [ $project->{url_name}, $recipe->{id} ] );
+        }
+    }
+
+    $c->stash(
+        recipes => \@recipes,
+        title   => "Public Recipes",
+    );
+}
+
 sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
     my ( $self, $c ) = @_;
 

@@ -1,0 +1,5 @@
+<ul>
+[% FOR recipe IN recipes %]
+    <li><a href="[% recipe.url %]">[% recipe.name | html %]</a> ([% recipe.project.name | html %])</li>
+[% END %]
+</ul>
