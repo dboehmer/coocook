@@ -22,6 +22,14 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
+sub mod_installed ($) {
+    my ($module) = @_;
+
+    local $@;
+
+    return eval("require $module; 1") ? $module : ();
+}
+
 use Catalyst (
     qw<
       ConfigLoader
@@ -33,7 +41,7 @@ use Catalyst (
       Authentication
       Static::Simple
       >,
-    ( eval "require Catalyst::Plugin::StackTrace; 1" ? 'StackTrace' : () ),
+    ( mod_installed 'Catalyst::Plugin::StackTrace' ? 'StackTrace' : () ),
 );
 
 extends 'Catalyst';
@@ -41,7 +49,7 @@ extends 'Catalyst';
 with 'Coocook::Helpers';
 
 if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always returns false
-    if ( eval "require CatalystX::LeakChecker; 1" ) {
+    if ( mod_installed 'CatalystX::LeakChecker' ) {
         with 'CatalystX::LeakChecker';
     }
 
@@ -107,7 +115,7 @@ EOT
         my $username = getpwuid($<);
 
         my $hostname = do {
-            if ( eval "require Sys::Hostname::FQDN; 1" ) {
+            if ( mod_installed 'Sys::Hostname::FQDN' ) {
                 Sys::Hostname::FQDN::fqdn();
             }
             elsif ( my $fqdn = `hostname --fqdn` ) {
