@@ -112,7 +112,11 @@ EOT
     registration_example_display_name => "Daniel Böhmer",
 
     email_from_address => do {
-        my $username = getpwuid($<);
+        my $username =    # see https://stackoverflow.com/a/3526587/498634
+             ( $^O ne 'riscos' && $^O ne 'MSWin32' ? getpwuid($<) : undef )
+          || ( $^O ne 'riscos' ? getlogin() : undef )
+          || $ENV{USER}
+          || 'coocook';
 
         my $hostname = do {
             if ( mod_installed 'Sys::Hostname::FQDN' ) {
