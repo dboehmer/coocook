@@ -32,7 +32,7 @@ __PACKAGE__->belongs_to(
 
 __PACKAGE__->belongs_to(
     recipe => 'Coocook::Schema::Result::Recipe',
-    'from_recipe'
+    'from_recipe', { join_type => 'left' }
 );
 
 __PACKAGE__->has_many(

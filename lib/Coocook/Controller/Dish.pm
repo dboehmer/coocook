@@ -20,8 +20,15 @@ Catalyst Controller.
 sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( dish => $c->project->dishes->search( undef, { prefetch => 'meal' } )->find($id)
-          || $c->detach('/error/not_found') );
+    $c->stash(
+        dish => $c->project->dishes->search(
+            undef,
+            {
+                prefetch => [ 'meal', 'recipe' ],
+            }
+        )->find($id)
+          || $c->detach('/error/not_found')
+    );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
@@ -50,10 +57,12 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
             tags_joined => $dish->tags_rs->joined,
             meal        => $dish->meal,
 
-            recipe => {
+            recipe => $dish->recipe
+            ? {
                 name => $dish->recipe->name,
                 url  => $c->project_uri( '/recipe/edit', $dish->recipe->id ),
-            },
+              }
+            : undef,
 
             # undef or hashref with only 'id' property for comparisons
             prepare_at_meal => map( { $_ ? { id => $_ } : undef } $dish->get_column('prepare_at_meal') ),
