@@ -77,5 +77,6 @@ on 'configure' => sub {
 
 on 'develop' => sub {
   recommends "Catalyst::Plugin::StackTrace" => "0";
+  recommends "Catalyst::Restarter" => "0";
   recommends "CatalystX::LeakChecker" => "0";
 };
