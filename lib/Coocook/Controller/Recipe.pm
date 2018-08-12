@@ -26,7 +26,21 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
     my @recipes = $recipes->hri->all;
 
     {
-        my %projects = map { $_->{id} => $_ } $recipes->search_related('project')->hri->all;
+        my $projects = $recipes->search_related('project');
+        my %projects = map { $_->{id} => $_ } $projects->hri->all;
+
+        my %users = map { $_->{id} => $_ } $projects->search_related('owner')->hri->all;
+
+        for my $user ( values %users ) {
+            $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
+        }
+
+        for my $project ( values %projects ) {
+            $project->{owner} = $users{ $project->{owner} }
+              or die "User for owner ID not found";
+
+            $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        }
 
         for my $recipe (@recipes) {
             my $project = $projects{ $recipe->{project} }

@@ -1,5 +1,9 @@
 <ul>
 [% FOR recipe IN recipes %]
-    <li><a href="[% recipe.url %]">[% recipe.name | html %]</a> ([% recipe.project.name | html %])</li>
+    <li>
+        <a href="[% recipe.url %]">[% recipe.name | html %]</a>
+        (from <a href="[% recipe.project.url %]">[% recipe.project.name | html %]</a>
+        by <a href="[% recipe.project.owner.url %]">[% recipe.project.owner.display_name | html %]</a>)
+    </li>
 [% END %]
 </ul>
