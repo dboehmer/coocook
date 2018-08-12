@@ -21,7 +21,7 @@ sub login : GET HEAD Chained('/base') Args(0) {
         username => (
                  $c->req->params->get('username')
               || $c->session->{username}    # session is more trustworthy than plaintext cookie
-              || $c->req->cookie('username')
+              || map { $_ ? $_->value : undef } $c->req->cookie('username')
         ),
         recover_url    => $c->uri_for_action('/user/recover'),
         post_login_url => $c->uri_for(
