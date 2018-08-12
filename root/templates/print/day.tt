@@ -54,7 +54,7 @@ BLOCK table %]
         [% FOREACH ingredient IN dish.ingredients;
             NEXT IF prepare AND NOT ingredient.prepare %]
     <tr class="[% 'prepare' IF ingredient.prepare AND NOT prepare %]">
-        <td class="right-align">[% ingredient.value %]</td>
+        <td class="right-align">[% USE NiceNumber; ingredient.value | $NiceNumber %]</td>
         <td>[% ingredient.unit.long_name | html %]</td>
         </td><td>[% ingredient.article.name | html ~%]
         [%~ IF ingredient.article.comment.length;
