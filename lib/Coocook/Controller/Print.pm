@@ -102,6 +102,8 @@ sub day : GET HEAD Chained('/project/base') PathPart('print/day') Args(3)
         }
 
         for my $dish ( @{ $meal->{prepared_dishes} } ) {
+            $dish->{url} ||= $c->project_uri( '/dish/edit', $dish->{id} );
+
             my $meal = $dish->{meal};
 
             $meal->{url} ||= $c->project_uri( '/print/day', map { $meal->{date}->$_ } qw< year month day > );
