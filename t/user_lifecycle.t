@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 43;
+use Test::Most tests => 42;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
@@ -147,7 +147,14 @@ $t->content_like( qr/ name="username" .+ value="test" /x,
 is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
   "'username' cookie contains username 'test'";
 
-ok $t->cookie_jar->clear( $t->base, 'session' ), "delete 'session' cookie";
+{
+    my $original_length = length $t->cookie_jar->as_string;
+
+    $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' );
+
+    $original_length > length $t->cookie_jar->as_string
+      or die "failed to delete session cookie";
+}
 
 $t->reload();
 $t->content_like( qr/ name="username" .+ value="test" /x,
