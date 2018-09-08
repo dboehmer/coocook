@@ -103,6 +103,8 @@ __PACKAGE__->config(
 
     about_page_md => <<EOT,
 This is an instance of the Coocook food planning software.
+
+<!-- define 'about_page_md' in 'coocook_local' config file to replace this text -->
 EOT
 
     # enable registration as self service, defaults to false
