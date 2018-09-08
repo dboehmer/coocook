@@ -124,6 +124,20 @@ main a:active {
     color: #333333;
 }
 
+a.anchor {
+    color: inherit;
+}
+
+a.anchor:before {
+    content: '¶ ';
+    color: grey;
+    visibility: hidden;
+}
+
+a.anchor:hover:before {
+    visibility: visible;
+}
+
 code {
     background-color: LightGray;
     border-radius: 0.25em;
@@ -137,7 +151,8 @@ code {
     color: Red;
 }
 
-.inline {
+.inline,
+.inline * {
     display: inline;
 }
 
