@@ -115,7 +115,7 @@ END %]
             <li><a href="[% admin_url %]">Admin</a></li>
 [% END %]
             <li><a href="[% about_url %]">[% about_title %]</a></li>
-			<li><a>FAQ</a></li>
+            <li><a href="[% faq_url %]">FAQ</a></li>
             <li><a href="[% statistics_url %]">Statistics</a></li>
 		</ul>
 		

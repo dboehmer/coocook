@@ -1,0 +1,8 @@
+[% USE Markdown;
+
+FOR faq IN faqs %]
+<div class="faq" id="[% faq.anchor | html %]">
+    <h2><a href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a></h2>
+
+    <div>[% faq.answer_md | $Markdown %]</div>
+[% END %]

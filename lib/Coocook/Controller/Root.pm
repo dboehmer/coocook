@@ -88,6 +88,7 @@ sub auto : Private {
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
         statistics_url => $c->uri_for_action('/statistics'),
+        faq_url        => $c->uri_for_action('/faq/index'),    # TODO only if filled
         about_url      => $c->uri_for_action('/about'),
     );
 
