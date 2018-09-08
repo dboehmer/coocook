@@ -88,9 +88,12 @@ sub auto : Private {
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
         statistics_url => $c->uri_for_action('/statistics'),
-        faq_url        => $c->uri_for_action('/faq/index'),    # TODO only if filled
         about_url      => $c->uri_for_action('/about'),
     );
+
+    if ( $c->model('DB::FAQ')->exists ) {
+        $c->stash( faq_url => $c->uri_for_action('/faq/index') );
+    }
 
     if ( $c->user ) {
         $c->stash(
