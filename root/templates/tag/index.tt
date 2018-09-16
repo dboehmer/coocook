@@ -1,3 +1,5 @@
+[% title = "Tags" %]
+
 <form action="[% create_tag_group_url %]" method="POST">
     <fieldset>
         <legend>New Tag Group</legend>

@@ -55,7 +55,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('purchase_lists') Args(0)
         default_date => $default_date,
         lists        => \@lists,
         create_url   => $c->project_uri( $self->action_for('create') ),
-        title        => "Purchase lists",
     );
 }
 

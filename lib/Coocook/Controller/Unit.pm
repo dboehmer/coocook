@@ -92,7 +92,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
         create_url => $c->project_uri( $self->action_for('create') ),
         quantities => \@quantities,
         units      => \@units,
-        title      => "Units",
     );
 }
 

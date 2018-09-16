@@ -58,7 +58,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('tags') Args(0)
         other_tags           => $other_tags,
         create_tag_url       => $c->project_uri( $self->action_for('create') ),
         create_tag_group_url => $c->project_uri( $self->action_for('create_group') ),
-        title                => "Tags",
     );
 }
 

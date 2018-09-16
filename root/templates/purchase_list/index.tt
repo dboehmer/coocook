@@ -1,3 +1,5 @@
+[% title = "Purchase lists" %]
+
 <form method="POST" action="[% create_url %]">
     <fieldset>
         <legend>Create purchase list</legend>

@@ -1,3 +1,5 @@
+[% title = "Permissions" %]
+
 <table>
     <thead>
         <tr>

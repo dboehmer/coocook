@@ -39,7 +39,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('shop_sections') Args(0)
     $c->stash(
         shop_sections => \@shop_sections,
         create_url    => $c->project_uri( $self->action_for('create') ),
-        title         => "Shop sections",
     );
 }
 

@@ -46,7 +46,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('permissions') Args(0)
     $c->stash(
         permissions => \@permissions,
         roles       => [ grep { $_ ne 'owner' } $c->model('Authorization')->project_roles ],
-        title       => "Permissions",
         template    => 'project/permissions.tt',
     );
 }

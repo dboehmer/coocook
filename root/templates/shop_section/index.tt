@@ -1,3 +1,5 @@
+[% title = "Shop sections" %]
+
 <form method="POST" action="[% create_url %]">
 <fieldset>
     <legend>Create new Shop Section</legend>

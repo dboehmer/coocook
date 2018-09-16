@@ -11,7 +11,6 @@ sub bad_request : Private {
     $c->response->status(400);
 
     $c->stash(
-        title    => "Bad Request",
         template => 'error/bad_request.tt',    # set explicitly to allow $c->detach('/error/bad_request')
     );
 }
@@ -22,7 +21,6 @@ sub forbidden : Private {
     $c->response->status(403);
 
     $c->stash(
-        title    => "Forbidden",
         template => 'error/forbidden.tt',      # set explicitly to allow $c->detach('/error/forbidden')
     );
 }
@@ -39,7 +37,6 @@ sub not_found : AnyMethod Chained('/base') PathPart('') {
     $c->response->status(404);
 
     $c->stash(
-        title    => "Not found",
         template => 'error/not_found.tt',    # set explicitly to allow $c->detach('/error/not_found')
     );
 }
