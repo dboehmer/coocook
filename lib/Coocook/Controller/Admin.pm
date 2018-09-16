@@ -5,11 +5,9 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => '' );
+sub base : Chained('/base') PathPart('admin') CaptureArgs(0) { }
 
-sub admin_base : Chained('/base') PathPart('admin') CaptureArgs(0) { }
-
-sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapability('admin_view') {
+sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('admin_view') {
     my ( $self, $c ) = @_;
 
     my @projects = $c->model('DB::Project')->sorted->hri->all;

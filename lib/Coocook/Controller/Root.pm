@@ -108,7 +108,7 @@ sub auto : Private {
     }
 
     if ( $c->has_capability('admin_view') ) {
-        $c->stash( admin_url => $c->uri_for_action('/admin') );
+        $c->stash( admin_url => $c->uri_for_action('/admin/index') );
     }
 
     return 1;    # important
