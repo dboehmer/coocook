@@ -98,7 +98,7 @@ sub auto : Private {
     if ( $c->user ) {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
-            settings_url  => $c->uri_for_action('/settings'),
+            settings_url  => $c->uri_for_action('/settings/index'),
             logout_url    => $c->forward('/logout_url'),
         );
     }
