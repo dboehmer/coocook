@@ -1,0 +1,6 @@
+<ul>
+[% FOR faq IN faqs %]
+    <li><a href="[% faq.url %]">[% faq.question_md | html %]<a></li>
+[% END %]
+    <li><a href="[% new_faq_url %]">Create new FAQ entry</a>
+</ul>

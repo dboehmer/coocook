@@ -1,0 +1,13 @@
+[% IF faq %]
+    <p><a href="[% faq.url %]">Public FAQ entry</a></p>
+[% END %]
+
+<form method="POST" action="[% submit_url %]">
+    <input type="text" name="anchor" value="[% faq.anchor | html %]">
+
+    <input type="text" name="question" value="[% faq.question_md | html %]">
+
+    <textarea name="answer">[% faq.answer_md | html %]</textarea>
+
+    <input type="submit" value="Save">
+</form>
