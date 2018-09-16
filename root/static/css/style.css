@@ -182,13 +182,15 @@ input[type="submit"]:hover, input[type="submit"]:active{
     background-color: white;
 }
 
+.markdown-preview + input[type="text"],
 .markdown-preview + textarea {
     display: block;
     width: 45%;
     width: calc( 50% - 2em );
 }
 
-.markdown-preview + textarea + * {
+.markdown-preview + input[type="text"] + *,
+.markdown-preview + textarea           + * {
     clear: both;
 }
 

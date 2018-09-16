@@ -3,11 +3,13 @@
 [% END %]
 
 <form method="POST" action="[% submit_url %]">
-    <input type="text" name="anchor" value="[% faq.anchor | html %]">
+    <p>HTML anchor name: <input type="text" name="anchor" value="[% faq.anchor | html %]"></p>
 
-    <input type="text" name="question" value="[% faq.question_md | html %]">
+    <h3>Question</h3>
+    <input class="with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
 
-    <textarea name="answer">[% faq.answer_md | html %]</textarea>
+    <h3>Answer</h3>
+    <textarea class="with-markdown-preview" name="answer">[% faq.answer_md | html %]</textarea>
 
-    <input type="submit" value="Save">
+    <p><input type="submit" value="Save"></p>
 </form>
