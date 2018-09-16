@@ -99,6 +99,8 @@ sub faq_base : Chained('base') PathPart('faq') CaptureArgs(1) {
 sub faq : GET HEAD Chained('faq_base') PathPart('') Args(0) RequiresCapability('admin_view') {
     my ( $self, $c ) = @_;
 
+    $c->stash->{faq}{url} = $c->uri_for_action( '/faq/index', \$c->stash->{faq}->anchor );
+
     $c->stash(
         admin_faq_url => $c->uri_for( $self->action_for('faqs') ),
         submit_url    => $c->uri_for( $self->action_for('update'), [ $c->stash->{faq}->id ] ),

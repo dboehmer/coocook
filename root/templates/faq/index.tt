@@ -1,8 +1,19 @@
-[% USE Markdown;
+[% IF admin_faq_url %]
+    <p><a href="[% admin_faq_url %]">Edit FAQ</a></p>
+[% END;
+
+USE Markdown;
 
 FOR faq IN faqs %]
 <div class="faq" id="[% faq.anchor | html %]">
-    <h2><a class="anchor inline" href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a></h2>
+    <h2>
+        <a class="anchor inline" href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a>
+    [% IF faq.edit_url %]
+        <form class="inline" method="GET" action="[% faq.edit_url %]">
+            <input type="submit" value="Edit">
+        </form>
+    [% END %]
+    </h2>
 
     <div>[% faq.answer_md | $Markdown %]</div>
 [% END %]
