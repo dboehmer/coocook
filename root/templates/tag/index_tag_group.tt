@@ -1,0 +1,7 @@
+[% title = "Tag groups" %]
+
+<ul>
+[% FOR group IN tag_groups %]
+    <li><a href="[% group.url %]">[% group.name | html %]</a></li>
+[% END %]
+</ul>
