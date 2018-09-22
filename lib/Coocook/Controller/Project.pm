@@ -57,28 +57,14 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
 sub submenu : Chained('base') PathPart('') CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my @subitems = (
-        { text => "Show project", action => 'project/show',     capability => 'view_project' },
-        { text => "Edit project", action => 'project/edit',     capability => 'edit_project' },
-        { text => "Permissions",  action => 'permission/index', capability => 'view_project_permissions' },
-        { text => "Project settings", action => 'project/settings', capability => 'view_project_settings' },
+    $c->stash(
+        submenu_items => [
+            { text => "Show project",     action => 'project/show' },
+            { text => "Edit project",     action => 'project/edit' },
+            { text => "Permissions",      action => 'permission/index' },
+            { text => "Project settings", action => 'project/settings' },
+        ],
     );
-
-    for my $item (@subitems) {
-        if ( not $c->has_capability( $item->{capability} ) ) {
-            $item->{forbidden} = 1;
-            next;
-        }
-
-        if ( $c->action ne $item->{action} ) {
-            $item->{url} = $c->project_uri( $item->{action} );
-        }
-    }
-
-    # remove subitems that have the 'forbidden' flag
-    @subitems = grep { not $_->{forbidden} } @subitems;
-
-    $c->stash( submenu_items => \@subitems );
 }
 
 sub show : GET HEAD Chained('submenu') PathPart('') Args(0) RequiresCapability('view_project') {

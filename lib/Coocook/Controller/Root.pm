@@ -186,6 +186,26 @@ Attempt to render a view, if needed.
 sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
+    for my $item ( @{ $c->stash->{submenu_items} } ) {
+        my $action = $item->{action};
+
+        my $capabilities = $self->action_for($action)->attributes->{RequiresCapability};
+
+        for my $capability (@$capabilities) {
+            if ( not $c->has_capability($capability) ) {
+                $item->{forbidden} = 1;
+                next;
+            }
+        }
+
+        if ( $c->action ne $action ) {
+            $item->{url} = $c->project_uri($action);
+        }
+    }
+
+    # remove subitems that have the 'forbidden' flag
+    @{ $c->stash->{submenu_items} } = grep { not $_->{forbidden} } @{ $c->stash->{submenu_items} };
+
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
         $_ = $c->uri_for_static($_);
     }

@@ -21,26 +21,12 @@ Catalyst Controller.
 sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my @subitems = (
-        { text => "All recipes", action => 'recipe/index',      capability => 'view_project' },
-        { text => "Add recipe",  action => 'recipe/new_recipe', capability => 'edit_project' },
+    $c->stash(
+        submenu_items => [
+            { text => "All recipes", action => 'recipe/index' },
+            { text => "Add recipe",  action => 'recipe/new_recipe' },
+        ]
     );
-
-    for my $item (@subitems) {
-        if ( not $c->has_capability( $item->{capability} ) ) {
-            $item->{forbidden} = 1;
-            next;
-        }
-
-        if ( $c->action ne $item->{action} ) {
-            $item->{url} = $c->project_uri( $item->{action} );
-        }
-    }
-
-    # remove subitems that have the 'forbidden' flag
-    @subitems = grep { not $_->{forbidden} } @subitems;
-
-    $c->stash( submenu_items => \@subitems );
 }
 
 =head2 index
