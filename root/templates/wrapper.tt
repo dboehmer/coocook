@@ -59,7 +59,6 @@
     <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
     <li><a href="[% project_urls.print %]">Printing</a></li>
     <li><a href="[% project_urls.shop_sections %]">Shop sections</a></li>
-    <li><a href="[% project_urls.quantities %]">Quantities</a></li>
     <li><a href="[% project_urls.units %]">Units</a></li>
     <li><a href="[% project_urls.import %]">Import</a></li>
 [% END %]

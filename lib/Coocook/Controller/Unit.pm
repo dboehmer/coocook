@@ -18,11 +18,23 @@ Catalyst Controller.
 
 =cut
 
+sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        submenu_items => [
+            { text => "All units",  action => 'unit/index' },
+            { text => "Add unit",   action => 'unit/new_unit' },
+            { text => "Quantities", action => 'quantity/index' },
+        ]
+    );
+}
+
 =head2 index
 
 =cut
 
-sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
+sub index : GET HEAD Chained('submenu') PathPart('units') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -95,7 +107,19 @@ sub index : GET HEAD Chained('/project/base') PathPart('units') Args(0)
     );
 }
 
-sub base : Chained('/project/base') PathPart('unit') CaptureArgs(1) {
+sub new_unit : GET HEAD Chained('submenu') PathPart('units/new') RequiresCapability('edit_project')
+{
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        template   => 'unit/new.tt',
+        create_url => $c->project_uri( $self->action_for('create') ),
+        quantities =>
+          [ $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } )->all ],
+    );
+}
+
+sub base : Chained('submenu') PathPart('unit') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( unit => $c->project->units->find($id) || $c->detach('/error/not_found') );

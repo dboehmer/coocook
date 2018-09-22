@@ -1,42 +1,5 @@
 [% title = "Units" %]
 
-<form method="POST" action="[% create_url %]">
-<fieldset>
-    <legend>Create new unit</legend>
-
-    <p>
-        <label for="new_short_name">Short name:</label>
-        <input  id="new_short_name" type="text" name="short_name" placeholder="short name">
-    </p>
-
-    <p>
-        <label for="new_long_name">Long name:</label>
-        <input  id="new_long_name" type="text" name="long_name" placeholder="long name">
-    </p>
-
-    <p>
-        <input type="checkbox" name="space" id="space">
-        <label for="space">prepend space</label>
-    </p>
-
-    <p>
-        <label for="new_quantity">Quantity:</label>
-        <select id="new_quantity" name="quantity">
-        [% FOR quantity IN quantities %]
-            <option value="[% quantity.id %]">[% quantity.name | html; IF quantity.default_unit; ' (default unit: '; quantity.default_unit.long_name | html; ')'; END %]</option>
-        [% END %]
-        </select>
-    </p>
-
-    <p>
-        <label for="new_to_quantity_default">Factor to quantity's default unit:</label>
-        <input  id="new_to_quantity_default" type="text" name="to_quantity_default" value="1">
-    </p>
-
-    <input type="submit" value="Create">
-</fieldset>
-</form>
-
 <table>
 <tr>
 <th>Quantity</th>
