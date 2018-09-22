@@ -1,0 +1,15 @@
+[% title = "Create recipe" %]
+
+<form method="POST" action="[% create_url %]">
+    <p>
+        <label for="name">Name:</label>
+        <input  id="name" type="text" name="name" placeholder="name">
+    </p>
+
+    <p>
+        <label for="servings">Servings:</label>
+        <input  id="servings" type="number" name="servings" value="4">
+    </p>
+
+    <input type="submit" value="Create">
+</form>

@@ -18,11 +18,36 @@ Catalyst Controller.
 
 =cut
 
+sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    my @subitems = (
+        { text => "All recipes", action => 'recipe/index',      capability => 'view_project' },
+        { text => "Add recipe",  action => 'recipe/new_recipe', capability => 'edit_project' },
+    );
+
+    for my $item (@subitems) {
+        if ( not $c->has_capability( $item->{capability} ) ) {
+            $item->{forbidden} = 1;
+            next;
+        }
+
+        if ( $c->action ne $item->{action} ) {
+            $item->{url} = $c->project_uri( $item->{action} );
+        }
+    }
+
+    # remove subitems that have the 'forbidden' flag
+    @subitems = grep { not $_->{forbidden} } @subitems;
+
+    $c->stash( submenu_items => \@subitems );
+}
+
 =head2 index
 
 =cut
 
-sub index : GET HEAD Chained('/project/base') PathPart('recipes') Args(0)
+sub index : GET HEAD Chained('submenu') PathPart('recipes') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -34,13 +59,10 @@ sub index : GET HEAD Chained('/project/base') PathPart('recipes') Args(0)
         $recipe->{delete_url}    = $c->project_uri( $self->action_for('delete'),    $recipe->{id} );
     }
 
-    $c->stash(
-        recipes    => \@recipes,
-        create_url => $c->project_uri( $self->action_for('create') ),
-    );
+    $c->stash( recipes => \@recipes );
 }
 
-sub base : Chained('/project/base') PathPart('recipe') CaptureArgs(1) {
+sub base : Chained('submenu') PathPart('recipe') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( recipe => $c->project->recipes->find($id) || $c->detach('/error/not_found') );
@@ -94,6 +116,15 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->escape_title( Recipe => $recipe->name );
 }
 
+sub new_recipe : GET HEAD Chained('submenu') PathPart('new') RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        template   => 'recipe/new.tt',
+        create_url => $c->project_uri( $self->action_for('create') ),
+    );
+}
+
 sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
@@ -112,7 +143,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     $c->detach( redirect => [ $recipe->id, '#ingredients' ] );
 }
 
-sub create : POST Chained('/project/base') Args(0) RequiresCapability('edit_project') {
+sub create : POST Chained('submenu') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $name = $c->req->params->get('name');
