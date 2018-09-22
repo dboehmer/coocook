@@ -17,11 +17,22 @@ Catalyst Controller.
 
 =cut
 
+sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        submenu_items => [
+            { text => "All articles", action => 'article/index' },
+            { text => "Add article",  action => 'article/new_article' },
+        ]
+    );
+}
+
 =head2 index
 
 =cut
 
-sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
+sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -68,7 +79,19 @@ sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
     );
 }
 
-sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
+sub new_article : GET HEAD Chained('submenu') PathPart('articles/new')
+  RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    $c->forward('fetch_project_data');
+
+    $c->stash(
+        template   => 'article/new.tt',
+        create_url => $c->project_uri( $self->action_for('create') ),
+    );
+}
+
+sub base : Chained('submenu') PathPart('article') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( article => $c->project->articles->find($id) || $c->detach('/error/not_found') );

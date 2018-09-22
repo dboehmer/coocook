@@ -102,7 +102,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->escape_title( Recipe => $recipe->name );
 }
 
-sub new_recipe : GET HEAD Chained('submenu') PathPart('new') RequiresCapability('edit_project') {
+sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new') RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash(
