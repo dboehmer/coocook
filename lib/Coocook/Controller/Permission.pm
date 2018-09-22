@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub index : GET HEAD Chained('/project/base') PathPart('permissions') Args(0)
+sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
   RequiresCapability('view_project_permissions') {
     my ( $self, $c ) = @_;
 

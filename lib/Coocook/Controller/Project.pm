@@ -54,7 +54,34 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     );
 }
 
-sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
+sub submenu : Chained('base') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    my @subitems = (
+        { text => "Show project", action => 'project/show',     capability => 'view_project' },
+        { text => "Edit project", action => 'project/edit',     capability => 'edit_project' },
+        { text => "Permissions",  action => 'permission/index', capability => 'view_project_permissions' },
+        { text => "Project settings", action => 'project/settings', capability => 'view_project_settings' },
+    );
+
+    for my $item (@subitems) {
+        if ( not $c->has_capability( $item->{capability} ) ) {
+            $item->{forbidden} = 1;
+            next;
+        }
+
+        if ( $c->action ne $item->{action} ) {
+            $item->{url} = $c->project_uri( $item->{action} );
+        }
+    }
+
+    # remove subitems that have the 'forbidden' flag
+    @subitems = grep { not $_->{forbidden} } @subitems;
+
+    $c->stash( submenu_items => \@subitems );
+}
+
+sub show : GET HEAD Chained('submenu') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $days = $c->model('Plan')->project( $c->project );
@@ -68,25 +95,12 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     }
 
     $c->stash(
-        days => $days,
-
-        edit_url => $c->has_capability('edit_project')
-        ? $c->project_uri( $self->action_for('edit') )
-        : undef,
-
-        permissions_url => $c->has_capability('view_project_permissions')
-        ? $c->project_uri('/permission/index')
-        : undef,
-
-        settings_url => $c->has_capability('view_project_settings')
-        ? $c->project_uri('/project/settings')
-        : undef,
-
+        days      => $days,
         inventory => $c->project->inventory,
     );
 }
 
-sub edit : GET HEAD Chained('base') PathPart('edit') Args(0) RequiresCapability('edit_project') {
+sub edit : GET HEAD Chained('submenu') PathPart('edit') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     my $default_date = DateTime->today;
@@ -123,7 +137,7 @@ sub edit : GET HEAD Chained('base') PathPart('edit') Args(0) RequiresCapability(
     );
 }
 
-sub settings : GET HEAD Chained('base') PathPart('settings') Args(0)
+sub settings : GET HEAD Chained('submenu') PathPart('settings') Args(0)
   RequiresCapability('view_project_settings') {
     my ( $self, $c ) = @_;
 

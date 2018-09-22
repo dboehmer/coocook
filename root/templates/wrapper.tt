@@ -72,6 +72,16 @@
     <li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
 </ul>
 </nav>
+
+<nav id="submenu">
+[% FOR item IN submenu_items;
+    IF item.url %]
+        <a href="[% item.url %]">[% item.text %]</a>
+    [% ELSE %]
+        <a href="" class="current">[% item.text %]</a>
+    [% END;
+END %]
+</nav>
 </header>
 
 <main>
