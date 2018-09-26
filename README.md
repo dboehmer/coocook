@@ -23,7 +23,9 @@ Web application for collecting recipes and making food plans
 
 Prerequisites:
 
-* Perl5 with [`cpanm`](https://github.com/miyagawa/cpanminus)
+* [Perl5](https://www.perl.org/get.html)
+  with [`cpanm`](https://metacpan.org/pod/App::cpanminus#INSTALLATION)
+
 * by default [SQLite](https://www.sqlite.org/)
   with [`DBD::SQLite`](https://metacpan.org/pod/DBD::SQLite)
   or some other RDBMS
