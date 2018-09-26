@@ -1,43 +1,7 @@
 [% title = "Admin" %]
 
-<h3>Projects</h3>
-
-<table>
-<thead>
-    <tr>
-        <th>Project</th>
-        <th>Owner</th>
-    </tr>
-</thead>
-<tbody>
-[% FOR proj IN projects %]
-    <tr>
-        <td><a href="[% proj.url %]">[% '🔒' UNLESS proj.is_public; proj.name | html %]</a></td>
-        <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
-    </tr>
+<ul>
+[% FOR item IN submenu_items %]
+    <li><a href="[% item.url %]">[% item.text | html %]</a></li>
 [% END %]
-</tbody>
-</table>
-
-<h3>Users</h3>
-
-<table>
-<thead>
-    <tr>
-        <th>User</th>
-        <th>Display Name</th>
-        <th>Owned projects</th>
-        <th>Status</th>
-    </tr>
-</thead>
-<tbody>
-[% FOR u IN users %]
-    <tr>
-        <td><a href="[% u.url %]">[% u.name %]</a></td>
-        <td><a href="[% u.url %]">[% u.display_name | html %]</a></td>
-        <td style="text-align:center">[% u.projects_count %]</td>
-        <td>[% u.status %]</td>
-    </tr>
-[% END %]
-</tbody>
-</table>
+</ul>

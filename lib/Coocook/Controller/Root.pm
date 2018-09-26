@@ -199,7 +199,12 @@ sub end : ActionClass('RenderView') {
         }
 
         if ( $c->action ne $action ) {
-            $item->{url} = $c->project_uri($action);
+            if ( $action =~ m/ ^ admin /x ) {    # TODO how to distinguish this in a generic way?
+                $item->{url} = $c->uri_for_action($action);
+            }
+            else {
+                $item->{url} = $c->project_uri($action);
+            }
         }
     }
 

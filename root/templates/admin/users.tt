@@ -1,0 +1,22 @@
+[% title = "Users" %]
+
+<table>
+<thead>
+    <tr>
+        <th>User</th>
+        <th>Display Name</th>
+        <th>Owned projects</th>
+        <th>Status</th>
+    </tr>
+</thead>
+<tbody>
+[% FOR u IN users %]
+    <tr>
+        <td><a href="[% u.url %]">[% u.name %]</a></td>
+        <td><a href="[% u.url %]">[% u.display_name | html %]</a></td>
+        <td style="text-align:center">[% u.projects_count %]</td>
+        <td>[% u.status %]</td>
+    </tr>
+[% END %]
+</tbody>
+</table>
