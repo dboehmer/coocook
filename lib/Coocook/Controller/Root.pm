@@ -123,7 +123,7 @@ sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    my @public_projects = $c->model('DB::Project')->public->hri->all;
+    my @public_projects = $c->model('DB::Project')->public->sorted->hri->all;
 
     for my $project (@public_projects) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
@@ -142,13 +142,13 @@ sub dashboard : Private {
 
     my $my_projects = $c->user->projects;
 
-    my @my_projects = $my_projects->hri->all;
+    my @my_projects = $my_projects->sorted->hri->all;
 
     my @other_projects = $c->model('DB::Project')->public->search(
         {
             id => { -not_in => $my_projects->get_column('id')->as_query },
         }
-    )->hri->all;
+    )->sorted->hri->all;
 
     for my $project ( @my_projects, @other_projects ) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );

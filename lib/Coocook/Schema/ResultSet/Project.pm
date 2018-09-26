@@ -11,6 +11,8 @@ __PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::SortByName
 
 __PACKAGE__->meta->make_immutable;
 
+sub sorted_by_columns { qw< url_name_fc name > }
+
 sub find_by_url_name {
     my ( $self, $url_name ) = @_;
 
