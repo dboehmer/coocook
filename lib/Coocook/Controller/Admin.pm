@@ -34,6 +34,15 @@ sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapabili
 
     for my $user (@users) {
         $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
+
+        if ( $user->{token_expires} ) {
+            $user->{status} = "user requested password recovery link";
+        }
+        elsif ( $user->{token_hash} ) {
+            $user->{status} = "user needs to verify e-mail address with verification link";
+        }
+
+        $user->{status} ||= "ok";
     }
 
     $c->stash(

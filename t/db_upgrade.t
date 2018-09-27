@@ -3,9 +3,10 @@ use warnings;
 
 use Coocook::Script::Deploy;
 use Coocook::Schema;
+use DBICx::TestDatabase;
 use Test::Most;
 
-my $schema = Coocook::Schema->connect('dbi:SQLite::memory:');
+my $schema = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
 
 my $app = Coocook::Script::Deploy->new( _schema => $schema );
 
