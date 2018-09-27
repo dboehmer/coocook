@@ -43,6 +43,8 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     # is not answered in 0.x seconds ...
     sleep 1;
 
+    my $redirect = $c->req->params->get('redirect');
+
     my $user = $c->authenticate(
         {
             name           => $c->req->params->get('username'),
@@ -62,7 +64,7 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
             httponly => 1,             # not accessible by client-side JavaScript
         };
 
-        if ( my $redirect = $c->req->params->get('redirect') ) {
+        if ( my $redirect ) {
             $c->forward( _check_redirect_uri => [$redirect] );
 
             $c->redirect_detach( $c->uri_for_local_part($redirect) );
@@ -72,12 +74,16 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     }
     else {
         $c->logout();
+
+        $c->forward( _check_redirect_uri => [$redirect] );
+
         $c->response->redirect(
             $c->uri_for_action(
                 '/login',
                 {
                     error    => "Login failed!",
                     username => $c->req->params->get('username'),
+                    $redirect ? ( redirect => $redirect ) : (),
                 }
             )
         );
