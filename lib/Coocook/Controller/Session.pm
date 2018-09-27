@@ -17,7 +17,6 @@ sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        title    => "Login",
         username => (
                  $c->req->params->get('username')
               || $c->session->{username}    # session is more trustworthy than plaintext cookie

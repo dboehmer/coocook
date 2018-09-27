@@ -48,7 +48,6 @@ sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapabili
     $c->stash(
         projects => \@projects,
         users    => \@users,
-        title    => "Admin",
     );
 }
 

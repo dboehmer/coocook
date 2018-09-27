@@ -1,3 +1,5 @@
+[% title = "Printing" %]
+
 <ul>
 
     <li><a href="[% project_url %]">Project overview</a></li>

@@ -1,3 +1,5 @@
+[% title = "Register" %]
+
 <p>You will receive an e-mail with a web link to verify your e-mail address.</p>
 
 <form method="POST" action="[% post_register_url %]">

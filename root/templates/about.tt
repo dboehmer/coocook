@@ -1,3 +1,5 @@
-[% USE Markdown;
+[% DEFAULT title = "About";
+
+USE Markdown;
 
 about_page_md | $Markdown %]

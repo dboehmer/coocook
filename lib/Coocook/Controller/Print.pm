@@ -75,7 +75,6 @@ sub index : GET HEAD Chained('/project/base') PathPart('print') Args(0)
         lists       => \@lists,
         projects    => \@projects,
         project_url => $c->project_uri('/print/project'),
-        title       => "Printing",
     );
 }
 
@@ -127,7 +126,6 @@ sub project : GET HEAD Chained('/project/base') PathPart('print/project') Args(0
     $c->stash(
         days          => $c->model('Plan')->project( $c->project ),
         extra_columns => \@extra_columns,
-        title         => "Print overview",
     );
 }
 

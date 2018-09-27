@@ -1,3 +1,5 @@
+[% title = "Admin" %]
+
 <h3>Projects</h3>
 
 <table>

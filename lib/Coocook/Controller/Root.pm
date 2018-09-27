@@ -165,17 +165,14 @@ sub dashboard : Private {
 sub statistics : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash(
-        title      => "Statistics",
-        statistics => $c->model('DB')->statistics,
-    );
+    $c->stash( statistics => $c->model('DB')->statistics );
 }
 
 sub about : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash(
-        title => $c->config->{about_page_title} || "About",
+        title         => $c->config->{about_page_title},
         about_page_md => $c->config->{about_page_md},
     );
 }
