@@ -51,16 +51,16 @@
 [% END %]
 
 [% IF project_urls %]
-    <li><a href="[% project_urls.project %]">Meals ([% inventory.meals %]) &amp; Dishes ([% inventory.dishes %])</a></li>
-    <li><a href="[% project_urls.recipes %]">Recipes ([% inventory.recipes %])</a></li>
-    <li><a href="[% project_urls.articles %]">Articles ([% inventory.articles %])</a></li>
-    <li><a href="[% project_urls.tags %]">Tags ([% inventory.tags %])</a></li>
-    <li><a href="[% project_urls.unassigned_items %]">Unassigned Items ([% inventory.unassigned_items %])</a></li>
-    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists ([% inventory.purchase_lists %])</a></li>
+    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+    <li><a href="[% project_urls.recipes %]">Recipes</a></li>
+    <li><a href="[% project_urls.articles %]">Articles</a></li>
+    <li><a href="[% project_urls.tags %]">Tags</a></li>
+    <li><a href="[% project_urls.unassigned_items %]">Unassigned Items</a></li>
+    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
     <li><a href="[% project_urls.print %]">Printing</a></li>
-    <li><a href="[% project_urls.shop_sections %]">Shop sections ([% inventory.shop_sections %])</a></li>
-    <li><a href="[% project_urls.quantities %]">Quantities ([% inventory.quantities %])</a></li>
-    <li><a href="[% project_urls.units %]">Units ([% inventory.units %])</a></li>
+    <li><a href="[% project_urls.shop_sections %]">Shop sections</a></li>
+    <li><a href="[% project_urls.quantities %]">Quantities</a></li>
+    <li><a href="[% project_urls.units %]">Units</a></li>
     <li><a href="[% project_urls.import %]">Import</a></li>
 [% END %]
 
