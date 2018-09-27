@@ -12,9 +12,9 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('users');
 
 __PACKAGE__->add_columns(
-    id   => { data_type => 'int', is_auto_increment => 1 },
-    name => { data_type => 'text' },
-    name_fc        => { data_type => 'text' },                         # fold cased
+    id             => { data_type => 'int', is_auto_increment => 1 },
+    name           => { data_type => 'text' },
+    name_fc        => { data_type => 'text' },                          # fold cased
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     email          => { data_type => 'text' },
@@ -25,7 +25,11 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraints( ['name'], ['name_fc'], ['email'], ['token_hash'] );
+__PACKAGE__->add_unique_constraints(
+    ['name'], ['name_fc'], ['email'],
+    ['password_hash'],    # passwords might be equal but salted hash MUST be unique
+    ['token_hash'],
+);
 
 __PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
 
