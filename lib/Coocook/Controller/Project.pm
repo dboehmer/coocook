@@ -81,6 +81,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         settings_url => $c->has_capability('view_project_settings')
         ? $c->project_uri('/project/settings')
         : undef,
+
+        inventory => $c->project->inventory,
     );
 }
 

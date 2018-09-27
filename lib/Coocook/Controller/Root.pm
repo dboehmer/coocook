@@ -192,12 +192,6 @@ sub end : ActionClass('RenderView') {
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
         $_ = $c->uri_for_static($_);
     }
-
-    if ( my $project = $c->stash->{project} ) {
-
-        # TODO allow prefilling variables in controller actions to speed things up
-        $c->stash( inventory => $project->inventory() );
-    }
 }
 
 __PACKAGE__->meta->make_immutable;
