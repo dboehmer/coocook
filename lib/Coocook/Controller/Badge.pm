@@ -9,7 +9,7 @@ BEGIN { extends 'Coocook::Controller' }
 sub dishes_served : GET HEAD Chained('/base') PathPart('badge/dishes_served.svg') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $dishes = $c->model('DB::Dish')->count_served;
+    my $dishes = $c->model('DB::Dish')->in_past_or_today->sum_servings;
 
     my $suffix;
     my @suffixes = qw< k m b >;

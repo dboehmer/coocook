@@ -63,7 +63,8 @@ sub statistics {
     my $self = shift;
 
     return {
-        dishes_served   => $self->resultset('Dish')->count_served,
+        dishes_served   => $self->resultset('Dish')->in_past_or_today->sum_servings,
+        dishes_planned  => $self->resultset('Dish')->in_future->sum_servings,
         public_projects => $self->resultset('Project')->public->count,
         users           => $self->resultset('User')->count,
     };

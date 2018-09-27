@@ -20,6 +20,7 @@ subtest statistics => sub {
         public_projects => 1,
         users           => 2,
         dishes_served   => 4 + 2 + 4,
+        dishes_planned  => 0,
     };
 };
 

@@ -45,15 +45,9 @@ sub from_recipe {
     );
 }
 
-=head2 count_served
+sub sum_servings { shift->get_column('servings')->sum // 0 }
 
-Returns the approximate number of dishes served until today.
-That is the sum of the number of servings all dishes of all meals
-scheduled for the past or today.
-
-=cut
-
-sub count_served {
+sub in_past_or_today {
     my $self = shift;
 
     return $self->search(
@@ -63,7 +57,20 @@ sub count_served {
         {
             join => 'meal',
         }
-    )->get_column('servings')->sum;
+    );
+}
+
+sub in_future {
+    my $self = shift;
+
+    return $self->search(
+        {
+            'meal.date' => { '>' => $self->format_date( DateTime->today ) },
+        },
+        {
+            join => 'meal',
+        }
+    );
 }
 
 1;
