@@ -1,20 +1,4 @@
 <p>
-[% submenu_items = [
-    { url => edit_url,        text => "Edit project" },
-    { url => permissions_url, text => "Permissions" },
-    { url => settings_url,    text => "Project settings" },
-];
-
-FOR item IN submenu_items;
-    IF item.url %]
-        <a href="[% item.url %]">[% item.text %]</a>
-    [% ELSE %]
-        [% item.text %]
-    [% END;
-END %]
-</p>
-
-<p>
 [% IF inventory.quantities == 0 AND inventory.articles == 0 AND inventory.shop_sections == 0 AND inventory.tags == 0 %]
     This is a fresh project without any data.
     You can <a href="[% project_urls.import %]">import data</a> from other projects

@@ -1,23 +1,5 @@
 [% title = "Recipes" %]
 
-<form method="POST" action="[% create_url %]">
-<fieldset>
-    <legend>Create new recipe</legend>
-
-    <p>
-        <label for="name">Name:</label>
-        <input  id="name" type="text" name="name" placeholder="name">
-    </p>
-
-    <p>
-        <label for="servings">Servings:</label>
-        <input  id="servings" type="number" name="servings" value="4">
-    </p>
-
-    <input type="submit" value="Create">
-</fieldset>
-</form>
-
 <table>
     <tr>
         <th>Recipe</th>

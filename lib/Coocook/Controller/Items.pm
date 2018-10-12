@@ -18,7 +18,7 @@ Catalyst Controller.
 
 =cut
 
-sub unassigned : GET HEAD Chained('/project/base') PathPart('items/unassigned') Args(0)
+sub unassigned : GET HEAD Chained('/purchase_list/submenu') PathPart('items/unassigned') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 

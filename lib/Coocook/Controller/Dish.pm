@@ -17,7 +17,7 @@ Catalyst Controller.
 
 =cut
 
-sub base : Chained('/project/base') PathPart('dish') CaptureArgs(1) {
+sub base : Chained('/project/submenu') PathPart('dish') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash(

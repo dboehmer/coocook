@@ -36,12 +36,6 @@
 <ul>
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Dashboard</a></li>
-    <li><a href="[% settings_url %]">Settings</a></li>
-    <li>
-        <form class="inline" method="POST" action="[% logout_url %]">
-            <input type="submit" name="logout" value="Logout">
-        </form>
-    </li>
 [% ELSIF login_url %]
     <li><a href="[% login_url %]">Login</a></li>
 [% END %]
@@ -55,11 +49,7 @@
     <li><a href="[% project_urls.recipes %]">Recipes</a></li>
     <li><a href="[% project_urls.articles %]">Articles</a></li>
     <li><a href="[% project_urls.tags %]">Tags</a></li>
-    <li><a href="[% project_urls.unassigned_items %]">Unassigned Items</a></li>
     <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-    <li><a href="[% project_urls.print %]">Printing</a></li>
-    <li><a href="[% project_urls.shop_sections %]">Shop sections</a></li>
-    <li><a href="[% project_urls.quantities %]">Quantities</a></li>
     <li><a href="[% project_urls.units %]">Units</a></li>
     <li><a href="[% project_urls.import %]">Import</a></li>
 [% END %]
@@ -70,7 +60,25 @@
 
     <li><a href="[% statistics_url %]">Statistics</a></li>
     <li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
+[% IF settings_url %]
+    <li><a href="[% settings_url %]">Settings</a></li>
+    <li>
+        <form class="inline" method="POST" action="[% logout_url %]">
+            <input type="submit" name="logout" value="Logout">
+        </form>
+    </li>
+[% END %]
 </ul>
+</nav>
+
+<nav id="submenu">
+[% FOR item IN submenu_items;
+    IF item.url %]
+        <a href="[% item.url %]">[% item.text %]</a>
+    [% ELSE %]
+        <a href="" class="current">[% item.text %]</a>
+    [% END;
+END %]
 </nav>
 </header>
 
@@ -87,9 +95,7 @@
 </main>
 
 <footer>
-Coocook&mdash;Web application for collecting recipes and making food plans<br>
-This software is copyright (c) 2015&ndash;2018 by Daniel Böhmer.
-This web application is free software, licensed under the GNU Affero General Public License, Version 3, 19 November 2007.
+Coocook&mdash;Web application for collecting recipes and making food plans
 </footer>
 
 [% FOR path IN js %]

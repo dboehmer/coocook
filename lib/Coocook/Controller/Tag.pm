@@ -17,28 +17,34 @@ Catalyst Controller.
 
 =cut
 
+sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash(
+        submenu_items => [
+            { text => "All tags",       action => 'tag/index' },
+            { text => "Add tag",        action => 'tag/new_tag' },
+            { text => "All tag groups", action => 'tag/index_tag_group' },
+            { text => "Add tag group",  action => 'tag/new_tag_group' },
+        ],
+    );
+}
+
 =head2 index
 
 =cut
 
-sub index : GET HEAD Chained('/project/base') PathPart('tags') Args(0)
+sub index : GET HEAD Chained('submenu') PathPart('tags') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
-    my $groups = $c->project->tag_groups->search(
-        undef,
-        {
-            prefetch => 'tags_sorted',
-        },
-    );
+    my $groups = $c->project->tag_groups;
 
     my @groups = $groups->hri->all;
     my %groups = map { $_->{id} => $_ } @groups;
 
     for my $group (@groups) {
-        $group->{tags}       = [];
-        $group->{update_url} = $c->project_uri( $self->action_for('update_group'), $group->{id} );
-        $group->{delete_url} = $c->project_uri( $self->action_for('delete_group'), $group->{id} );
+        $group->{tags} = [];
     }
 
     my $other_tags = [];
@@ -54,21 +60,45 @@ sub index : GET HEAD Chained('/project/base') PathPart('tags') Args(0)
     }
 
     $c->stash(
-        groups               => \@groups,
-        other_tags           => $other_tags,
-        create_tag_url       => $c->project_uri( $self->action_for('create') ),
-        create_tag_group_url => $c->project_uri( $self->action_for('create_group') ),
+        groups     => \@groups,
+        other_tags => $other_tags,
     );
 }
 
-sub tag : Chained('/project/base') PathPart('tag') CaptureArgs(1)
-  RequiresCapability('view_project') {
+sub new_tag : GET HEAD Chained('submenu') PathPart('tags/new') Args(0) {
+    my ( $self, $c, $id ) = @_;
+
+    $c->stash(
+        create_url => $c->project_uri( $self->action_for('create') ),
+        tag_groups => [ $c->project->tag_groups->sorted->hri->all ],
+    );
+}
+
+sub index_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups') Args(0) {
+    my ( $self, $c, $id ) = @_;
+
+    my @groups = $c->project->tag_groups->sorted->hri->all;
+
+    for my $group (@groups) {
+        $group->{url} = $c->project_uri( $self->action_for('edit_group'), $group->{id} );
+    }
+
+    $c->stash( tag_groups => \@groups );
+}
+
+sub new_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups/new') Args(0) {
+    my ( $self, $c, $id ) = @_;
+
+    $c->stash( create_url => $c->project_uri( $self->action_for('create_group') ) );
+}
+
+sub tag : Chained('submenu') PathPart('tag') CaptureArgs(1) RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( tag => $c->project->tags->find($id) || $c->detach('/error/not_found') );
 }
 
-sub tag_group : Chained('/project/base') PathPart('tag_group') CaptureArgs(1)
+sub tag_group : Chained('submenu') PathPart('tag_group') CaptureArgs(1)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
@@ -105,6 +135,27 @@ sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view
     );
 
     $c->escape_title( Tag => $tag->name );
+}
+
+sub edit_group : GET HEAD Chained('tag_group') PathPart('') Args(0)
+  RequiresCapability('view_project') {
+    my ( $self, $c ) = @_;
+
+    my $group = $c->stash->{tag_group};
+
+    my @tags = $group->tags->hri->all;
+
+    for my $tag (@tags) {
+        $tag->{url} = $c->project_uri( $self->action_for('edit'), $tag->{id} );
+    }
+
+    $c->stash(
+        tags       => \@tags,
+        update_url => $c->project_uri( $self->action_for('update_group'), $group->id ),
+        delete_url => $c->project_uri( $self->action_for('delete_group'), $group->id ),
+    );
+
+    $c->escape_title( "Tag group" => $group->name );
 }
 
 sub delete : POST Chained('tag') Args(0) RequiresCapability('edit_project') {

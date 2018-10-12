@@ -1,25 +1,4 @@
-[% title = "Admin" %]
-
-<h3>Projects</h3>
-
-<table>
-<thead>
-    <tr>
-        <th>Project</th>
-        <th>Owner</th>
-    </tr>
-</thead>
-<tbody>
-[% FOR proj IN projects %]
-    <tr>
-        <td><a href="[% proj.url %]">[% '🔒' UNLESS proj.is_public; proj.name | html %]</a></td>
-        <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
-    </tr>
-[% END %]
-</tbody>
-</table>
-
-<h3>Users</h3>
+[% title = "Users" %]
 
 <table>
 <thead>

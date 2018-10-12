@@ -1,58 +1,13 @@
 [% title = "Tags" %]
 
-<form action="[% create_tag_group_url %]" method="POST">
-    <fieldset>
-        <legend>New Tag Group</legend>
-        <p>
-            <label for="new_group_name">Name:</label>
-            <input  id="new_group_name" type="text" name="name" placeholder="name">
-        </p>
-        <p>
-            <label for="new_group_comment">Comment:</label>
-            <input  id="new_group_comment" type="text" name="comment" placeholder="comment">
-        </p>
-        <input type="submit" value="Create">
-    </fieldset>
-</form>
-
 [% FOR group IN groups %]
 <h3>Tag Group [% group.name | html %]</h3>
-
-[% IF group.delete_url %]
-<form action="[% group.delete_url %]" method="POST">
-    <input type="submit" value="Delete Tag Group">
-</form>
-[% END %]
-
-<form action="[% group.update_url %]" method="POST">
-    <fieldset>
-        <legend>Edit Tag Group</legend>
-        <p>
-            <label for="group[% group.id %]name">Name:</label>
-            <input  id="group[% group.id %]name" type="text" name="name" value="[% group.name | html %]">
-        </p>
-        <p>
-            <label for="group[% group.id %]comment">Comment:</label>
-            <input  id="group[% group.id %]comment" type="text" name="comment" value="[% group.comment %]">
-        </p>
-        <input type="submit" value="Edit">
-    </fieldset>
-</form>
 
 <p>Tags:
     [% FOR tag IN group.tags %]
     <a href="[% tag.edit_url %]">[% tag.name | html %]</a>
     [% END %]
 </p>
-
-<form action="[% create_tag_url %]" method="POST">
-    <input type="hidden" name="tag_group" value="[% group.id %]">
-    <fieldset>
-        <legend>New Tag</legend>
-        <input type="text" name="name" placeholder="name">
-        <input type="submit" value="Create">
-    </fieldset>
-</form>
 [% END %]
 
 <h3>Other Tags</h3>
@@ -62,11 +17,3 @@
     <a href="[% tag.edit_url %]">[% tag.name | html %]</a>
 [% END %]
 </p>
-
-<form action="[% create_tag_url %]" method="POST">
-    <fieldset>
-        <legend>New Tag</legend>
-        <input type="text" name="name" placeholder="name">
-        <input type="submit" value="Create">
-    </fieldset>
-</form>

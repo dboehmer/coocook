@@ -29,7 +29,7 @@ sub auto : Private {
     push @{ $c->stash->{css} }, '/lib/print.css';
 }
 
-sub index : GET HEAD Chained('/project/base') PathPart('print') Args(0)
+sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('print') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -78,7 +78,7 @@ sub index : GET HEAD Chained('/project/base') PathPart('print') Args(0)
     );
 }
 
-sub day : GET HEAD Chained('/project/base') PathPart('print/day') Args(3)
+sub day : GET HEAD Chained('/purchase_list/submenu') PathPart('print/day') Args(3)
   RequiresCapability('view_project') {
     my ( $self, $c, $year, $month, $day ) = @_;
 
@@ -117,7 +117,7 @@ sub day : GET HEAD Chained('/project/base') PathPart('print/day') Args(3)
     );
 }
 
-sub project : GET HEAD Chained('/project/base') PathPart('print/project') Args(0)
+sub project : GET HEAD Chained('/purchase_list/submenu') PathPart('print/project') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
@@ -129,8 +129,8 @@ sub project : GET HEAD Chained('/project/base') PathPart('print/project') Args(0
     );
 }
 
-sub purchase_list : GET HEAD Chained('/project/base') PathPart('print/purchase_list') Args(1)
-  RequiresCapability('view_project') {
+sub purchase_list : GET HEAD Chained('/purchase_list/submenu') PathPart('print/purchase_list')
+  Args(1) RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);

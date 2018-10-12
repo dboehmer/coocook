@@ -68,6 +68,10 @@ header nav a {
     text-decoration:none;
 }
 
+header a.current {
+    color: red;
+}
+
 header nav input[name="logout"]:active,
 header nav input[name="logout"]:hover,
 header nav a:hover {
@@ -250,7 +254,6 @@ footer {
     right: 0;
     bottom: 0;
     left: 0;
-    height: 3em;
     padding: 0.5em 15px 0.5em 15px;
     margin: 0 auto;
 }

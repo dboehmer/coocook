@@ -5,32 +5,45 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => '' );
-
-sub admin_base : Chained('/base') PathPart('admin') CaptureArgs(0) { }
-
-sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapability('admin_view') {
+sub base : Chained('/base') PathPart('admin') CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
+    $c->stash(
+        submenu_items => [
+            { action => 'admin/projects', text => "Projects" },
+            { action => 'admin/users',    text => "Users" },
+        ]
+    );
+}
+
+sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('admin_view') { }
+
+sub projects : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view') {
+    my ( $self, $c ) = @_;
+
+    # we expect every users to have >=1 projects
+    # so better not preload 1:n relationship 'users'
     my @projects = $c->model('DB::Project')->sorted->hri->all;
 
-    my $users = $c->model('DB::User');
-    my @users = $users->search(
-        undef,
-        {
-            order_by   => 'display_name',
-            '+columns' => {
-                projects_count => $users->correlate('owned_projects')->count_rs->as_query
-            },
-        }
-    )->hri->all;
-
-    my %users = map { $_->{id} => $_ } @users;
+    my %users = map { $_->{id} => $_ } $c->model('DB::User')->with_projects_count->hri->all;
 
     for my $project (@projects) {
-        $project->{owner} = $users{ $project->{owner} };
+        $project->{owner} = $users{ $project->{owner} } || die;
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
     }
+
+    for my $user ( values %users ) {
+        $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
+    }
+
+    $c->stash( projects => \@projects );
+}
+
+sub users : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view') {
+    my ( $self, $c ) = @_;
+
+    my @users =
+      $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name' } )->hri->all;
 
     for my $user (@users) {
         $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
@@ -45,10 +58,7 @@ sub admin : GET HEAD Chained('admin_base') PathPart('') Args(0) RequiresCapabili
         $user->{status} ||= "ok";
     }
 
-    $c->stash(
-        projects => \@projects,
-        users    => \@users,
-    );
+    $c->stash( users => \@users );
 }
 
 __PACKAGE__->meta->make_immutable;

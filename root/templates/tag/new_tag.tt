@@ -1,0 +1,16 @@
+[% title = "Add tag" %]
+
+<form action="[% create_url %]" method="POST">
+    <p><input type="text" name="name" placeholder="name"></p>
+
+    <p>Tag group:
+    <select name="tag_group">
+        <option value="">(none)</option>
+[% FOR group IN tag_groups %]
+        <option value="[% group.id %]">[% group.name | html %]</option>
+[% END %]
+    </select>
+    </p>
+
+    <p><input type="submit" value="Create"></p>
+</form>

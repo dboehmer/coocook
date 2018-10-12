@@ -108,7 +108,7 @@ sub auto : Private {
     }
 
     if ( $c->has_capability('admin_view') ) {
-        $c->stash( admin_url => $c->uri_for_action('/admin') );
+        $c->stash( admin_url => $c->uri_for_action('/admin/index') );
     }
 
     return 1;    # important
@@ -123,7 +123,7 @@ sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    my @public_projects = $c->model('DB::Project')->public->hri->all;
+    my @public_projects = $c->model('DB::Project')->public->sorted->hri->all;
 
     for my $project (@public_projects) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
@@ -142,13 +142,13 @@ sub dashboard : Private {
 
     my $my_projects = $c->user->projects;
 
-    my @my_projects = $my_projects->hri->all;
+    my @my_projects = $my_projects->sorted->hri->all;
 
     my @other_projects = $c->model('DB::Project')->public->search(
         {
             id => { -not_in => $my_projects->get_column('id')->as_query },
         }
-    )->hri->all;
+    )->sorted->hri->all;
 
     for my $project ( @my_projects, @other_projects ) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
@@ -185,6 +185,31 @@ Attempt to render a view, if needed.
 
 sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
+
+    for my $item ( @{ $c->stash->{submenu_items} } ) {
+        my $action = $item->{action};
+
+        my $capabilities = $self->action_for($action)->attributes->{RequiresCapability};
+
+        for my $capability (@$capabilities) {
+            if ( not $c->has_capability($capability) ) {
+                $item->{forbidden} = 1;
+                next;
+            }
+        }
+
+        if ( $c->action ne $action ) {
+            if ( $action =~ m/ ^ admin /x ) {    # TODO how to distinguish this in a generic way?
+                $item->{url} = $c->uri_for_action($action);
+            }
+            else {
+                $item->{url} = $c->project_uri($action);
+            }
+        }
+    }
+
+    # remove subitems that have the 'forbidden' flag
+    @{ $c->stash->{submenu_items} } = grep { not $_->{forbidden} } @{ $c->stash->{submenu_items} };
 
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
         $_ = $c->uri_for_static($_);

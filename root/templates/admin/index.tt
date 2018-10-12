@@ -1,0 +1,7 @@
+[% title = "Admin" %]
+
+<ul>
+[% FOR item IN submenu_items %]
+    <li><a href="[% item.url %]">[% item.text | html %]</a></li>
+[% END %]
+</ul>

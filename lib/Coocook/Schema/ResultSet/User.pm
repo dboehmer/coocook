@@ -21,6 +21,19 @@ sub site_admins {
     );
 }
 
+sub with_projects_count {
+    my $self = shift;
+
+    return $self->search(
+        undef,
+        {
+            '+columns' => {
+                projects_count => $self->correlate('owned_projects')->count_rs->as_query,
+            },
+        }
+    );
+}
+
 sub with_valid_limited_token {
     my $self = shift;
 
