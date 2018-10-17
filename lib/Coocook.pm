@@ -101,6 +101,8 @@ __PACKAGE__->config(
         $abstract;
     },
 
+    about_page_title => "About",
+
     about_page_md => <<EOT,
 This is an instance of the Coocook food planning software.
 

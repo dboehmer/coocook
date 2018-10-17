@@ -256,4 +256,19 @@ footer {
     left: 0;
     padding: 0.5em 15px 0.5em 15px;
     margin: 0 auto;
+    text-align: center;
+}
+
+footer nav ul {
+    list-style-type: none;
+    margin: 0;
+}
+
+footer nav ul li {
+    display: inline-block;
+    margin-left:  1em;
+    margin-right: 1em;
+}
+footer a {
+    color: inherit;
 }

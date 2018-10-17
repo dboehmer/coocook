@@ -32,11 +32,13 @@
 [% END %]
 </h1>
 
-<nav>
+<nav id="user_nav">
 <ul>
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Dashboard</a></li>
-[% ELSIF login_url %]
+[% END %]
+
+[% IF login_url %]
     <li><a href="[% login_url %]">Login</a></li>
 [% END %]
 
@@ -44,24 +46,11 @@
     <li><a href="[% register_url %]">Register</a></li>
 [% END %]
 
-[% IF project_urls %]
-    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
-    <li><a href="[% project_urls.recipes %]">Recipes</a></li>
-    <li><a href="[% project_urls.articles %]">Articles</a></li>
-    <li><a href="[% project_urls.tags %]">Tags</a></li>
-    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-    <li><a href="[% project_urls.units %]">Units</a></li>
-    <li><a href="[% project_urls.import %]">Import</a></li>
-[% END %]
-
-[% IF admin_url %]
-    <li><a href="[% admin_url %]">Admin</a></li>
-[% END %]
-
-    <li><a href="[% statistics_url %]">Statistics</a></li>
-    <li><a href="[% about_url %]">[% about_title || 'About' %]</a></li>
 [% IF settings_url %]
     <li><a href="[% settings_url %]">Settings</a></li>
+[% END %]
+
+[% IF logout_url %]
     <li>
         <form class="inline" method="POST" action="[% logout_url %]">
             <input type="submit" name="logout" value="Logout">
@@ -70,6 +59,20 @@
 [% END %]
 </ul>
 </nav>
+
+[% IF project_urls %]
+<nav id="project_nav">
+<ul>
+    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+    <li><a href="[% project_urls.recipes %]">Recipes</a></li>
+    <li><a href="[% project_urls.articles %]">Articles</a></li>
+    <li><a href="[% project_urls.tags %]">Tags</a></li>
+    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
+    <li><a href="[% project_urls.units %]">Units</a></li>
+    <li><a href="[% project_urls.import %]">Import</a></li>
+</ul>
+</nav>
+[% END %]
 
 <nav id="submenu">
 [% FOR item IN submenu_items;
@@ -95,7 +98,16 @@ END %]
 </main>
 
 <footer>
-Coocook&mdash;Web application for collecting recipes and making food plans
+    <nav>
+        <ul>
+[% IF admin_url %]
+            <li><a href="[% admin_url %]">Admin</a></li>
+[% END %]
+
+            <li><a href="[% statistics_url %]">Statistics</a></li>
+            <li><a href="[% about_url %]">[% about_title %]</a></li>
+        </ul>
+    </nav>
 </footer>
 
 [% FOR path IN js %]
