@@ -22,7 +22,8 @@
 </head>
 
 <body>
-
+<!--container div is necessary to keep the footer down, see https://matthewjamestaylor.com/bottom-footer -->
+<div id="container">
 <header>
 <h1>
     <a href="[% homepage_url %]">[% name | html %]</a>
@@ -98,21 +99,40 @@ END %]
 </main>
 
 <footer>
-    <nav>
+	<nav>
+[% IF project_urls %]
         <ul>
+			<h4>Project Parameters</h4>
+			<li><a href="[% project_urls.units %]">Units & Quantities</a></li>
+			<li><a href="[% project_urls.tags %]">Tags</a></li>
+			<li><a href="[% project_urls.shop_sections %]">Shop Sections</a></li>
+        </ul>
+[% END %]
+		
+		<ul>
+		<h4>Get to know Coocook</h4>
 [% IF admin_url %]
             <li><a href="[% admin_url %]">Admin</a></li>
 [% END %]
-
-            <li><a href="[% statistics_url %]">Statistics</a></li>
             <li><a href="[% about_url %]">[% about_title %]</a></li>
-        </ul>
-    </nav>
+			<li><a>FAQ</a></li>
+            <li><a href="[% statistics_url %]">Statistics</a></li>
+		</ul>
+		
+		<ul>
+			<h4>Legal information</h4>
+			<li><a>Imprint</a></li>
+			<li><a>Privacy Policy</a></li>
+			<li><a>GTC</a></li>
+			<li><a>Contact</a></li>
+		</ul>
+	</nav>
 </footer>
 
 [% FOR path IN js %]
 <script src="[% path %]"></script>
 [% END %]
 
+</div>
 </body>
 </html>
