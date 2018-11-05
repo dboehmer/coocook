@@ -110,7 +110,7 @@ END %]
 [% END %]
 
         <ul>
-        <h4>Get to know Coocook</h4>
+        <h4>Get to know [% name | html %]</h4>
 [% IF admin_url %]
             <li><a href="[% admin_url %]">Admin</a></li>
 [% END %]
