@@ -68,3 +68,6 @@ INSERT INTO 'tags' VALUES(3,1,NULL,'delicious');
 INSERT INTO 'articles_tags' VALUES(1,1);
 INSERT INTO 'articles_tags' VALUES(4,2);
 INSERT INTO 'recipes_tags' VALUES(1,3);
+
+INSERT INTO 'faqs' VALUES(1,2,'foss','Is Coocook free and open-source software (FOSS)?','Yes, it is.');
+INSERT INTO 'faqs' VALUES(2,1,'what','What is Coocook?','Coocook is a web application for collecting recipes and making food plans.');

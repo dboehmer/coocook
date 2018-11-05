@@ -1,0 +1,16 @@
+[% IF faq %]
+    <p><a href="[% faq.url %]">Show existing FAQ entry</a></p>
+[% END %]
+
+<form method="POST" action="[% submit_url %]">
+    <!-- URL fragment format regex taken from https://stackoverflow.com/a/26119120/498634 -->
+    <p>HTML anchor name: <input type="text" name="anchor" pattern="([-?/:@._~!$&'()*+,;=a-zA-Z0-9]|%[0-9a-fA-F]{2})*" value="[% faq.anchor | html %]"></p>
+
+    <h3>Question</h3>
+    <input class="with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
+
+    <h3>Answer</h3>
+    <textarea class="with-markdown-preview" name="answer">[% faq.answer_md | html %]</textarea>
+
+    <p><input type="submit" value="Save"></p>
+</form>

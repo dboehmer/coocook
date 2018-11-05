@@ -61,7 +61,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     }
 
     if ( $c->user and $c->user->id == $user->id ) {
-        $c->stash( my_settings_url => $c->uri_for_action('/settings') );
+        $c->stash( my_settings_url => $c->uri_for_action('/settings/index') );
     }
 
     $c->escape_title( User => $user->display_name );

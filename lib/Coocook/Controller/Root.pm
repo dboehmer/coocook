@@ -91,10 +91,14 @@ sub auto : Private {
         about_url      => $c->uri_for_action('/about'),
     );
 
+    if ( $c->model('DB::FAQ')->exists ) {
+        $c->stash( faq_url => $c->uri_for_action('/faq/index') );
+    }
+
     if ( $c->user ) {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
-            settings_url  => $c->uri_for_action('/settings'),
+            settings_url  => $c->uri_for_action('/settings/index'),
             logout_url    => $c->forward('/logout_url'),
         );
     }

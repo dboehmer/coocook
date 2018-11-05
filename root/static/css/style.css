@@ -124,6 +124,20 @@ main a:active {
     color: #333333;
 }
 
+a.anchor {
+    color: inherit;
+}
+
+a.anchor:before {
+    content: '¶ ';
+    color: grey;
+    visibility: hidden;
+}
+
+a.anchor:hover:before {
+    visibility: visible;
+}
+
 code {
     background-color: LightGray;
     border-radius: 0.25em;
@@ -137,7 +151,8 @@ code {
     color: Red;
 }
 
-.inline {
+.inline,
+.inline * {
     display: inline;
 }
 
@@ -167,13 +182,15 @@ input[type="submit"]:hover, input[type="submit"]:active{
     background-color: white;
 }
 
+.markdown-preview + input[type="text"],
 .markdown-preview + textarea {
     display: block;
     width: 45%;
     width: calc( 50% - 2em );
 }
 
-.markdown-preview + textarea + * {
+.markdown-preview + input[type="text"] + *,
+.markdown-preview + textarea           + * {
     clear: both;
 }
 

@@ -5,14 +5,9 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => '' );
+sub base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
 
-# need to use different name than just 'base'
-# because controller is explicitly set to namespace '' like Controller::Root
-sub settings_base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
-
-sub settings : GET HEAD Chained('settings_base') PathPart('') Args(0)
-  RequiresCapability('view_user_settings') {
+sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user_settings') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -21,18 +16,17 @@ sub settings : GET HEAD Chained('settings_base') PathPart('') Args(0)
     );
 }
 
-sub change_display_name : POST Chained('settings_base') Args(0)
-  RequiresCapability('change_display_name') {
+sub change_display_name : POST Chained('base') Args(0) RequiresCapability('change_display_name') {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
 
     $user->update( { display_name => $c->req->params->get('display_name') } );
 
-    $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
+    $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
 }
 
-sub change_password : POST Chained('settings_base') Args(0) RequiresCapability('change_password') {
+sub change_password : POST Chained('base') Args(0) RequiresCapability('change_password') {
     my ( $self, $c ) = @_;
 
     my $user = $c->user
@@ -53,13 +47,13 @@ sub change_password : POST Chained('settings_base') Args(0) RequiresCapability('
 
     $c->visit( '/email/password_changed', [$user] );
 
-    $c->response->redirect( $c->uri_for( $self->action_for('settings') ) );
+    $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
 }
 
 sub redirect : Private {
     my ( $self, $c, $query ) = @_;
 
-    $c->response->redirect( $c->uri_for( $self->action_for('settings'), $query || () ) );
+    $c->response->redirect( $c->uri_for( $self->action_for('index'), $query || () ) );
 }
 
 __PACKAGE__->meta->make_immutable;
