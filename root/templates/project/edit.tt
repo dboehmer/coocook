@@ -23,7 +23,7 @@
     <tr>
         <td>
             [% meal.comment %]
-	    ([% meal.dishes.size %] [% meal.dishes.size == 1 ? 'dish' : 'dishes' %])
+            ([% meal.dishes.size %] [% meal.dishes.size == 1 ? 'dish' : 'dishes' %])
         </td>
     </tr>
     <tr>
@@ -63,18 +63,18 @@
                 <input type="submit" value="Import recipe">
             </form>
         [% END %]
-	</td>
+        </td>
     </tr>
     [% END %]
     <tr>
         <td>
             <form action="[% meal_create_url %]" method="POST">
-		<input type="hidden" name="date" value="[% day.date.ymd %]">
+                <input type="hidden" name="date" value="[% day.date.ymd %]">
                 <fieldset>
                     <legend>Add meal on [% display_date(day.date, {html=>1}) %]</legend>
-		    Name:    <input type="text" name="name"    placeholder="name" required>
-		    Comment: <input type="text" name="comment" placeholder="comment">
-		    <input type="submit" value="Add meal">
+                    Name:    <input type="text" name="name"    placeholder="name" required>
+                    Comment: <input type="text" name="comment" placeholder="comment">
+                    <input type="submit" value="Add meal">
                 </fieldset>
             </form>
         </td>

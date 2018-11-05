@@ -23,8 +23,8 @@ body {
 }
 
 #container {
-	min-height: 100%;
-	position: relative;
+    min-height: 100%;
+    position: relative;
 }
 
 /******** header part ********/
@@ -106,7 +106,7 @@ header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
 
 main {
     padding: 15px;
-	padding-bottom: 12em; /*necessary for position of footer*/
+    padding-bottom: 12em; /*necessary for position of footer*/
 }
 
 a {
@@ -277,20 +277,20 @@ footer {
     width: 100%;
     padding: 0.5em 15px 0.5em 15px;
     margin: 0 auto;
-	display: inline-block;
-	line-height: 1.5;
-	height: 10em; /*adjust if there are additional links in the footer*/
+    display: inline-block;
+    line-height: 1.5;
+    height: 10em; /*adjust if there are additional links in the footer*/
 }
 
 footer nav ul {
     list-style-type: none;
-	float: left;
+    float: left;
 }
 
 footer nav h4 {
-	margin: 0;
+    margin: 0;
 }
-	
+
 footer a {
     color: inherit;
 }
