@@ -1,5 +1,5 @@
 [% IF faq %]
-    <p><a href="[% faq.url %]">Public FAQ entry</a></p>
+    <p><a href="[% faq.url %]">Show existing FAQ entry</a></p>
 [% END %]
 
 <form method="POST" action="[% submit_url %]">
