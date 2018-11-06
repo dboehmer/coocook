@@ -46,8 +46,8 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
 
     my $user = $c->authenticate(
         {
-            name           => $c->req->params->get('username'),
-            password_hash  => $c->req->params->get('password'),
+            name           => $c->req->body_params->get('username'),
+            password_hash  => $c->req->body_params->get('password'),
             email_verified => { '!=' => undef },
         }
     );

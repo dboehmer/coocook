@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 43;
+use Test::Most tests => 45;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
@@ -220,6 +220,25 @@ subtest "redirects after login/logout" => sub {
     is $t->uri->path => '/about',
       "client is redirected to last page after login"
       or diag "uri: " . $t->uri;
+};
+
+subtest "malicious redirects are filtered on logout" => sub {
+    $t->is_logged_in();
+
+    $t->post('/logout?redirect=https://malicious.example/');
+    $t->status_is( 400, "request fails" );
+
+    $t->get_ok('/');    # TODO nav bar still looks like logged in although session is logged out
+    $t->is_logged_out("... but client is logged out anyway");
+};
+
+subtest "malicious redirects are filtered on login" => sub {
+    $t->post(
+        '/login?redirect=https://malicious.example/',
+        { username => 'test', password => 'new, nice & shiny' }
+    );
+
+    $t->status_is( 400, "requests fails" );
 };
 
 $t->create_project_ok( { name => "Test Project 1" } );

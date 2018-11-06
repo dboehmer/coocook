@@ -148,6 +148,15 @@ sub is_logged_in {
       or note $self->content;
 }
 
+sub is_logged_out {
+    my ( $self, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    $self->content_unlike( qr/Dashboard/, $name || "client is logged out" )
+      or note $self->content;
+}
+
 sub login {
     my ( $self, $username, $password ) = @_;
 
