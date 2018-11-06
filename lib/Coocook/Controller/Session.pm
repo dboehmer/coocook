@@ -16,6 +16,16 @@ sub login_url : Private {
 sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
+    if ( $c->user ) {    # user is already logged in, probably via other browser tab
+        if ( my $redirect = $c->req->params->get('redirect') ) {
+            $c->forward( _check_redirect_uri => [$redirect] );
+
+            $c->redirect_detach( $c->uri_for_local_part($redirect) );
+        }
+
+        $c->response->redirect( $c->uri_for_action('/index') );
+    }
+
     $c->stash(
         username => (
                  $c->req->params->get('username')

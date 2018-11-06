@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 45;
+use Test::Most tests => 46;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
@@ -219,6 +219,14 @@ subtest "redirects after login/logout" => sub {
 
     is $t->uri->path => '/about',
       "client is redirected to last page after login"
+      or diag "uri: " . $t->uri;
+};
+
+subtest "refreshing login page after logging in other browser tab" => sub {
+    $t->get_ok('/login?redirect=statistics');
+
+    is $t->uri->path => '/statistics',
+      "client is redirected immediately"
       or diag "uri: " . $t->uri;
 };
 
