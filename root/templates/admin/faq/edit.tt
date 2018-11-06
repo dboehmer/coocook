@@ -1,3 +1,5 @@
+[% title = faq.id.defined ? "Edit FAQ entry" : "Create new FAQ entry" %]
+
 [% IF faq %]
     <p><a href="[% faq.url %]">Show existing FAQ entry</a></p>
 [% END %]
