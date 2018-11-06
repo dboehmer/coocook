@@ -43,14 +43,16 @@ sub projects : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view')
 sub users : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view') {
     my ( $self, $c ) = @_;
 
-    my @users =
-      $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name' } )->hri->all;
+    my $users = $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name' } );
+    my @users = $users->hri->all;
 
     for my $user (@users) {
         $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
 
-        if ( $user->{token_expires} ) {
-            $user->{status} = "user requested password recovery link";
+        if ( my $token_expires = $user->{token_expires} ) {
+            if ( DateTime->now <= $users->parse_datetime($token_expires) ) {
+                $user->{status} = sprintf "user requested password recovery link (valid until %s)", $token_expires;
+            }
         }
         elsif ( $user->{token_hash} ) {
             $user->{status} = "user needs to verify e-mail address with verification link";
