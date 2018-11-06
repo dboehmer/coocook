@@ -6,7 +6,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 BEGIN { extends 'Coocook::Controller' }
 
 sub index : GET HEAD Chained('/admin/base') PathPart('faq') Args(0)
-  RequiresCapability('admin_view') {
+  RequiresCapability('manage_faqs') {
     my ( $self, $c ) = @_;
 
     my @faqs = $c->model('DB::FAQ')->hri->all;
@@ -21,7 +21,8 @@ sub index : GET HEAD Chained('/admin/base') PathPart('faq') Args(0)
     );
 }
 
-sub new_faq : GET HEAD Chained('/admin/base') PathPart('faq/new') RequiresCapability('admin_view') {
+sub new_faq : GET HEAD Chained('/admin/base') PathPart('faq/new')
+  RequiresCapability('manage_faqs') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -40,7 +41,7 @@ sub base : Chained('/admin/base') PathPart('faq') CaptureArgs(1) {
     $c->stash( faq => $faq );
 }
 
-sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('admin_view') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('manage_faqs') {
     my ( $self, $c ) = @_;
 
     $c->stash->{faq}{url} = $c->uri_for_action( '/faq/index', \$c->stash->{faq}->anchor );
@@ -51,14 +52,14 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('adm
     );
 }
 
-sub update : POST Chained('base') Args(0) RequiresCapability('admin_view') {
+sub update : POST Chained('base') Args(0) RequiresCapability('manage_faqs') {
     my ( $self, $c ) = @_;
 
     $c->detach('update_or_create');
 }
 
 sub create : POST Chained('/admin/base') PathPart('faq/create') Args(0)
-  RequiresCapability('admin_view') {
+  RequiresCapability('manage_faqs') {
     my ( $self, $c ) = @_;
 
     $c->stash( faq => $c->model('DB::FAQ')->new_result( {} ) );

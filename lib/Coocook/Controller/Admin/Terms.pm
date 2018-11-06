@@ -7,7 +7,7 @@ use DateTime;
 BEGIN { extends 'Coocook::Controller' }
 
 sub index : GET HEAD Chained('/admin/base') PathPart('terms') Args(0)
-  RequiresCapability('admin_view') {
+  RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     my @terms;
@@ -36,7 +36,7 @@ sub index : GET HEAD Chained('/admin/base') PathPart('terms') Args(0)
 }
 
 sub new_terms : GET HEAD Chained('/admin/base') PathPart('terms/new')
-  RequiresCapability('admin_view') {
+  RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     my $default_offset_days = 31;    # TODO allow configuration
@@ -66,7 +66,7 @@ sub base : Chained('/admin/base') PathPart('terms') CaptureArgs(1) {
     $c->stash( terms => $terms );
 }
 
-sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('admin_view') {
+sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     my $terms = $c->stash->{terms};
@@ -79,7 +79,7 @@ sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability(
     $c->redirect_detach( $c->uri_for( $self->action_for('index') ) );
 }
 
-sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('admin_view') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     $c->stash->{submit_url} ||=    # in case of /new
@@ -91,14 +91,14 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('adm
     );
 }
 
-sub update : POST Chained('base') Args(0) RequiresCapability('admin_view') {
+sub update : POST Chained('base') Args(0) RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     $c->detach('update_or_create');
 }
 
 sub create : POST Chained('/admin/base') PathPart('terms/create') Args(0)
-  RequiresCapability('admin_view') {
+  RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
     $c->stash( terms => $c->model('DB::Terms')->new_result( {} ) );
