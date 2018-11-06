@@ -39,15 +39,19 @@ sub new_terms : GET HEAD Chained('/admin/base') PathPart('terms/new')
   RequiresCapability('manage_terms') {
     my ( $self, $c ) = @_;
 
-    my $default_offset_days = 31;    # TODO allow configuration
+    my $default_valid_from = do {
+        my $default_offset_days = 31;    # TODO allow configuration
 
-    my $default_date = do {
         my $newest = $c->model('DB::Terms')->order(-1)->one_row;
-        $newest ? $newest->valid_from : DateTime->today;
-    };
-    $default_date->add( days => $default_offset_days );
+        my $today  = DateTime->today;
 
-    my $terms = $c->model('DB::Terms')->new_result( { valid_from => $default_date } );
+        my $base_date = $newest && $today < $newest->valid_from ? $newest->valid_from : undef;
+        $base_date ||= $today;
+
+        $base_date->add( days => $default_offset_days );
+    };
+
+    my $terms = $c->model('DB::Terms')->new_result( { valid_from => $default_valid_from } );
 
     $c->stash(
         submit_url => $c->uri_for( $self->action_for('create') ),
