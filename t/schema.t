@@ -10,7 +10,7 @@ use_ok 'Coocook::Schema';
 
 ok my $db = TestDB->new;
 
-is $db->count()                   => 63, "count()";
+is $db->count()                   => 65, "count()";
 is $db->count(qw< Article Unit >) => 11, "count(Article Unit)";
 
 subtest statistics => sub {

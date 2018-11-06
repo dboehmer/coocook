@@ -8,6 +8,23 @@ extends 'Coocook::Schema::ResultSet';
 
 __PACKAGE__->meta->make_immutable;
 
+=head2 order(±1)
+
+=over 4
+
+=item* B<-1:> from newest to oldest
+
+=item* B<+1:> from oldest to newest
+
+=back
+
+=cut
+
+sub order {
+    return
+      shift->search( undef, { order_by => { ( shift() < 0 ? '-DESC' : '-ASC' ) => 'valid_from' } } );
+}
+
 sub valid_on_date_rs {
     my ( $self, $date ) = @_;
 

@@ -10,9 +10,10 @@ sub base : Chained('/base') PathPart('admin') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { action => 'admin/faq/index', text => "FAQ" },
-            { action => 'admin/projects',  text => "Projects" },
-            { action => 'admin/users',     text => "Users" },
+            { action => 'admin/faq/index',   text => "FAQ" },
+            { action => 'admin/projects',    text => "Projects" },
+            { action => 'admin/terms/index', text => "Terms" },
+            { action => 'admin/users',       text => "Users" },
         ]
     );
 }

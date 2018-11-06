@@ -1,0 +1,12 @@
+[% title = terms.in_storage ? "Edit Terms" : "Create new Terms" %]
+
+<form method="POST" action="[% submit_url %]">
+    <p>
+        Valid from:
+        <input type="date" required min="[% tomorrow.ymd %]" name="valid_from" value="[% terms.valid_from.ymd %]">
+    </p>
+
+    <textarea class="with-markdown-preview" name="content_md">[% terms.content_md | html %]</textarea>
+
+    <p><input type="submit" value="[% terms.in_storage ? 'Update' : 'Create' %]"></p>
+</form>
