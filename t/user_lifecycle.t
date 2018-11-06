@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 42;
+use Test::Most tests => 43;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
@@ -201,6 +201,26 @@ subtest "password recovery marks e-mail address verified" => sub {
 };
 
 $t->login_ok( 'test', 'new, nice & shiny' );
+
+subtest "redirects after login/logout" => sub {
+    $t->get_ok('/about');
+
+    $t->logout_ok();
+
+    is $t->uri->path => '/about',
+      "client is redirected to last page after logout"
+      or diag "uri: " . $t->uri;
+
+    $t->login_fails( 'test', 'invalid' );
+
+    note "uri: " . $t->uri;
+
+    $t->login_ok( 'test', 'new, nice & shiny' );
+
+    is $t->uri->path => '/about',
+      "client is redirected to last page after login"
+      or diag "uri: " . $t->uri;
+};
 
 $t->create_project_ok( { name => "Test Project 1" } );
 

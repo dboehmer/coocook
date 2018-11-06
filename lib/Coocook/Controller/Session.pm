@@ -63,7 +63,7 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
             httponly => 1,             # not accessible by client-side JavaScript
         };
 
-        if ( my $redirect ) {
+        if ($redirect) {
             $c->forward( _check_redirect_uri => [$redirect] );
 
             $c->redirect_detach( $c->uri_for_local_part($redirect) );
