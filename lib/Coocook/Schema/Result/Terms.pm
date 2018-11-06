@@ -152,4 +152,21 @@ sub neighbors {
     );
 }
 
+=head2 valid_until()
+
+Returns last date when this revision of Terms is valid or C<undef> if no successor is defined.
+
+=cut
+
+sub valid_until {
+    my $self = shift;
+
+    if ( my $next = $self->next ) {
+        return $next->valid_from->clone->subtract( days => 1 );
+    }
+    else {
+        return undef;
+    }
+}
+
 1;

@@ -5,7 +5,7 @@
     <a href="[% next_url %]">next</a>
 [% END %]
 
-<p>valid from [% terms.valid_from.ymd %]</p>
+<p>valid from [% terms.valid_from.ymd; ' until ' _ terms.valid_until.ymd IF terms.valid_until %]</p>
 
 [% USE Markdown;
 terms.content_md | $Markdown %]
