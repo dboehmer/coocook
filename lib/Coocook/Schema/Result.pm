@@ -16,10 +16,19 @@ __PACKAGE__->load_components(
       >
 );
 
+=head2 as_hashref(%extra_kv_pairs?)
+
+Returns a hashref with all column values from the object, possibly with additional hash key/value pairs.
+
+    $c->stash( my_result => $result_object->as_hashref( url => $c->uri_for( ... ) ) );
+
+=cut
+
 sub as_hashref {
     my $self = shift;
 
-    return { $self->get_inflated_columns };   # TODO is there a method for getting a hashref right away?
+    # TODO is there a method for getting a hashref right away?
+    return { $self->get_inflated_columns, @_ };
 }
 
 # set default of cascade_copy to false

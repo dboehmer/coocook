@@ -13,20 +13,17 @@ sub index : GET HEAD Chained('/admin/base') PathPart('terms') Args(0)
     my @terms;
 
     for my $terms ( $c->model('DB::Terms')->order(+1)->all ) {
-        my %terms = (
-            valid_from => $terms->get_column('valid_from'),
-            content_md => $terms->get_column('content_md'),
+        push @terms, $terms->as_hashref(
+            view_url => $c->uri_for_action( '/terms/show', [ $terms->id ] ),
+
+            $terms->reasons_to_freeze
+            ? ()
+            : ( edit_url => $c->uri_for( $self->action_for('edit'), [ $terms->id ] ) ),
+
+            $terms->reasons_to_keep
+            ? ()
+            : ( delete_url => $c->uri_for( $self->action_for('delete'), [ $terms->id ] ) ),
         );
-
-        $terms{view_url} = $c->uri_for_action( '/terms/show', [ $terms->id ] );
-
-        $terms->reasons_to_freeze
-          or $terms{edit_url} = $c->uri_for( $self->action_for('edit'), [ $terms->id ] );
-
-        $terms->reasons_to_keep
-          or $terms{delete_url} = $c->uri_for( $self->action_for('delete'), [ $terms->id ] );
-
-        push @terms, \%terms;
     }
 
     $c->stash(

@@ -3,7 +3,7 @@
 <ul>
 [% FOR term IN terms %]
     <li>
-        <a href="[% term.view_url %]">Terms valid from [% term.valid_from %]</a>
+        <a href="[% term.view_url %]">Terms valid from [% display_date( term.valid_from, {html=>1} ) %]</a>
     [% IF term.edit_url %]
         <form class="inline" method="GET"  action="[% term.edit_url   %]"><input type="submit" value="Edit"  ></form>
     [% END;
