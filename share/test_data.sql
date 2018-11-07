@@ -71,3 +71,6 @@ INSERT INTO 'recipes_tags' VALUES(1,3);
 
 INSERT INTO 'faqs' VALUES(1,2,'foss','Is Coocook free and open-source software (FOSS)?','Yes, it is.');
 INSERT INTO 'faqs' VALUES(2,1,'what','What is Coocook?','Coocook is a web application for collecting recipes and making food plans.');
+
+INSERT INTO 'terms' VALUES(1,'1999-01-01','All your recipes are belong to us.');
+INSERT INTO 'terms' VALUES(2,'2100-01-01','Just STEAL ALL THE COOKING INSTRUCTIONS!');

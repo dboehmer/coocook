@@ -10,8 +10,18 @@ use_ok 'Coocook::Schema';
 
 ok my $db = TestDB->new;
 
-is $db->count()                   => 63, "count()";
+is $db->count()                   => 65, "count()";
 is $db->count(qw< Article Unit >) => 11, "count(Article Unit)";
+
+subtest "one_row() in favor of first()" => sub {
+    my $__FILE__ = __FILE__;
+    my $rs       = $db->resultset('Project');
+
+    throws_ok { $rs->first() } qr/ one_row .+ \Q$__FILE__\E /x,
+      "first() fails, recommends one_row() and names correct source file";
+
+    isa_ok $rs->one_row() => 'DBIx::Class::Row', "one_row() returns Result object";
+};
 
 subtest statistics => sub {
     ok my $stats = $db->statistics(), "\$schema->statistics()";

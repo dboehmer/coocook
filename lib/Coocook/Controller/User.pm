@@ -78,6 +78,11 @@ sub register : GET HEAD Chained('/base') Args(0) {
       /lib/zxcvbn.js
     >;
 
+    if ( my $terms = $c->model('DB::Terms')->valid_today ) {
+        $c->stash(
+            terms => $terms->as_hashref( url => $c->uri_for_action( '/terms/show', [ $terms->id ] ) ) );
+    }
+
     $c->stash(
         example_username     => $c->config->{registration_example_username},
         example_display_name => $c->config->{registration_example_display_name},
@@ -124,6 +129,16 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     $email = is_email($email)
       or push @errors, "e-mail address is not valid";
 
+    my $terms = $c->model('DB::Terms')->valid_today;
+
+    if ($terms) {
+        my $id = $c->req->params->get('accept_terms')
+          or $c->detach('/error/bad_request');    # parameter missing
+
+        $id == $terms->id
+          or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
+    }
+
     if (@errors) {
         my $errors = $c->stash->{errors} ||= [];
         push @$errors, @errors;
@@ -162,6 +177,14 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         undef $password;
 
         $c->visit( '/email/verification', [ $user, $token ] );
+
+        $terms
+          and $user->create_related(
+            terms_users => {
+                terms    => $terms->id,
+                approved => $terms->format_datetime( DateTime->now ),
+            }
+          );
 
         my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
 

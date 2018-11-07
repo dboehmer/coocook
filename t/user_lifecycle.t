@@ -272,7 +272,7 @@ ok !$project->is_public, "1st project is private";
 is $project->owner->name => 'test',
   "new project is owned by new user";
 
-is $project->users->first->name => 'test',
+is $project->users->one_row->name => 'test',
   "owner relationship is also stored via table 'projects_users'";
 
 ok my $project2 = $schema->resultset('Project')->find( { name => "Test Project 2" } );

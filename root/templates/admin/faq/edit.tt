@@ -1,3 +1,5 @@
+[% title = faq.in_storage ? "Edit FAQ entry" : "Create new FAQ entry" %]
+
 [% IF faq %]
     <p><a href="[% faq.url %]">Show existing FAQ entry</a></p>
 [% END %]
@@ -12,5 +14,5 @@
     <h3>Answer</h3>
     <textarea class="with-markdown-preview" name="answer">[% faq.answer_md | html %]</textarea>
 
-    <p><input type="submit" value="Save"></p>
+    <p><input type="submit" value="[% faq.in_storage ? 'Update' : 'Create' %]"></p>
 </form>

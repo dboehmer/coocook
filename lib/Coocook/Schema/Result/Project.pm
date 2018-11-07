@@ -169,7 +169,7 @@ sub inventory {
                 units            => $self->units->count_rs->as_query,
             },
         }
-    )->hri->first;    # use single() and make outer query not SELECT from a table
+    )->hri->single;    # TODO make outer query not SELECT from a table
 }
 
 =head2 other_projects

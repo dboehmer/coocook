@@ -14,10 +14,10 @@ sub index : GET HEAD Chained('/base') PathPart('faq') Args(0) {
       or $c->detach('/error/not_found');
 
     if ( $c->has_capability('admin_view') ) {
-        $c->stash( admin_faq_url => $c->uri_for_action('/admin/faqs') );
+        $c->stash( admin_faq_url => $c->uri_for_action('/admin/faq/index') );
 
         for my $faq (@faqs) {
-            $faq->{edit_url} = $c->uri_for_action( '/admin/faq', [ $faq->{id} ] );
+            $faq->{edit_url} = $c->uri_for_action( '/admin/faq/edit', [ $faq->{id} ] );
         }
     }
 

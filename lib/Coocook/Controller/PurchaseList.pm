@@ -44,7 +44,7 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
     my $lists = $c->project->purchase_lists;
 
     my $max_date = do {
-        my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->first;
+        my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->one_row;
 
         $list ? $list->date : undef;
     };

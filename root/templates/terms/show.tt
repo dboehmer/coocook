@@ -1,0 +1,12 @@
+[% IF previous_url %]
+    <a href="[% previous_url %]">previous</a>
+[% END %]
+[% IF next_url %]
+    <a href="[% next_url %]">next</a>
+[% END %]
+
+<p>valid from [% display_date( terms.valid_from,  {html=>1} );
+     ' until ' _ display_date( terms.valid_until, {html=>1} ) IF terms.valid_until %]</p>
+
+[% USE Markdown;
+terms.content_md | $Markdown %]
