@@ -38,6 +38,9 @@ __PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'ow
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
 
+__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
+__PACKAGE__->many_to_many( terms => terms_users => 'terms' );
+
 # support virtual 'password' column
 around [ 'set_column', 'store_column' ] => sub {
     my ( $orig, $self, $column => $value ) = @_;

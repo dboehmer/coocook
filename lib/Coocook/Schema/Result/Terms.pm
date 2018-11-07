@@ -51,6 +51,8 @@ sub cmp_validity_today {
     else                { return $CMP_VALID_IN_FUTURE }
 }
 
+sub is_valid_today { shift->cmp_validity_today == $CMP_VALID_TODAY }
+
 =head2 reasons_to_freeze
 
 Returns a list of reasons why this row can not be edited.

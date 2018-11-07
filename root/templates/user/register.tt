@@ -33,5 +33,13 @@
     </tr>
 </table>
 
-<input type="submit" value="Register">
+[% label = "Register";
+
+IF terms %]
+<input type="hidden" name="accept_terms" value="[% terms.id %]">
+
+<p>By clicking <em>[% label %]</em> you accept our <a href="[% terms.url %]">terms as of [% display_date(terms.valid_from, {html=>1}) %]</a>.</p>
+[% END %]
+
+<input type="submit" value="[% label %]">
 </form>
