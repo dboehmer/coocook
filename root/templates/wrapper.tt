@@ -123,12 +123,12 @@ END %]
 
         <ul>
             <h4>Legal information</h4>
-            <li><a>Imprint</a></li>
-            <li><a>Privacy Policy</a></li>
+            <li><a><s>Imprint</s></a></li>
+            <li><a><s>Privacy Policy</s></a></li>
 [% IF terms_url %]
             <li><a href="[% terms_url %]">Terms</a></li>
 [% END %]
-            <li><a>Contact</a></li>
+            <li><a><s>Contact</s></a></li>
         </ul>
     </nav>
 </footer>
