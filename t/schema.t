@@ -26,9 +26,10 @@ subtest "one_row() in favor of first()" => sub {
 subtest statistics => sub {
     ok my $stats = $db->statistics(), "\$schema->statistics()";
 
-    is_deeply $stats => {
+    cmp_deeply $stats => superhashof {
         public_projects => 1,
         users           => 2,
+        recipes         => 1,
         dishes_served   => 4 + 2 + 4,
         dishes_planned  => 0,
     };

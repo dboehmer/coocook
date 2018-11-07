@@ -65,6 +65,7 @@ sub statistics {
     return {
         dishes_served   => $self->resultset('Dish')->in_past_or_today->sum_servings,
         dishes_planned  => $self->resultset('Dish')->in_future->sum_servings,
+        recipes         => $self->resultset('Recipe')->count_distinct('name'),
         public_projects => $self->resultset('Project')->public->count,
         users           => $self->resultset('User')->count,
     };

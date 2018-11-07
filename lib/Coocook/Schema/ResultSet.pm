@@ -35,6 +35,14 @@ before first => sub {
 
 __PACKAGE__->meta->make_immutable;
 
+# from https://metacpan.org/pod/release/MSTROUT/DBIx-Class-0.08100/lib/DBIx/Class/Manual/Cookbook.pod#SELECT-COUNT(DISTINCT-colname)
+sub count_distinct {
+    my ( $self, $column ) = @_;
+
+    return $self->search( undef, { columns => { count => { COUNT => { DISTINCT => $column } } } } )
+      ->hri->one_row->{count};
+}
+
 sub exists {
     my $self = shift;
 
