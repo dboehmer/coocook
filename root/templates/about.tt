@@ -2,4 +2,4 @@
 
 USE Markdown;
 
-about_page_md | $Markdown %]
+about_page_md | markdown %]

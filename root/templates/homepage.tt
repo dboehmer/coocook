@@ -1,5 +1,5 @@
 [% USE Markdown;
-homepage_text_md | $Markdown %]
+homepage_text_md | markdown %]
 
 <h2>Public Projects</h2>
 

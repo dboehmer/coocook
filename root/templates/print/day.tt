@@ -25,11 +25,11 @@
         [% END %]
     </h5>
 
-    [% USE Markdown; dish.preparation | $Markdown;
+    [% USE Markdown; dish.preparation | markdown;
 END %]
 
 <h5>Description</h5>
-[% USE Markdown; dish.description | $Markdown %]
+[% USE Markdown; dish.description | markdown %]
 
 </div>
 
@@ -40,7 +40,7 @@ END %]
 
 [% PROCESS table prepare = 1 %]
 
-<p>[% USE Markdown; dish.preparation | $Markdown %]</p>
+<p>[% USE Markdown; dish.preparation | markdown %]</p>
     [% END;
 END;
 

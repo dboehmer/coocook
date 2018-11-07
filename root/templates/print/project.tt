@@ -1,5 +1,5 @@
 [% USE Markdown;
-project.description | $Markdown %]
+project.description | markdown %]
 
 <table id="days">
 <thead>
