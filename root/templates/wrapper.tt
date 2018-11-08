@@ -110,25 +110,22 @@ END %]
 [% END %]
 
         <ul>
-        <h4>Get to know [% name | html %]</h4>
-[% IF admin_url %]
-            <li><a href="[% admin_url %]">Admin</a></li>
-[% END %]
-            <li><a href="[% about_url %]">[% about_title %]</a></li>
+            <h4>Get Help</h4>
 [% IF faq_url %]
             <li><a href="[% faq_url %]">FAQ</a></li>
 [% END %]
-            <li><a href="[% statistics_url %]">Statistics</a></li>
         </ul>
 
         <ul>
-            <h4>Legal information</h4>
-            <li><a><s>Imprint</s></a></li>
-            <li><a><s>Privacy Policy</s></a></li>
+            <h4>About [% name | html %]</h4>
+[% IF admin_url %]
+            <li><a href="[% admin_url %]">Admin</a></li>
+[% END %]
+            <li><a href="[% statistics_url %]">Statistics</a></li>
+            <li><a href="[% about_url %]">[% about_title %]</a></li>
 [% IF terms_url %]
             <li><a href="[% terms_url %]">Terms</a></li>
 [% END %]
-            <li><a><s>Contact</s></a></li>
         </ul>
     </nav>
 </footer>
