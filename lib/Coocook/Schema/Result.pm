@@ -8,11 +8,15 @@ use MooseX::NonMoose;
 
 extends 'DBIx::Class::Core';
 
+# order of listed components DOES matter
+# wrong order causes components not to load
+# what is probably a bug in some component:-/
 __PACKAGE__->load_components(
     qw<
       InflateColumn::DateTime
       +Coocook::Schema::Component::ProxyMethods
       +Coocook::Schema::Component::Result::Boolify
+      Helper::Row::SelfResultSet
       >
 );
 
