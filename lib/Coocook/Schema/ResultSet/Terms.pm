@@ -8,6 +8,8 @@ extends 'Coocook::Schema::ResultSet';
 
 __PACKAGE__->meta->make_immutable;
 
+=encoding utf8
+
 =head2 order(±1)
 
 =over 4
