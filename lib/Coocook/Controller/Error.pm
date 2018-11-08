@@ -25,6 +25,20 @@ sub forbidden : Private {
     );
 }
 
+=head2 internal_server_error
+
+An endpoint to receive an HTML page which can be saved and displayed as static 500 error page by a proxy.
+
+=cut
+
+sub internal_server_error : HEAD GET Chained('/base') {
+    my ( $self, $c ) = @_;
+
+    # do NOT set status to 500 because this actually works
+
+    $c->response->header( 'X-Robots-Tag' => 'noindex' );    # hide this in search engines
+}
+
 =head2 not_found
 
 Standard 404 error page
