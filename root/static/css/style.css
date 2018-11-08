@@ -294,3 +294,7 @@ footer nav h4 {
 footer a {
     color: inherit;
 }
+
+footer a:hover {
+    text-decoration: underline;
+}
