@@ -17,7 +17,7 @@ our @stdin;
 
 my $schema = TestDB->new();
 
-my $user = $schema->resultset('User')->first;
+my $user = $schema->resultset('User')->one_row;
 
 sub password_ok {
     my ( $expected, $name ) = @_;
