@@ -138,6 +138,11 @@ a.anchor:hover:before {
     visibility: visible;
 }
 
+abbr[title] { /* reset default Browser style with underline */
+    border-bottom:   none;
+    text-decoration: none;
+}
+
 code {
     background-color: LightGray;
     border-radius: 0.25em;
@@ -293,4 +298,8 @@ footer nav h4 {
 
 footer a {
     color: inherit;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }

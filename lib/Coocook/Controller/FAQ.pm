@@ -21,10 +21,7 @@ sub index : GET HEAD Chained('/base') PathPart('faq') Args(0) {
         }
     }
 
-    $c->stash(
-        title => "FAQ",
-        faqs  => \@faqs,
-    );
+    $c->stash( faqs => \@faqs );
 }
 
 __PACKAGE__->meta->make_immutable;
