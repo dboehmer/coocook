@@ -1,3 +1,6 @@
+[% title = 'FAQ';
+html_title = 'Frequently Asked Questions' %]
+
 [% IF admin_faq_url %]
     <p><a href="[% admin_faq_url %]">Edit FAQ</a></p>
 [% END;
