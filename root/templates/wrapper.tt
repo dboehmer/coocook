@@ -35,6 +35,11 @@
 
 <nav id="user_nav">
 <ul>
+    <li>
+        [% IF user %]<a href="[% user_url %]">[% user.display_name | html %]</a>[% END %]
+        [% IF project %]on [% project.name | html; END %]
+    </li>
+
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Dashboard</a></li>
 [% END %]

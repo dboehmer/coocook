@@ -1,5 +1,3 @@
-<p>Logged in as <a href="[% user_url %]">[% user.display_name | html %]</a>.</p>
-
 <h2>My projects</h2>
 
 <ul>
