@@ -11,7 +11,7 @@
     <tbody>
 [% FOR permission IN permissions %]
         <tr>
-            <td><a href="[% permission.user_url %]">[% permission.user.display_name | xml %]</a></td>
+            <td><a href="[% permission.user_url %]">[% permission.user.display_name | html %]</a></td>
             <td>
     [% IF permission.edit_url %]
                 <form method="POST" action="[% permission.edit_url %]" class="inline">
@@ -54,7 +54,7 @@
     <form method="POST" action="[% add_permission_url %]">
         <select name="user">
 [% FOR other_user IN other_users %]
-            <option value="[% other_user.name %]">[% other_user.name | xml %] ([% other_user.display_name | xml %])</option>
+            <option value="[% other_user.name %]">[% other_user.name | html %] ([% other_user.display_name | html %])</option>
 [% END %]
         </select>
 

@@ -92,7 +92,7 @@ END %]
 [% END %]
 
 [% FOREACH error IN errors %]
-    <p class="error">[% error | xml %]</p>
+    <p class="error">[% error | html %]</p>
 [% END %]
 
 [% content %]

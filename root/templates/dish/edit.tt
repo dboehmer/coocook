@@ -1,4 +1,4 @@
-<p>for meal <em>[% dish.meal.name | xml %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
+<p>for meal <em>[% dish.meal.name | html %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
 
 [% IF dish.recipe %]
 <p>from recipe <a href="[% dish.recipe.url %]">[% dish.recipe.name | html %]</a></p>
@@ -17,7 +17,7 @@
     <select id="prepare_at_meal" name="prepare_at_meal">
         <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
 [% FOR meal IN prepare_meals %]
-        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | xml %]</option>
+        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
 [% END %]
     </select>
 </p>

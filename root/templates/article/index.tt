@@ -16,8 +16,8 @@
     <tbody>
 [% FOR article IN articles %]
         <tr>
-            <td><a href="[% article.edit_url %]">[% article.name | xml %]</a></td>
-            <td>[% article.comment | xml %]</td>
+            <td><a href="[% article.edit_url %]">[% article.name | html %]</a></td>
+            <td>[% article.comment | html %]</td>
             <td>[% IF article.preorder_workdays.defined AND article.preorder_servings.defined; article.preorder_workdays %] days if ≥[% article.preorder_servings %] servings[% END %]</td>
             <td>[% IF article.shelf_life_days.defined; article.shelf_life_days _ ' days'; ELSE; '<em>unknown</em>'; END %]</td>
             <td>[% IF article.shop_section; article.shop_section.name | html; ELSE; '<em>none</em>'; END %]</td>
