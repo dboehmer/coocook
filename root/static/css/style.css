@@ -47,6 +47,7 @@ header {
 
 header nav {
     background: #333333;
+    color: #f5f5ef;
 }
 
 header nav ul {
@@ -66,8 +67,8 @@ header nav a {
     min-width: 3em;
     line-height: 2em;
 
-    background: #333333;
-    color: #f5f5ef;
+    background-color: inherit;
+    color:            inherit;
     text-align: center;
     text-decoration:none;
 }
