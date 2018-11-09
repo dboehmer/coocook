@@ -16,7 +16,7 @@
         <th><label for="display_name">Display name</label></th>
         <td>
             <input id="display_name" type="text" name="display_name" placeholder="display name" value="[% last_input.display_name | html %]">
-            [% IF example_display_name %]e.g. <code>Daniel Böhmer</code>[% END %]
+            [% IF example_display_name %]e.g. <code>[% example_display_name | html %]</code>[% END %]
         </td>
     </tr>
     <tr>
