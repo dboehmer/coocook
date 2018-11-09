@@ -84,9 +84,8 @@ sub register : GET HEAD Chained('/base') Args(0) {
     }
 
     $c->stash(
-        example_username     => $c->config->{registration_example_username},
-        example_display_name => $c->config->{registration_example_display_name},
-        post_register_url    => $c->uri_for( $self->action_for('post_register') ),
+        example_username  => $c->config->{registration_example_username},
+        post_register_url => $c->uri_for( $self->action_for('post_register') ),
     );
 }
 
@@ -96,10 +95,9 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
 
-    my $username     = $c->req->params->get('username');       # use key 'username' just like login form
-    my $password     = $c->req->params->get('password');
-    my $display_name = $c->req->params->get('display_name');
-    my $email        = $c->req->params->get('email');
+    my $username = $c->req->params->get('username');    # use key 'username' just like login form
+    my $password = $c->req->params->get('password');
+    my $email    = $c->req->params->get('email');
 
     my @errors;
 
@@ -122,10 +120,6 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     }
 
-    if ( length $display_name == 0 ) {
-        push @errors, "display name must not be empty";
-    }
-
     $email = is_email($email)
       or push @errors, "e-mail address is not valid";
 
@@ -146,9 +140,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         $c->stash(
             template   => 'user/register.tt',
             last_input => {
-                username     => $username,
-                display_name => $display_name,
-                email        => $email,
+                username => $username,
+                email    => $email,
             },
         );
 
@@ -165,8 +158,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             {
                 name         => $username,
                 password     => $password,
-                display_name => $c->req->params->get('display_name'),
-                email        => $c->req->params->get('email'),
+                display_name => $username,
+                email        => $email,
                 token_hash   => $token->to_salted_hash,
                 token_expires => undef,    # never: token only for verification, doesn't allow password reset
             }

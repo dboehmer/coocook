@@ -5,18 +5,10 @@
 <form method="POST" action="[% post_register_url %]">
 <table>
     <tr>
-        <th><label for="name">Login name</label></th>
+        <th><label for="username">Username</label></th>
         <td>
-            <input id="name" type="text" name="username" placeholder="name" value="[% last_input.username | html %]" pattern="[0-9a-zA-Z_]+">
-            only 0-9, a-z, A-Z and <code>_</code> allowed
-            [%~ IF example_username %], e.g. <code>daniel_boehmer42</code>[% END %]
-        </td>
-    </tr>
-    <tr>
-        <th><label for="display_name">Display name</label></th>
-        <td>
-            <input id="display_name" type="text" name="display_name" placeholder="display name" value="[% last_input.display_name | html %]">
-            [% IF example_display_name %]e.g. <code>[% example_display_name | html %]</code>[% END %]
+            <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]">
+            [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
         </td>
     </tr>
     <tr>

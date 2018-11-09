@@ -17,11 +17,10 @@ $t->get_ok('/');
 
 $t->register_ok(
     {
-        username     => "test",
-        display_name => "Test User",
-        email        => "test\@example.com",
-        password     => "s3cr3t",
-        password2    => "s3cr3t",
+        username  => "test",
+        email     => "test\@example.com",
+        password  => "s3cr3t",
+        password2 => "s3cr3t",
     }
 );
 
@@ -51,11 +50,10 @@ $t->get('/');
 
 $t->register_ok(
     {
-        username     => "test2",
-        display_name => "Other User",
-        email        => "test2\@example.com",
-        password     => "s3cr3t",
-        password2    => "s3cr3t",
+        username  => "test2",
+        email     => "test2\@example.com",
+        password  => "s3cr3t",
+        password2 => "s3cr3t",
     }
 );
 
@@ -68,11 +66,10 @@ my $content_after_registration = $t->content;
 subtest "registration of existing e-mail address triggers e-mail" => sub {
     $t->register_ok(
         {
-            username     => 'test_other',
-            display_name => "Other user with same e-mail address",
-            email        => 'test2@example.com',
-            password     => 's3cr3t',
-            password2    => 's3cr3t',
+            username  => 'test_other',
+            email     => 'test2@example.com',
+            password  => 's3cr3t',
+            password2 => 's3cr3t',
         }
     );
 
@@ -91,9 +88,7 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 subtest "registration of existing username fails" => sub {
     $t->follow_link_ok( { text => 'Register' } );
 
-    $t->submit_form_ok(
-        { with_fields => { username => 'TEST2', display_name => "Same as test2 with other case" }, },
-        "register account 'TEST2'" );
+    $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
 
     $t->content_like(qr/username/)
       or note $t->content;
@@ -102,10 +97,7 @@ subtest "registration of existing username fails" => sub {
 subtest "registration with invalid username fails" => sub {
     $t->follow_link_ok( { text => 'Register' } );
 
-    $t->submit_form_ok(
-        { with_fields => { username => $_, display_name => "Username with trailing space" }, },
-        "register account '$_'" )
-      for "foobar ";
+    $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
 
     $t->content_like(qr/username/)
       or note $t->content;

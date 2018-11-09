@@ -116,8 +116,7 @@ EOT
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
-    registration_example_username     => 'daniel_boehmer42',
-    registration_example_display_name => "Daniel Böhmer",
+    registration_example_username => 'daniel_boehmer42',
 
     email_from_address => do {
         my $username =    # see https://stackoverflow.com/a/3526587/498634
