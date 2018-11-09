@@ -109,6 +109,10 @@ This is an instance of the Coocook food planning software.
 <!-- define 'about_page_md' in 'coocook_local' config file to replace this text -->
 EOT
 
+    # TODO move to local config of Coocook.org once 3rd party instances exist
+    help_title => "Report issues",
+    help_url   => 'https://github.com/dboehmer/coocook/issues',
+
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
