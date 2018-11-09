@@ -208,6 +208,8 @@ sub login_fails {
 sub logout_ok {
     my ( $self, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     $self->click_ok( 'logout', $name || "click logout button" );
 }
 
@@ -305,6 +307,8 @@ sub create_project_ok {
 
 sub status_is {
     my ( $self, $expected, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     is $self->response->code => $expected,
       $name || "Response has status code $expected";

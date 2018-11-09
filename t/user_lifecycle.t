@@ -200,6 +200,9 @@ subtest "redirects after login/logout" => sub {
       "client is redirected to last page after logout"
       or diag "uri: " . $t->uri;
 
+    # pass link around between login/register
+    $t->follow_link_ok( { text => 'Sign up' } );
+
     $t->login_fails( 'test', 'invalid' );
 
     note "uri: " . $t->uri;
@@ -223,9 +226,8 @@ subtest "malicious redirects are filtered on logout" => sub {
     $t->is_logged_in();
 
     $t->post('/logout?redirect=https://malicious.example/');
-    $t->status_is( 400, "request fails" );
+    is $t->uri => 'https://localhost/', "client is redirected to /";
 
-    $t->get_ok('/');    # TODO nav bar still looks like logged in although session is logged out
     $t->is_logged_out("... but client is logged out anyway");
 };
 
@@ -234,8 +236,19 @@ subtest "malicious redirects are filtered on login" => sub {
         '/login?redirect=https://malicious.example/',
         { username => 'test', password => 'new, nice & shiny' }
     );
+    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->is_logged_in();
 
-    $t->status_is( 400, "requests fails" );
+    $t->logout_ok();
+    $t->post(
+        '/login',
+        {
+            redirect => 'https://malicious.example/',
+            username => 'test',
+            password => 'new, nice & shiny'
+        }
+    );
+    is $t->uri => 'https://localhost/', "client is redirected to /";
 };
 
 $t->create_project_ok( { name => "Test Project 1" } );

@@ -133,6 +133,37 @@ sub redirect_detach {
     $c->detach;
 }
 
+=head2 $c->redirect_uri_for_action( $action, @arguments, \%query_params )
+
+Should support same method arguments as Catalyst's C<< $c->uri_for_action() >>
+but adds a query parameter C<redirect> to the current page's path and query.
+Except when the current URI contains a C<redirect> query parameter--then
+its value is passed along.
+
+=cut
+
+sub redirect_uri_for_action {
+    my $c = shift;
+
+    # complex signature of Catalyst->uri_for_action()
+    my $query = @_ >= 2 && ref $_[-1] eq 'HASH'
+      ? $_[-1]    # use existing hashref
+      : do { push @_, my $q = {}; $q };    # push hashref to @_
+
+    if ( my $redirect = $c->req->query_params->get('redirect') ) {
+        ## TODO validate redirect
+        $query->{redirect} = $redirect;
+    }
+    else {
+        # URL built with current_uri_local_part() in POST request might be inaccessible via GET
+        if ( $c->req->method eq 'GET' ) {    # TODO also HEAD?
+            $query->{redirect} = $c->current_uri_local_part();
+        }
+    }
+
+    return $c->uri_for_action(@_);
+}
+
 =head2 $c->user_registration_enabled()
 
 Returns boolean value if new users are allowed to register. That is

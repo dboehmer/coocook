@@ -85,7 +85,7 @@ sub register : GET HEAD Chained('/base') Args(0) {
 
     $c->stash(
         example_username  => $c->config->{registration_example_username},
-        post_register_url => $c->uri_for( $self->action_for('post_register') ),
+        post_register_url => $c->redirect_uri_for_action( $self->action_for('post_register') ),
     );
 }
 
