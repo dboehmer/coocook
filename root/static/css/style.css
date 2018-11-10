@@ -29,63 +29,20 @@ body {
 
 /******** header part ********/
 
-/* padding for Coocook headline, not put to header to avoid space between header and navbar */
-header h1 a {
-    margin-left: 15px;
-}
-
-header h1 a:hover,
-header h1 a:active {
-    color: #f5f5ef;
-}
+/*** general part ***/
 
 header {
     margin: 0;
-    padding-top: 15px;
     background-color: #4CAF50;
-}
-
-header nav {
-    background: #333333;
-    color: #f5f5ef;
 }
 
 header nav ul {
     list-style-type: none;
-    padding-left: 10px;
+    padding-left: 0;
 }
 
 header nav li {
     display: inline;
-}
-
-header nav input[name="logout"],
-header nav a {
-    display: inline-block;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    min-width: 3em;
-    line-height: 2em;
-
-    background-color: inherit;
-    color:            inherit;
-    text-align: center;
-    text-decoration:none;
-}
-
-header a.current {
-    color: red;
-}
-
-header nav input[name="logout"]:active,
-header nav input[name="logout"]:hover,
-header nav a:hover {
-    background-color:#f5f5ef;
-    color: #333333;
-
-    -webkit-box-shadow: 0px 2px 3px grey;
-    -moz-box-shadow:    0px 2px 3px grey;
-    box-shadow:         0px 2px 3px grey;
 }
 
 /* "Logout" must be button for POST request but style like link */
@@ -102,6 +59,131 @@ header nav input[name="logout"] {
  * see https://stackoverflow.com/questions/12288175/firefox-adds-2px-padding-in-a-submit-button
  */
 header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
+
+header h1 {
+	font-size: 2.5em;
+}
+
+header p {
+	margin: 0;
+	padding: 0 0.5em 0 0.5em;
+	color: #f5f5ef;
+}
+
+header p a {
+	color: #f5f5ef;
+}
+
+/*** user nav ***/
+header #user_nav {
+	height: 7em;
+	padding: 0 1em 0 1em;
+	display: flex;
+	justify-content: space-between;
+}
+
+header #h1-div {
+	align-self: center;
+}
+
+header #user_nav a {
+	padding: 0;
+}
+
+header #user_nav h4 a:hover,
+header #user_nav h4 a:active {
+	color: #333333;
+}
+
+header #user_nav a:hover,
+header #user_nav a:active {
+    color: #f5f5ef;
+}
+
+header #user_nav ul {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+header #user_nav ul p + div {
+	margin-top: 1em;
+}
+
+header #user_nav ul div:only-child {
+	margin-top: 3em;
+}
+
+header #user_nav h4 {
+	margin: 0;
+	padding: 0 0.5em 0 0.5em;
+	color: #f5f5ef;
+}
+
+header #user_nav h4 a {
+	color: #f5f5ef;
+}
+
+header nav input[name="logout"] {
+	background-color: #4CAF50;
+}
+
+header nav input[name="logout"]:active,
+header nav input[name="logout"]:hover {
+    color: #f5f5ef;
+
+    -webkit-box-shadow: 0px 0px 0px grey !important;
+    -moz-box-shadow:    0px 0px 0px grey !important;
+    box-shadow:         0px 0px 0px grey !important;
+}
+
+/*** project nav ***/
+header #project_nav {
+    background: #333333;
+    color: #f5f5ef;
+	width: 100%;
+	height: 2em;
+	padding: 0 1em 0 1em; 
+}
+
+header #project_nav ul {
+	margin: 0;
+}
+
+header #project_nav a,
+header #submenu_nav a {
+    display: inline-block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    min-width: 3em;
+    line-height: 2em;
+
+    background-color: inherit;
+    color:            inherit;
+    text-align: center;
+    text-decoration:none;
+}
+
+header #project_nav a:hover {
+    background-color:#f5f5ef;
+    color: #333333;
+
+    -webkit-box-shadow: 0px 2px 3px grey;
+    -moz-box-shadow:    0px 2px 3px grey;
+    box-shadow:         0px 2px 3px grey;
+}
+
+/*** submenu nav ***/
+header #submenu_nav {
+	width: 100%;
+	height: 2em;
+	padding: 0 1em 0 1em; 
+}
+
+header #submenu_nav a:hover,
+header #submenu_nav a.current {
+	color: #f5f5ef;
+}
 
 /******** content part ********/
 
@@ -281,7 +363,7 @@ footer {
     position: absolute; /*necessary to position it at the bottom in all cases*/
     bottom: 0;
     width: 100%;
-    padding: 0.5em 15px 0.5em 15px;
+    padding: 0.5em 1em 0.5em 1em;
     margin: 0 auto;
     display: inline-block;
     line-height: 1.5;
@@ -291,6 +373,10 @@ footer {
 footer nav ul {
     list-style-type: none;
     float: left;
+}
+
+footer nav ul:first-child {
+	padding-left: 10px;
 }
 
 footer nav h4 {

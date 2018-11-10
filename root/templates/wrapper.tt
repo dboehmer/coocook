@@ -25,50 +25,56 @@
 <!--container div is necessary to keep the footer down, see https://matthewjamestaylor.com/bottom-footer -->
 <div id="container">
 <header>
-<h1>
-    <a href="[% homepage_url %]">[% name | html %]</a>
-[%~ IF project_urls ~%]
-    :
-    <a href="[% project_urls.project %]">[% project.name | html %]</a>
-[% END %]
-</h1>
 
 <nav id="user_nav">
-<ul>
-    <li>
-        [% IF user %]<a href="[% user_url %]">[% user.display_name | html %]</a>[% END %]
-        [% IF project %]on [% project.name | html; END %]
-    </li>
+<div id="h1-div">
+	<h1>
+		<a href="[% homepage_url %]">[% name | html %]</a>
+	</h1>
+</div>
 
-[% IF dashboard_url %]
-    <li><a href="[% dashboard_url %]">Dashboard</a></li>
+<ul>
+[% IF user %]<h4>Welcome to Coocook, <a href="[% user_url %]">[% user.display_name | html %]</a></h4>[% END %]
+
+[% IF logout_url %]
+[% IF project %]
+	<p>You're currently working on project [% project.name | html%]</p>
+[% ELSE %]
+	<p>Please create or choose a project now.</p>
+[% END %]
 [% END %]
 
+<div>
 [% IF login_url %]
-    <li><a href="[% login_url %]">Login</a></li>
+    <li><a href="[% login_url %]">Sign in</a></li>
 [% END %]
 
 [% IF register_url %]
-    <li><a href="[% register_url %]">Register</a></li>
+    <li><a href="[% register_url %]">Sign up</a></li>
 [% END %]
 
 [% IF settings_url %]
-    <li><a href="[% settings_url %]">Settings</a></li>
+    <li><a href="[% settings_url %]">Account Settings</a></li>
 [% END %]
 
 [% IF logout_url %]
     <li>
         <form class="inline" method="POST" action="[% logout_url %]">
-            <input type="submit" name="logout" value="Logout">
+            <input type="submit" name="logout" value="Sign out">
         </form>
     </li>
 [% END %]
+</div>
+
 </ul>
 </nav>
 
-[% IF project_urls %]
 <nav id="project_nav">
 <ul>
+[% IF dashboard_url %]
+    <li><a href="[% dashboard_url %]">Start</a></li>
+[% END %]
+[% IF project_urls %]
     <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
     <li><a href="[% project_urls.recipes %]">Recipes</a></li>
     <li><a href="[% project_urls.articles %]">Articles</a></li>
@@ -76,11 +82,12 @@
     <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
     <li><a href="[% project_urls.units %]">Units</a></li>
     <li><a href="[% project_urls.import %]">Import</a></li>
+[% END %]
 </ul>
 </nav>
-[% END %]
 
-<nav id="submenu">
+
+<nav id="submenu_nav">
 [% FOR item IN submenu_items;
     IF item.url %]
         <a href="[% item.url %]">[% item.text %]</a>
