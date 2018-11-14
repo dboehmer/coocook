@@ -73,6 +73,8 @@
 <ul>
 [% IF dashboard_url %]
     <li><a href="[% dashboard_url %]">Start</a></li>
+[% ELSIF homepage_url %]
+    <li><a href="[% homepage_url %]">Start</a></li>
 [% END %]
 [% IF project_urls %]
     <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
