@@ -34,7 +34,7 @@
 </div>
 
 <ul>
-[% IF user %]<h4>Welcome to Coocook, <a href="[% user_url %]">[% user.display_name | html %]</a></h4>[% END %]
+[% IF user %]<h4>Welcome to [% name | html %], <a href="[% user_url %]">[% user.display_name | html %]</a></h4>[% END %]
 
 [% IF logout_url %]
 [% IF project %]
