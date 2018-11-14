@@ -123,9 +123,11 @@ END %]
 
         <ul>
             <h4>Get Help</h4>
-            <li><a href="[% help_url %]">[% help_title | html %]</a></li>
 [% IF faq_url %]
             <li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
+[% END %]
+[% FOR help_link IN help_links %]
+            <li><a href="[% help_link.url %]">[% help_link.title | html %]</a></li>
 [% END %]
         </ul>
 
