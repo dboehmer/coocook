@@ -1,3 +1,5 @@
+<p><a href="[% profile_url %]">View your profile</a></p>
+
 <form method="POST" action="[% change_display_name_url %]">
 <fieldset>
     <legend>Change your user's display name</legend>
