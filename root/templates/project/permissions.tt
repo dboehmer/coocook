@@ -69,6 +69,6 @@
         <input type="submit" value="Add">
     </form>
 [% ELSE %]
-    <p>No more users. You need to let users register before giving them permission.</p>
+    <p>No more users. You need to let users sign up before giving them permission.</p>
 [% END %]
 </fieldset>

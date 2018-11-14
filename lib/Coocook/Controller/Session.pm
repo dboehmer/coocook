@@ -90,7 +90,7 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
             $c->uri_for_action(
                 '/login',
                 {
-                    error    => "Login failed!",
+                    error    => "Sign in failed!",
                     username => $c->req->params->get('username'),
                     $redirect ? ( redirect => $redirect ) : (),
                 }

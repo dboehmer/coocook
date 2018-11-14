@@ -1,6 +1,6 @@
-[% title = "Register" %]
+[% title = "Sign Up" %]
 
-<p><a href="[% login_url %]">Already have an account? Login here.</a></p>
+<p><a href="[% login_url %]">Already have an account? Sign in here.</a></p>
 
 <p>You will receive an e-mail with a web link to verify your e-mail address.</p>
 
@@ -27,7 +27,7 @@
     </tr>
 </table>
 
-[% label = "Register";
+[% label = "Sign up";
 
 IF terms %]
 <input type="hidden" name="accept_terms" value="[% terms.id %]">
