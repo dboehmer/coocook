@@ -53,6 +53,7 @@ sub auto : Private {
           qw<
           date_format_short
           date_format_long
+          footer_html
           help_links
           icon_type
           icon_url

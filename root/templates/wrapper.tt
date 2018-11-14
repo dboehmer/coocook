@@ -149,6 +149,8 @@ END %]
 <script src="[% path %]"></script>
 [% END %]
 
+[% footer_html %]
+
 </div>
 </body>
 </html>
