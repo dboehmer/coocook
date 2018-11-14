@@ -32,7 +32,7 @@ for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
 subtest "verify e-mail address" => sub {
     $t->verify_email_ok();
 
-    $t->title_like( qr/login/i, "got redirected to login page" );
+    $t->title_like( qr/sign in/i, "got redirected to login page" );
 
     # TODO replace evil HTML "parser" hackery by reasonable HTML parser
     $t->content_like( qr/ <input [^<>]+ name="username" [^<>]+ value="test" /x,
@@ -42,7 +42,7 @@ subtest "verify e-mail address" => sub {
 
 $t->clear_emails();
 
-$t->content_lacks('Register');
+$t->content_lacks('Sign up');
 
 Coocook->reload_config( enable_user_registration => 1 );
 
@@ -86,7 +86,7 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 }
 
 subtest "registration of existing username fails" => sub {
-    $t->follow_link_ok( { text => 'Register' } );
+    $t->follow_link_ok( { text => 'Sign up' } );
 
     $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
 
@@ -95,7 +95,7 @@ subtest "registration of existing username fails" => sub {
 };
 
 subtest "registration with invalid username fails" => sub {
-    $t->follow_link_ok( { text => 'Register' } );
+    $t->follow_link_ok( { text => 'Sign up' } );
 
     $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
 

@@ -73,7 +73,7 @@ sub register_ok {
     my ( $self, $field_values, $name ) = @_;
 
     subtest $name || "register", sub {
-        $self->follow_link_ok( { text => 'Register' } );
+        $self->follow_link_ok( { text => 'Sign up' } );
 
         $self->submit_form_ok( { with_fields => $field_values },
             "register account '$field_values->{username}'" );
@@ -144,7 +144,7 @@ sub is_logged_in {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_like( qr/Dashboard/, $name || "client is logged in" )
+    $self->content_like( qr/Start/, $name || "client is logged in" )
       or note $self->content;
 }
 
@@ -153,14 +153,14 @@ sub is_logged_out {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_unlike( qr/Dashboard/, $name || "client is logged out" )
+    $self->content_unlike( qr/Start/, $name || "client is logged out" )
       or note $self->content;
 }
 
 sub login {
     my ( $self, $username, $password ) = @_;
 
-    $self->follow_link_ok( { text => 'Login' } );
+    $self->follow_link_ok( { text => 'Sign in' } );
 
     $self->submit_form_ok(
         {
@@ -189,7 +189,7 @@ sub login_fails {
     subtest $name || "login with $username:$password fails", sub {
         $self->login( $username, $password );
 
-        ( $self->content_like(qr/fail/) and $self->content_like(qr/Login/) )
+        ( $self->content_like(qr/fail/) and $self->content_like(qr/Sign in/) )
           or note $self->content;
     };
 }
@@ -204,7 +204,7 @@ sub change_password_ok {
     my ( $self, $field_values, $name ) = @_;
 
     subtest $name || "change password", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'Account Settings' } );
 
         $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
     };
@@ -214,7 +214,7 @@ sub change_display_name_ok {
     my ( $self, $display_name, $name ) = @_;
 
     subtest $name || "change display name", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'Account Settings' } );
 
         $self->submit_form_ok(
             {
@@ -231,7 +231,7 @@ sub request_recovery_link_ok {
     my ( $self, $email, $name ) = @_;
 
     subtest $name || "request recovery link for $email", sub {
-        $self->follow_link_ok( { text => 'Login' } );
+        $self->follow_link_ok( { text => 'Sign in' } );
 
         $self->follow_link_ok( { text => 'Lost your password?' } );
 
