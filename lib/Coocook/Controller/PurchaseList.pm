@@ -43,16 +43,22 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 
     my $lists = $c->project->purchase_lists;
 
-    my $max_date = do {
-        my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->one_row;
+    my $min_date = DateTime->today;
 
-        $list ? $list->date : undef;
+    my $default_date = do {    # one day after today or last list's date
+        my $date = $min_date;
+
+        my $last_list =
+          $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->one_row;
+
+        if ($last_list) {
+            if ( $date < $last_list->date ) {
+                $date = $last_list->date;
+            }
+        }
+
+        $date->add( days => 1 );
     };
-
-    my $default_date =
-        $max_date
-      ? $max_date->add( days => 1 )
-      : DateTime->today;
 
     my @lists = $lists->sorted->hri->all;
 
@@ -66,6 +72,7 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 
     $c->stash(
         default_date => $default_date,
+        min_date     => $min_date,
         lists        => \@lists,
         create_url   => $c->project_uri( $self->action_for('create') ),
     );

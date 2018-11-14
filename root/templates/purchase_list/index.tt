@@ -6,7 +6,7 @@
 
         <p>
             <label for="date">Date:</label>
-            <input  id="date" type="date" name="date" value="[% default_date.ymd %]">
+            <input  id="date" type="date" name="date" min="[% min_date.ymd %]" value="[% default_date.ymd %]">
         </p>
 
         <p>
