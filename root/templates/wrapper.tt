@@ -38,7 +38,7 @@
 
 [% IF logout_url %]
 [% IF project %]
-	<p>You're currently working on project [% project.name | html%]</p>
+	<p>You're currently working on <a href="[% project_urls.project %]">project [% project.name | html%]</a></p>
 [% ELSE %]
 	<p>Please create or choose a project now.</p>
 [% END %]
