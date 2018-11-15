@@ -195,7 +195,9 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
       or $c->redirect_detach(
         $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
 
-    my $project = $c->stash->{project} = $c->model('DB::Project')->create(
+    my $projects = $c->model('DB::Project');
+
+    my $project = $c->stash->{project} = $c->model('DB::Project')->new_result(
         {
             name           => $c->req->params->get('name'),
             description    => '',
@@ -209,6 +211,11 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
             ],
         }
     );
+
+    $projects->search( { url_name_fc => $project->url_name_fc } )->exists
+      and $c->redirect_detach( $c->uri_for( '/', { error => "Project name is already in use" } ) );
+
+    $project->insert();
 
     my $importable_projects = $c->forward('importable_projects');
 
