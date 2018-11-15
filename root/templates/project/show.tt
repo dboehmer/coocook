@@ -13,7 +13,7 @@
     or <a href="[% project_urls.articles %]">create some</a> from scratch.
 [% ELSIF inventory.meals == 0 OR inventory.dishes == 0 %]
     This project lacks any [% inventory.meals == 0 ? 'meals' : 'dishes' %].
-    You can <a href="[% edit_url %]">create some</a> now.
+    You can <a href="[% project_urls.edit %]">create some</a> now.
     [% IF inventory.recipes == 0 %]
     You can also <a href="[% project_urls.recipes %]">create a recipe</a> for dishes.
     [% END %]

@@ -40,6 +40,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     $c->stash(
         project_urls => {
             project          => $c->project_uri('/project/show'),
+            edit             => $c->project_uri('/project/edit'),
             recipes          => $c->project_uri('/recipe/index'),
             articles         => $c->project_uri('/article/index'),
             tags             => $c->project_uri('/tag/index'),
