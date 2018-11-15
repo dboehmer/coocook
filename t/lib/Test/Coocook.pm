@@ -144,7 +144,7 @@ sub is_logged_in {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_like( qr/Start/, $name || "client is logged in" )
+    $self->content_like( qr/Account [Ss]ettings/, $name || "client is logged in" )
       or note $self->content;
 }
 
@@ -153,7 +153,7 @@ sub is_logged_out {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_unlike( qr/Start/, $name || "client is logged out" )
+    $self->content_like( qr/Sign [Ii]n/, $name || "client is logged out" )
       or note $self->content;
 }
 
