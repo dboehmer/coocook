@@ -1,29 +1,37 @@
 @media print {
 
     /* hide browser navigation elements */
-    nav, footer {
+    header, footer {
         display: none;
     }
-}
 
-main a {
-    color: inherit !important;
-}
+    main {
+        padding-bottom: 15px;
+    }
 
-main a:hover {
-    text-decoration: underline;
-}
+    #print_h1 {
+        display: block !important;
+    }
 
-table {
-    border-collapse: collapse;
-}
+    main a {
+        color: inherit !important;
+    }
 
-table td, table th {
-    border: 1px solid black;
-    padding: 0.1em 0.25em;
-    vertical-align: top;
-}
+    main a:hover {
+        text-decoration: underline;
+    }
 
-.small-font {
-    font-size: 0.8em;
+    table {
+        border-collapse: collapse;
+    }
+
+    table td, table th {
+        border: 1px solid black;
+        padding: 0.1em 0.25em;
+        vertical-align: top;
+    }
+
+    .small-font {
+        font-size: 0.8em;
+    }
 }
