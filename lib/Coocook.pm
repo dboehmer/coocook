@@ -217,7 +217,10 @@ EOT
     },
 
     'View::TT' => {
-        INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to(qw< root custom_templates >),    # allow overriding with custom files
+            __PACKAGE__->path_to(qw< root templates >),
+        ],
     },
 );
 
