@@ -69,6 +69,7 @@
 </ul>
 </nav>
 
+
 <nav id="project_nav">
 <ul>
 [% IF dashboard_url %]
@@ -96,17 +97,70 @@
     [% END;
 END %]
 </nav>
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			[% IF dashboard_url %]
+				<li class="nav-item"><a class="nav-link" href="[% dashboard_url %]">Start</a></li>
+			[% END %]
+			[% IF project_urls %]
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
+				<li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
+			[% END %]
+
+		</ul>
+	</div>
+</nav>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			[% FOR item IN submenu_items;
+				IF item.url %]
+					<li class="nav-item"><a class="nav-link" href="[% item.url %]">[% item.text %]</a></li>
+				[% ELSE %]
+					<li class="nav-item"><a class="nav-link active" href="">[% item.text %]</a></li>
+				[% END;
+			END %]
+
+		</ul>
+	</div>
+</nav>
+
+
 </header>
 
 <main>
-[% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
-[% ELSIF   title %]<h2>[% title | html %]</h2>
-[% END %]
+	<div class="container">
+		<div class="row vspace20">
+			<div class="col-md-12" style="margin-bottom:20px">
+				[% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
+				[% ELSIF   title %]<h2>[% title | html %]</h2>
+				[% END %]
 
-[% FOREACH error IN errors %]
-    <p class="error">[% error | html %]</p>
-[% END %]
-
+				[% FOREACH error IN errors %]
+					<div class="alert alert-danger">
+						<strong>Error!</strong> [% error | xml %]
+					</div>
+				[% END %]
+			</div>
+		</div>
+	</div>
 [% content %]
 </main>
 
