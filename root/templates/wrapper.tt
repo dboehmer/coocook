@@ -133,6 +133,9 @@ END %]
 			[% FOR item IN submenu_items;
 				IF item.url %]
 					<li class="nav-item"><a class="nav-link" href="[% item.url %]">[% item.text %]</a></li>
+<!--
+					<div class="dropdown-divider"></div>
+-->
 				[% ELSE %]
 					<li class="nav-item"><a class="nav-link active" href="">[% item.text %]</a></li>
 				[% END;
@@ -164,38 +167,77 @@ END %]
 [% content %]
 </main>
 
+<!--
 <footer>
     <nav>
-[% IF project_urls %]
+[%# IF project_urls %]
         <ul>
             <h4>Project Parameters</h4>
-            <li><a href="[% project_urls.units %]">Units & Quantities</a></li>
-            <li><a href="[% project_urls.tags %]">Tags</a></li>
-            <li><a href="[% project_urls.shop_sections %]">Shop Sections</a></li>
+            <li><a href="[% #project_urls.units %]">Units & Quantities</a></li>
+            <li><a href="[% #project_urls.tags %]">Tags</a></li>
+            <li><a href="[% #project_urls.shop_sections %]">Shop Sections</a></li>
         </ul>
-[% END %]
+[% #END %]
 
         <ul>
             <h4>Get Help</h4>
-            <li><a href="[% help_url %]">[% help_title | html %]</a></li>
-[% IF faq_url %]
-            <li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
-[% END %]
+            <li><a href="[% #help_url %]">[%# help_title | html %]</a></li>
+[% #IF faq_url %]
+            <li><a href="[% #faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
+[%# END %]
         </ul>
 
         <ul>
-            <h4>About [% name | html %]</h4>
-[% IF admin_url %]
-            <li><a href="[% admin_url %]">Admin</a></li>
-[% END %]
-            <li><a href="[% statistics_url %]">Statistics</a></li>
-            <li><a href="[% about_url %]">[% about_title %]</a></li>
-[% IF terms_url %]
-            <li><a href="[% terms_url %]">Terms</a></li>
-[% END %]
+            <h4>About [%# name | html %]</h4>
+[%# IF admin_url %]
+            <li><a href="[% #admin_url %]">Admin</a></li>
+[%# END %]
+            <li><a href="[% #statistics_url %]">Statistics</a></li>
+            <li><a href="[%#about_url %]">[% #about_title %]</a></li>
+[% #IF terms_url %]
+            <li><a href="[% #terms_url %]">Terms</a></li>
+[% #END %]
         </ul>
     </nav>
 </footer>
+-->
+
+	<div class="footer bg-dark text-white">
+		<div class="contbainer vspace20">
+			<div class="row">
+				<div class="col-md-4">
+					<h4 class="text-centerNO">Project parameters</h4>
+					<ul class="list-unstyled">
+						<li><a class="footer-link" href="#">Units & Qualtities</a></li>
+						<li><a class="footer-link" href="#">Tags</a></li>
+						<li><a class="footer-link" href="#">Shop Sections</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<h4 class="text-centerNO">Get to know cookcook</h4>
+					<ul class="list-unstyled">
+						<li><a class="footer-link" href="#">About</a></li>
+						<li><a class="footer-link" href="#">FAQ</a></li>
+						<li><a class="footer-link" href="#">Statistics</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<h4 class="text-centerNO">Legal information</h4>
+					<ul class="list-unstyled">
+						<li><a class="footer-link" href="#">Imprint</a></li>
+						<li><a class="footer-link" href="#">Private Policy</a></li>
+						<li><a class="footer-link" href="#">GTC</a></li>
+						<li><a class="footer-link" href="#">Contact</a></li>
+					</ul>
+				</div>
+				<div class="col-md-12">
+					<p class="text-center">This software is Copyright (c) 2015-2018 by Daniel Böhmer. This web-application is free software licensed under the GNU Affero General Public License, Version 3, November 2007 GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 
 [% FOR path IN js %]
 <script src="[% path %]"></script>

@@ -63,7 +63,8 @@ sub auto : Private {
     $c->stash(
 		css => [
 			'/css/style.css',
-			'/lib/bootstrap-4.1.3/css/bootstrap.min.css'
+			'/lib/bootstrap-4.1.3/css/bootstrap.min.css',
+			'/css/tmp.css'
 			],
 		js  => [
 			'/lib/jquery-3.2.1' .  ( $c->debug ? '.js' : '.min.js' ),
