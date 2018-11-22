@@ -29,7 +29,7 @@
 <nav id="user_nav">
 <div id="h1-div">
     <h1>
-        <a href="[% homepage_url %]">[% name | html %]</a>
+        <a class="header-link" href="[% homepage_url %]">[% name | html %]</a>
     </h1>
 </div>
 
@@ -54,7 +54,7 @@
 [% END %]
 
 [% IF settings_url %]
-    <li><a class="nav-link-account" href="[% settings_url %]">Account Settings</a></li>
+    <li><a class="header-link" href="[% settings_url %]">Account Settings</a></li>
 [% END %]
 
 [% IF logout_url %]
