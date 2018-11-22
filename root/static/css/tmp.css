@@ -1,6 +1,7 @@
 
-/******** bootstrap modifications ********/
-
+/*===========================================================================
+bootstrap modifications
+===========================================================================*/
 .nav-link {
   display: block;
   padding: 0.0rem 0rem;
@@ -29,12 +30,14 @@ vertical space
 .vspace-20 { margin-top:-20px; }
 .vspace-40 { margin-top:-40px; }
 
-
+/*===========================================================================
+style adaption of footer
+===========================================================================*/
 a.footer-link {
-	color: rgba(255, 255, 255, 0.99);
+    color: rgba(255, 255, 255, 0.99);
 }
 a.footer-link:hover {
-	color: rgb(25, 255, 255);
+    color: rgb(25, 255, 255);
 }
 
 .footer {
@@ -48,4 +51,8 @@ a.footer-link:hover {
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding: 0.3rem 1rem;
+}
+
+nav#user_nav .nav-link-account {
+  color: rgb(255, 255, 255);
 }

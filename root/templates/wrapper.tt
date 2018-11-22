@@ -28,9 +28,9 @@
 
 <nav id="user_nav">
 <div id="h1-div">
-	<h1>
-		<a href="[% homepage_url %]">[% name | html %]</a>
-	</h1>
+    <h1>
+        <a href="[% homepage_url %]">[% name | html %]</a>
+    </h1>
 </div>
 
 <ul>
@@ -38,9 +38,9 @@
 
 [% IF logout_url %]
 [% IF project %]
-	<p>You're currently working on project [% project.name | html%]</p>
+    <p>You're currently working on project [% project.name | html%]</p>
 [% ELSE %]
-	<p>Please create or choose a project now.</p>
+    <p>Please create or choose a project now.</p>
 [% END %]
 [% END %]
 
@@ -54,7 +54,7 @@
 [% END %]
 
 [% IF settings_url %]
-    <li><a href="[% settings_url %]">Account Settings</a></li>
+    <li><a class="nav-link-account" href="[% settings_url %]">Account Settings</a></li>
 [% END %]
 
 [% IF logout_url %]
@@ -70,172 +70,107 @@
 </nav>
 
 
-<nav id="project_nav">
-<ul>
-[% IF dashboard_url %]
-    <li><a href="[% dashboard_url %]">Start</a></li>
-[% END %]
-[% IF project_urls %]
-    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
-    <li><a href="[% project_urls.recipes %]">Recipes</a></li>
-    <li><a href="[% project_urls.articles %]">Articles</a></li>
-    <li><a href="[% project_urls.tags %]">Tags</a></li>
-    <li><a href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-    <li><a href="[% project_urls.units %]">Units</a></li>
-    <li><a href="[% project_urls.import %]">Import</a></li>
-[% END %]
-</ul>
-</nav>
-
-
-<nav id="submenu_nav">
-[% FOR item IN submenu_items;
-    IF item.url %]
-        <a href="[% item.url %]">[% item.text %]</a>
-    [% ELSE %]
-        <a href="" class="current">[% item.text %]</a>
-    [% END;
-END %]
-</nav>
-
-
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-			[% IF dashboard_url %]
-				<li class="nav-item"><a class="nav-link" href="[% dashboard_url %]">Start</a></li>
-			[% END %]
-			[% IF project_urls %]
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
-				<li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
-			[% END %]
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            [% IF dashboard_url %]
+                <li class="nav-item"><a class="nav-link" href="[% dashboard_url %]">Start</a></li>
+            [% END %]
+            [% IF project_urls %]
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
+                <li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
+            [% END %]
 
-		</ul>
-	</div>
+        </ul>
+    </div>
 </nav>
 
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-			[% FOR item IN submenu_items;
-				IF item.url %]
-					<li class="nav-item"><a class="nav-link" href="[% item.url %]">[% item.text %]</a></li>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            [% FOR item IN submenu_items;
+                IF item.url %]
+                    <li class="nav-item"><a class="nav-link" href="[% item.url %]">[% item.text %]</a></li>
 <!--
-					<div class="dropdown-divider"></div>
+                    <div class="dropdown-divider"></div>
 -->
-				[% ELSE %]
-					<li class="nav-item"><a class="nav-link active" href="">[% item.text %]</a></li>
-				[% END;
-			END %]
+                [% ELSE %]
+                    <li class="nav-item"><a class="nav-link active" href="">[% item.text %]</a></li>
+                [% END;
+            END %]
 
-		</ul>
-	</div>
+        </ul>
+    </div>
 </nav>
 
 
 </header>
 
 <main>
-	<div class="container">
-		<div class="row vspace20">
-			<div class="col-md-12" style="margin-bottom:20px">
-				[% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
-				[% ELSIF   title %]<h2>[% title | html %]</h2>
-				[% END %]
+    <div class="container">
+        <div class="row vspace20">
+            <div class="col-md-12" style="margin-bottom:20px">
+                [% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
+                [% ELSIF   title %]<h2>[% title | html %]</h2>
+                [% END %]
 
-				[% FOREACH error IN errors %]
-					<div class="alert alert-danger">
-						<strong>Error!</strong> [% error | xml %]
-					</div>
-				[% END %]
-			</div>
-		</div>
-	</div>
-[% content %]
+                [% FOREACH error IN errors %]
+                    <div class="alert alert-danger">
+                        <strong>Error!</strong> [% error | xml %]
+                    </div>
+                [% END %]
+            </div>
+        </div>
+    </div>
+    [% content %]
 </main>
 
-<!--
-<footer>
-    <nav>
-[%# IF project_urls %]
-        <ul>
-            <h4>Project Parameters</h4>
-            <li><a href="[% #project_urls.units %]">Units & Quantities</a></li>
-            <li><a href="[% #project_urls.tags %]">Tags</a></li>
-            <li><a href="[% #project_urls.shop_sections %]">Shop Sections</a></li>
-        </ul>
-[% #END %]
-
-        <ul>
-            <h4>Get Help</h4>
-            <li><a href="[% #help_url %]">[%# help_title | html %]</a></li>
-[% #IF faq_url %]
-            <li><a href="[% #faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
-[%# END %]
-        </ul>
-
-        <ul>
-            <h4>About [%# name | html %]</h4>
-[%# IF admin_url %]
-            <li><a href="[% #admin_url %]">Admin</a></li>
-[%# END %]
-            <li><a href="[% #statistics_url %]">Statistics</a></li>
-            <li><a href="[%#about_url %]">[% #about_title %]</a></li>
-[% #IF terms_url %]
-            <li><a href="[% #terms_url %]">Terms</a></li>
-[% #END %]
-        </ul>
-    </nav>
-</footer>
--->
-
-	<div class="footer bg-dark text-white">
-		<div class="contbainer vspace20">
-			<div class="row">
-				<div class="col-md-4">
-					<h4 class="text-centerNO">Project parameters</h4>
-					<ul class="list-unstyled">
-						<li><a class="footer-link" href="#">Units & Qualtities</a></li>
-						<li><a class="footer-link" href="#">Tags</a></li>
-						<li><a class="footer-link" href="#">Shop Sections</a></li>
-					</ul>
-				</div>
-				<div class="col-md-4">
-					<h4 class="text-centerNO">Get to know cookcook</h4>
-					<ul class="list-unstyled">
-						<li><a class="footer-link" href="#">About</a></li>
-						<li><a class="footer-link" href="#">FAQ</a></li>
-						<li><a class="footer-link" href="#">Statistics</a></li>
-					</ul>
-				</div>
-				<div class="col-md-4">
-					<h4 class="text-centerNO">Legal information</h4>
-					<ul class="list-unstyled">
-						<li><a class="footer-link" href="#">Imprint</a></li>
-						<li><a class="footer-link" href="#">Private Policy</a></li>
-						<li><a class="footer-link" href="#">GTC</a></li>
-						<li><a class="footer-link" href="#">Contact</a></li>
-					</ul>
-				</div>
-				<div class="col-md-12">
-					<p class="text-center">This software is Copyright (c) 2015-2018 by Daniel Böhmer. This web-application is free software licensed under the GNU Affero General Public License, Version 3, November 2007 GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007</p>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="footer bg-dark text-white">
+    <div class="contbainer vspace20">
+        <div class="row">
+            <div class="col-md-4">
+                <h4 class="text-centerNO">Project parameters</h4>
+                <ul class="list-unstyled">
+                    <li><a class="footer-link" href="#">Units & Qualtities</a></li>
+                    <li><a class="footer-link" href="#">Tags</a></li>
+                    <li><a class="footer-link" href="#">Shop Sections</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-centerNO">Get to know cookcook</h4>
+                <ul class="list-unstyled">
+                    <li><a class="footer-link" href="#">About</a></li>
+                    <li><a class="footer-link" href="#">FAQ</a></li>
+                    <li><a class="footer-link" href="#">Statistics</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-centerNO">Legal information</h4>
+                <ul class="list-unstyled">
+                    <li><a class="footer-link" href="#">Imprint</a></li>
+                    <li><a class="footer-link" href="#">Private Policy</a></li>
+                    <li><a class="footer-link" href="#">GTC</a></li>
+                    <li><a class="footer-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-12">
+                <p class="text-center">This software is Copyright (c) 2015-2018 by Daniel Böhmer. This web-application is free software licensed under the GNU Affero General Public License, Version 3, November 2007 GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
