@@ -77,7 +77,7 @@ header p a {
 /*** user nav ***/
 header #user_nav {
 	height: 7em;
-	padding: 0 1em 0 1em;
+	padding: 0 1.5em 0 1.5em;
 	display: flex;
 	justify-content: space-between;
 }
@@ -191,7 +191,7 @@ header #submenu_nav a.current {
 /******** content part ********/
 
 main {
-    padding: 15px;
+    padding: 1.5em;
     padding-bottom: 12em; /*necessary for position of footer*/
 }
 
