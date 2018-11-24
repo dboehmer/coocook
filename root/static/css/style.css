@@ -285,6 +285,10 @@ input[type="submit"]:hover, input[type="submit"]:active{
     clear: both;
 }
 
+form th {
+	text-align: left;
+}
+
 table td input[type="checkbox"]:first-child:last-child {
     /* center single checkbox in table column */
     display: block;
