@@ -86,6 +86,10 @@ header #h1-div {
 	align-self: center;
 }
 
+header #user_nav li {
+	padding-left: 1em;
+}
+
 header #user_nav a {
 	padding: 0;
 }
