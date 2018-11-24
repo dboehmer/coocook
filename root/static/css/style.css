@@ -130,6 +130,7 @@ header #user_nav h4 a {
 
 header nav input[name="logout"] {
 	background-color: #4CAF50;
+	color: #333333;
 }
 
 header nav input[name="logout"]:active,
