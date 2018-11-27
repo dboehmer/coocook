@@ -165,8 +165,11 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
-    my $source   = $c->model('DB::Project')->find( $c->req->params->get('source_project') );
-    my $target   = $c->project;
+
+    my $source = $c->model('DB::Project')->find( $c->req->params->get('source_project') )
+      or $c->detach('/error/bad_request');
+
+    my $target = $c->project;
 
     $c->has_capability( import_from_project => { project => $source } )
       or $c->detach('/error/forbidden');
