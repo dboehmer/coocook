@@ -60,7 +60,7 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
         $date->add( days => 1 );
     };
 
-    my @lists = $lists->sorted->hri->all;
+    my @lists = $lists->sorted->with_item_count->hri->all;
 
     for my $list (@lists) {
         $list->{date} = $lists->parse_date( $list->{date} );

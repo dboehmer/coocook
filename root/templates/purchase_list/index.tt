@@ -29,7 +29,7 @@
     <tr>
         <td>[% display_date(list.date, {html=>1}) %]</td>
         <td><a href="[% list.edit_url %]">[% list.name | html %]</a></td>
-        <td>[% list.items_rs.count %]</td>
+        <td>[% list.item_count %]</td>
         <td>
             <form action="[% list.update_url %]" method="POST">
                 <input type="text" name="name" value="[% list.name | html %]">
