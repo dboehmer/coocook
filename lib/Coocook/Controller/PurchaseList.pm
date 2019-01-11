@@ -128,10 +128,28 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
+    my $date = $c->req->params->get('date');
+    my $name = $c->req->params->get('name');
+
+    my $lists = $c->project->search_related('purchase_lists');
+
+    if ( $lists->search( { name => $name } )->exists ) {
+        push @{ $c->stash->{errors} }, "A purchase list with that name already exists!";
+
+        $c->stash(
+            last_input => {
+                date => $date,
+                name => $name,
+            }
+        );
+
+        $c->go( 'index', [ $c->project->url_name ], [] );
+    }
+
     $c->project->create_related(
         purchase_lists => {
-            date => $c->req->params->get('date'),
-            name => $c->req->params->get('name'),
+            date => $date,
+            name => $name,
         }
     );
 
