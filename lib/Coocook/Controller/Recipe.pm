@@ -121,7 +121,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
         ingredients => {
             prepare => !!$c->req->params->get('prepare'),
             article => $c->req->params->get('article'),
-            value   => $c->req->params->get('value'),
+            value   => $c->req->params->get('value') + 0,
             unit    => $c->req->params->get('unit'),
             comment => $c->req->params->get('comment'),
         }
@@ -193,7 +193,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                     $ingredient->update(
                         {
                             prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
-                            value   => $c->req->params->get( 'value' . $ingredient->id ),
+                            value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
                             unit    => $c->req->params->get( 'unit' . $ingredient->id ),
                             comment => $c->req->params->get( 'comment' . $ingredient->id ),
                         }

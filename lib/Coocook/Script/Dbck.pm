@@ -22,6 +22,7 @@ sub run {
 
     $self->check_schema();
     $self->check_rows();
+    $self->check_values();
 }
 
 sub check_schema {
@@ -138,6 +139,21 @@ sub check_rows {
                     next ROW;
                 }
             }
+        }
+    }
+}
+
+sub check_values {
+    my $self = shift;
+
+    my $schema = $self->_schema;
+
+    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite allows '' for an INTEGER column
+        for my $table (qw< DishIngredient RecipeIngredient Item >) {
+            my $count = $schema->resultset($table)->search( { value => '' } );
+
+            $count > 0
+              and warn "Found $count rows with value of empty string '' in table $table\n";
         }
     }
 }
