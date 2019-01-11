@@ -30,7 +30,7 @@
 <form action="[% create_url %]" method="POST">
 <fieldset>
     <legend>Create new quantity</legend>
-    <input type="text" name="name" placeholder="name">
+    <input type="text" name="name" placeholder="name" value="[% last_input.name %]">
     <input type="submit" value="Create">
 </fieldset>
 </form>
