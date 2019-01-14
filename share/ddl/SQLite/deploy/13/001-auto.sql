@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Jan 14 17:46:27 2019
+-- Created on Mon Jan 14 18:04:41 2019
 -- 
 
 ;
@@ -359,7 +359,7 @@ CREATE TABLE dish_ingredients (
   FOREIGN KEY (article) REFERENCES articles(id),
   FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit),
   FOREIGN KEY (dish) REFERENCES dishes(id) ON DELETE CASCADE,
-  FOREIGN KEY (item) REFERENCES items(id) ON DELETE CASCADE,
+  FOREIGN KEY (item) REFERENCES items(id) ON DELETE SET NULL,
   FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX dish_ingredients_idx_article ON dish_ingredients (article);

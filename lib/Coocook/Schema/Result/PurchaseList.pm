@@ -28,13 +28,6 @@ __PACKAGE__->has_many(
 __PACKAGE__->many_to_many( articles => items => 'article' );
 __PACKAGE__->many_to_many( units    => items => 'unit' );
 
-before delete => sub {
-    my $self = shift;
-
-    $self->items->search_related('ingredients')->update( { item => undef } );
-    $self->items->delete;
-};
-
 __PACKAGE__->meta->make_immutable;
 
 1;

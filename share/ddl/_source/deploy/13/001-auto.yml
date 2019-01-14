@@ -364,7 +364,7 @@ schema:
             - item
           match_type: ''
           name: dish_ingredients_fk_item
-          on_delete: CASCADE
+          on_delete: SET NULL
           on_update: ''
           options: []
           reference_fields:
