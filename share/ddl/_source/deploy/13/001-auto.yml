@@ -2503,7 +2503,7 @@ schema:
             - quantity
           match_type: ''
           name: units_fk_quantity
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:

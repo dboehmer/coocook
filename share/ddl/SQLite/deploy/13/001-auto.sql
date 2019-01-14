@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Jan 14 17:39:30 2019
+-- Created on Mon Jan 14 17:46:27 2019
 -- 
 
 ;
@@ -227,7 +227,7 @@ CREATE TABLE units (
   short_name text NOT NULL,
   long_name text NOT NULL,
   FOREIGN KEY (project) REFERENCES projects(id) ON DELETE CASCADE,
-  FOREIGN KEY (quantity) REFERENCES quantities(id) ON DELETE CASCADE
+  FOREIGN KEY (quantity) REFERENCES quantities(id)
 );
 CREATE INDEX units_idx_project ON units (project);
 CREATE INDEX units_idx_quantity ON units (quantity);

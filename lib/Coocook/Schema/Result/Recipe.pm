@@ -26,8 +26,8 @@ __PACKAGE__->has_many(
     dishes => 'Coocook::Schema::Result::Dish',
     'from_recipe',
     {
-        cascade_on_delete => 0,    # recipes with dishes may not be deleted
-                                   # TODO maybe ON DELETE SET NULL?
+        cascade_delete => 0,    # recipes with dishes may not be deleted
+                                # TODO maybe ON DELETE SET NULL?
     }
 );
 

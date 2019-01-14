@@ -30,7 +30,7 @@ __PACKAGE__->has_many(
     units => 'Coocook::Schema::Result::Unit',
     undef,
     {
-        cascade_on_delete => 0,    # quantities with units may not be deleted
+        cascade_delete => 0,    # quantities with units may not be deleted
     }
 );
 
