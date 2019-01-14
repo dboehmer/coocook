@@ -552,7 +552,7 @@ schema:
             - from_recipe
           match_type: ''
           name: dishes_fk_from_recipe
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -1598,7 +1598,7 @@ schema:
           match_type: ''
           name: recipe_ingredients_fk_recipe
           on_delete: CASCADE
-          on_update: ''
+          on_update: CASCADE
           options: []
           reference_fields:
             - id
@@ -2246,7 +2246,7 @@ schema:
             - tag_group
           match_type: ''
           name: tags_fk_tag_group
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:

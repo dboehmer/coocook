@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Jan 14 16:49:54 2019
+-- Created on Mon Jan 14 17:39:30 2019
 -- 
 
 ;
@@ -210,7 +210,7 @@ CREATE TABLE tags (
   tag_group int,
   name text NOT NULL,
   FOREIGN KEY (project) REFERENCES projects(id) ON DELETE CASCADE,
-  FOREIGN KEY (tag_group) REFERENCES tag_groups(id) ON DELETE CASCADE
+  FOREIGN KEY (tag_group) REFERENCES tag_groups(id)
 );
 CREATE INDEX tags_idx_project ON tags (project);
 CREATE INDEX tags_idx_tag_group ON tags (tag_group);
@@ -247,7 +247,7 @@ CREATE TABLE dishes (
   comment text NOT NULL,
   FOREIGN KEY (meal) REFERENCES meals(id) ON DELETE CASCADE,
   FOREIGN KEY (prepare_at_meal) REFERENCES meals(id),
-  FOREIGN KEY (from_recipe) REFERENCES recipes(id) ON DELETE CASCADE
+  FOREIGN KEY (from_recipe) REFERENCES recipes(id)
 );
 CREATE INDEX dishes_idx_meal ON dishes (meal);
 CREATE INDEX dishes_idx_prepare_at_meal ON dishes (prepare_at_meal);
@@ -336,7 +336,7 @@ CREATE TABLE recipe_ingredients (
   comment text NOT NULL,
   FOREIGN KEY (article) REFERENCES articles(id),
   FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit),
-  FOREIGN KEY (recipe) REFERENCES recipes(id) ON DELETE CASCADE,
+  FOREIGN KEY (recipe) REFERENCES recipes(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX recipe_ingredients_idx_article ON recipe_ingredients (article);
