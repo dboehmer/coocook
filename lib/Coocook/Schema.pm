@@ -20,6 +20,66 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->load_namespaces( default_resultset_class => '+Coocook::Schema::ResultSet' );
 
+=head2 connection
+
+Overrides original C<connection> in order to set sane default values.
+
+=over 4
+
+=item* enable C<foreign_keys> pragma in SQLite
+
+=back
+
+=cut
+
+sub connection {
+    my $self = shift;
+
+    @_ or warn "missing connection information";
+
+    my $extra_attributes = do {
+        my $index =
+            ( @_ == 1 and ref $_[0] eq 'HASH' ) ? 0
+          : ( @_ <= 2 and ref $_[0] eq 'CODE' ) ? 1
+          :                                       3;
+
+        $_[$index] //= {};
+    };
+
+    my $on_connect_do = \$extra_attributes->{on_connect_do};
+
+    my $enable_fk = sub {
+        my $storage = shift;
+
+        if ( $storage->sqlt_type eq 'SQLite' ) {
+            return ['PRAGMA foreign_keys = 1'];
+        }
+        else {
+            return;
+        }
+    };
+
+    if ( not defined $$on_connect_do ) {
+        $$on_connect_do = [$enable_fk];
+    }
+    elsif ( ref $$on_connect_do eq 'ARRAY' ) {
+        push @$$on_connect_do, $enable_fk;
+    }
+    elsif ( ref $$on_connect_do eq 'CODE' ) {
+        my $coderef = $$on_connect_do;
+
+        $$on_connect_do = [
+            sub { $coderef->(); return () },    # ignore return value
+            $enable_fk,
+        ];
+    }
+    else {                                      # scalar
+        $$on_connect_do = [ $$on_connect_do, $enable_fk ];
+    }
+
+    return $self->SUPER::connection(@_);
+}
+
 =head2 count(@resultsets?)
 
 Returns accumulated number of rows in @resultsets. Defaults to all resultsets.
