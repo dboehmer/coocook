@@ -40,16 +40,40 @@ __PACKAGE__->has_many(
     }
 );
 
-__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'unit' );
+__PACKAGE__->has_many(
+    articles_units => 'Coocook::Schema::Result::ArticleUnit',
+    'unit',
+    {
+        cascade_delete => 0,    # units with articles_units may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
-__PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient', 'unit' );
+__PACKAGE__->has_many(
+    dish_ingredients => 'Coocook::Schema::Result::DishIngredient',
+    'unit',
+    {
+        cascade_delete => 0,    # units with dish_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
 
-__PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient', 'unit' );
+__PACKAGE__->has_many(
+    recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
+    'unit',
+    {
+        cascade_delete => 0,    # units with recipe_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
-__PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item', 'unit' );
+__PACKAGE__->has_many(
+    items => 'Coocook::Schema::Result::Item',
+    'unit',
+    {
+        cascade_delete => 0,    # units with items may not be deleted
+    }
+);
 
 before delete => sub {
     my $self = shift;

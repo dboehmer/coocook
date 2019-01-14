@@ -21,7 +21,10 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->has_many(
     articles => 'Coocook::Schema::Result::Article',
-    'shop_section'
+    'shop_section',
+    {
+        cascade_delete => 0,    # shop sections with articles may not be deleted
+    }
 );
 
 __PACKAGE__->meta->make_immutable;

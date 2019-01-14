@@ -33,7 +33,13 @@ __PACKAGE__->add_unique_constraints(
 
 __PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
 
-__PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
+__PACKAGE__->has_many(
+    owned_projects => 'Coocook::Schema::Result::Project',
+    'owner',
+    {
+        cascade_delete => 0,    # users who own projects may not be deleted
+    }
+);
 
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );

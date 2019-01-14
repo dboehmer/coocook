@@ -48,7 +48,7 @@ schema:
             - shop_section
           match_type: ''
           name: articles_fk_shop_section
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -261,7 +261,7 @@ schema:
             - unit
           match_type: ''
           name: articles_units_fk_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -323,7 +323,7 @@ schema:
             - article
           match_type: ''
           name: dish_ingredients_fk_article
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -337,7 +337,7 @@ schema:
             - unit
           match_type: ''
           name: dish_ingredients_fk_article_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -377,7 +377,7 @@ schema:
             - unit
           match_type: ''
           name: dish_ingredients_fk_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -539,7 +539,7 @@ schema:
             - prepare_at_meal
           match_type: ''
           name: dishes_fk_prepare_at_meal
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -862,7 +862,7 @@ schema:
             - article
           match_type: ''
           name: items_fk_article
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -876,7 +876,7 @@ schema:
             - unit
           match_type: ''
           name: items_fk_article_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -903,7 +903,7 @@ schema:
             - unit
           match_type: ''
           name: items_fk_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -1175,7 +1175,7 @@ schema:
             - owner
           match_type: ''
           name: projects_fk_owner
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -1569,7 +1569,7 @@ schema:
             - article
           match_type: ''
           name: recipe_ingredients_fk_article
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -1583,7 +1583,7 @@ schema:
             - unit
           match_type: ''
           name: recipe_ingredients_fk_article_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -1610,7 +1610,7 @@ schema:
             - unit
           match_type: ''
           name: recipe_ingredients_fk_unit
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:
@@ -2392,7 +2392,7 @@ schema:
             - terms
           match_type: ''
           name: terms_users_fk_terms
-          on_delete: CASCADE
+          on_delete: ''
           on_update: ''
           options: []
           reference_fields:

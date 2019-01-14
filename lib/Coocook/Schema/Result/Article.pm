@@ -26,10 +26,19 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to(
     shop_section => 'Coocook::Schema::Result::ShopSection',
-    undef, { join_type => 'LEFT' }
+    undef,
+    {
+        join_type => 'LEFT',
+    }
 );
 
-__PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item' );
+__PACKAGE__->has_many(
+    items => 'Coocook::Schema::Result::Item',
+    undef,
+    {
+        cascade_delete => 0,    # articles with items may not be deleted
+    }
+);
 
 __PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
 __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
@@ -37,10 +46,22 @@ __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
 __PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
 __PACKAGE__->many_to_many( units => articles_units => 'unit' );
 
-__PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient' );
+__PACKAGE__->has_many(
+    dish_ingredients => 'Coocook::Schema::Result::DishIngredient',
+    undef,
+    {
+        cascade_delete => 0,    # articles with dish_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
 
-__PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient' );
+__PACKAGE__->has_many(
+    recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
+    undef,
+    {
+        cascade_delete => 0,    # articles with recipe_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
 __PACKAGE__->meta->make_immutable;

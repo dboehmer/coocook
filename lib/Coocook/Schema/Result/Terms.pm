@@ -20,7 +20,13 @@ __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['valid_from'] );
 
-__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
+__PACKAGE__->has_many(
+    terms_users => 'Coocook::Schema::Result::TermsUser',
+    undef,
+    {
+        cascade_delete => 0,    # terms who have users may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( users => terms_users => 'user' );
 
 __PACKAGE__->meta->make_immutable;

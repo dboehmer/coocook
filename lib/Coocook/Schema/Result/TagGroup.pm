@@ -21,7 +21,12 @@ __PACKAGE__->add_unique_constraints( [ 'project', 'name' ] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
-__PACKAGE__->has_many( tags => 'Coocook::Schema::Result::Tag' => 'tag_group' );
+__PACKAGE__->has_many(
+    tags => 'Coocook::Schema::Result::Tag' => 'tag_group',
+    {
+        cascade_delete => 0,    # tag groups with tags may not be deleted
+    }
+);
 
 __PACKAGE__->has_many(
     tags_sorted => 'Coocook::Schema::Result::Tag' => 'tag_group',

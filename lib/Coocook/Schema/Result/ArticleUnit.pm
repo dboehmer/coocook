@@ -22,6 +22,9 @@ __PACKAGE__->has_many(
     {
         'foreign.article' => 'self.article',
         'foreign.unit'    => 'self.unit',
+    },
+    {
+        cascade_delete => 0,    # articles_units with dish_ingredients may not be deleted
     }
 );
 
@@ -30,6 +33,9 @@ __PACKAGE__->has_many(
     {
         'foreign.article' => 'self.article',
         'foreign.unit'    => 'self.unit',
+    },
+    {
+        cascade_delete => 0,    # articles_units with items may not be deleted
     }
 );
 
@@ -38,6 +44,9 @@ __PACKAGE__->has_many(
     {
         'foreign.article' => 'self.article',
         'foreign.unit'    => 'self.unit',
+    },
+    {
+        cascade_delete => 0,    # articles_units with recipe_ingredients may not be deleted
     }
 );
 

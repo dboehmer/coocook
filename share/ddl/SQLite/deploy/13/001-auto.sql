@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Jan 14 15:30:09 2019
+-- Created on Mon Jan 14 16:49:54 2019
 -- 
 
 ;
@@ -64,7 +64,7 @@ CREATE TABLE projects (
   description text NOT NULL,
   is_public bool NOT NULL DEFAULT '1',
   owner int NOT NULL,
-  FOREIGN KEY (owner) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (owner) REFERENCES users(id)
 );
 CREATE INDEX projects_idx_owner ON projects (owner);
 CREATE UNIQUE INDEX projects_name ON projects (name);
@@ -164,7 +164,7 @@ CREATE TABLE terms_users (
   user int NOT NULL,
   approved datetime NOT NULL,
   PRIMARY KEY (terms, user),
-  FOREIGN KEY (terms) REFERENCES terms(id) ON DELETE CASCADE,
+  FOREIGN KEY (terms) REFERENCES terms(id),
   FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE INDEX terms_users_idx_terms ON terms_users (terms);
@@ -182,7 +182,7 @@ CREATE TABLE articles (
   name text NOT NULL,
   comment text NOT NULL,
   FOREIGN KEY (project) REFERENCES projects(id) ON DELETE CASCADE,
-  FOREIGN KEY (shop_section) REFERENCES shop_sections(id) ON DELETE CASCADE
+  FOREIGN KEY (shop_section) REFERENCES shop_sections(id)
 );
 CREATE INDEX articles_idx_project ON articles (project);
 CREATE INDEX articles_idx_shop_section ON articles (shop_section);
@@ -246,7 +246,7 @@ CREATE TABLE dishes (
   description text NOT NULL,
   comment text NOT NULL,
   FOREIGN KEY (meal) REFERENCES meals(id) ON DELETE CASCADE,
-  FOREIGN KEY (prepare_at_meal) REFERENCES meals(id) ON DELETE CASCADE,
+  FOREIGN KEY (prepare_at_meal) REFERENCES meals(id),
   FOREIGN KEY (from_recipe) REFERENCES recipes(id) ON DELETE CASCADE
 );
 CREATE INDEX dishes_idx_meal ON dishes (meal);
@@ -284,7 +284,7 @@ CREATE TABLE articles_units (
   unit int NOT NULL,
   PRIMARY KEY (article, unit),
   FOREIGN KEY (article) REFERENCES articles(id) ON DELETE CASCADE,
-  FOREIGN KEY (unit) REFERENCES units(id) ON DELETE CASCADE
+  FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX articles_units_idx_article ON articles_units (article);
 CREATE INDEX articles_units_idx_unit ON articles_units (unit);
@@ -312,10 +312,10 @@ CREATE TABLE items (
   article int NOT NULL,
   purchased bool NOT NULL DEFAULT '0',
   comment text NOT NULL,
-  FOREIGN KEY (article) REFERENCES articles(id) ON DELETE CASCADE,
-  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit) ON DELETE CASCADE,
+  FOREIGN KEY (article) REFERENCES articles(id),
+  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit),
   FOREIGN KEY (purchase_list) REFERENCES purchase_lists(id) ON DELETE CASCADE,
-  FOREIGN KEY (unit) REFERENCES units(id) ON DELETE CASCADE
+  FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX items_idx_article ON items (article);
 CREATE INDEX items_idx_article_unit ON items (article, unit);
@@ -334,10 +334,10 @@ CREATE TABLE recipe_ingredients (
   unit int NOT NULL,
   value real NOT NULL,
   comment text NOT NULL,
-  FOREIGN KEY (article) REFERENCES articles(id) ON DELETE CASCADE,
-  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit) ON DELETE CASCADE,
+  FOREIGN KEY (article) REFERENCES articles(id),
+  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit),
   FOREIGN KEY (recipe) REFERENCES recipes(id) ON DELETE CASCADE,
-  FOREIGN KEY (unit) REFERENCES units(id) ON DELETE CASCADE
+  FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX recipe_ingredients_idx_article ON recipe_ingredients (article);
 CREATE INDEX recipe_ingredients_idx_article_unit ON recipe_ingredients (article, unit);
@@ -356,11 +356,11 @@ CREATE TABLE dish_ingredients (
   value real NOT NULL,
   comment text NOT NULL,
   item int,
-  FOREIGN KEY (article) REFERENCES articles(id) ON DELETE CASCADE,
-  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit) ON DELETE CASCADE,
+  FOREIGN KEY (article) REFERENCES articles(id),
+  FOREIGN KEY (article, unit) REFERENCES articles_units(article, unit),
   FOREIGN KEY (dish) REFERENCES dishes(id) ON DELETE CASCADE,
   FOREIGN KEY (item) REFERENCES items(id) ON DELETE CASCADE,
-  FOREIGN KEY (unit) REFERENCES units(id) ON DELETE CASCADE
+  FOREIGN KEY (unit) REFERENCES units(id)
 );
 CREATE INDEX dish_ingredients_idx_article ON dish_ingredients (article);
 CREATE INDEX dish_ingredients_idx_article_unit ON dish_ingredients (article, unit);
