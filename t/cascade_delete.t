@@ -10,25 +10,17 @@ use Test::Most;
 my $db = TestDB->new;
 
 subtest "Dish->delete" => sub {
-    my $a = count('DishIngredient');
-    ok $db->resultset('Dish')->one_row->delete, "delete()";
-    my $b = count('DishIngredient');
+    ok $db->resultset('Dish')->delete, "delete()";
 
-    cmp_ok $a, '>', $b, "also deleted dish_ingredients";
+    is $db->resultset('DishIngredient')->count => 0,
+      "also deleted dish_ingredients";
 };
 
 subtest "Recipe->delete" => sub {
-    my $a = count('RecipeIngredient');
-    ok $db->resultset('Recipe')->one_row->delete, "delete()";
-    my $b = count('RecipeIngredient');
+    ok $db->resultset('Recipe')->delete, "delete()";
 
-    cmp_ok $a, '>', $b, "also deleted recipe_ingredients";
+    is $db->resultset('RecipeIngredient')->count => 0,
+      "also deleted recipe_ingredients";
 };
 
 done_testing;
-
-sub count {
-    my $rs = shift;
-
-    return $db->resultset($rs)->count;
-}
