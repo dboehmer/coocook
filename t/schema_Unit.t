@@ -40,9 +40,10 @@ throws_ok { $kg->delete } qr/delete/, "fails while rows reference unit";
 
 note "deleting referencing rows ...";
 $db->resultset($_)->delete for qw<
-  ArticleUnit
   DishIngredient
+  Item
   RecipeIngredient
+  ArticleUnit
 >;
 
 throws_ok { $kg->delete } qr/default/, "fails because kg is default unit";

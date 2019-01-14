@@ -40,7 +40,7 @@ subtest articles_cached_units => sub {
 
     # delete all entries to make sure everything is cached
     $db->resultset('Quantity')->update( { default_unit => undef } );
-    for my $rs (qw< DishIngredient Item ArticleTag Article RecipeIngredient Unit >) {
+    for my $rs (qw< DishIngredient Item ArticleTag RecipeIngredient Article Unit >) {
         ok $db->resultset($rs)->delete, "delete all ${rs}s";
         is $db->resultset($rs)->count => 0, "count($rs) == 0";
     }
