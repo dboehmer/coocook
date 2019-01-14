@@ -75,22 +75,6 @@ __PACKAGE__->has_many(
     }
 );
 
-before delete => sub {
-    my $self = shift;
-
-    for ( $self->articles_units, $self->items, $self->dish_ingredients, $self->recipe_ingredients ) {
-        $_->exists
-          and die "unit can't be deleted because it's in use";
-    }
-
-    if ( $self->is_quantity_default ) {
-        $self->convertible_into->exists
-          and die "unit is quantity default and other units exist";
-
-        $self->quantity->update( { default_unit => undef } );
-    }
-};
-
 __PACKAGE__->meta->make_immutable;
 
 sub can_be_quantity_default {
