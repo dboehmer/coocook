@@ -38,29 +38,6 @@ __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 
-before delete => sub {    # TODO solve workaround
-    my $self = shift;
-
-    $self->purchase_lists->search_related('items')->delete;
-    $self->purchase_lists->delete;
-    $self->articles->search_related('articles_tags')->delete;
-    $self->articles->search_related('articles_units')->delete;
-    $self->meals->search_related('dishes')->search_related('ingredients')->delete;
-    $self->meals->search_related('dishes')->delete;
-    $self->meals->delete;
-    $self->recipes->search_related('ingredients')->delete;
-    $self->recipes->search_related('recipes_tags')->delete;
-    $self->recipes->delete;
-    $self->articles->delete;
-    $self->shop_sections->delete;
-    $self->quantities->update( { default_unit => undef } );    # to pass FK constraint
-    $self->units->delete;
-    $self->quantities->delete;
-    $self->tags->delete;
-    $self->tag_groups->delete;
-    $self->projects_users->delete;
-};
-
 # trigger for generating url_name[_fc]
 before store_column => sub {
     my ( $self, $column, $value ) = @_;

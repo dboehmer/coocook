@@ -77,10 +77,25 @@ subtest articles_cached_units => sub {
 subtest delete => sub {
     my $db = TestDB->new;
 
-    ok $db->resultset('Project')->find(1)->delete;
+    $db->enable_fk_checks();
 
-    is $db->count => 12    # number of records for other projects
-      and return;
+    my @projects = $db->resultset('Project')->all
+      or die "no projects";
 
-    note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
+    for my $project (@projects) {
+        ok $project->delete(), "delete project " . $project->name;
+    }
+
+    my %unaffected_sources = map { $_ => 1 } qw<
+      FAQ
+      RoleUser
+      Terms
+      User
+    >;
+
+    for my $source ( $db->sources ) {
+        $unaffected_sources{$source}
+          or is $db->resultset($source)->count => 0,
+          "table $source has zero rows";
+    }
 };
