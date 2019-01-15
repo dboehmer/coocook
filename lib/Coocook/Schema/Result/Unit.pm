@@ -25,7 +25,7 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to( quantity => 'Coocook::Schema::Result::Quantity' );
 
-# returns other units of same quantity but not $self,
+# returns other convertible units of same quantity but not $self,
 # for doc see https://metacpan.org/pod/DBIx::Class::Relationship::Base#Custom-join-conditions
 __PACKAGE__->has_many(
     convertible_into => 'Coocook::Schema::Result::Unit',
@@ -36,6 +36,19 @@ __PACKAGE__->has_many(
             "$args->{foreign_alias}.id"       => { '!='   => { -ident => "$args->{self_alias}.id" } },
             "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
             "$args->{foreign_alias}.to_quantity_default" => { '!=' => undef },
+        };
+    }
+);
+
+# returns other units of same quantity except $self--regardless if convertible or not
+__PACKAGE__->has_many(
+    other_units_of_same_quantity => 'Coocook::Schema::Result::Unit',
+    sub {
+        my $args = shift;
+
+        return {
+            "$args->{foreign_alias}.id"       => { '!='   => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
         };
     }
 );
@@ -74,6 +87,18 @@ __PACKAGE__->has_many(
         cascade_delete => 0,    # units with items may not be deleted
     }
 );
+
+# before deleting a single unit
+# we need to unset default_unit for the quantity if it's the last unit
+# because then the quantitiy's default unit cannot be switched to any other unit
+before delete => sub {
+    my $self = shift;
+
+    if ( $self->is_quantity_default ) {
+        $self->other_units_of_same_quantity->exists
+          or $self->quantity->update( { default_unit => undef } );
+    }
+};
 
 __PACKAGE__->meta->make_immutable;
 
