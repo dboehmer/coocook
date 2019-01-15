@@ -89,9 +89,7 @@ sub can_be_quantity_default {
 sub is_quantity_default {
     my $self = shift;
 
-    my $quantity = $self->quantity or return;
-
-    return ( $self->id == $quantity->get_column('default_unit') );
+    return ( $self->id == $self->quantity->get_column('default_unit') );
 }
 
 # marks this unit as its quantity's default and adjusts conversion factors of all units
