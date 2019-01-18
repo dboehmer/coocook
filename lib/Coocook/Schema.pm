@@ -26,7 +26,7 @@ Overrides original C<connection> in order to set sane default values.
 
 =over 4
 
-=item* enable C<foreign_keys> pragma in SQLite
+=item * enable C<foreign_keys> pragma in SQLite
 
 =back
 
