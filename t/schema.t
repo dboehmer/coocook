@@ -38,6 +38,25 @@ subtest statistics => sub {
 subtest fk_checks_off_do => sub {
     $db = TestDB->new;
 
+    ok $db->sqlite_pragma('foreign_keys'), "PRAGMA foreign_keys is enabled by default";
+
+    $db->fk_checks_off_do(
+        sub {
+            ok !$db->sqlite_pragma('foreign_keys'), "PRAGMA foreign_keys is disabled by fk_checks_off_do()";
+        }
+    );
+
+    ok $db->sqlite_pragma('foreign_keys'), "PRAGMA foreign_keys is enabled after fk_checks_off_do()";
+
+    ok $db->sqlite_pragma( foreign_keys => 0 ), "disable PRAGMA foreign_keys";
+    ok !$db->sqlite_pragma('foreign_keys'), "... PRAGMA foreign_keys is disabled";
+
+    ok $db->sqlite_pragma( foreign_keys => 1 ), "enable PRAGMA foreign_keys";
+    ok $db->sqlite_pragma('foreign_keys'), "... PRAGMA foreign_keys is enabled";
+
+    $db->fk_checks_off_do( sub { is join( '', @_ ) => 'abc', "fk_checks_off_do() passes args" },
+        'a' .. 'c' );
+
     {
         no warnings 'once', 'redefine';
         local *DBIx::Class::Storage::DBI::sqlt_type = sub { 'OtherDBMS' };

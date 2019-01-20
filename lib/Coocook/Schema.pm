@@ -95,28 +95,43 @@ sub count {
 }
 
 sub fk_checks_off_do {
-    my ( $self, $cb ) = @_;
+    my $self = shift;
+    my $cb   = shift;
 
-    $self->disable_fk_checks();
-    $cb->();
-    $self->enable_fk_checks();    # TODO restore original setting instead of always enable
+    my $original_state = $self->sqlite_pragma('foreign_keys');
+
+    $original_state
+      and $self->disable_fk_checks();
+
+    $cb->(@_);
+
+    $original_state
+      and $self->enable_fk_checks();
 }
 
-sub enable_fk_checks  { shift->_toggle_fk_checks( 1, @_ ) }
-sub disable_fk_checks { shift->_toggle_fk_checks( 0, @_ ) }
+sub enable_fk_checks  { shift->sqlite_pragma( foreign_keys => 1 ) }
+sub disable_fk_checks { shift->sqlite_pragma( foreign_keys => 0 ) }
 
-sub _toggle_fk_checks {
-    my ( $self, $enable ) = @_;
+sub sqlite_pragma {
+    my ( $self, $pragma, $set_value ) = @_;
 
     $self->storage->sqlt_type eq 'SQLite'
       or die "only implemented for SQLite";
 
-    my $sql = 'PRAGMA foreign_keys = ' . ( $enable ? 'ON' : 'OFF' );
+    my $sql = 'PRAGMA foreign_keys';
+
+    defined $set_value
+      and $sql .= " = '$set_value'";
 
     $ENV{DBIC_TRACE}
       and warn "$sql\n";
 
-    $self->storage->dbh_do( sub { $_[1]->do($sql) } );
+    if ( defined $set_value ) {
+        return $self->storage->dbh_do( sub { $_[1]->do($sql) } );
+    }
+    else {
+        return $self->storage->dbh_do( sub { return $_[1]->selectrow_array($sql) } );
+    }
 }
 
 sub statistics {
