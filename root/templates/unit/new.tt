@@ -1,6 +1,6 @@
 [% title = "Create unit" %]
 
-<form method="POST" action="[% create_url %]">
+<form method="post" action="[% create_url %]">
     <p>
         <label for="new_short_name">Short name:</label>
         <input  id="new_short_name" type="text" name="short_name" placeholder="short name">

@@ -15,14 +15,14 @@
     [% IF loop.first;
             '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
     ELSE %]
-            <form method="POST" action="[% ingredient.reposition_url %]" class="inline">
+            <form method="post" action="[% ingredient.reposition_url %]" class="inline">
                 <input type="submit" name="up" value="↑">
             </form>
     [% END %]
             </td>
             <td>
     [% UNLESS loop.last %]
-            <form method="POST" action="[% ingredient.reposition_url %]" class="inline">
+            <form method="post" action="[% ingredient.reposition_url %]" class="inline">
                 <input type="submit" name="down" value="↓">
             </form>
     [% END %]

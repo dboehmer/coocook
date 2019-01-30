@@ -25,14 +25,14 @@
 [% ELSE; '<td></td><td></td>'; END %]
     <td>
 [% IF unit.make_quantity_default_url %]
-        <form action="[% unit.make_quantity_default_url %]" method="POST" class="inline">
+        <form action="[% unit.make_quantity_default_url %]" method="post" class="inline">
             <input type="submit" value="Make quantity's default">
         </form>
 [% END %]
     </td>
     <td>
 [% IF unit.delete_url %]
-        <form action="[% unit.delete_url %]" method="POST" class="inline">
+        <form action="[% unit.delete_url %]" method="post" class="inline">
             <input type="submit" value="Delete">
         </form>
 [% END %]

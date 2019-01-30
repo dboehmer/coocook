@@ -25,7 +25,7 @@
             <td>[% article.tags_joined %]</td>
             <td>
     [% IF article.delete_url %]
-                <form method="POST" action="[% article.delete_url %]" class="inline">
+                <form method="post" action="[% article.delete_url %]" class="inline">
                     <input type="submit" value="Delete" title="Delete [% article.name | html %]">
                 </form>
     [% END %]

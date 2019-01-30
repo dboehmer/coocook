@@ -1,4 +1,4 @@
-<form method="POST" action="[% update_url %]">
+<form method="post" action="[% update_url %]">
     <p>
         <label for="short_name">Short name:</label>
         <input  id="short_name" type="text" name="short_name" value="[% unit.short_name | html %]">

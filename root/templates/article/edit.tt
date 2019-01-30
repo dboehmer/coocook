@@ -1,4 +1,4 @@
-<form method="POST" action="[% update_url %]">
+<form method="post" action="[% update_url %]">
     <p>Applicable units:</p>
 
     <table style="margin-left: 2em">

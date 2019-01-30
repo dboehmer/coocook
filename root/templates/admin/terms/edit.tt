@@ -1,6 +1,6 @@
 [% title = terms.in_storage ? "Edit Terms" : "Create new Terms" %]
 
-<form method="POST" action="[% submit_url %]">
+<form method="post" action="[% submit_url %]">
     <p>
         Valid from:
         <input type="date" required min="[% tomorrow.ymd %]" name="valid_from" value="[% terms.valid_from.ymd %]">

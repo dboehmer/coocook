@@ -1,6 +1,6 @@
 [% title = "Shop sections" %]
 
-<form method="POST" action="[% create_url %]">
+<form method="post" action="[% create_url %]">
 <fieldset>
     <legend>Create new Shop Section</legend>
     <input type="text" name="name" placeholder="name" value="[% last_input.name %]">
@@ -20,14 +20,14 @@
         <td>[% section.name | html %]</td>
         <td class="right-align">[% section.article_count %]</td>
         <td>
-        <form method="POST" action="[% section.update_url %]" class="inline">
+        <form method="post" action="[% section.update_url %]" class="inline">
             <input type="text" name="name" value="[% section.name | html %]">
             <input type="submit" value="Rename">
         </form>
         </td>
         <td>
     [% IF section.delete_url %]
-        <form method="POST" action="[% section.delete_url %]" class="inline">
+        <form method="post" action="[% section.delete_url %]" class="inline">
             <input type="submit" value="Delete">
         </form>
     [% END %]

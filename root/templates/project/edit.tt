@@ -14,7 +14,7 @@
         <th colspan="1" style="text-align:left">
             [% meal.name | html %]
         [% IF meal.delete_url %]
-            <form class="inline" method="POST" action="[% meal.delete_url %]">
+            <form class="inline" method="post" action="[% meal.delete_url %]">
                 <input type="submit" value="Delete meal">
             </form>
         [% END %]
@@ -28,7 +28,7 @@
     </tr>
     <tr>
         <td>
-            <form method="POST" action="[% meal.update_url %]">
+            <form method="post" action="[% meal.update_url %]">
                 <input type="text" name="name"    value="[% meal.name | html %]">
                 <input type="text" name="comment" value="[% meal.comment | html %]" placeholder="comment">
                 <input type="submit" value="Update meal">
@@ -45,14 +45,14 @@
         [% END %]
     <tr>
         <td>
-            <form action="[% dish_create_url %]" method="POST">
+            <form action="[% dish_create_url %]" method="post">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <input type="text"   name="name" placeholder="name">
                 <input type="number" name="servings" value="4">
                 <input type="submit" value="Create dish">
             </form>
         [% IF recipes.size %]
-            <form action="[% dish_from_recipe_url %]" method="POST">
+            <form action="[% dish_from_recipe_url %]" method="post">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <select name="recipe">
             [% FOREACH recipe IN recipes %]
@@ -68,7 +68,7 @@
     [% END %]
     <tr>
         <td>
-            <form action="[% meal_create_url %]" method="POST">
+            <form action="[% meal_create_url %]" method="post">
                 <input type="hidden" name="date" value="[% day.date.ymd %]">
                 <fieldset>
                     <legend>Add meal on [% display_date(day.date, {html=>1}) %]</legend>
@@ -82,7 +82,7 @@
 [% END %]
 </table>
 
-<form action="[% meal_create_url %]" method="POST">
+<form action="[% meal_create_url %]" method="post">
     <fieldset>
         <legend>Add meal</legend>
         Date:    <input type="date" name="date"    placeholder="YYYY-MM-DD" required value="[% default_date.ymd %]">

@@ -8,7 +8,7 @@
         <form class="inline" method="GET"  action="[% term.edit_url   %]"><input type="submit" value="Edit"  ></form>
     [% END;
     IF term.delete_url %]
-        <form class="inline" method="POST" action="[% term.delete_url %]"><input type="submit" value="Delete"></form>
+        <form class="inline" method="post" action="[% term.delete_url %]"><input type="submit" value="Delete"></form>
     [% END %]
     </li>
 [% END %]

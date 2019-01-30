@@ -15,11 +15,11 @@
         <td>[% quantity.name | html %]</td>
         <td>[% quantity.default_unit ? display_unit(quantity.default_unit) : '<em>none</em>' %]</td>
         <td>
-        <form class="inline" method="POST" action="[% quantity.update_url %]"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
+        <form class="inline" method="post" action="[% quantity.update_url %]"><input type="text" name="name" value="[% quantity.name | html %]"> <input type="submit" value="Rename"></form>
         </td>
         <td>
     [% IF quantity.delete_url %]
-        <form class="inline" method="POST" action="[% quantity.delete_url %]"><input type="submit" value="Delete"></form>
+        <form class="inline" method="post" action="[% quantity.delete_url %]"><input type="submit" value="Delete"></form>
     [% END %]
         </td>
     </tr>
@@ -27,7 +27,7 @@
 </tbody>
 </table>
 
-<form action="[% create_url %]" method="POST">
+<form action="[% create_url %]" method="post">
 <fieldset>
     <legend>Create new quantity</legend>
     <input type="text" name="name" placeholder="name" value="[% last_input.name %]">

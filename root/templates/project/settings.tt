@@ -1,10 +1,10 @@
-<form method="POST" action="[% update_url %]">
+<form method="post" action="[% update_url %]">
     <textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% project.description | html %]</textarea>
 
     <input type="submit" value="Update project">
 </form>
 
-<form action="[% rename_url %]" method="POST">
+<form action="[% rename_url %]" method="post">
     <fieldset>
         <legend>Rename project <em>[% project.name | html %]</em></legend>
         <p>
@@ -16,7 +16,7 @@
     </fieldset>
 </form>
 
-<form method="POST" action="[% visibility_url %]">
+<form method="post" action="[% visibility_url %]">
     <fieldset>
         <legend>Visibility</legend>
         <p>Project is: <strong>[% project.is_public ? 'public' : '🔒private' %]</strong></p>
@@ -27,7 +27,7 @@
     </fieldset>
 </form>
 
-<form method="POST" action="[% delete_url %]">
+<form method="post" action="[% delete_url %]">
     <fieldset>
         <legend>Delete project <em>[% project.name | html %]</em></legend>
         <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion of project <em>[% project.name | html %]</em>.</p>

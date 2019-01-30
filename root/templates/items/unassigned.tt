@@ -1,6 +1,6 @@
 [% title = "Unassigned items" %]
 
-<form method="POST" action="[% assign_url %]">
+<form method="post" action="[% assign_url %]">
 <table id="items">
     <tr>
         <th>Ingredient</th>

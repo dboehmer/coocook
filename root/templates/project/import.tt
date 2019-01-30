@@ -1,6 +1,6 @@
 [% title = "Import" %]
 
-<form method="POST" action="[% import_url %]">
+<form method="post" action="[% import_url %]">
     <fieldset>
         <legend>Source Project</legend>
         <select name="source_project">

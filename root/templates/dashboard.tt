@@ -6,7 +6,7 @@
 [% END %]
 </ul>
 
-<form method="POST" action="[% project_create_url %]">
+<form method="post" action="[% project_create_url %]">
 <fieldset>
     <legend>Create new project</legend>
     <input type="text" name="name" placeholder="name">

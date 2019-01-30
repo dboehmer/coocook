@@ -4,11 +4,11 @@
 <p>from recipe <a href="[% dish.recipe.url %]">[% dish.recipe.name | html %]</a></p>
 [% END %]
 
-<form method="POST" action="[% delete_url %]">
+<form method="post" action="[% delete_url %]">
     <input type="submit" value="Delete dish">
 </form>
 
-<form action="[% dish.update_url %]" method="POST">
+<form action="[% dish.update_url %]" method="post">
 <p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
 <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn't recalculate values!</em></p>
@@ -39,7 +39,7 @@
 
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]
 
-<form method="POST" action="[% dish.recalculate_url %]">
+<form method="post" action="[% dish.recalculate_url %]">
 <fieldset>
     <legend>Recalculate values</legend>
 

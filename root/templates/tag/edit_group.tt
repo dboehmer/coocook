@@ -1,10 +1,10 @@
 [% IF delete_url %]
-<form action="[% delete_url %]" method="POST">
+<form action="[% delete_url %]" method="post">
     <input type="submit" value="Delete Tag Group">
 </form>
 [% END %]
 
-<form action="[% update_url %]" method="POST">
+<form action="[% update_url %]" method="post">
     <fieldset>
         <legend>Edit Tag Group</legend>
         <p>
@@ -25,7 +25,7 @@
     [% END %]
 </p>
 
-<form action="[% create_tag_url %]" method="POST">
+<form action="[% create_tag_url %]" method="post">
     <input type="hidden" name="tag_group" value="[% tag_group.id %]">
     <fieldset>
         <legend>New Tag</legend>

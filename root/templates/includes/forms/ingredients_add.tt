@@ -1,4 +1,4 @@
-<form action="[% add_ingredient_url %]" method="POST">
+<form action="[% add_ingredient_url %]" method="post">
 <fieldset>
     <legend>Add ingredient</legend>
     <p>

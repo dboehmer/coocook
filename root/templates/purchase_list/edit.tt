@@ -33,14 +33,14 @@
                 [% ingredient.dish.meal.date.strftime('%a, %F') %]
                 [% ingredient.dish.name | html %]
                 [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
-                <form class="inline" method="POST" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
+                <form class="inline" method="post" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
             </li>
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>
         <td>
         [% FOREACH unit IN item.convertible_into %]
-            <form class="inline" method="POST" action="[% item.convert_url %]">
+            <form class="inline" method="post" action="[% item.convert_url %]">
                 <input type="hidden" name="unit" value="[% unit.id %]">
                 <input type="submit" value="[% unit.short_name | html %]" title="[% unit.long_name | html %]">
             </form>

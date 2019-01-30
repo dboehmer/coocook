@@ -1,10 +1,10 @@
 [% IF delete_url %]
-<form method="POST" action="[% delete_url %]">
+<form method="post" action="[% delete_url %]">
     <input type="submit" value="Delete Tag">
 </form>
 [% END %]
 
-<form method="POST" action="[% update_url %]">
+<form method="post" action="[% update_url %]">
     <fieldset>
         <legend>Edit Tag</legend>
         <input type="text" name="name" value="[% tag.name | html %]">

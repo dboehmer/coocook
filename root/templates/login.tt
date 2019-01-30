@@ -1,6 +1,6 @@
 [% title = "Sign In" %]
 
-<form method="POST" action="[% post_login_url %]">
+<form method="post" action="[% post_login_url %]">
     <input type="text"     name="username" placeholder="username" [% 'autofocus' IF NOT username %] value="[% username | html %]">
     <input type="password" name="password" placeholder="password" [% 'autofocus' IF     username %] value="">
     <input type="submit" value="Sign in">

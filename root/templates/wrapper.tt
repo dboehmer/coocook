@@ -59,7 +59,7 @@
 
 [% IF logout_url %]
     <li>
-        <form class="inline" method="POST" action="[% logout_url %]">
+        <form class="inline" method="post" action="[% logout_url %]">
             <input type="submit" name="logout" value="Sign out">
         </form>
     </li>

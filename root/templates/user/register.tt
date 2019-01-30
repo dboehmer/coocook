@@ -4,7 +4,7 @@
 
 <p>You will receive an e-mail with a web link to verify your e-mail address.</p>
 
-<form method="POST" action="[% post_register_url %]">
+<form method="post" action="[% post_register_url %]">
 <table>
     <tr>
         <th><label for="username">Username</label></th>

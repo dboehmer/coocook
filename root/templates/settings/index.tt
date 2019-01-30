@@ -1,6 +1,6 @@
 <p><a href="[% profile_url %]">View your profile</a></p>
 
-<form method="POST" action="[% change_display_name_url %]">
+<form method="post" action="[% change_display_name_url %]">
 <fieldset>
     <legend>Change your user's display name</legend>
     <input type="text" name="display_name" value="[% user.display_name | html %]">
@@ -8,7 +8,7 @@
 </fieldset>
 </form>
 
-<form method="POST" action="[% change_password_url %]">
+<form method="post" action="[% change_password_url %]">
 <fieldset>
     <legend>Change your password</legend>
     <input type="password" name="old_password"  placeholder="old password">

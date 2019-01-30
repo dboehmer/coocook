@@ -1,6 +1,6 @@
 [% title = "Purchase lists" %]
 
-<form method="POST" action="[% create_url %]">
+<form method="post" action="[% create_url %]">
     <fieldset>
         <legend>Create purchase list</legend>
 
@@ -31,11 +31,11 @@
         <td><a href="[% list.edit_url %]">[% list.name | html %]</a></td>
         <td>[% list.item_count %]</td>
         <td>
-            <form action="[% list.update_url %]" method="POST">
+            <form action="[% list.update_url %]" method="post">
                 <input type="text" name="name" value="[% list.name | html %]">
                 <input type="submit" value="Rename list">
             </form>
-            <form action="[% list.delete_url %]" method="POST">
+            <form action="[% list.delete_url %]" method="post">
                 <input type="submit" value="Delete list">
             </form>
         </td>
