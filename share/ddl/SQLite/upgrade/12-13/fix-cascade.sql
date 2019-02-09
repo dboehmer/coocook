@@ -2,6 +2,10 @@ BEGIN;
 
 -- ABSTRACT: recreate some tables to fix "DELETE CASCADE"-clauses
 
+-- do NOT cascade rename into referencing PKs in SQLite >=3.25.0
+-- see https://www.sqlite.org/lang_altertable.html
+PRAGMA legacy_alter_table = 1;
+
 --
 -- Table: articles
 --
