@@ -102,7 +102,8 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->escape_title( Recipe => $recipe->name );
 }
 
-sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new') RequiresCapability('edit_project') {
+sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
+  RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -132,7 +133,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 sub create : POST Chained('submenu') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $name = $c->req->params->get('name');
+    my $name       = $c->req->params->get('name');
     my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipes" } );
     if ($input_okay) {
         my $recipe = $c->project->create_related(

@@ -29,7 +29,7 @@ schema_from_schema_loader(
             my $first = $rows->first
               or next;
 
-            my $project_id = $first->get_column('project');                  # randomly selected by 001.sql
+            my $project_id     = $first->get_column('project');              # randomly selected by 001.sql
             my @other_projects = grep { $_->id != $project_id } @projects;
 
             # limit to currently existing rows
@@ -122,7 +122,7 @@ schema_from_schema_loader(
                 my $project = $row->get_column('project');
 
                 while ( my ( $column => $rs2 ) = each %$rels ) {
-                    my $old_id = $row->get_column($column) // next;
+                    my $old_id = $row->get_column($column)     // next;
                     my $new_id = $map{$rs2}{$old_id}{$project} // next;
 
                     $row->set_columns( { $column => $new_id } );

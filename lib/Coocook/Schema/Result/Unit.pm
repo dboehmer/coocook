@@ -8,10 +8,10 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("units");
 
 __PACKAGE__->add_columns(
-    id                  => { data_type => 'int',  is_auto_increment => 1 },
+    id                  => { data_type => 'int', is_auto_increment => 1 },
     project             => { data_type => 'int' },
-    quantity            => { data_type => 'int',  is_nullable       => 0 },
-    to_quantity_default => { data_type => 'real', is_nullable       => 1 },
+    quantity            => { data_type => 'int', is_nullable => 0 },
+    to_quantity_default => { data_type => 'real', is_nullable => 1 },
     space               => { data_type => 'bool' },
     short_name          => { data_type => 'text' },
     long_name           => { data_type => 'text' },
@@ -33,9 +33,9 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
-            "$args->{foreign_alias}.quantity"            => { -ident => "$args->{self_alias}.quantity" },
-            "$args->{foreign_alias}.to_quantity_default" => { '!='   => undef },
+            "$args->{foreign_alias}.id"       => { '!='   => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
+            "$args->{foreign_alias}.to_quantity_default" => { '!=' => undef },
         };
     }
 );
@@ -106,8 +106,8 @@ sub make_quantity_default {
     # collect convertible units of this quantity except $self and $orig
     my $others = $quantity->units->search(
         {
-            id => { -not_in => [ $self->id, $orig->id ] },
-            to_quantity_default => { '!=' => undef },    # IS NOT NULL
+            id                  => { -not_in => [ $self->id, $orig->id ] },
+            to_quantity_default => { '!='    => undef },                      # IS NOT NULL
         }
     );
 

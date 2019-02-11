@@ -10,10 +10,10 @@ __PACKAGE__->table("articles");
 __PACKAGE__->add_columns(
     id                => { data_type => 'int', is_auto_increment => 1 },
     project           => { data_type => 'int' },
-    shop_section      => { data_type => 'int', is_nullable       => 1 },
-    shelf_life_days   => { data_type => 'int', is_nullable       => 1 },
-    preorder_servings => { data_type => 'int', is_nullable       => 1 },
-    preorder_workdays => { data_type => 'int', is_nullable       => 1 },
+    shop_section      => { data_type => 'int', is_nullable => 1 },
+    shelf_life_days   => { data_type => 'int', is_nullable => 1 },
+    preorder_servings => { data_type => 'int', is_nullable => 1 },
+    preorder_workdays => { data_type => 'int', is_nullable => 1 },
     name              => { data_type => 'text' },
     comment           => { data_type => 'text' },
 );
@@ -46,7 +46,7 @@ __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 __PACKAGE__->meta->make_immutable;
 
 sub unit_ids_joined { # TODO move to ResultSet::Unit or optimize for non-cached 'units' relationship
-    my $self = shift;
+    my $self      = shift;
     my $seperator = shift || ',';
 
     return join $seperator, map { $_->id } $self->units;

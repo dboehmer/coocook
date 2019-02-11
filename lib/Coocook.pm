@@ -212,7 +212,7 @@ EOT
             charset      => 'utf-8',
             encoding     => 'quoted-printable',
         },
-        sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
+        sender          => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
         template_prefix => 'email',
     },
 
