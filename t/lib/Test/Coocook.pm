@@ -39,7 +39,11 @@ sub new {
 
     my $schema = delete $args{schema};
 
-    my $self = $class->SUPER::new( catalyst_app => 'Coocook', %args );
+    my $self = $class->SUPER::new(
+        catalyst_app => 'Coocook',
+        strict_forms => 1,           # change default to true
+        %args
+    );
 
     if ($schema) {
         Coocook->model('DB')->schema->storage( $schema->storage );
@@ -297,21 +301,6 @@ sub status_is {
 
     is $self->response->code => $expected,
       $name || "Response has status code $expected";
-}
-
-=head2 submit_form(...)
-
-Overrides the method from L<WWW::Mechanize> to set C<strict_forms> to true by default.
-
-=cut
-
-sub submit_form {
-    my ( $self, %args ) = @_;
-
-    exists $args{strict_forms}
-      or $args{strict_forms} = 1;
-
-    return $self->SUPER::submit_form(%args);
 }
 
 1;
