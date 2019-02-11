@@ -80,6 +80,10 @@ on 'configure' => sub {
 };
 
 on 'develop' => sub {
+  requires "Test::PerlTidy" => "0";
+};
+
+on 'develop' => sub {
   recommends "Catalyst::Plugin::StackTrace" => "0";
   recommends "Catalyst::Restarter" => "0";
   recommends "CatalystX::LeakChecker" => "0";
