@@ -1,3 +1,14 @@
+# Links for German Perl Workshop 2019
+
+| Component | Implementation in Coocook |
+| --- | --- |
+| `MySchema::Result::User->has_role()` | [`Coocook::Schema::Result::User`](lib/Coocook/Schema/Result/User.pm#L88) |
+| `MySchema::Result::User->has_project_role()` | [`Coocook::Schema::Result::User`](lib/Coocook/Schema/Result/User.pm#L102) |
+| `MyApp::ActionRole::RequiresCapability` | [`Coocook::ActionRole::RequiresCapability`](lib/Coocook/ActionRole/RequiresCapability.pm) |
+| `MyApp->has_capability()` | [`Coocook::Helpers`](lib/Coocook/Helpers.pm#L56) |
+| `MyApp::Controller` | [`Cooocook::Controller`](lib/Coocook/Controller.pm#L12) |
+| `MyApp::Model::Authorization` | [`Coocook::Model::Authorization`](lib/Coocook/Model/Authorization.pm) <br> [`t/model_Authorization.t`](t/model_Authorization.t) |
+
 # Coocook
 
 [![build status](https://travis-ci.org/dboehmer/coocook.svg?branch=master)](https://travis-ci.org/dboehmer/coocook)
