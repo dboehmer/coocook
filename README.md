@@ -1,4 +1,8 @@
-# Links for German Perl Workshop 2019
+# German Perl Workshop 2019: *rule-based authorization in Catalyst*
+
+[Presentation slides](catalyst-authz.html)
+
+Links to implementation in Coocook:
 
 | Component | Implementation in Coocook |
 | --- | --- |

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-code, .remark-slide-content { font-size: 25px  }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# *Darf der das?*
+
+# Regelbasierte Autorisierung in Catalyst
+
+# (rule-based authorization in Catalyst)
+
+<span style="color: DarkRed">Links to code on github.com/dboehmer/coocook/tree/gpw2019</a>
+
+German Perl Workshop 2019
+
+Daniel Böhmer
+
+---
+
+class: center, middle
+
+<img src="coocook.png" style="height: 500px">
+
+## Coocook.org&mdash;collect recipes and make food plans
+
+---
+
+## Authorization&mdash;simple question
+
+    if( $allowed ) {
+        # do whatever
+    }
+    else {
+        # show error
+    }
+
+---
+
+## Authorization&mdash;simple question
+
+    if( not $allowed ) {
+        # show error and return
+    }
+
+    # do whatever
+
+---
+
+## Difficult to answer
+
+- Is somebody logged in?
+
+--
+
+- identity of user
+
+--
+
+- Does user have global role?
+
+--
+
+- Does user have role on item?
+
+--
+
+- state of item
+
+---
+
+class: center, middle
+
+# How does it work in Catalyst?
+
+---
+
+## Catalyst controllers
+
+    package MyApp::Controller::FAQ
+
+    sub index {
+        my ( $self, $c ) = @_;
+
+        ...
+    }
+
+---
+
+## Catalyst controllers
+
+    package MyApp::Controller::FAQ
+
+    sub index : GET Path {    # /faq/
+        my ( $self, $c ) = @_;
+
+        ...
+    }
+
+---
+
+## Catalyst controllers
+
+    package MyApp::Controller::FAQ
+
+    sub index : GET Path {    # /faq/
+        my ( $self, $c ) = @_;
+
+        ...
+    }
+
+    sub show : GET Path Args(1) {    # /faq/$id
+        my ( $self, $c, $id ) = @_;
+
+        ...
+    }
+
+---
+
+## Example: dashboard
+
+    sub dashboard : GET Path {
+        my ( $self, $c ) = @_;
+
+        ...
+    }
+
+---
+
+## Is anyone logged in?
+
+    sub dashboard : GET Path {
+        my ( $self, $c ) = @_;
+
+        my $user = $c->user();
+
+        if( not $user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        ...
+    }
+
+---
+
+## Example: show item
+
+    sub show_item : GET Path('item') Args(1) {
+        my ( $self, $c, $item_id ) = @_;
+
+        my $user = $c->user();
+
+        if( not $user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        my $item = $c->model('DB::Item')->find($item_id);
+
+        ...
+    }
+
+---
+
+## Is the *right* user logged in?
+
+    sub show_item : GET Path('item') Args(1) {
+        my ( $self, $c, $item_id ) = @_;
+
+        my $user = $c->user();
+
+        if( not $user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        my $item = $c->model('DB::Item')->find($item_id);
+
+        if( $item->owner_id() != $user->id() ) {
+            $c->detach('/error/forbidden');
+        }
+
+        ...
+    }
+
+---
+
+## Example: admin panel
+
+    sub admin : GET Path {
+        my ( $self, $c ) = @_;
+
+        my $user = $c->user();
+
+        if( not $user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        ...
+    }
+
+---
+
+## Does the user have a certain role?
+
+    sub admin : GET Path {
+        my ( $self, $c ) = @_;
+
+        my $user = $c->user();
+
+        if( not $user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        if( $user->role() ne 'admin' ) {
+            $c->error('/error/forbidden');
+        }
+
+        ...
+    }
+
+---
+
+## Example: edit an item
+
+    sub edit_item : POST Path('item') Args(1) {
+        my ( $self, $c, $item_id ) = @_;
+
+        if( not $c->user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        my $item = $c->model('DB::Item')->find($item_id);
+
+        ...
+    }
+
+---
+
+## Does the user have a role for this item?
+
+    sub edit_item : POST Path('item') Args(1) {
+        my ( $self, $c, $item_id ) = @_;
+
+        if( not $c->user ) {
+            $c->response->redirect( $c->uri_for('/login') );
+            $c->detach();
+        }
+
+        my $item = $c->model('DB::Item')->find($item_id);
+
+        my $relationship = $item->search_related( items_users => {
+            user_id => $c->user->id(),
+            type    => 'editor',
+        } );
+
+        if( not $relationship ) {
+            $c->detach('/error/forbidden');
+        }
+
+        ...
+    }
+
+---
+
+class: center, middle
+
+# Prior Art
+
+---
+
+## Catalyst::Plugin::Authorization::Roles
+
+* can check only literal roles
+
+* provides only methods for checks
+
+---
+
+## Catalyst::Plugin::Authorization::ACL
+
+* allows flexible rules
+
+* has a package global list of rules, not linked to action methods
+
+---
+
+## Catalyst::Plugin::Authorization::Abilities
+
+* provides only methods for checks
+
+* supports actions allowed by roles
+
+* supports superuser by defining 1 superuser ID
+
+* no rules dependending on data
+
+---
+
+## Catalyst::ActionRole::ACL
+
+* method modifier for action roles
+
+* only unflexible literal roles
+
+Example:
+
+    sub action : Does(ACL) RequiresRole(Foo) { ... }
+    # checks $c->user()->has_role('Foo')
+
+    $c->can_visit('/foo_action')
+    # checks $c->user->has_role( $foo_action->requires_role )
+
+---
+
+class: center, middle
+
+## Links to code on
+
+## github.com/dboehmer/coocook/tree/gpw2019
+
+---
+
+## Controllers
+
+    package MyApp::Controller::Project;
+
+    sub show : GET Path RequiresCapability('view_project') { ... }
+
+--
+
+    sub edit : GET Path RequiresCapability('edit_project') { ... }
+
+---
+
+## Controllers with chained actions
+
+    package MyApp::Controller::Project;
+
+    sub base : Chain('/') CaptureArgs(1) {
+        my ( $self, $c, $id ) = @_;
+
+        my $project = $c->model('DB::Project')->find($id);
+
+        $c->stash->{project} = $project;
+    }
+
+--
+
+    sub show : GET Chain('base') RequiresCapability('view_project') { ... }
+
+    sub edit : GET Chain('base') RequiresCapability('edit_project') { ... }
+
+---
+
+## The ruleset
+
+    package Coocook::Model::Authorization;
+
+    my @rules = (
+      {
+        needs_input  => ['user'],
+        rule         => sub { !!shift->{user} },  # simply: is anyone logged in?
+        capabilities =>
+          [qw< dashboard logout create_project view_user_settings
+               change_display_name change_password >],
+      },
+      ...
+
+---
+
+## The ruleset
+
+      ...
+      {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+           my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+           return (
+                    $user->has_role('site_admin')
+                 or $user->has_any_project_role( $project, qw< editor admin owner > )
+           );
+        },
+        capabilities => [qw< edit_project import_into_project >],
+      },
+
+---
+
+## The ruleset
+
+    package Coocook::Model::Authorization;
+
+    sub has_capability {
+        my ( $self, $capability, $stash ) = @_;
+
+        ...
+    }
+
+---
+
+## Schema methods
+
+- `MySchema::Result::User->has_role($role)`
+
+- `MySchema::Result::User->has_project_role( $project, $role )`
+
+---
+
+## How to access Catalyst's stash to generic model?
+
+    package Coocook;
+
+    sub has_capability {
+        my ( $c, $capability, $input ) = @_;
+
+        $input            //= {};
+        $input->{project} //= $c->stash->{project};
+        $input->{user}    //= $c->user;
+
+        return $c->model('Authorization')->has_capability( $capability, $input );
+    }
+
+---
+
+## Method modifier for controller actions
+
+    package Coocook::ActionRole::RequiresCapability;
+
+    around BUILD => sub {
+        my ( $class, $args ) = @_;
+
+        my $capabilities = $args->{attributes}{RequiresCapability};
+
+        # sanity checks
+    };
+
+---
+
+## Method modifier for controller actions
+
+    ...
+    around execute => sub {
+        my $orig = shift;
+        my $self = shift;
+        my ( $controller, $c ) = @_;
+
+        if ( my $capabilities = $self->attributes->{RequiresCapability} ) {
+            for my $capability (@$capabilities) {
+                next if $c->has_capability( $capability, $c->stash );
+
+                # display error page
+            }
+        }
+
+        $self->$orig(@_);
+    };
+
+---
+
+## Method modifier for controller actions
+
+Display error page:
+
+    ...
+
+    # not logged in? try login and redirect here again
+    if ( $c->req->method eq 'GET' and not $c->user ) {
+        $c->redirect_detach( $c->uri_for_action( '/login', { redirect => $c->current_uri_local_part } ) );
+    }
+
+    $c->detach('/error/forbidden');
+
+    ...
+
+---
+
+## Applying the role to all actions
+
+    package Coocook::Controller;
+
+    sub COMPONENT {
+        my ( $class, $app, $args ) = @_;
+
+        $class->config(
+            action_roles => [
+                '~RequiresCapability',
+            ]
+        );
+
+        return $class->new( $app, $args );
+    }
+
+---
+
+## Applying the role to all actions
+
+    package Coocook::Controller::Project;
+
+    BEGIN { extends 'Coocook::Controller' }
+
+---
+
+## What do we get out of it?
+
+* generic, reuseable (outside of Catalyst) ruleset
+
+--
+
+* get rid of error-prone, tedious conditionals
+
+--
+
+* limit controller actions declaratively
+
+--
+
+* displays links/forms only if action is available
+
+---
+
+class: center, middle
+
+# Thank you! Any questions?
+
+Links to code on github.com/dboehmer/coocook/tree/gpw2019
+
+Daniel Böhmer
+
+post@daniel-boehmer.de | XING | LinkedIn
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create( {
+        ratio:             '16:9',
+        highlightLanguage: 'perl',
+      } );
+    </script>
+  </body>
+</html>
