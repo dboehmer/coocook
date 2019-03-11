@@ -7,6 +7,7 @@
 | `MyApp::ActionRole::RequiresCapability` | [`Coocook::ActionRole::RequiresCapability`](lib/Coocook/ActionRole/RequiresCapability.pm) |
 | `MyApp->has_capability()` | [`Coocook::Helpers`](lib/Coocook/Helpers.pm#L56) |
 | `MyApp::Controller` | [`Cooocook::Controller`](lib/Coocook/Controller.pm#L12) |
+| `MyApp::Controller::Foo` | [`Coocook::Controller::Project`](lib/Coocook/Controller/Project.pm) |
 | `MyApp::Model::Authorization` | [`Coocook::Model::Authorization`](lib/Coocook/Model/Authorization.pm) <br> [`t/model_Authorization.t`](t/model_Authorization.t) |
 
 # Coocook
