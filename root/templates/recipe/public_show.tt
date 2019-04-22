@@ -1,0 +1,60 @@
+[% escape_title( 'Recipe', recipe.name ) %]
+
+[% IF project_url %]
+    <p>from project <a href="[% project_url %]">[% recipe.project.name | html %]</a>
+[% ELSE %]
+    <p>from a private project</p>
+[% END %]
+
+<form method="get" action="">
+Servings:
+<input type="number" name="servings" min="1" value="[% servings %]">
+<input type="submit" value="Show">
+</form>
+
+<p>Tags:
+<ul>
+[% FOR tag IN recipe.tags %]
+    <li>&#x1f3f7;[% tag.name | html %]</li>
+[% END %]
+</ul>
+</p>
+
+[% BLOCK ingredients_table;
+    IF ingredients.size %]
+<table>
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Article</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+[% FOR ingredient IN ingredients %]
+        <tr>
+            <td>[% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]</td>
+            <td>[% ingredient.article.name | html %]</td>
+            <td>[% ingredient.comment | html %]</td>
+        </tr>
+[% END %]
+    </tbody>
+</table>
+    [% END;
+END %]
+
+[% USE Markdown %]
+
+[% IF recipe.preparation OR prepared_ingredients.size %]
+    <h2>Preparation</h2>
+
+    [% PROCESS ingredients_table ingredients=prepared_ingredients %]
+
+    [% recipe.preparation | markdown %]
+[% END %]
+
+<h2>Description</h2>
+
+[% PROCESS ingredients_table ingredients=not_prepared_ingredients %]
+
+[% recipe.description | markdown %]

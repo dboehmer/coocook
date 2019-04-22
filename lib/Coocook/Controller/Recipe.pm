@@ -49,13 +49,55 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
             $recipe->{project} = $project;
 
             $recipe->{url} =
-              $c->uri_for( $self->action_for('edit'), [ $project->{url_name}, $recipe->{id} ] );
+              $c->uri_for( $self->action_for('public_show'), [ $recipe->{id} ] );
         }
     }
 
     $c->stash(
         recipes => \@recipes,
         title   => "Public Recipes",
+    );
+}
+
+sub public_show : GET HEAD Chained('/base') PathPart('recipe') Args(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $recipe = $c->model('DB::Recipe')->find($id)
+      or $c->detach('/error/not_found');
+
+    my $project = $recipe->project;
+
+    my $factor = 1;
+    my $servings;
+
+    if ( $servings = $c->req->params->get('servings') ) {
+        $factor = $servings / $recipe->servings;
+    }
+
+    $servings ||= $recipe->servings;
+
+    my %ingredients;
+
+    for my $block (qw< prepared not_prepared >) {
+        my $ingredients = $recipe->ingredients->$block();
+
+        $ingredients{$block} = $c->model('Ingredients')->new(
+            factor      => $factor,
+            ingredients => $ingredients,
+            project     => $project,
+        )->as_arrayref;
+    }
+
+    # link to project if project is visible to public/user
+    if ( $project->is_public or $c->has_capability( view_project => { project => $project } ) ) {
+        $c->stash( project_url => $c->uri_for_action( '/project/show', [ $project->url_name ] ) );
+    }
+
+    $c->stash(
+        recipe                   => $recipe,
+        servings                 => $servings,
+        prepared_ingredients     => $ingredients{prepared},
+        not_prepared_ingredients => $ingredients{not_prepared},
     );
 }
 
