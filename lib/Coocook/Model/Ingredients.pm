@@ -18,6 +18,12 @@ has all_units => (
     isa => 'ArrayRef[Coocook::Schema::Result::Unit]',
 );
 
+has factor => (
+    is      => 'rw',
+    isa     => 'Num',
+    default => 1,
+);
+
 has ingredients => (
     is  => 'ro',
     isa => 'Coocook::Schema::ResultSet::DishIngredient | Coocook::Schema::ResultSet::RecipeIngredient',
@@ -68,7 +74,7 @@ sub as_arrayref {
               {
                 id      => $ingredient->id,
                 prepare => $ingredient->prepare,
-                value   => $ingredient->value,
+                value   => $ingredient->value * $self->factor,
                 comment => $ingredient->comment,
                 unit    => $units{ $ingredient->get_column('unit') },
                 article => $articles{ $ingredient->get_column('article') },
