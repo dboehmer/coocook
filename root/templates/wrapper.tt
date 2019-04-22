@@ -85,8 +85,6 @@
     <li><a href="[% homepage_url %]">Start</a></li>
 [% END %]
 
-    <li><a href="[% public_recipes_url %]">Public Recipes</a></li>
-
 [% IF project_urls %]
     |
     <li><a href="[% project_urls.project %]">Project</a></li>
@@ -133,6 +131,13 @@ END %]
 </main>
 
 <footer>
+    <nav>
+        <ul>
+            <h4>Browse</h4>
+            <li><a href="[% public_recipes_url %]">Recipes</a></li>
+        </ul>
+    </nav>
+
     <nav>
 [% IF project_urls %]
         <ul>
