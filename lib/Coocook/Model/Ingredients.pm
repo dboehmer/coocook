@@ -31,6 +31,24 @@ has project => (
     builder => 'build_project',
 );
 
+around BUILDARGS => sub {
+    my $orig  = shift;
+    my $class = shift;
+
+    my %args = @_;
+
+    if ( my $dish = delete $args{dish} ) {
+        $args{project}     = $dish->project;
+        $args{ingredients} = $dish->ingredients;
+    }
+    elsif ( my $recipe = delete $args{recipe} ) {
+        $args{project}     = $recipe->project;
+        $args{ingredients} = $recipe->ingredients;
+    }
+
+    return $class->$orig(%args);
+};
+
 sub build_project { shift->ingredients->one_row->project }
 
 sub as_arrayref {
