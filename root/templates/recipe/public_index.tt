@@ -1,3 +1,10 @@
+[% IF user;
+    title = "Recipes";
+ELSE;
+    title = "Public Recipes" %]
+    <div>These are <em>only</em> public recipes. <a href="[% login_url %]">Sign in</a> to view private recipes, too.</div>
+[% END %]
+
 <ul>
 [% FOR recipe IN recipes %]
     <li>

@@ -18,6 +18,7 @@ __PACKAGE__->load_components(
       Helper::ResultSet::IgnoreWantarray
       Helper::ResultSet::Me
       Helper::ResultSet::OneRow
+      Helper::ResultSet::SetOperations
       Helper::ResultSet::Shortcut::HRI
       >
 );

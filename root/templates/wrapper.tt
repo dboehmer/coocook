@@ -134,7 +134,7 @@ END %]
     <nav>
         <ul>
             <h4>Browse</h4>
-            <li><a href="[% public_recipes_url %]">Recipes</a></li>
+            <li><a href="[% recipes_url %]">Recipes</a></li>
         </ul>
     </nav>
 

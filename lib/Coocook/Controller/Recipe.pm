@@ -18,10 +18,15 @@ Catalyst Controller.
 
 =cut
 
+# TODO rename sub because this shows private recipes, too
 sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
     my ( $self, $c ) = @_;
 
     my $recipes = $c->model('DB::Recipe')->public;
+
+    if ( my $user = $c->user ) {
+        $recipes = $recipes->union( $user->projects->search_related('recipes') );
+    }
 
     my @recipes = $recipes->hri->all;
 
@@ -53,10 +58,7 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
         }
     }
 
-    $c->stash(
-        recipes => \@recipes,
-        title   => "Public Recipes",
-    );
+    $c->stash( recipes => \@recipes );
 }
 
 sub public_show : GET HEAD Chained('/base') PathPart('recipe') Args(1) {

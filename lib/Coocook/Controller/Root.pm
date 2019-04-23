@@ -106,10 +106,10 @@ sub auto : Private {
     }
 
     $c->stash(
-        homepage_url       => $c->uri_for_action('/index'),
-        public_recipes_url => $c->uri_for_action('/recipe/public_index'),
-        statistics_url     => $c->uri_for_action('/statistics'),
-        about_url          => $c->uri_for_action('/about'),
+        homepage_url   => $c->uri_for_action('/index'),
+        recipes_url    => $c->uri_for_action('/recipe/public_index'),
+        statistics_url => $c->uri_for_action('/statistics'),
+        about_url      => $c->uri_for_action('/about'),
     );
 
     if ( my $base = $c->config->{canonical_url_base} ) {
