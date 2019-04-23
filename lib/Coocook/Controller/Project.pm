@@ -16,6 +16,32 @@ Catalyst Controller.
 
 =head1 METHODS
 
+=cut
+
+# TODO rename because this also shows private projects if logged in
+sub public_index : GET HEAD Chained('/base') PathPart('projects') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $projects = $c->model('DB::Project')->public;
+
+    if ( my $user = $c->user ) {
+        $projects = $projects->union(
+
+            # without search() exception:
+            # Can't locate object method "_resolved_attrs" via package "Coocook::Model::DB::Project"
+            $user->projects->search()
+        );
+    }
+
+    my @projects = $projects->sorted->hri->all;
+
+    for my $project (@projects) {
+        $project->{url} = $c->uri_for( $self->action_for('show'), [ $project->{url_name} ] );
+    }
+
+    $c->stash( projects => \@projects );
+}
+
 =head2 base
 
 Chain action that captures the project ID and stores the
