@@ -8,12 +8,11 @@ use warnings;
 use Carp;
 
 # TODO invent some syntax sugar to avoid defining variables twice
-#      and extract them from %{ $_[0] } by hand
+#      and extract them from %$_ by hand
 #
 # - unfortunately Perl::Tidy doesn't work with Method::Signatures
 # - method attributes like sub foo : Foo Bar {} work but need string parsing
 # - how to define lexical variables like $project before calling the anonymous sub?
-# maybe set $_ to [@vars] in the order of $rule->{needs_input} ??
 my @rules = (
     {
         needs_input  => [],
@@ -22,14 +21,14 @@ my @rules = (
     },
     {
         needs_input => ['user'],
-        rule        => sub { !!shift->{user} },    # simply: is anyone logged in?
+        rule        => sub { !!$_->{user} },    # simply: is anyone logged in?
         capabilities =>
           [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
     },
     {
-        needs_input => ['project'],                # optional: user
+        needs_input => ['project'],             # optional: user
         rule        => sub {
-            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
                 $project->is_public
                   or (
@@ -44,7 +43,7 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            my ( $project, $user ) = @$_{ 'project', 'user' };
             $project->archived and return;
             return (
                      $user->has_role('site_owner')
@@ -56,7 +55,7 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
                      $user->has_role('site_owner')
                   or $user->has_any_project_role( $project, qw< admin owner > )
@@ -67,7 +66,7 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user, $capability ) = @{ +shift }{ 'project', 'user', 'capability' };
+            my ( $project, $user, $capability ) = @$_{ 'project', 'user', 'capability' };
 
             return if $capability eq 'archive_project'   and $project->archived;
             return if $capability eq 'unarchive_project' and not $project->archived;
@@ -85,7 +84,7 @@ my @rules = (
     {
         needs_input => [ 'project', 'permission', 'user' ],
         rule        => sub {
-            my ( $project, $permission, $user ) = @{ +shift }{ 'project', 'permission', 'user' };
+            my ( $project, $permission, $user ) = @$_{ 'project', 'permission', 'user' };
             return (  $permission->user->id != $user->id
                   and $permission->role ne 'owner'
                   and ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) ) );
@@ -94,13 +93,13 @@ my @rules = (
     },
     {
         needs_input  => 'user',
-        rule         => sub { shift->{user}->has_any_role( 'site_owner', 'private_projects' ) },
+        rule         => sub { $_->{user}->has_any_role( 'site_owner', 'private_projects' ) },
         capabilities => 'create_private_project',
     },
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
                 $user->has_role('site_owner')
                   or ( $user->has_role('private_projects') and $user->has_project_role( $project, 'owner' ) )
@@ -111,7 +110,7 @@ my @rules = (
     {
         needs_input => [ 'user', 'project', 'permission' ],
         rule        => sub {
-            my ( $project, $user, $permission ) = @{ +shift }{ 'project', 'user', 'permission' };
+            my ( $project, $user, $permission ) = @$_{ 'project', 'user', 'permission' };
 
             # can be transferred only to admin
             $permission->role eq 'admin' or return;
@@ -129,7 +128,7 @@ my @rules = (
     {
         needs_input => [ 'user', 'project', 'recipe' ],
         rule        => sub {
-            my ( $user, $project, $recipe ) = @{ +shift }{ 'user', 'project', 'recipe' };
+            my ( $user, $project, $recipe ) = @$_{ 'user', 'project', 'recipe' };
 
             # recipe must not be in target project
             $recipe->get_column('project') != $project->id
@@ -145,13 +144,13 @@ my @rules = (
     },
     {
         needs_input  => ['user'],
-        rule         => sub { shift->{user}->has_role('site_owner') },
+        rule         => sub { $_->{user}->has_role('site_owner') },
         capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
     },
     {
         needs_input => [ 'user', 'user_object' ],
         rule        => sub {
-            my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
+            my ( $user, $user_object ) = @$_{ 'user', 'user_object' };
             $user->has_role('site_owner') or return;
             $user->id != $user_object->id or return;
             return 1;
@@ -161,7 +160,7 @@ my @rules = (
     {
         needs_input => [ 'user', 'user_object' ],
         rule        => sub {
-            my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
+            my ( $user, $user_object ) = @$_{ 'user', 'user_object' };
             $user->has_role('site_owner')             or return;
             $user_object->status_code eq 'unverified' or return;
             return 1;
@@ -235,7 +234,9 @@ sub has_capability {
 
     local $input->{capability} = $capability;
 
-    return $rule->{rule}->($input) ? 1 : ();
+    local $_ = $input;
+
+    return $rule->{rule}->() ? 1 : ();
 }
 
 sub project_roles { qw< viewer editor admin owner > }
