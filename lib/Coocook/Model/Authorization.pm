@@ -127,6 +127,23 @@ my @rules = (
         capabilities => 'transfer_project_ownership',
     },
     {
+        needs_input => [ 'user', 'project', 'recipe' ],
+        rule        => sub {
+            my ( $user, $project, $recipe ) = @{ +shift }{ 'user', 'project', 'recipe' };
+
+            # recipe must not be in target project
+            $recipe->get_column('project') != $project->id
+              or return;
+
+            return 1 if $user->has_role('site_owner');
+
+            return 1 if $user->has_any_project_role( $project, qw< viewer editor admin owner > );
+
+            return;
+        },
+        capabilities => 'import_recipe',
+    },
+    {
         needs_input  => ['user'],
         rule         => sub { shift->{user}->has_role('site_owner') },
         capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],

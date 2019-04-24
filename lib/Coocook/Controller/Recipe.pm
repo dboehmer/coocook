@@ -108,8 +108,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All recipes", action => 'recipe/index' },
-            { text => "Add recipe",  action => 'recipe/new_recipe' },
+            { text => "All recipes",    action => 'recipe/index' },
+            { text => "Add recipe",     action => 'recipe/new_recipe' },
+            { text => "Import recipes", action => 'recipe/importable_recipes' },
         ]
     );
 }
@@ -325,6 +326,47 @@ sub redirect : Private {
     else {
         $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
     }
+}
+
+sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') Args(0)
+  RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    my $recipes = $c->model('DB::Recipe')->public;    # public projects
+
+    $recipes = $recipes->union( $c->user->projects->search_related('recipes') )    # + user's projects
+      ->search( { $recipes->me('project') => { '!=' => $c->project->id } } );      # - this project
+
+    my @recipes = $recipes->search( undef, { prefetch => { project => 'owner' } } )->all;
+
+    for my $recipe (@recipes) {
+        $recipe->{url} = $c->uri_for( $self->action_for('public_show'), [ $recipe->id ] );
+
+        $recipe->project->{url} ||= $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
+
+        $recipe->project->owner->{url} ||=
+          $c->uri_for_action( '/user/show', [ $recipe->project->owner->name ] );
+
+        $recipe->{import_url} = $c->project_uri( $self->action_for('import_preview'), $recipe->id );
+    }
+
+    $c->stash( recipes => \@recipes );
+}
+
+sub external_recipe_base : Chained('/project/base') PathPart('recipes/import') CaptureArgs(1) {
+    my ( $self, $c, $id ) = @_;
+
+    my $external_recipes =
+      $c->model('DB::Recipe')->search( { project => { '!=' => $c->project->id } } );
+
+    $c->stash( recipe => $external_recipes->find($id) || $c->detach('/error/not_found') );
+}
+
+sub import_preview : GET HEAD Chained('external_recipe_base') PathPart('') Args(0)
+  RequiresCapability('import_recipe') {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe};
 }
 
 sub check_name : Private {
