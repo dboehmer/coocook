@@ -77,7 +77,7 @@ sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
     $c->detach('redirect');
 }
 
-sub base : Chained('/project/base') CaptureArgs(1) {
+sub base : Chained('/project/base') PathPart('quantities') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( quantity => $c->project->quantities->find($id) || $c->detach('/error/not_found') );
