@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::Most;
 
 BEGIN { use_ok 'Coocook::View::Email::Template' }
 
