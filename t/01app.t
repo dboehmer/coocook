@@ -11,7 +11,7 @@ use Test::Most tests => 9;
 
 my $t = Test::Coocook->new( max_redirect => 0 );
 
-subtest "public actions are either GET or POST" => sub {
+subtest "attributes of controller actions" => sub {
     my $app = $t->catalyst_app;
 
     for ( $app->controllers ) {
@@ -25,30 +25,37 @@ subtest "public actions are either GET or POST" => sub {
 
             my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
 
-            exists $attrs{Private}
-              and next;
+            my $action_pkg_name = $action->package_name . "::" . $action->name . "()";
 
             if ( exists $attrs{CaptureArgs} )
             {    # actions with CaptureArgs are chain elements and automatically private
-                $methods eq ''
-                  or warn "Chain action "
-                  . $action->package_name . "::"
-                  . $action->name
-                  . " is restricted to HTTP methods "
-                  . $methods . "\n";
-
+                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
                 next;
             }
 
-            exists $attrs{AnyMethod}    # special keyword indicating any method will be ok
-              and next;
+            if ( exists $attrs{Private} ) {
+                note "Skipping $action_pkg_name: has 'Private' attribute";
+                next;
+            }
 
-            $action->name eq 'end'
-              and next;
+            if ( $action->name eq 'end' ) {
+                note "Skipping $action_pkg_name: is 'end' action";
+                next;
+            }
 
             ok(
-                ( $methods eq 'GET+HEAD' or $methods eq 'POST' ),
-                $action->package_name . "::" . $action->name . "()"
+                ( exists $attrs{Public} xor exists $attrs{RequiresCapability} ),
+                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute"
+            );
+
+            if ( exists $attrs{AnyMethod} ) {    # special keyword indicating any method will be ok
+                $methods .= '+' if length $methods;
+                $methods .= 'any';
+            }
+
+            ok(
+                ( $methods eq 'any' or $methods eq 'GET+HEAD' or $methods eq 'POST' ),
+                "$action_pkg_name has 'AnyMethod' or is GET & HEAD or POST"
             ) or note "HTTP methods: " . $methods;
         }
     }
