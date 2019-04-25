@@ -1,4 +1,4 @@
-package Coocook::Model::Importer;
+package Coocook::Model::ProjectImporter;
 
 # ABSTRACT: business logic for importing data to a project from another
 

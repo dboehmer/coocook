@@ -179,7 +179,7 @@ sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my $importer = $c->model('Importer');
+    my $importer = $c->model('ProjectImporter');
 
     $c->stash(
         projects        => $c->forward('importable_projects'),
@@ -194,7 +194,7 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my $importer = $c->model('Importer');
+    my $importer = $c->model('ProjectImporter');
 
     my $source = $c->model('DB::Project')->find( $c->req->params->get('source_project') )
       or $c->detach('/error/bad_request');
