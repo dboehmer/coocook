@@ -53,6 +53,9 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
 
             $recipe->{project} = $project;
 
+            $c->user
+              and $recipe->{import_url} = $c->uri_for( $self->action_for('public_import'), [ $recipe->{id} ] );
+
             $recipe->{url} =
               $c->uri_for( $self->action_for('public_show'), [ $recipe->{id} ] );
         }
@@ -61,12 +64,42 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
     $c->stash( recipes => \@recipes );
 }
 
-sub public_show : GET HEAD Chained('/base') PathPart('recipe') Args(1) {
+sub public_recipe_base : Chained('/base') PathPart('recipe') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    my $recipe = $c->model('DB::Recipe')->find($id)
-      or $c->detach('/error/not_found');
+    $c->stash( recipe => $c->model('DB::Recipe')->find($id) || $c->detach('/error/not_found') );
+}
 
+sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe = $c->stash->{recipe};
+
+    $recipe->{url} = $c->uri_for( $self->action_for('public_show'), [ $recipe->id ] );
+    $recipe->project->{url} = $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
+
+    my $projects = $c->user->projects->search(
+        {
+            id => { '!=' => $recipe->get_column('project') },    # not this recipe's source project
+        }
+    );
+
+    my @projects = $projects->hri->all;
+
+    for my $project (@projects) {
+        $project->{import_url} =
+          $c->uri_for( $self->action_for('import_preview'), [ $project->{url_name}, $recipe->id ] );
+
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+    }
+
+    $c->stash( projects => \@projects );
+}
+
+sub public_show : GET HEAD Chained('public_recipe_base') PathPart('') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $recipe  = $c->stash->{recipe};
     my $project = $recipe->project;
 
     my $factor = 1;

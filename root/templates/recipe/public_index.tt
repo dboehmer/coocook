@@ -8,6 +8,11 @@ ELSE;
 <ul>
 [% FOR recipe IN recipes %]
     <li>
+    [% IF recipe.import_url %]
+        <form method="get" action="[% recipe.import_url %]" class="inline">
+            <input type="submit" value="Import" title="Import this recipe into one of your projects">
+        </form>
+    [% END %]
         <a href="[% recipe.url %]">[% recipe.name | html %]</a>
         (from <a href="[% recipe.project.url %]">[% recipe.project.name | html %]</a>
         by <a href="[% recipe.project.owner.url %]">[% recipe.project.owner.display_name | html %]</a>)
