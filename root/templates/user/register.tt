@@ -2,8 +2,6 @@
 
 <p><a href="[% login_url %]">Already have an account? Sign in here.</a></p>
 
-<p>You will receive an e-mail with a web link to verify your e-mail address.</p>
-
 <form method="post" action="[% post_register_url %]">
 <table>
     <tr>
@@ -34,6 +32,8 @@ IF terms %]
 
 <p>By clicking <em>[% label %]</em> you accept our <a href="[% terms.url %]">terms as of [% display_date(terms.valid_from, {html=>1}) %]</a>.</p>
 [% END %]
+
+<p>You will receive an e-mail with a web link to verify your e-mail address.</p>
 
 <input type="submit" value="[% label %]">
 </form>
