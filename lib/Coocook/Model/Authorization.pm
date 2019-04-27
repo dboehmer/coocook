@@ -38,7 +38,7 @@ my @rules = (
                   )
             );
         },
-        capabilities => [qw< view_project import_from_project >],
+        capabilities => [qw< view_project export_from_project >],
     },
     {
         needs_input => [ 'project', 'user' ],
