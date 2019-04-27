@@ -78,8 +78,13 @@ sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Ar
     $recipe->{url} = $c->uri_for( $self->action_for('public_show'), [ $recipe->id ] );
     $recipe->project->{url} = $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
 
-    my $projects = $c->user->projects->search(
+    # TODO should site admins see a list of all projects??
+    my $projects = $c->user->projects_users->search(
         {
+            role => { -in => [qw< editor admin owner >] },
+        }
+    )->search_related(
+        project => {
             id => { '!=' => $recipe->get_column('project') },    # not this recipe's source project
         }
     );
