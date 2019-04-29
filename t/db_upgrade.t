@@ -9,21 +9,44 @@ use Test::Most;
 use lib 't/lib/';
 use TestDB;
 
-my $schema_from_deploy   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
-my $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
-my $schema_from_code     = TestDB->new();
+# first upgrade scripts created columns in different order
+# or had other subtle differences to a fresh deployment
+#
+# share/ddl/SQLite/upgrade/12-13/fix-cascade.sql is the
+# first upgrade script that has an equal result
+#
+# earlier upgrade scripts should NOT be fixed because
+# deployments from these versions stay the same and
+# will be fixed with upgrade to version 13. Luckily
+# we are pretty sure there are no installations
+# older than version 13.
+my $FIRST_TESTED_VERSION = 13;
 
-{
-    my $app = Coocook::Script::Deploy->new( _schema => $schema_from_upgrades );
+my $schema_from_code = TestDB->new();
+my $schema_from_deploy;
+my $schema_from_upgrades;
 
-    install_ok( $app->_dh, 1 );
-    upgrade_ok( $app->_dh );    # to newest version
-}
+for my $version ( $FIRST_TESTED_VERSION .. $Coocook::Schema::VERSION ) {
+    $schema_from_deploy   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+    $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
 
-{
-    my $app = Coocook::Script::Deploy->new( _schema => $schema_from_deploy );
+    {
+        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_deploy );
 
-    install_ok( $app->_dh );    # newest version
+        install_ok( $app->_dh, $version );
+    }
+
+    {
+        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_upgrades );
+
+        install_ok( $app->_dh, 1 );
+        upgrade_ok( $app->_dh, $version );
+    }
+
+    schema_eq(
+        $schema_from_upgrades => $schema_from_deploy,
+        "schema version $version from upgrade SQLs and schema from deploy SQL are equal"
+    );
 }
 
 schema_eq(
@@ -32,8 +55,8 @@ schema_eq(
 );
 
 schema_eq(
-    $schema_from_deploy => $schema_from_upgrades,
-    "schema from deploy SQL and schema from upgrade SQLs are equal"
+    $schema_from_upgrades => $schema_from_code,
+    "schema from upgrade SQLs and schema from Coocook::Schema code are equal"
 );
 
 done_testing;
