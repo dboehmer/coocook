@@ -9,31 +9,31 @@ use Test::Most;
 use lib 't/lib/';
 use TestDB;
 
-my $fresh_schema   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
-my $upgrade_schema = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
-my $test_schema    = TestDB->new();
+my $schema_from_deploy   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+my $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+my $schema_from_code     = TestDB->new();
 
 {
-    my $app = Coocook::Script::Deploy->new( _schema => $upgrade_schema );
+    my $app = Coocook::Script::Deploy->new( _schema => $schema_from_upgrades );
 
     install_ok( $app->_dh, 1 );
     upgrade_ok( $app->_dh );    # to newest version
 }
 
 {
-    my $app = Coocook::Script::Deploy->new( _schema => $fresh_schema );
+    my $app = Coocook::Script::Deploy->new( _schema => $schema_from_deploy );
 
     install_ok( $app->_dh );    # newest version
 }
 
 schema_eq(
-    $fresh_schema => $test_schema,
-    "fresh schema and TestDB schema are equal"
+    $schema_from_deploy => $schema_from_code,
+    "schema from deploy SQL and schema from Coocook::Schema code are equal"
 );
 
 schema_eq(
-    $fresh_schema => $upgrade_schema,
-    "fresh schema and upgraded schema are equal"
+    $schema_from_deploy => $schema_from_upgrades,
+    "schema from deploy SQL and schema from upgrade SQLs are equal"
 );
 
 done_testing;
