@@ -17,6 +17,7 @@ __PACKAGE__->add_columns(
     name_fc        => { data_type => 'text' },                          # fold cased
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
+    admin_comment  => { data_type => 'text', default_value => '' },
     email          => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable => 1 },
     token_hash     => { data_type => 'text', is_nullable => 1 },

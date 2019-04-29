@@ -5,6 +5,7 @@
     <tr>
         <th>User</th>
         <th>Display Name</th>
+        <th>Admin Comment</th>
         <th>Owned projects</th>
         <th>Status</th>
     </tr>
@@ -14,6 +15,12 @@
     <tr>
         <td><a href="[% u.url %]">[% u.name %]</a></td>
         <td><a href="[% u.url %]">[% u.display_name | html %]</a></td>
+        <td>
+            <form method="post" action="[% u.update_url %]" class="inline">
+                <input type="text" name="admin_comment" value="[% u.admin_comment | html %]">
+                <input type="submit" value="&#128190;">
+            </form>
+        </td>
         <td style="text-align:center">[% u.projects_count %]</td>
         <td>[% u.status %]</td>
     </tr>
