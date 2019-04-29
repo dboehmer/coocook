@@ -83,8 +83,7 @@ sub schema_eq {
                 my $name = $table->{TABLE_NAME};
                 my $sql  = $table->{sqlite_sql};
 
-                if ( $type eq 'LOCAL TEMPORARY' ) { next }
-                if ( $type eq 'SYSTEM TABLE' )    { next }
+                if ( $type eq 'SYSTEM TABLE' ) { next }
 
                 $schema->{tables}{$name} = $sql;
 
