@@ -38,6 +38,62 @@ sub _build__schema {
 sub run {
     my $self = shift;
 
+    $self->check_schema();
+    $self->check_rows();
+}
+
+sub check_schema {
+    my $self = shift;
+
+    my $live_schema = $self->_schema;
+
+    $live_schema->storage->sqlt_type eq 'SQLite'
+      or die "Only implemented for SQLite!";
+
+    my $code_schema = Coocook::Schema->connect('dbi:SQLite::memory:');
+    $code_schema->deploy();
+
+    my $sth = $code_schema->storage->dbh->table_info( undef, undef, undef, 'TABLE' );
+
+    while ( my $table = $sth->fetchrow_hashref ) {
+        my $table_name = $table->{TABLE_NAME};
+        my $table_type = $table->{TABLE_TYPE};
+
+        $table_type eq 'SYSTEM TABLE'
+          and next;
+
+        $self->_debug("Checking schema of table '$table_name' ...");
+
+        my $live_table =
+          $live_schema->storage->dbh->table_info( undef, undef, $table_name, $table_type )
+          ->fetchrow_hashref;
+
+        my $code_sql = $table->{sqlite_sql};
+        my $live_sql = $live_table->{sqlite_sql};
+
+        for ( $code_sql, $live_sql ) {
+            s/\s+/ /gms;    # normalize whitespace
+            s/["']//g;      # ignore quote chars
+        }
+
+        $live_sql eq $code_sql
+          and next;
+
+        warn "SQL for table '$table_name' differs:\n";
+
+        s/^/  /gm for $code_sql, $live_sql;
+
+        warn "<" x 7, " code\n";
+        warn $code_sql, "\n";
+        warn "-" x 7, "\n";
+        warn $live_sql, "\n";
+        warn ">" x 7, " live\n";
+    }
+}
+
+sub check_rows {
+    my $self = shift;
+
     my @m_n_tables = (
         { ArticleTag       => [qw< article tag >] },
         { ArticleUnit      => [qw< article unit >] },
@@ -52,7 +108,7 @@ sub run {
     for (@m_n_tables) {
         my ( $rs_class, $joins ) = %$_;
 
-        $self->_debug("Checking table '$rs_class' ...");
+        $self->_debug("Checking rows in table '$rs_class' ...");
 
         @$joins >= 2
           or die "need 2 or more relationships to compare project IDs";
