@@ -95,6 +95,7 @@ sub check_rows {
     my $self = shift;
 
     my @m_n_tables = (
+        { Article          => [qw< me shop_section >] },
         { ArticleTag       => [qw< article tag >] },
         { ArticleUnit      => [qw< article unit >] },
         { Dish             => [qw< meal recipe prepare_at_meal >] },
@@ -103,6 +104,8 @@ sub check_rows {
         { Item             => [qw< purchase_list unit article  >] },
         { RecipeIngredient => [qw< recipe article unit >] },
         { RecipeTag        => [qw< recipe tag >] },
+        { Tag              => [qw< me tag_group >] },
+        { Unit             => [qw< me quantity >] },
     );
 
     for (@m_n_tables) {
@@ -126,7 +129,7 @@ sub check_rows {
                     ( map { $_ => $_ } @pk_cols ),    # e.g. id             => id
                     ( map { $_ . '_project' => $_ . '.project' } @tables ),    # e.g. recipe_project => recipe.project
                 },
-                join => [@$joins],
+                join => [ grep { $_ ne 'me' } @$joins ],
             }
         )->hri;
 
