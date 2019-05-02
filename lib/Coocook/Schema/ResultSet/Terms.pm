@@ -14,9 +14,9 @@ __PACKAGE__->meta->make_immutable;
 
 =over 4
 
-=item* B<-1:> from newest to oldest
+=item * B<-1:> from newest to oldest
 
-=item* B<+1:> from oldest to newest
+=item * B<+1:> from oldest to newest
 
 =back
 

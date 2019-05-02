@@ -29,14 +29,19 @@ __PACKAGE__->grouping_column('dish');
 
 __PACKAGE__->belongs_to( article => 'Coocook::Schema::Result::Article' );
 __PACKAGE__->belongs_to( dish    => 'Coocook::Schema::Result::Dish' );
-__PACKAGE__->belongs_to( item    => 'Coocook::Schema::Result::Item' );
 __PACKAGE__->belongs_to( unit    => 'Coocook::Schema::Result::Unit' );
+
 __PACKAGE__->belongs_to(
     article_unit => 'Coocook::Schema::Result::ArticleUnit',
     {
         'foreign.article' => 'self.article',
         'foreign.unit'    => 'self.unit',
     }
+);
+
+__PACKAGE__->belongs_to(
+    item => 'Coocook::Schema::Result::Item',
+    undef, { on_delete => 'SET NULL' }
 );
 
 __PACKAGE__->meta->make_immutable;

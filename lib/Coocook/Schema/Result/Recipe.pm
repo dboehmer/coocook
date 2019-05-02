@@ -22,22 +22,22 @@ __PACKAGE__->add_unique_constraints( [ 'project', 'name' ] );
 
 __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
-__PACKAGE__->has_many( dishes => 'Coocook::Schema::Result::Dish', 'from_recipe' );
+__PACKAGE__->has_many(
+    dishes => 'Coocook::Schema::Result::Dish',
+    'from_recipe',
+    {
+        cascade_delete => 0,    # recipes with dishes may not be deleted
+                                # TODO maybe ON DELETE SET NULL?
+    }
+);
 
 __PACKAGE__->has_many(
     ingredients => 'Coocook::Schema::Result::RecipeIngredient',
     'recipe',
     {
-        cascade_delete => 1,    # TODO why does this not work?
-        cascade_copy   => 1,    # this works surprisingly
+        cascade_copy => 1,
     }
 );
-
-before delete => sub {          # TODO remove workaround!
-    my $self = shift;
-
-    $self->ingredients->delete();
-};
 
 __PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag' );
 __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );

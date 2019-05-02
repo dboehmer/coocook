@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 -- password: P@ssw0rd
-INSERT INTO 'users' VALUES(1,'john_doe','john_doe','$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw','John Doe','john.doe@example.com',DATETIME('now'),NULL,NULL);
-INSERT INTO 'users' VALUES(2,'other','other','other','Other User','other@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(1,'john_doe','john_doe','$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw','John Doe','test user from test SQL','john.doe@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(2,'other','other','other','Other User','other test user from test SQL','other@example.com',DATETIME('now'),NULL,NULL);
 INSERT INTO 'roles_users' VALUES('site_admin',1);
 INSERT INTO 'projects' VALUES(1,'Test','test','test','Test Project.',1,1);
 INSERT INTO 'projects' VALUES(2,'Other Project','other-project','other-project','Other Project.',0,1);

@@ -35,19 +35,7 @@ __PACKAGE__->belongs_to(
     'from_recipe', { join_type => 'left' }
 );
 
-__PACKAGE__->has_many(
-    ingredients => 'Coocook::Schema::Result::DishIngredient',
-    'dish',
-    {
-        cascade_delete => 1    # TODO this is default. but why does it not work?
-    }
-);
-
-before delete => sub {         # TODO remove workaround!
-    my $self = shift;
-
-    $self->ingredients->delete();
-};
+__PACKAGE__->has_many( ingredients => 'Coocook::Schema::Result::DishIngredient', 'dish' );
 
 __PACKAGE__->has_many(
     ingredients_ordered => 'Coocook::Schema::Result::DishIngredient',

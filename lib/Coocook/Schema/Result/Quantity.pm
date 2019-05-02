@@ -26,7 +26,13 @@ __PACKAGE__->belongs_to(
     { join_type    => 'LEFT' }
 );
 
-__PACKAGE__->has_many( units => 'Coocook::Schema::Result::Unit' );
+__PACKAGE__->has_many(
+    units => 'Coocook::Schema::Result::Unit',
+    undef,
+    {
+        cascade_delete => 0,    # quantities with units may not be deleted
+    }
+);
 
 __PACKAGE__->meta->make_immutable;
 

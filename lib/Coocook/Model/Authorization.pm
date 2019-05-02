@@ -119,7 +119,7 @@ my @rules = (
     {
         needs_input  => ['user'],
         rule         => sub { shift->{user}->has_role('site_admin') },
-        capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms' ],
+        capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
     },
 );
 

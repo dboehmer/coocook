@@ -650,4 +650,6 @@ INSERT INTO units SELECT id, project, quantity, to_quantity_default, space, shor
 
 DROP TABLE units_temp_alter;
 
+DROP TABLE random_project;
+
 COMMIT;

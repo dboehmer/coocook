@@ -6,19 +6,63 @@ use Coocook::Schema;
 use DBICx::TestDatabase;
 use Test::Most;
 
-my $schema = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+use lib 't/lib/';
+use TestDB;
 
-my $app = Coocook::Script::Deploy->new( _schema => $schema );
+# first upgrade scripts created columns in different order
+# or had other subtle differences to a fresh deployment
+#
+# share/ddl/SQLite/upgrade/12-13/fix-cascade.sql is the
+# first upgrade script that has an equal result
+#
+# earlier upgrade scripts should NOT be fixed because
+# deployments from these versions stay the same and
+# will be fixed with upgrade to version 13. Luckily
+# we are pretty sure there are no installations
+# older than version 13.
+my $FIRST_TESTED_VERSION = 13;
 
-my $dh = $app->_dh;
+my $schema_from_code = TestDB->new();
+my $schema_from_deploy;
+my $schema_from_upgrades;
 
-install_ok(1);
-upgrade_ok();    # newest version
+for my $version ( $FIRST_TESTED_VERSION .. $Coocook::Schema::VERSION ) {
+    $schema_from_deploy   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+    $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+
+    {
+        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_deploy );
+
+        install_ok( $app->_dh, $version );
+    }
+
+    {
+        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_upgrades );
+
+        install_ok( $app->_dh, 1 );
+        upgrade_ok( $app->_dh, $version );
+    }
+
+    schema_eq(
+        $schema_from_upgrades => $schema_from_deploy,
+        "schema version $version from upgrade SQLs and schema from deploy SQL are equal"
+    );
+}
+
+schema_eq(
+    $schema_from_deploy => $schema_from_code,
+    "schema from deploy SQL and schema from Coocook::Schema code are equal"
+);
+
+schema_eq(
+    $schema_from_upgrades => $schema_from_code,
+    "schema from upgrade SQLs and schema from Coocook::Schema code are equal"
+);
 
 done_testing;
 
 sub install_ok {
-    my ( $version, $name ) = @_;
+    my ( $dh, $version, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -29,7 +73,7 @@ sub install_ok {
 }
 
 sub upgrade_ok {
-    my ( $version, $name ) = @_;
+    my ( $dh, $version, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -37,4 +81,61 @@ sub upgrade_ok {
       and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
 
     ok $dh->upgrade(), $name || "upgrade to version " . $dh->to_version;
+}
+
+sub schema_eq {
+    my ( $schema1, $schema2, $test_name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    subtest $test_name => sub {
+        my @schemas = (
+            my $a = { id => 1, dbh => $schema1->storage->dbh },
+            my $b = { id => 2, dbh => $schema2->storage->dbh },
+        );
+
+        my %table_names;
+
+        for my $schema (@schemas) {
+            my $sth = $schema->{dbh}->table_info( undef, undef, '%' );
+
+            while ( my $table = $sth->fetchrow_hashref ) {
+                ##note explain $table;
+
+                my $type = $table->{TABLE_TYPE};
+                my $name = $table->{TABLE_NAME};
+                my $sql  = $table->{sqlite_sql};
+
+                if ( $type eq 'SYSTEM TABLE' ) { next }
+
+                $schema->{tables}{$name} = $sql;
+
+                $table_names{$name}++;
+            }
+        }
+
+      NAME: for my $name ( keys %table_names ) {
+            next if $name eq 'dbix_class_deploymenthandler_versions';    # ignore internal table
+
+            for my $schema (@schemas) {
+                if ( not exists $schema->{tables}{$name} ) {
+                    fail $name;
+                    diag "Table '$name' is missing in schema " . $schema->{id};
+                    next NAME;
+                }
+            }
+
+            my $sql1 = $a->{tables}{$name};
+            my $sql2 = $b->{tables}{$name};
+
+            for ( $sql1, $sql2 ) {
+                defined or next;
+
+                s/\s+/ /gs;    # ignore whitespace differences
+                s/['"]//g;     # ignore quote characters
+            }
+
+            is $sql1 => $sql2, $name;
+        }
+    };
 }
