@@ -38,8 +38,8 @@ sub new_with_options {
 sub run {
     my $self = shift;
 
-    my $uri = URI->new('https://localhost');    # HTTPS is required
-    $uri->path( $self->path );
+    my $uri = URI->new( $self->path );
+    $uri->scheme('https');    # HTTPS is required
 
     print get($uri);
 }
