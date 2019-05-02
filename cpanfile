@@ -38,6 +38,7 @@ requires "MooseX::MarkAsMethods" => "0";
 requires "MooseX::NonMoose" => "0";
 requires "Net::SSLeay" => "0";
 requires "Scalar::Util" => "0";
+requires "Template" => "2.29";
 requires "Template::Plugin::Filter" => "0";
 requires "Template::Plugin::Markdown" => "0";
 requires "Term::ReadKey" => "0";
