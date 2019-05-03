@@ -33,7 +33,9 @@
                 [% ingredient.value;
                 '&nbsp;' IF unit.space;
                 display_unit(ingredient.unit, {html=>1}) %]
+                –
                 [% ingredient.dish.meal.date.strftime('%a, %F') %]
+                [% ingredient.dish.meal.name | html %]:
                 [% ingredient.dish.name | html %]
                 [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
                 <form class="inline" method="post" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
