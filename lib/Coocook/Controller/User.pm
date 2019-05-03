@@ -70,6 +70,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 sub register : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
+    if ( $c->user ) {    # user is already logged in, probably via other browser tab
+        $c->detach('/_validated_redirect');
+    }
+
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
 
