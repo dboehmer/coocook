@@ -101,12 +101,12 @@ sub auto : Private {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
             settings_url  => $c->uri_for_action('/settings/index'),
-            logout_url    => $c->redirect_uri_for_action('/logout'),
+            logout_url    => $c->redirect_uri_for_action('/session/logout'),
         );
     }
     else {
         $c->stash(    # login/register URLs with previous application path as query parameter
-            login_url    => $c->redirect_uri_for_action('/login'),
+            login_url    => $c->redirect_uri_for_action('/session/login'),
             register_url => $c->user_registration_enabled
             ? $c->redirect_uri_for_action('/user/register')
             : undef,

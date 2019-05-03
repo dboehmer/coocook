@@ -5,8 +5,6 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => '' );
-
 sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
 
@@ -61,7 +59,7 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
 
     $c->response->redirect(
         $c->redirect_uri_for_action(
-            '/login',
+            $self->action_for('login'),
             {
                 error    => "Sign in failed!",
                 username => $c->req->params->get('username'),

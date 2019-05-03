@@ -303,7 +303,7 @@ sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) {
         );
     }
 
-    $c->response->redirect( $c->uri_for_action( '/login', { username => $user->name } ) );
+    $c->response->redirect( $c->uri_for_action( '/session/login', { username => $user->name } ) );
     $c->detach;
 }
 

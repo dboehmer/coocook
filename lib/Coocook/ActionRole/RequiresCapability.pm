@@ -31,7 +31,7 @@ around execute => sub {
 
             # not logged in? try login and redirect here again
             if ( $c->req->method eq 'GET' and not $c->user ) {
-                $c->redirect_detach( $c->redirect_uri_for_action('/login') );
+                $c->redirect_detach( $c->redirect_uri_for_action('/session/login') );
             }
 
             $c->detach('/error/forbidden');
