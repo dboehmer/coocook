@@ -10,9 +10,6 @@ use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
 
-$ENV{TEST_VERBOSE}
-  or Coocook->log->disable('info');    # don't spill STDERR with info messages
-
 $t->get_ok('/');
 
 $t->register_ok(

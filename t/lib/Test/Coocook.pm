@@ -17,6 +17,9 @@ BEGIN {
     $ENV{COOCOOK_CONFIG} = "$FindBin::Bin";
 }
 
+# don't spill STDERR with info messages when not in verbose mode
+our $DISABLE_LOG_LEVEL_INFO //= !$ENV{TEST_VERBOSE};
+
 use Coocook;
 
 *Coocook::reload_config = sub {
@@ -44,6 +47,10 @@ sub new {
         strict_forms => 1,           # change default to true
         %args
     );
+
+    if ($DISABLE_LOG_LEVEL_INFO) {
+        $self->catalyst_app->log->disable('info');
+    }
 
     if ($schema) {
         $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
