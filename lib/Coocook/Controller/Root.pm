@@ -118,7 +118,7 @@ sub auto : Private {
     }
 
     # has current terms or has any terms (valid in future then)
-    if ( $c->model('DB::Terms')->valid_today_rs->exists or $c->model('DB::Terms')->exists ) {
+    if ( $c->model('DB::Terms')->exists ) {
         $c->stash( terms_url => $c->uri_for_action('/terms/index') );
     }
 
