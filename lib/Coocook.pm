@@ -54,7 +54,7 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
     }
 
     # print e-mails on STDOUT in debugging mode
-    $ENV{EMAIL_SENDER_TRANSPORT} = 'Print';
+    $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
 
     __PACKAGE__->config(
         require_ssl => {
