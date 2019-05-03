@@ -46,7 +46,7 @@ sub new {
     );
 
     if ($schema) {
-        Coocook->model('DB')->schema->storage( $schema->storage );
+        $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
     }
 
     return $self;
