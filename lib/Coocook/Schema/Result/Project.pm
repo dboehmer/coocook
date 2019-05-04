@@ -155,6 +155,19 @@ sub inventory {
     )->hri->single;
 }
 
+=head2 is_stale()
+
+Returns a boolean value indicating whether the whole project is already past.
+Indicates if this project can be archived.
+
+=cut
+
+sub is_stale {
+    my ( $self, $pivot_date ) = @_;
+
+    return $self->self_rs->stale($pivot_date)->exists();
+}
+
 =head2 other_projects
 
 Returns a resultset to all projects except itself.

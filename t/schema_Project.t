@@ -1,11 +1,13 @@
 use strict;
 use warnings;
 
+use DateTime;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
+use Test::Deep;
 use Test::Memory::Cycle;
-use Test::Most tests => 3;
+use Test::Most tests => 4;
 
 subtest inventory => sub {
     my $db = TestDB->new();
@@ -97,5 +99,28 @@ subtest delete => sub {
         $unaffected_sources{$source}
           or is $db->resultset($source)->count => 0,
           "table $source has zero rows";
+    }
+};
+
+subtest stale => sub {
+    my $db = TestDB->new();
+
+    my $rs = $db->resultset('Project');
+
+    is_deeply [ $rs->stale->get_column('id')->all ] => [ 1, 2 ], "ResultSet::Project->stale for today";
+
+    {
+        my $date = DateTime->new( year => 2000, month => 1, day => 2 );    # in the middle of project 1
+
+        is_deeply [ $rs->stale($date)->get_column('id')->all ] => [2],
+          "ResultSet::Project->stale for $date";
+
+        subtest "Result::Project->is_stale()" => sub {
+            ok $rs->find(1)->is_stale();
+            ok $rs->find(2)->is_stale();
+
+            ok !$rs->find(1)->is_stale($date);
+            ok $rs->find(2)->is_stale($date);
+        };
     }
 };

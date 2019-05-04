@@ -3,6 +3,8 @@ package Coocook::Schema::ResultSet::Project;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use DateTime;
+
 extends 'Coocook::Schema::ResultSet';
 
 use feature 'fc';    # Perl v5.16
@@ -23,6 +25,27 @@ sub public {
     my $self = shift;
 
     return $self->search( { is_public => 1 } );
+}
+
+=head2 stale
+
+Returns a new resultset with projects that are completetly in the past.
+Indicates that these can be archived.
+
+=cut
+
+sub stale {    # TODO maybe other name? "completed"? then also edit Result->is_stale
+    my ( $self, $pivot_date ) = @_;
+
+    my $cmp = { '>=' => $self->format_date( $pivot_date || DateTime->today ) };
+
+    my @rs = (
+        $self->correlate('meals')->search( { date => $cmp } ),
+        $self->correlate('purchase_lists')->search( { date => $cmp } ),
+    );
+
+    return $self->search(
+        { -not_bool => [ map { -exists => $_->search( undef, { select => [ \1 ] } )->as_query } @rs ], } );
 }
 
 1;
