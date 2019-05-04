@@ -5,6 +5,7 @@ package Coocook::Schema;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
+use DBIx::Class::Helpers::Util qw< normalize_connect_info >;
 
 our $VERSION = 14;    # version of schema definition, not software version!
 
@@ -35,18 +36,9 @@ Overrides original C<connection> in order to set sane default values.
 sub connection {
     my $self = shift;
 
-    @_ or warn "missing connection information";
+    my $args = normalize_connect_info(@_);
 
-    my $extra_attributes = do {
-        my $index =
-            ( @_ == 1 and ref $_[0] eq 'HASH' ) ? 0
-          : ( @_ <= 2 and ref $_[0] eq 'CODE' ) ? 1
-          :                                       3;
-
-        $_[$index] //= {};
-    };
-
-    my $on_connect_do = \$extra_attributes->{on_connect_do};
+    my $on_connect_do = \$args->{on_connect_do};
 
     my $enable_fk = sub {
         my $storage = shift;
