@@ -9,7 +9,7 @@
     <tr>
     <td><a href="[% recipe.edit_url %]">[% recipe.name | html %]</a></td>
     <td>
-        <form class="inline" method="POST" action="[% recipe.duplicate_url %]">
+        <form class="inline" method="post" action="[% recipe.duplicate_url %]">
             Name: <input type="text" name="name" value="Duplicate of [% recipe.name | html %]">
             <input type="submit" value="Duplicate">
             <div class="tooltip">?
@@ -18,7 +18,7 @@
         </form>
     </td>
     <td>
-        <form class="inline" method="POST" action="[% recipe.delete_url %]">
+        <form class="inline" method="post" action="[% recipe.delete_url %]">
             <input type="submit" value="Delete">
         </form>
     </td>

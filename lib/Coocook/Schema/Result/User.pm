@@ -17,6 +17,7 @@ __PACKAGE__->add_columns(
     name_fc        => { data_type => 'text' },                          # fold cased
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
+    admin_comment  => { data_type => 'text', default_value => '' },
     email          => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable => 1 },
     token_hash     => { data_type => 'text', is_nullable => 1 },
@@ -33,10 +34,19 @@ __PACKAGE__->add_unique_constraints(
 
 __PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
 
-__PACKAGE__->has_many( owned_projects => 'Coocook::Schema::Result::Project', 'owner' );
+__PACKAGE__->has_many(
+    owned_projects => 'Coocook::Schema::Result::Project',
+    'owner',
+    {
+        cascade_delete => 0,    # users who own projects may not be deleted
+    }
+);
 
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
+
+__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
+__PACKAGE__->many_to_many( terms => terms_users => 'terms' );
 
 # support virtual 'password' column
 around [ 'set_column', 'store_column' ] => sub {

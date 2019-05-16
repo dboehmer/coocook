@@ -2,7 +2,7 @@
     IF opts.html ~%]
         <abbr title="[% date.strftime(date_format_long) %]">[% date.strftime(date_format_short) %]</abbr>
     [%~ ELSE;
-        date.strftime(date_format_short);
+        date.strftime(date_format_long);
     END;
 END;
 
@@ -22,7 +22,7 @@ END;
 MACRO display_value_unit(value, unit, opts) BLOCK;
     USE NiceNumber;
     value | $NiceNumber;
-    '&nbsp;' IF unit.space;
+    '&nbsp;' IF unit.space OR opts.print;
     display_unit(unit, opts);
 END ~%]
 

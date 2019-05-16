@@ -1,4 +1,4 @@
-<form method="POST" action="[% update_url %]">
+<form method="post" action="[% update_url %]">
     <p>Applicable units:</p>
 
     <table style="margin-left: 2em">
@@ -27,7 +27,7 @@
         <input type="checkbox" name="shelf_life" id="shelf_life" [% 'checked' IF article.shelf_life_days.defined %]>
         <label for="shelf_life">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
     </p>
-    <p>Name: <input type="text" name="name" value="[% article.name | xml %]"></p>
+    <p>Name: <input type="text" name="name" value="[% article.name | html %]"></p>
     <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
     <p>Shop section: <select name="shop_section">
         <option value="" style="font-style:italic">(no shop section)</option>
@@ -39,20 +39,20 @@
     <input type="submit" value="Update">
 </form>
 
-<h2>Where <em>[% article.name | xml %]</em> is used</h2>
+<h2>Where <em>[% article.name | html %]</em> is used</h2>
 
 <ul>
 [% FOR r IN recipes %]
-    <li>recipe <a href="[% r.recipe.url %]">[% r.recipe.name | xml %]</a>
+    <li>recipe <a href="[% r.recipe.url %]">[% r.recipe.name | html %]</a>
     <ul>
     [% FOR dish IN r.dishes %]
-        <li>dish <a href="[% dish.url %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
+        <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
     [% END %]
     </ul>
     </li>
 [% END %]
 
 [% FOR dish IN dishes %]
-    <li>dish <a href="[% dish.url %]">[% dish.name | xml %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
+    <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
 [% END %]
 </ul>

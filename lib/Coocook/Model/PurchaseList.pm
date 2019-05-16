@@ -67,7 +67,16 @@ sub BUILD {
           $list->items->search_related('ingredients')->search_related( 'dish', undef, { distinct => 1 } )
           ->hri;
 
+        my %meals = map { $_->{id} => $_ }
+          $project->meals->hri->all;    # fetch all meals is probably more efficient than complex query
+
+        for my $meal ( values %meals ) {
+            $meal->{date} = $project->parse_date( $meal->{date} );
+        }
+
         while ( my $dish = $dishes->next ) {
+            $dish->{meal} = $meals{ $dish->{meal} } || die;
+
             for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
                 $ingredient->{dish} = $dish;
             }

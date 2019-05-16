@@ -30,7 +30,23 @@ cmp_deeply $sections => [
                         unit        => superhashof( { short_name => "g" } ),
                         article     => superhashof( { name => "flour" } ),
                         ingredients => [                                       #perltidy
-                            superhashof( { id => 1 } ),
+                            superhashof(
+                                {
+                                    id   => 1,
+                                    dish => superhashof(
+                                        {
+                                            name => "pancakes",
+                                            meal => superhashof(
+                                                {
+                                                    id   => 1,
+                                                    date => all( isa('DateTime'), methods( ymd => '2000-01-01' ) ),
+                                                    name => "breakfast",
+                                                }
+                                            ),
+                                        }
+                                    ),
+                                },
+                            ),
                             superhashof( { id => 4 } ),
                         ],
                     }

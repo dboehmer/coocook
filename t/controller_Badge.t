@@ -9,12 +9,18 @@ use Catalyst::Test 'Coocook';
 my $schema = DBICx::TestDatabase->new('Coocook::Schema');
 Coocook->model('DB')->schema->storage( $schema->storage );
 
-$schema->resultset('User')
+my $user = $schema->resultset('User')
   ->create( { map { $_ => '' } qw< name display_name password_hash email > } );
 
-my $meal = $schema->resultset('Meal')->create(
-    {
-        project => 99999,
+my $project = $user->create_related(
+    owned_projects => {
+        name        => __FILE__,
+        description => __FILE__,
+    }
+);
+
+my $meal = $project->create_related(
+    meals => {
         date    => '2000-01-01',
         name    => 'foo',
         comment => '',

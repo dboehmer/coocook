@@ -51,4 +51,6 @@ SELECT
   token_expires
 FROM users_temp_alter;
 
+DROP TABLE users_temp_alter;
+
 COMMIT;

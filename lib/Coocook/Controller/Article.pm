@@ -110,7 +110,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     my $units_in_use = $article->units_in_use;
 
     $c->stash(
-        update_url => $c->project_uri( $self->action_for('update'), $article->id ),
+        update_url     => $c->project_uri( $self->action_for('update'), $article->id ),
         selected_units => { map { $_ => 1 } $units->get_column('id')->all },
         units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
@@ -210,7 +210,7 @@ sub dishes_recipes : Private {
 
         my $meal = $dish->meal;
         $dish = $dish->as_hashref;
-        $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+        $dish->{url}  = $c->project_uri( '/dish/edit', $dish->{id} );
         $dish->{meal} = $meal;
 
         if ( defined $recipe and exists $recipes{$recipe} ) {

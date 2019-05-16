@@ -38,29 +38,6 @@ __PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
 __PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
 __PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
 
-before delete => sub {    # TODO solve workaround
-    my $self = shift;
-
-    $self->purchase_lists->search_related('items')->delete;
-    $self->purchase_lists->delete;
-    $self->articles->search_related('articles_tags')->delete;
-    $self->articles->search_related('articles_units')->delete;
-    $self->meals->search_related('dishes')->search_related('ingredients')->delete;
-    $self->meals->search_related('dishes')->delete;
-    $self->meals->delete;
-    $self->recipes->search_related('ingredients')->delete;
-    $self->recipes->search_related('recipes_tags')->delete;
-    $self->recipes->delete;
-    $self->articles->delete;
-    $self->shop_sections->delete;
-    $self->quantities->update( { default_unit => undef } );    # to pass FK constraint
-    $self->units->delete;
-    $self->quantities->delete;
-    $self->tags->delete;
-    $self->tag_groups->delete;
-    $self->projects_users->delete;
-};
-
 # trigger for generating url_name[_fc]
 before store_column => sub {
     my ( $self, $column, $value ) = @_;
@@ -153,23 +130,27 @@ Returns a hashref with counts for related object.
 sub inventory {
     my $self = shift;
 
-    return $self->result_source->resultset->search(
+    my $self_rs = $self->self_rs;
+
+    return $self_rs->search(
         undef,
         {
             columns => {
-                articles         => $self->articles->count_rs->as_query,
-                dishes           => $self->meals->search_related('dishes')->count_rs->as_query,
-                meals            => $self->meals->count_rs->as_query,
-                purchase_lists   => $self->purchase_lists->count_rs->as_query,
-                quantities       => $self->quantities->count_rs->as_query,
-                recipes          => $self->recipes->count_rs->as_query,
-                shop_sections    => $self->shop_sections->count_rs->as_query,
-                tags             => $self->tags->count_rs->as_query,
-                unassigned_items => $self->dish_ingredients->unassigned->count_rs->as_query,
-                units            => $self->units->count_rs->as_query,
+                articles       => $self_rs->search_related('articles')->count_rs->as_query,
+                dishes         => $self_rs->search_related('meals')->search_related('dishes')->count_rs->as_query,
+                meals          => $self_rs->search_related('meals')->count_rs->as_query,
+                purchase_lists => $self_rs->search_related('purchase_lists')->count_rs->as_query,
+                quantities     => $self_rs->search_related('quantities')->count_rs->as_query,
+                recipes        => $self_rs->search_related('recipes')->count_rs->as_query,
+                shop_sections  => $self_rs->search_related('shop_sections')->count_rs->as_query,
+                tags           => $self_rs->search_related('tags')->count_rs->as_query,
+                units          => $self_rs->search_related('units')->count_rs->as_query,
+                unassigned_items =>
+                  $self_rs->search_related('meals')->search_related('dishes')->search_related('ingredients')
+                  ->unassigned->count_rs->as_query,
             },
         }
-    )->hri->first;    # use single() and make outer query not SELECT from a table
+    )->hri->single;
 }
 
 =head2 other_projects

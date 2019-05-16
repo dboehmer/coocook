@@ -30,7 +30,14 @@
         <td>[% item.article.name | html %]</td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
-            <li>[% display_value_unit(ingredient.value, ingredient.unit, {print=>1}) %] [% ingredient.dish.meal.date.strftime('%a, %F') %] [% ingredient.dish.name | html %] [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</li>
+            <li>
+                [% display_value_unit(ingredient.value, ingredient.unit, {print=>1}) %]
+                –
+                [% ingredient.dish.meal.date.strftime('%a, %F') %]
+                [% ingredient.dish.meal.name | html %]:
+                [% ingredient.dish.name | html %]
+                [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
+            </li>
         [% END %]
         </ul></td>
         <td>[% item.comment | html %]</td>

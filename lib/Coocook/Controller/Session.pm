@@ -5,16 +5,12 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => '' );
-
-sub login_url : Private {
-    my ( $self, $c ) = @_;
-
-    return $c->uri_for( $self->action_for('login'), { redirect => $c->current_uri_local_part } );
-}
-
 sub login : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
+
+    if ( $c->user ) {    # user is already logged in, probably via other browser tab
+        $c->detach('/_validated_redirect');
+    }
 
     $c->stash(
         username => (
@@ -23,12 +19,7 @@ sub login : GET HEAD Chained('/base') Args(0) {
               || map { $_ ? $_->value : undef } $c->req->cookie('username')
         ),
         recover_url    => $c->uri_for_action('/user/recover'),
-        post_login_url => $c->uri_for(
-            $self->action_for('post_login'),
-            {
-                redirect => $c->forward( _check_redirect_uri => [ $c->req->params->get('redirect') ] ),
-            }
-        ),
+        post_login_url => $c->redirect_uri_for_action( $self->action_for('post_login') ),
     );
 }
 
@@ -42,12 +33,10 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
     # is not answered in 0.x seconds ...
     sleep 1;
 
-    my $redirect = $c->req->params->get('redirect');
-
     my $user = $c->authenticate(
         {
-            name           => $c->req->params->get('username'),
-            password_hash  => $c->req->params->get('password'),
+            name           => $c->req->body_params->get('username'),
+            password_hash  => $c->req->body_params->get('password'),
             email_verified => { '!=' => undef },
         }
     );
@@ -63,56 +52,20 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) {
             httponly => 1,             # not accessible by client-side JavaScript
         };
 
-        if ( my $redirect ) {
-            $c->forward( _check_redirect_uri => [$redirect] );
-
-            $c->redirect_detach( $c->uri_for_local_part($redirect) );
-        }
-
-        $c->response->redirect( $c->uri_for_action('/index') );
+        $c->detach('/_validated_redirect');
     }
-    else {
-        $c->logout();
 
-        $c->forward( _check_redirect_uri => [$redirect] );
+    $c->logout();
 
-        $c->response->redirect(
-            $c->uri_for_action(
-                '/login',
-                {
-                    error    => "Login failed!",
-                    username => $c->req->params->get('username'),
-                    $redirect ? ( redirect => $redirect ) : (),
-                }
-            )
-        );
-    }
-}
-
-sub _check_redirect_uri : Private {
-    my ( $self, $c, $uri ) = @_;
-
-    defined $uri
-      or return;
-
-    my @regexes = (    # TODO is this sufficient to assert security?
-        qr!\.\.!,       # path traversal
-        qr!^//!,        # same protocol URI
-        qr!^\w+://!,    # explicit protocol URI
+    $c->response->redirect(
+        $c->redirect_uri_for_action(
+            $self->action_for('login'),
+            {
+                error    => "Sign in failed!",
+                username => $c->req->params->get('username'),
+            }
+        )
     );
-
-    for my $regex (@regexes) {
-        $uri =~ $regex
-          and $c->detach('/error/bad_request');
-    }
-
-    return $uri;
-}
-
-sub logout_url : Private {
-    my ( $self, $c ) = @_;
-
-    return $c->uri_for( $self->action_for('logout'), { redirect => $c->current_uri_local_part } );
 }
 
 sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
@@ -120,13 +73,7 @@ sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
 
     $c->logout();
 
-    if ( my $redirect = $c->req->params->get('redirect') ) {
-        $c->forward( _check_redirect_uri => [$redirect] );
-
-        $c->redirect_detach( $c->uri_for_local_part($redirect) );
-    }
-
-    $c->response->redirect( $c->uri_for_action('/index') );
+    $c->detach('/_validated_redirect');
 }
 
 1;

@@ -11,7 +11,7 @@ __PACKAGE__->add_columns(
     id           => { data_type => 'int', is_auto_increment => 1 },
     project      => { data_type => 'int' },
     name         => { data_type => 'text' },
-    default_unit => { data_type => 'int', is_nullable       => 1 },
+    default_unit => { data_type => 'int', is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key("id");
@@ -26,7 +26,13 @@ __PACKAGE__->belongs_to(
     { join_type    => 'LEFT' }
 );
 
-__PACKAGE__->has_many( units => 'Coocook::Schema::Result::Unit' );
+__PACKAGE__->has_many(
+    units => 'Coocook::Schema::Result::Unit',
+    undef,
+    {
+        cascade_delete => 0,    # quantities with units may not be deleted
+    }
+);
 
 __PACKAGE__->meta->make_immutable;
 

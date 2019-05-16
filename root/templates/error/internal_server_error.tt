@@ -1,0 +1,3 @@
+[% title = 'Oooops …' %]
+
+<p>Sorry, an internal server error occured.</p>

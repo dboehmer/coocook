@@ -40,6 +40,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     $c->stash(
         project_urls => {
             project          => $c->project_uri('/project/show'),
+            edit             => $c->project_uri('/project/edit'),
             recipes          => $c->project_uri('/recipe/index'),
             articles         => $c->project_uri('/article/index'),
             tags             => $c->project_uri('/tag/index'),
@@ -164,8 +165,11 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('Importer');
-    my $source   = $c->model('DB::Project')->find( $c->req->params->get('source_project') );
-    my $target   = $c->project;
+
+    my $source = $c->model('DB::Project')->find( $c->req->params->get('source_project') )
+      or $c->detach('/error/bad_request');
+
+    my $target = $c->project;
 
     $c->has_capability( import_from_project => { project => $source } )
       or $c->detach('/error/forbidden');
@@ -195,7 +199,9 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
       or $c->redirect_detach(
         $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
 
-    my $project = $c->stash->{project} = $c->model('DB::Project')->create(
+    my $projects = $c->model('DB::Project');
+
+    my $project = $c->stash->{project} = $c->model('DB::Project')->new_result(
         {
             name           => $c->req->params->get('name'),
             description    => '',
@@ -209,6 +215,11 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
             ],
         }
     );
+
+    $projects->search( { url_name_fc => $project->url_name_fc } )->exists
+      and $c->redirect_detach( $c->uri_for( '/', { error => "Project name is already in use" } ) );
+
+    $project->insert();
 
     my $importable_projects = $c->forward('importable_projects');
 

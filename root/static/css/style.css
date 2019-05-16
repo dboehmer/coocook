@@ -3,6 +3,8 @@
 html {
   height: 100%;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 *,
@@ -16,71 +18,31 @@ body {
     margin: 0;
     font-family: Georgia, 'Times New Roman', serif;
     position: relative;
-    padding-bottom: 6rem;
-    min-height: 100%;
+    height: 100%;
     color: #333333;
 }
 
-
+#container {
+    min-height: 100%;
+    position: relative;
+}
 
 /******** header part ********/
 
-/* padding for Coocook headline, not put to header to avoid space between header and navbar */
-header h1 a {
-    margin-left: 15px;
-}
-
-header h1 a:hover,
-header h1 a:active {
-    color: #f5f5ef;
-}
+/*** general part ***/
 
 header {
     margin: 0;
-    padding-top: 15px;
     background-color: #4CAF50;
-}
-
-header nav {
-    background: #333333;
 }
 
 header nav ul {
     list-style-type: none;
-    padding-left: 10px;
+    padding-left: 0;
 }
 
 header nav li {
     display: inline;
-}
-
-header nav input[name="logout"],
-header nav a {
-    display: inline-block;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    min-width: 3em;
-    line-height: 2em;
-
-    background: #333333;
-    color: #f5f5ef;
-    text-align: center;
-    text-decoration:none;
-}
-
-header a.current {
-    color: red;
-}
-
-header nav input[name="logout"]:active,
-header nav input[name="logout"]:hover,
-header nav a:hover {
-    background-color:#f5f5ef;
-    color: #333333;
-
-    -webkit-box-shadow: 0px 2px 3px grey;
-    -moz-box-shadow:    0px 2px 3px grey;
-    box-shadow:         0px 2px 3px grey;
 }
 
 /* "Logout" must be button for POST request but style like link */
@@ -98,10 +60,140 @@ header nav input[name="logout"] {
  */
 header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
 
+header h1 {
+	font-size: 2.5em;
+}
+
+header p {
+	margin: 0;
+	padding: 0 0.5em 0 0.5em;
+	color: #f5f5ef;
+}
+
+header p a {
+	color: #f5f5ef;
+}
+
+/*** user nav ***/
+header #user_nav {
+	height: 7em;
+	padding: 0 1.5em 0 1.5em;
+	display: flex;
+	justify-content: space-between;
+}
+
+header #h1-div {
+	align-self: center;
+}
+
+header #user_nav li {
+	padding-left: 1em;
+}
+
+header #user_nav a {
+	padding: 0;
+}
+
+header #user_nav h4 a:hover,
+header #user_nav h4 a:active {
+	color: #333333;
+}
+
+header #user_nav a:hover,
+header #user_nav a:active {
+    color: #f5f5ef;
+}
+
+header #user_nav ul {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+header #user_nav ul p + div {
+	margin-top: 1em;
+}
+
+header #user_nav ul div:only-child {
+	margin-top: 3em;
+}
+
+header #user_nav h4 {
+	margin: 0;
+	padding: 0 0.5em 0 0.5em;
+	color: #f5f5ef;
+}
+
+header #user_nav h4 a {
+	color: #f5f5ef;
+}
+
+header nav input[name="logout"] {
+	background-color: #4CAF50;
+	color: #333333;
+}
+
+header nav input[name="logout"]:active,
+header nav input[name="logout"]:hover {
+    color: #f5f5ef;
+
+    -webkit-box-shadow: 0px 0px 0px grey !important;
+    -moz-box-shadow:    0px 0px 0px grey !important;
+    box-shadow:         0px 0px 0px grey !important;
+}
+
+/*** project nav ***/
+header #project_nav {
+    background: #333333;
+    color: #f5f5ef;
+	width: 100%;
+	height: 2em;
+	padding: 0 1em 0 1em; 
+}
+
+header #project_nav ul {
+	margin: 0;
+}
+
+header #project_nav a,
+header #submenu_nav a {
+    display: inline-block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    min-width: 3em;
+    line-height: 2em;
+
+    background-color: inherit;
+    color:            inherit;
+    text-align: center;
+    text-decoration:none;
+}
+
+header #project_nav a:hover {
+    background-color:#f5f5ef;
+    color: #333333;
+
+    -webkit-box-shadow: 0px 2px 3px grey;
+    -moz-box-shadow:    0px 2px 3px grey;
+    box-shadow:         0px 2px 3px grey;
+}
+
+/*** submenu nav ***/
+header #submenu_nav {
+	width: 100%;
+	padding: 0 1em 0 1em; 
+}
+
+header #submenu_nav a:hover,
+header #submenu_nav a.current {
+	color: #f5f5ef;
+}
+
 /******** content part ********/
 
 main {
-    padding: 15px;
+    padding: 1.5em;
+    padding-bottom: 12em; /*necessary for position of footer*/
 }
 
 a {
@@ -119,6 +211,25 @@ main a:active {
     color: #333333;
 }
 
+a.anchor {
+    color: inherit;
+}
+
+a.anchor:before {
+    content: '¶ ';
+    color: grey;
+    visibility: hidden;
+}
+
+a.anchor:hover:before {
+    visibility: visible;
+}
+
+abbr[title] { /* reset default Browser style with underline */
+    border-bottom:   none;
+    text-decoration: none;
+}
+
 code {
     background-color: LightGray;
     border-radius: 0.25em;
@@ -132,7 +243,8 @@ code {
     color: Red;
 }
 
-.inline {
+.inline,
+.inline * {
     display: inline;
 }
 
@@ -162,14 +274,20 @@ input[type="submit"]:hover, input[type="submit"]:active{
     background-color: white;
 }
 
+.markdown-preview + input[type="text"],
 .markdown-preview + textarea {
     display: block;
     width: 45%;
     width: calc( 50% - 2em );
 }
 
-.markdown-preview + textarea + * {
+.markdown-preview + input[type="text"] + *,
+.markdown-preview + textarea           + * {
     clear: both;
+}
+
+form th {
+	text-align: left;
 }
 
 table td input[type="checkbox"]:first-child:last-child {
@@ -250,10 +368,33 @@ ul {
 footer {
     background-color: #333333;
     color: #f5f5ef;
-    position: absolute;
-    right: 0;
+    position: absolute; /*necessary to position it at the bottom in all cases*/
     bottom: 0;
-    left: 0;
-    padding: 0.5em 15px 0.5em 15px;
+    width: 100%;
+    padding: 0.5em 1em 0.5em 1em;
     margin: 0 auto;
+    display: inline-block;
+    line-height: 1.5;
+    height: 10em; /*adjust if there are additional links in the footer*/
+}
+
+footer nav ul {
+    list-style-type: none;
+    float: left;
+}
+
+footer nav ul:first-child {
+	padding-left: 10px;
+}
+
+footer nav h4 {
+    margin: 0;
+}
+
+footer a {
+    color: inherit;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }

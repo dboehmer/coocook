@@ -69,7 +69,7 @@ sub assign : POST Chained('/project/base') PathPart('items/unassigned') Args(0)
     my ( $self, $c ) = @_;
 
     my $ingredients = $c->project->dish_ingredients->unassigned;
-    my %lists = map { $_->id => $_ } $c->project->search_related('purchase_lists')->all;
+    my %lists       = map { $_->id => $_ } $c->project->search_related('purchase_lists')->all;
 
     $ingredients->txn_do(
         sub {

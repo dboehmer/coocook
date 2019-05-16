@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 -- password: P@ssw0rd
-INSERT INTO 'users' VALUES(1,'john_doe','john_doe','$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw','John Doe','john.doe@example.com',DATETIME('now'),NULL,NULL);
-INSERT INTO 'users' VALUES(2,'other','other','other','Other User','other@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(1,'john_doe','john_doe','$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw','John Doe','test user from test SQL','john.doe@example.com',DATETIME('now'),NULL,NULL);
+INSERT INTO 'users' VALUES(2,'other','other','other','Other User','other test user from test SQL','other@example.com',DATETIME('now'),NULL,NULL);
 INSERT INTO 'roles_users' VALUES('site_admin',1);
 INSERT INTO 'projects' VALUES(1,'Test','test','test','Test Project.',1,1);
 INSERT INTO 'projects' VALUES(2,'Other Project','other-project','other-project','Other Project.',0,1);
@@ -68,3 +68,9 @@ INSERT INTO 'tags' VALUES(3,1,NULL,'delicious');
 INSERT INTO 'articles_tags' VALUES(1,1);
 INSERT INTO 'articles_tags' VALUES(4,2);
 INSERT INTO 'recipes_tags' VALUES(1,3);
+
+INSERT INTO 'faqs' VALUES(1,2,'foss','Is Coocook free and open-source software (FOSS)?','Yes, it is.');
+INSERT INTO 'faqs' VALUES(2,1,'what','What is Coocook?','Coocook is a web application for collecting recipes and making food plans.');
+
+INSERT INTO 'terms' VALUES(1,'1999-01-01','All your recipes are belong to us.');
+INSERT INTO 'terms' VALUES(2,'2100-01-01','Just STEAL ALL THE COOKING INSTRUCTIONS!');

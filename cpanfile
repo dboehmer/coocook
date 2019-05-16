@@ -14,6 +14,7 @@ requires "Catalyst::Plugin::Session::Store::DBIC" => "0";
 requires "Catalyst::Plugin::Session::Store::FastMmap" => "0";
 requires "Catalyst::Plugin::Static::Simple" => "0";
 requires "Catalyst::Runtime" => "5.80";
+requires "Catalyst::Test" => "0";
 requires "Catalyst::View::Email::Template" => "0";
 requires "Catalyst::View::TT" => "0";
 requires "Config::General" => "0";
@@ -37,9 +38,11 @@ requires "MooseX::MarkAsMethods" => "0";
 requires "MooseX::NonMoose" => "0";
 requires "Net::SSLeay" => "0";
 requires "Scalar::Util" => "0";
+requires "Template" => "2.29";
 requires "Template::Plugin::Filter" => "0";
 requires "Template::Plugin::Markdown" => "0";
 requires "Term::ReadKey" => "0";
+requires "URI" => "0";
 requires "feature" => "0";
 requires "lib" => "0";
 requires "parent" => "0";
@@ -51,7 +54,6 @@ recommends "Template::Plugin::Markdown" => "2.28";
 suggests "Sys::Hostname::FQDN" => "0";
 
 on 'test' => sub {
-  requires "Catalyst::Test" => "0";
   requires "DBICx::TestDatabase" => "0";
   requires "DBIx::Class::Schema::Loader" => "0";
   requires "DateTime::Format::SQLite" => "0";
@@ -65,6 +67,7 @@ on 'test' => sub {
   requires "Test::MockObject" => "0";
   requires "Test::More" => "0";
   requires "Test::Most" => "0";
+  requires "Test::Output" => "0";
   requires "Test::WWW::Mechanize::Catalyst" => "0";
   requires "Time::HiRes" => "0";
 };
@@ -76,6 +79,11 @@ on 'test' => sub {
 
 on 'configure' => sub {
   requires "ExtUtils::MakeMaker::CPANfile" => "0";
+};
+
+on 'develop' => sub {
+  requires "Test::Most" => "0";
+  requires "Test::PerlTidy" => "0";
 };
 
 on 'develop' => sub {

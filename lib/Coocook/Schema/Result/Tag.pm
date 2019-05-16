@@ -10,7 +10,7 @@ __PACKAGE__->table("tags");
 __PACKAGE__->add_columns(
     id        => { data_type => 'int', is_auto_increment => 1 },
     project   => { data_type => 'int' },
-    tag_group => { data_type => 'int', is_nullable       => 1 },
+    tag_group => { data_type => 'int', is_nullable => 1 },
     name      => { data_type => 'text' },
 );
 

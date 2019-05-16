@@ -1,14 +1,14 @@
-<p>for meal <em>[% dish.meal.name | xml %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
+<p>for meal <em>[% dish.meal.name | html %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
 
 [% IF dish.recipe %]
 <p>from recipe <a href="[% dish.recipe.url %]">[% dish.recipe.name | html %]</a></p>
 [% END %]
 
-<form method="POST" action="[% delete_url %]">
+<form method="post" action="[% delete_url %]">
     <input type="submit" value="Delete dish">
 </form>
 
-<form action="[% dish.update_url %]" method="POST">
+<form action="[% dish.update_url %]" method="post">
 <p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
 <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn't recalculate values!</em></p>
@@ -17,7 +17,7 @@
     <select id="prepare_at_meal" name="prepare_at_meal">
         <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
 [% FOR meal IN prepare_meals %]
-        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | xml %]</option>
+        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
 [% END %]
     </select>
 </p>
@@ -39,7 +39,7 @@
 
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]
 
-<form method="POST" action="[% dish.recalculate_url %]">
+<form method="post" action="[% dish.recalculate_url %]">
 <fieldset>
     <legend>Recalculate values</legend>
 

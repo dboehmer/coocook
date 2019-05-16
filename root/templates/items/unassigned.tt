@@ -1,6 +1,6 @@
 [% title = "Unassigned items" %]
 
-<form method="POST" action="[% assign_url %]">
+<form method="post" action="[% assign_url %]">
 <table id="items">
     <tr>
         <th>Ingredient</th>
@@ -18,12 +18,12 @@
             <a href="[% ingredient.dish.url %]">[% ingredient.dish.name | html %]</a> for [% ingredient.dish.meal.name %] on [% display_date(ingredient.dish.meal.date, {html=>1}) %]
             [% IF ingredient.comment.length;
                 '<br><span class="comment">ingredient: ';
-                ingredient.comment | xml;
+                ingredient.comment | html;
                 '</span>';
             END;
             IF ingredient.article.comment.length;
                 '<br><span class="comment">article: ';
-                ingredient.article.comment | xml;
+                ingredient.article.comment | html;
                 '</span>';
             END %]
         </td>

@@ -12,13 +12,13 @@ __PACKAGE__->load_components('+Coocook::Schema::Component::Result::Convertible')
 __PACKAGE__->table("items");
 
 __PACKAGE__->add_columns(
-    id            => { data_type => 'int',  is_auto_increment => 1 },
+    id            => { data_type => 'int', is_auto_increment => 1 },
     purchase_list => { data_type => 'int' },
     value         => { data_type => 'real' },
-    offset        => { data_type => 'real', default_value     => 0 },
+    offset        => { data_type => 'real', default_value => 0 },
     unit          => { data_type => 'int' },
     article       => { data_type => 'int' },
-    purchased     => { data_type => 'bool', default_value     => 0 },
+    purchased     => { data_type => 'bool', default_value => 0 },
     comment       => { data_type => 'text' },
 );
 

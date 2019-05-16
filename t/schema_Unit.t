@@ -32,32 +32,24 @@ my $db = TestDB->new;
 
 my $kg = $db->resultset('Unit')->find( { short_name => 'kg' } );
 
-is my @other_units = $kg->convertible_into->all => 2, "is convertible into 2 units";
+is $kg->convertible_into->count => $_, "is convertible into $_ units" for 2;
 
 ok $kg->is_quantity_default, "unit is quantity default";
 
-throws_ok { $kg->delete } qr/delete/, "fails while rows reference unit";
+throws_ok { $kg->delete } qr/FOREIGN KEY constraint failed/, "fails while rows reference unit";
 
 note "deleting referencing rows ...";
 $db->resultset($_)->delete for qw<
-  ArticleUnit
   DishIngredient
+  Item
   RecipeIngredient
+  ArticleUnit
 >;
 
-throws_ok { $kg->delete } qr/default/, "fails because kg is default unit";
+throws_ok { $kg->delete } qr/FOREIGN KEY constraint failed/, "fails when kg is default unit";
 
 note "deleting all other units ...";
-$db->fk_checks_off_do(
-    sub {
-        $db->resultset('Unit')->search(
-            {
-                short_name          => { '!=' => 'kg' },
-                to_quantity_default => { '!=' => undef },
-            }
-        )->delete;
-    }
-);
+$kg->other_units_of_same_quantity->delete;
 
 ok $kg->delete, "default unit can be deleted if last remaining unit";
 

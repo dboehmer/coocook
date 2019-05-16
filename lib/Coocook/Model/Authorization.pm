@@ -13,6 +13,7 @@ use Carp;
 # - unfortunately Perl::Tidy doesn't work with Method::Signatures
 # - method attributes like sub foo : Foo Bar {} work but need string parsing
 # - how to define lexical variables like $project before calling the anonymous sub?
+# maybe set $_ to [@vars] in the order of $rule->{needs_input} ??
 my @rules = (
     {
         needs_input  => [],
@@ -118,7 +119,7 @@ my @rules = (
     {
         needs_input  => ['user'],
         rule         => sub { shift->{user}->has_role('site_admin') },
-        capabilities => 'admin_view',
+        capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
     },
 );
 

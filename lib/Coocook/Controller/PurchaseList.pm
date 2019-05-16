@@ -43,18 +43,24 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 
     my $lists = $c->project->purchase_lists;
 
-    my $max_date = do {
-        my $list = $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->first;
+    my $min_date = DateTime->today;
 
-        $list ? $list->date : undef;
+    my $default_date = do {    # one day after today or last list's date
+        my $date = $min_date;
+
+        my $last_list =
+          $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->one_row;
+
+        if ($last_list) {
+            if ( $date < $last_list->date ) {
+                $date = $last_list->date;
+            }
+        }
+
+        $date->add( days => 1 );
     };
 
-    my $default_date =
-        $max_date
-      ? $max_date->add( days => 1 )
-      : DateTime->today;
-
-    my @lists = $lists->sorted->hri->all;
+    my @lists = $lists->sorted->with_item_count->hri->all;
 
     for my $list (@lists) {
         $list->{date} = $lists->parse_date( $list->{date} );
@@ -66,6 +72,7 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 
     $c->stash(
         default_date => $default_date,
+        min_date     => $min_date,
         lists        => \@lists,
         create_url   => $c->project_uri( $self->action_for('create') ),
     );
@@ -121,10 +128,28 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
+    my $date = $c->req->params->get('date');
+    my $name = $c->req->params->get('name');
+
+    my $lists = $c->project->search_related('purchase_lists');
+
+    if ( $lists->search( { name => $name } )->exists ) {
+        push @{ $c->stash->{errors} }, "A purchase list with that name already exists!";
+
+        $c->stash(
+            last_input => {
+                date => $date,
+                name => $name,
+            }
+        );
+
+        $c->go( 'index', [ $c->project->url_name ], [] );
+    }
+
     $c->project->create_related(
         purchase_lists => {
-            date => $c->req->params->get('date'),
-            name => $c->req->params->get('name'),
+            date => $date,
+            name => $name,
         }
     );
 

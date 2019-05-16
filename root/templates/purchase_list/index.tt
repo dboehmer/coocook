@@ -1,17 +1,17 @@
 [% title = "Purchase lists" %]
 
-<form method="POST" action="[% create_url %]">
+<form method="post" action="[% create_url %]">
     <fieldset>
         <legend>Create purchase list</legend>
 
         <p>
             <label for="date">Date:</label>
-            <input  id="date" type="date" name="date" value="[% default_date.ymd %]">
+            <input  id="date" type="date" name="date" min="[% min_date.ymd %]" value="[% last_input.date || default_date.ymd %]">
         </p>
 
         <p>
             <label for="name">Name:</name>
-            <input  id="name" type="text" name="name" placeholder="name">
+            <input  id="name" type="text" name="name" placeholder="name" value="[% last_input.name %]">
         </p>
 
         <input type="submit" value="Create purchase list">
@@ -29,13 +29,13 @@
     <tr>
         <td>[% display_date(list.date, {html=>1}) %]</td>
         <td><a href="[% list.edit_url %]">[% list.name | html %]</a></td>
-        <td>[% list.items_rs.count %]</td>
+        <td>[% list.item_count %]</td>
         <td>
-            <form action="[% list.update_url %]" method="POST">
+            <form action="[% list.update_url %]" method="post">
                 <input type="text" name="name" value="[% list.name | html %]">
                 <input type="submit" value="Rename list">
             </form>
-            <form action="[% list.delete_url %]" method="POST">
+            <form action="[% list.delete_url %]" method="post">
                 <input type="submit" value="Delete list">
             </form>
         </td>

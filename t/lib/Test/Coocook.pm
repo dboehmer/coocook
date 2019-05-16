@@ -17,6 +17,9 @@ BEGIN {
     $ENV{COOCOOK_CONFIG} = "$FindBin::Bin";
 }
 
+# don't spill STDERR with info messages when not in verbose mode
+our $DISABLE_LOG_LEVEL_INFO //= !$ENV{TEST_VERBOSE};
+
 use Coocook;
 
 *Coocook::reload_config = sub {
@@ -39,10 +42,18 @@ sub new {
 
     my $schema = delete $args{schema};
 
-    my $self = $class->SUPER::new( catalyst_app => 'Coocook', %args );
+    my $self = $class->SUPER::new(
+        catalyst_app => 'Coocook',
+        strict_forms => 1,           # change default to true
+        %args
+    );
+
+    if ($DISABLE_LOG_LEVEL_INFO) {
+        $self->catalyst_app->log->disable('info');
+    }
 
     if ($schema) {
-        Coocook->model('DB')->schema->storage( $schema->storage );
+        $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
     }
 
     return $self;
@@ -73,7 +84,7 @@ sub register_ok {
     my ( $self, $field_values, $name ) = @_;
 
     subtest $name || "register", sub {
-        $self->follow_link_ok( { text => 'Register' } );
+        $self->follow_link_ok( { text => 'Sign up' } );
 
         $self->submit_form_ok( { with_fields => $field_values },
             "register account '$field_values->{username}'" );
@@ -144,14 +155,23 @@ sub is_logged_in {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_like( qr/Dashboard/, $name || "client is logged in" )
+    $self->content_like( qr/Account [Ss]ettings/, $name || "client is logged in" )
+      or note $self->content;
+}
+
+sub is_logged_out {
+    my ( $self, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    $self->content_like( qr/Sign [Ii]n/, $name || "client is logged out" )
       or note $self->content;
 }
 
 sub login {
     my ( $self, $username, $password ) = @_;
 
-    $self->follow_link_ok( { text => 'Login' } );
+    $self->follow_link_ok( { text => 'Sign in' } );
 
     $self->submit_form_ok(
         {
@@ -180,13 +200,15 @@ sub login_fails {
     subtest $name || "login with $username:$password fails", sub {
         $self->login( $username, $password );
 
-        ( $self->content_like(qr/fail/) and $self->content_like(qr/Login/) )
+        ( $self->content_like(qr/fail/) and $self->content_like(qr/Sign in/) )
           or note $self->content;
     };
 }
 
 sub logout_ok {
     my ( $self, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $self->click_ok( 'logout', $name || "click logout button" );
 }
@@ -195,7 +217,7 @@ sub change_password_ok {
     my ( $self, $field_values, $name ) = @_;
 
     subtest $name || "change password", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'Account Settings' } );
 
         $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
     };
@@ -205,7 +227,7 @@ sub change_display_name_ok {
     my ( $self, $display_name, $name ) = @_;
 
     subtest $name || "change display name", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'Account Settings' } );
 
         $self->submit_form_ok(
             {
@@ -222,7 +244,7 @@ sub request_recovery_link_ok {
     my ( $self, $email, $name ) = @_;
 
     subtest $name || "request recovery link for $email", sub {
-        $self->follow_link_ok( { text => 'Login' } );
+        $self->follow_link_ok( { text => 'Sign in' } );
 
         $self->follow_link_ok( { text => 'Lost your password?' } );
 
@@ -286,23 +308,10 @@ sub create_project_ok {
 sub status_is {
     my ( $self, $expected, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     is $self->response->code => $expected,
       $name || "Response has status code $expected";
-}
-
-=head2 submit_form(...)
-
-Overrides the method from L<WWW::Mechanize> to set C<strict_forms> to true by default.
-
-=cut
-
-sub submit_form {
-    my ( $self, %args ) = @_;
-
-    exists $args{strict_forms}
-      or $args{strict_forms} = 1;
-
-    return $self->SUPER::submit_form(%args);
 }
 
 1;

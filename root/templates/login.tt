@@ -1,9 +1,0 @@
-[% title = "Login" %]
-
-<form method="POST" action="[% post_login_url %]">
-    <input type="text"     name="username" placeholder="username" [% 'autofocus' IF NOT username %] value="[% username | xml %]">
-    <input type="password" name="password" placeholder="password" [% 'autofocus' IF     username %] value="">
-    <input type="submit" value="Login">
-</form>
-
-<a href="[% recover_url %]">Lost your password?</a>

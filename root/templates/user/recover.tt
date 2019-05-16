@@ -1,7 +1,7 @@
 <p>You can request a password recovery link to your e-mail address.
 When you click it you can set a new password for your account.</p>
 
-<form method="POST" action="[% recover_url %]">
-    <input type="email" name="email" value="[% email | xml %]" placeholder="e-mail address">
+<form method="post" action="[% recover_url %]">
+    <input type="email" name="email" value="[% email | html %]" placeholder="e-mail address">
     <input type="submit" value="Send recovery link">
 </form>

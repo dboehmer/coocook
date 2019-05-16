@@ -61,7 +61,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     }
 
     if ( $c->user and $c->user->id == $user->id ) {
-        $c->stash( my_settings_url => $c->uri_for_action('/settings') );
+        $c->stash( my_settings_url => $c->uri_for_action('/settings/index') );
     }
 
     $c->escape_title( User => $user->display_name );
@@ -69,6 +69,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
 sub register : GET HEAD Chained('/base') Args(0) {
     my ( $self, $c ) = @_;
+
+    if ( $c->user ) {    # user is already logged in, probably via other browser tab
+        $c->detach('/_validated_redirect');
+    }
 
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
@@ -78,10 +82,14 @@ sub register : GET HEAD Chained('/base') Args(0) {
       /lib/zxcvbn.js
     >;
 
+    if ( my $terms = $c->model('DB::Terms')->valid_today ) {
+        $c->stash(
+            terms => $terms->as_hashref( url => $c->uri_for_action( '/terms/show', [ $terms->id ] ) ) );
+    }
+
     $c->stash(
-        example_username     => $c->config->{registration_example_username},
-        example_display_name => $c->config->{registration_example_display_name},
-        post_register_url    => $c->uri_for( $self->action_for('post_register') ),
+        example_username  => $c->config->{registration_example_username},
+        post_register_url => $c->redirect_uri_for_action( $self->action_for('post_register') ),
     );
 }
 
@@ -91,10 +99,9 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
 
-    my $username     = $c->req->params->get('username');       # use key 'username' just like login form
-    my $password     = $c->req->params->get('password');
-    my $display_name = $c->req->params->get('display_name');
-    my $email        = $c->req->params->get('email');
+    my $username = $c->req->params->get('username');    # use key 'username' just like login form
+    my $password = $c->req->params->get('password');
+    my $email    = $c->req->params->get('email');
 
     my @errors;
 
@@ -117,12 +124,18 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     }
 
-    if ( length $display_name == 0 ) {
-        push @errors, "display name must not be empty";
-    }
-
     $email = is_email($email)
       or push @errors, "e-mail address is not valid";
+
+    my $terms = $c->model('DB::Terms')->valid_today;
+
+    if ($terms) {
+        my $id = $c->req->params->get('accept_terms')
+          or $c->detach('/error/bad_request');    # parameter missing
+
+        $id == $terms->id
+          or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
+    }
 
     if (@errors) {
         my $errors = $c->stash->{errors} ||= [];
@@ -131,9 +144,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         $c->stash(
             template   => 'user/register.tt',
             last_input => {
-                username     => $username,
-                display_name => $display_name,
-                email        => $email,
+                username => $username,
+                email    => $email,
             },
         );
 
@@ -150,8 +162,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             {
                 name         => $username,
                 password     => $password,
-                display_name => $c->req->params->get('display_name'),
-                email        => $c->req->params->get('email'),
+                display_name => $username,
+                email        => $email,
                 token_hash   => $token->to_salted_hash,
                 token_expires => undef,    # never: token only for verification, doesn't allow password reset
             }
@@ -162,6 +174,14 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         undef $password;
 
         $c->visit( '/email/verification', [ $user, $token ] );
+
+        $terms
+          and $user->create_related(
+            terms_users => {
+                terms    => $terms->id,
+                approved => $terms->format_datetime( DateTime->now ),
+            }
+          );
 
         my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
 
@@ -287,7 +307,7 @@ sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) {
         );
     }
 
-    $c->response->redirect( $c->uri_for_action( '/login', { username => $user->name } ) );
+    $c->response->redirect( $c->uri_for_action( '/session/login', { username => $user->name } ) );
     $c->detach;
 }
 

@@ -62,11 +62,22 @@ sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->project->create_related( quantities => { name => $c->req->params->get('name') } );
+    my $name       = $c->req->params->get('name');
+    my $quantities = $c->project->search_related('quantities');
+
+    if ( $quantities->search( { name => $name } )->exists ) {
+        push @{ $c->stash->{errors} }, "Quantity already exists";
+
+        $c->stash( last_input => { name => $name } );
+
+        $c->go( 'index', [ $c->project->url_name ], [] );
+    }
+
+    $c->project->create_related( quantities => { name => $name } );
     $c->detach('redirect');
 }
 
-sub base : Chained('/project/base') CaptureArgs(1) {
+sub base : Chained('/project/base') PathPart('quantities') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( quantity => $c->project->quantities->find($id) || $c->detach('/error/not_found') );

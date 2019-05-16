@@ -40,14 +40,14 @@ subtest articles_cached_units => sub {
 
     # delete all entries to make sure everything is cached
     $db->resultset('Quantity')->update( { default_unit => undef } );
-    for my $rs (qw< DishIngredient Item ArticleTag Article RecipeIngredient Unit >) {
+    for my $rs (qw< DishIngredient Item ArticleTag RecipeIngredient Article Unit >) {
         ok $db->resultset($rs)->delete, "delete all ${rs}s";
         is $db->resultset($rs)->count => 0, "count($rs) == 0";
     }
 
     # add new unit to new article to make sure that is cached, too
     my $article = $project->create_related( articles => { name => "foo", comment => "" } );
-    my $unit = $project->create_related(
+    my $unit    = $project->create_related(
         units => { short_name => "b", long_name => "bar", quantity => 1, space => 0 } );
     $article->add_to_units($unit);
 
@@ -77,10 +77,25 @@ subtest articles_cached_units => sub {
 subtest delete => sub {
     my $db = TestDB->new;
 
-    ok $db->resultset('Project')->find(1)->delete;
+    $db->enable_fk_checks();
 
-    is $db->count => 8    # number of records for other projects
-      and return;
+    my @projects = $db->resultset('Project')->all
+      or die "no projects";
 
-    note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
+    for my $project (@projects) {
+        ok $project->delete(), "delete project " . $project->name;
+    }
+
+    my %unaffected_sources = map { $_ => 1 } qw<
+      FAQ
+      RoleUser
+      Terms
+      User
+    >;
+
+    for my $source ( $db->sources ) {
+        $unaffected_sources{$source}
+          or is $db->resultset($source)->count => 0,
+          "table $source has zero rows";
+    }
 };

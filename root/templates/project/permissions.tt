@@ -11,10 +11,10 @@
     <tbody>
 [% FOR permission IN permissions %]
         <tr>
-            <td><a href="[% permission.user_url %]">[% permission.user.display_name | xml %]</a></td>
+            <td><a href="[% permission.user_url %]">[% permission.user.display_name | html %]</a></td>
             <td>
     [% IF permission.edit_url %]
-                <form method="POST" action="[% permission.edit_url %]" class="inline">
+                <form method="post" action="[% permission.edit_url %]" class="inline">
                     <select name="role">
         [% FOR role IN roles %]
                         <option value="[% role %]" [% 'selected' IF permission.role == role %]>[% role %]</option>
@@ -28,14 +28,14 @@
             </td>
             <td>
     [% IF permission.revoke_url %]
-                <form method="POST" action="[% permission.revoke_url %]" class="inline">
+                <form method="post" action="[% permission.revoke_url %]" class="inline">
                     <input type="submit" value="Revoke">
                 </form>
     [% END %]
             </td>
             <td>
     [% IF permission.make_owner_url %]
-                <form method="POST" action="[% permission.make_owner_url %]" class="inline">
+                <form method="post" action="[% permission.make_owner_url %]" class="inline">
                     <input type="submit" value="Transfer ownership">
                 </form>
     [% END %]
@@ -51,10 +51,10 @@
     <legend>Add permission</legend>
 
 [% IF other_users %]
-    <form method="POST" action="[% add_permission_url %]">
+    <form method="post" action="[% add_permission_url %]">
         <select name="user">
 [% FOR other_user IN other_users %]
-            <option value="[% other_user.name %]">[% other_user.name | xml %] ([% other_user.display_name | xml %])</option>
+            <option value="[% other_user.name %]">[% other_user.name | html %] ([% other_user.display_name | html %])</option>
 [% END %]
         </select>
 
@@ -69,6 +69,6 @@
         <input type="submit" value="Add">
     </form>
 [% ELSE %]
-    <p>No more users. You need to let users register before giving them permission.</p>
+    <p>No more users. You need to let users sign up before giving them permission.</p>
 [% END %]
 </fieldset>

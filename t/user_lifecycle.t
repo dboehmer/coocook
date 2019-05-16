@@ -5,23 +5,19 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 42;
+use Test::Most tests => 47;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
-
-$ENV{TEST_VERBOSE}
-  or Coocook->log->disable('info');    # don't spill STDERR with info messages
 
 $t->get_ok('/');
 
 $t->register_ok(
     {
-        username     => "test",
-        display_name => "Test User",
-        email        => "test\@example.com",
-        password     => "s3cr3t",
-        password2    => "s3cr3t",
+        username  => "test",
+        email     => "test\@example.com",
+        password  => "s3cr3t",
+        password2 => "s3cr3t",
     }
 );
 
@@ -33,7 +29,7 @@ for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
 subtest "verify e-mail address" => sub {
     $t->verify_email_ok();
 
-    $t->title_like( qr/login/i, "got redirected to login page" );
+    $t->title_like( qr/sign in/i, "got redirected to login page" );
 
     # TODO replace evil HTML "parser" hackery by reasonable HTML parser
     $t->content_like( qr/ <input [^<>]+ name="username" [^<>]+ value="test" /x,
@@ -43,7 +39,7 @@ subtest "verify e-mail address" => sub {
 
 $t->clear_emails();
 
-$t->content_lacks('Register');
+$t->content_lacks('Sign up');
 
 Coocook->reload_config( enable_user_registration => 1 );
 
@@ -51,11 +47,10 @@ $t->get('/');
 
 $t->register_ok(
     {
-        username     => "test2",
-        display_name => "Other User",
-        email        => "test2\@example.com",
-        password     => "s3cr3t",
-        password2    => "s3cr3t",
+        username  => "test2",
+        email     => "test2\@example.com",
+        password  => "s3cr3t",
+        password2 => "s3cr3t",
     }
 );
 
@@ -68,11 +63,10 @@ my $content_after_registration = $t->content;
 subtest "registration of existing e-mail address triggers e-mail" => sub {
     $t->register_ok(
         {
-            username     => 'test_other',
-            display_name => "Other user with same e-mail address",
-            email        => 'test2@example.com',
-            password     => 's3cr3t',
-            password2    => 's3cr3t',
+            username  => 'test_other',
+            email     => 'test2@example.com',
+            password  => 's3cr3t',
+            password2 => 's3cr3t',
         }
     );
 
@@ -89,23 +83,18 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 }
 
 subtest "registration of existing username fails" => sub {
-    $t->follow_link_ok( { text => 'Register' } );
+    $t->follow_link_ok( { text => 'Sign up' } );
 
-    $t->submit_form_ok(
-        { with_fields => { username => 'TEST2', display_name => "Same as test2 with other case" }, },
-        "register account 'TEST2'" );
+    $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
 
     $t->content_like(qr/username/)
       or note $t->content;
 };
 
 subtest "registration with invalid username fails" => sub {
-    $t->follow_link_ok( { text => 'Register' } );
+    $t->follow_link_ok( { text => 'Sign up' } );
 
-    $t->submit_form_ok(
-        { with_fields => { username => $_, display_name => "Username with trailing space" }, },
-        "register account '$_'" )
-      for "foobar ";
+    $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
 
     $t->content_like(qr/username/)
       or note $t->content;
@@ -202,6 +191,74 @@ subtest "password recovery marks e-mail address verified" => sub {
 
 $t->login_ok( 'test', 'new, nice & shiny' );
 
+subtest "redirects after login/logout" => sub {
+    $t->get_ok('/about');
+
+    $t->logout_ok();
+
+    is $t->uri->path => '/about',
+      "client is redirected to last page after logout"
+      or diag "uri: " . $t->uri;
+
+    # pass link around between login/register
+    $t->follow_link_ok( { text => 'Sign up' } );
+
+    $t->login_fails( 'test', 'invalid' );
+
+    note "uri: " . $t->uri;
+
+    $t->login_ok( 'test', 'new, nice & shiny' );
+
+    is $t->uri->path => '/about',
+      "client is redirected to last page after login"
+      or diag "uri: " . $t->uri;
+};
+
+subtest "refreshing login page after logging in other browser tab" => sub {
+    $t->get_ok('/login?redirect=statistics');
+
+    is $t->uri->path => '/statistics',
+      "client is redirected immediately"
+      or diag "uri: " . $t->uri;
+};
+
+subtest "refreshing register page after logging in other browser tab" => sub {
+    $t->get_ok('/register?redirect=statistics');
+
+    is $t->uri->path => '/statistics',
+      "client is redirected immediately"
+      or diag "uri: " . $t->uri;
+};
+
+subtest "malicious redirects are filtered on logout" => sub {
+    $t->is_logged_in();
+
+    $t->post('/logout?redirect=https://malicious.example/');
+    is $t->uri => 'https://localhost/', "client is redirected to /";
+
+    $t->is_logged_out("... but client is logged out anyway");
+};
+
+subtest "malicious redirects are filtered on login" => sub {
+    $t->post(
+        '/login?redirect=https://malicious.example/',
+        { username => 'test', password => 'new, nice & shiny' }
+    );
+    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->is_logged_in();
+
+    $t->logout_ok();
+    $t->post(
+        '/login',
+        {
+            redirect => 'https://malicious.example/',
+            username => 'test',
+            password => 'new, nice & shiny'
+        }
+    );
+    is $t->uri => 'https://localhost/', "client is redirected to /";
+};
+
 $t->create_project_ok( { name => "Test Project 1" } );
 
 unlike $t->uri => qr/import/,
@@ -225,7 +282,7 @@ ok !$project->is_public, "1st project is private";
 is $project->owner->name => 'test',
   "new project is owned by new user";
 
-is $project->users->first->name => 'test',
+is $project->users->one_row->name => 'test',
   "owner relationship is also stored via table 'projects_users'";
 
 ok my $project2 = $schema->resultset('Project')->find( { name => "Test Project 2" } );

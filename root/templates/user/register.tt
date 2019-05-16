@@ -1,22 +1,14 @@
-[% title = "Register" %]
+[% title = "Sign Up" %]
 
-<p>You will receive an e-mail with a web link to verify your e-mail address.</p>
+<p><a href="[% login_url %]">Already have an account? Sign in here.</a></p>
 
-<form method="POST" action="[% post_register_url %]">
+<form method="post" action="[% post_register_url %]">
 <table>
     <tr>
-        <th><label for="name">Login name</label></th>
+        <th><label for="username">Username</label></th>
         <td>
-            <input id="name" type="text" name="username" placeholder="name" value="[% last_input.username | html %]" pattern="[0-9a-zA-Z_]+">
-            only 0-9, a-z, A-Z and <code>_</code> allowed
-            [%~ IF example_username %], e.g. <code>daniel_boehmer42</code>[% END %]
-        </td>
-    </tr>
-    <tr>
-        <th><label for="display_name">Display name</label></th>
-        <td>
-            <input id="display_name" type="text" name="display_name" placeholder="display name" value="[% last_input.display_name | html %]">
-            [% IF example_display_name %]e.g. <code>Daniel Böhmer</code>[% END %]
+            <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]">
+            [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
         </td>
     </tr>
     <tr>
@@ -33,5 +25,15 @@
     </tr>
 </table>
 
-<input type="submit" value="Register">
+[% label = "Sign up";
+
+IF terms %]
+<input type="hidden" name="accept_terms" value="[% terms.id %]">
+
+<p>By clicking <em>[% label %]</em> you accept our <a href="[% terms.url %]">terms as of [% display_date(terms.valid_from, {html=>1}) %]</a>.</p>
+[% END %]
+
+<p>You will receive an e-mail with a web link to verify your e-mail address.</p>
+
+<input type="submit" value="[% label %]">
 </form>

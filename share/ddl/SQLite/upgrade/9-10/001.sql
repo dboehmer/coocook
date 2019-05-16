@@ -49,4 +49,6 @@ SELECT
   owner
 FROM projects_temp_alter;
 
+DROP TABLE projects_temp_alter;
+
 COMMIT;

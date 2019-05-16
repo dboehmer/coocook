@@ -95,4 +95,6 @@ INSERT INTO projects_users
 SELECT id,1,'owner'
 FROM projects;
 
+DROP TABLE alter_projects;
+
 COMMIT;

@@ -1,6 +1,6 @@
 [% title = "Add tag" %]
 
-<form action="[% create_url %]" method="POST">
+<form action="[% create_url %]" method="post">
     <p><input type="text" name="name" placeholder="name"></p>
 
     <p>Tag group:

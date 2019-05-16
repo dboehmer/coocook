@@ -54,7 +54,7 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
     }
 
     # print e-mails on STDOUT in debugging mode
-    $ENV{EMAIL_SENDER_TRANSPORT} = 'Print';
+    $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
 
     __PACKAGE__->config(
         require_ssl => {
@@ -101,17 +101,30 @@ __PACKAGE__->config(
         $abstract;
     },
 
+    about_page_title => "About",
+
     about_page_md => <<EOT,
 This is an instance of the Coocook food planning software.
 
 <!-- define 'about_page_md' in 'coocook_local' config file to replace this text -->
 EOT
 
+    # TODO move to local config of Coocook.org once 3rd party instances exist
+    help_links => [
+        {
+            title => "Mailing list",
+            url   => 'https://lists.coocook.org/mailman/listinfo/coocook',
+        },
+        {
+            title => "Report issues",
+            url   => 'https://github.com/dboehmer/coocook/issues',
+        },
+    ],
+
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
-    registration_example_username     => 'daniel_boehmer42',
-    registration_example_display_name => "Daniel Böhmer",
+    registration_example_username => 'daniel_boehmer42',
 
     email_from_address => do {
         my $username =    # see https://stackoverflow.com/a/3526587/498634
@@ -199,12 +212,15 @@ EOT
             charset      => 'utf-8',
             encoding     => 'quoted-printable',
         },
-        sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
+        sender          => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
         template_prefix => 'email',
     },
 
     'View::TT' => {
-        INCLUDE_PATH => __PACKAGE__->path_to(qw< root templates >),
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to(qw< root custom_templates >),    # allow overriding with custom files
+            __PACKAGE__->path_to(qw< root templates >),
+        ],
     },
 );
 

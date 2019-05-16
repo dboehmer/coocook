@@ -46,8 +46,19 @@ sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->project->create_related(
-        shop_sections => {
+    my $name     = $c->req->params->get('name');
+    my $sections = $c->project->search_related('shop_sections');
+
+    if ( $sections->search( { name => $name } )->exists ) {
+        push @{ $c->stash->{errors} }, "Shop section already exists!";
+
+        $c->stash( last_input => { name => $name } );
+
+        $c->go( 'index', [ $c->project->url_name ], [] );
+    }
+
+    $sections->create(
+        {
             name => $c->req->params->get('name'),
         }
     );

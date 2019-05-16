@@ -71,7 +71,7 @@ sub index : GET HEAD Chained('submenu') PathPart('units') Args(0)
             $unit->quantity( $quantities{ $unit->get_column('quantity') } );
 
             my %unit = (
-                url => $c->project_uri( $self->action_for('edit'), $unit->id ),
+                url                   => $c->project_uri( $self->action_for('edit'), $unit->id ),
                 from_quantity_default => $unit->to_quantity_default ? 1 / $unit->to_quantity_default : undef,
                 map { $_ => $unit->$_() }
                   qw<

@@ -68,7 +68,7 @@ sub password_changed : Private {
 sub recovery_link : Private {
     my ( $self, $c, $user ) = @_;
 
-    my $token = $c->model('Token')->new();
+    my $token   = $c->model('Token')->new();
     my $expires = DateTime->now->add( days => 1 );
 
     $user->update(

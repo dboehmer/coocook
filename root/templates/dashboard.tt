@@ -1,5 +1,3 @@
-<p>Logged in as <a href="[% user_url %]">[% user.display_name | html %]</a>.</p>
-
 <h2>My projects</h2>
 
 <ul>
@@ -8,7 +6,7 @@
 [% END %]
 </ul>
 
-<form method="POST" action="[% project_create_url %]">
+<form method="post" action="[% project_create_url %]">
 <fieldset>
     <legend>Create new project</legend>
     <input type="text" name="name" placeholder="name">

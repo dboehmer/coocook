@@ -31,7 +31,7 @@ has project => (
     builder => 'build_project',
 );
 
-sub build_project { shift->ingredients->first->project }
+sub build_project { shift->ingredients->one_row->project }
 
 sub as_arrayref {
     my $self = shift;

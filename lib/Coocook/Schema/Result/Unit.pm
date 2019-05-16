@@ -8,10 +8,10 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("units");
 
 __PACKAGE__->add_columns(
-    id                  => { data_type => 'int',  is_auto_increment => 1 },
+    id                  => { data_type => 'int', is_auto_increment => 1 },
     project             => { data_type => 'int' },
-    quantity            => { data_type => 'int',  is_nullable       => 0 },
-    to_quantity_default => { data_type => 'real', is_nullable       => 1 },
+    quantity            => { data_type => 'int', is_nullable => 0 },
+    to_quantity_default => { data_type => 'real', is_nullable => 1 },
     space               => { data_type => 'bool' },
     short_name          => { data_type => 'text' },
     long_name           => { data_type => 'text' },
@@ -25,7 +25,7 @@ __PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
 
 __PACKAGE__->belongs_to( quantity => 'Coocook::Schema::Result::Quantity' );
 
-# returns other units of same quantity but not $self,
+# returns other convertible units of same quantity but not $self,
 # for doc see https://metacpan.org/pod/DBIx::Class::Relationship::Base#Custom-join-conditions
 __PACKAGE__->has_many(
     convertible_into => 'Coocook::Schema::Result::Unit',
@@ -33,37 +33,70 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.id" => { '!=' => { -ident => "$args->{self_alias}.id" } },
-            "$args->{foreign_alias}.quantity"            => { -ident => "$args->{self_alias}.quantity" },
-            "$args->{foreign_alias}.to_quantity_default" => { '!='   => undef },
+            "$args->{foreign_alias}.id"       => { '!='   => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
+            "$args->{foreign_alias}.to_quantity_default" => { '!=' => undef },
         };
     }
 );
 
-__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'unit' );
+# returns other units of same quantity except $self--regardless if convertible or not
+__PACKAGE__->has_many(
+    other_units_of_same_quantity => 'Coocook::Schema::Result::Unit',
+    sub {
+        my $args = shift;
+
+        return {
+            "$args->{foreign_alias}.id"       => { '!='   => { -ident => "$args->{self_alias}.id" } },
+            "$args->{foreign_alias}.quantity" => { -ident => "$args->{self_alias}.quantity" },
+        };
+    }
+);
+
+__PACKAGE__->has_many(
+    articles_units => 'Coocook::Schema::Result::ArticleUnit',
+    'unit',
+    {
+        cascade_delete => 0,    # units with articles_units may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( articles => articles_units => 'article' );
 
-__PACKAGE__->has_many( dish_ingredients => 'Coocook::Schema::Result::DishIngredient', 'unit' );
+__PACKAGE__->has_many(
+    dish_ingredients => 'Coocook::Schema::Result::DishIngredient',
+    'unit',
+    {
+        cascade_delete => 0,    # units with dish_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
 
-__PACKAGE__->has_many( recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient', 'unit' );
+__PACKAGE__->has_many(
+    recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
+    'unit',
+    {
+        cascade_delete => 0,    # units with recipe_ingredients may not be deleted
+    }
+);
 __PACKAGE__->many_to_many( recipes => recipe_ingredients => 'recipe' );
 
-__PACKAGE__->has_many( items => 'Coocook::Schema::Result::Item', 'unit' );
+__PACKAGE__->has_many(
+    items => 'Coocook::Schema::Result::Item',
+    'unit',
+    {
+        cascade_delete => 0,    # units with items may not be deleted
+    }
+);
 
+# before deleting a single unit
+# we need to unset default_unit for the quantity if it's the last unit
+# because then the quantitiy's default unit cannot be switched to any other unit
 before delete => sub {
     my $self = shift;
 
-    for ( $self->articles_units, $self->items, $self->dish_ingredients, $self->recipe_ingredients ) {
-        $_->exists
-          and die "unit can't be deleted because it's in use";
-    }
-
     if ( $self->is_quantity_default ) {
-        $self->convertible_into->exists
-          and die "unit is quantity default and other units exist";
-
-        $self->quantity->update( { default_unit => undef } );
+        $self->other_units_of_same_quantity->exists
+          or $self->quantity->update( { default_unit => undef } );
     }
 };
 
@@ -81,9 +114,7 @@ sub can_be_quantity_default {
 sub is_quantity_default {
     my $self = shift;
 
-    my $quantity = $self->quantity or return;
-
-    return ( $self->id == $quantity->get_column('default_unit') );
+    return ( $self->id == $self->quantity->get_column('default_unit') );
 }
 
 # marks this unit as its quantity's default and adjusts conversion factors of all units
@@ -106,8 +137,8 @@ sub make_quantity_default {
     # collect convertible units of this quantity except $self and $orig
     my $others = $quantity->units->search(
         {
-            id => { -not_in => [ $self->id, $orig->id ] },
-            to_quantity_default => { '!=' => undef },    # IS NOT NULL
+            id                  => { -not_in => [ $self->id, $orig->id ] },
+            to_quantity_default => { '!='    => undef },                      # IS NOT NULL
         }
     );
 

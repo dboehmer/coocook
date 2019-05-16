@@ -53,6 +53,8 @@ sub auto : Private {
           qw<
           date_format_short
           date_format_long
+          footer_html
+          help_links
           icon_type
           icon_url
           >
@@ -91,24 +93,33 @@ sub auto : Private {
         about_url      => $c->uri_for_action('/about'),
     );
 
+    if ( $c->model('DB::FAQ')->exists ) {
+        $c->stash( faq_url => $c->uri_for_action('/faq/index') );
+    }
+
     if ( $c->user ) {
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
-            settings_url  => $c->uri_for_action('/settings'),
-            logout_url    => $c->forward('/logout_url'),
+            settings_url  => $c->uri_for_action('/settings/index'),
+            logout_url    => $c->redirect_uri_for_action('/session/logout'),
         );
     }
     else {
-        # login URI with current application path as query parameter or current login URI itself
-        $c->stash(
-            login_url => $c->req->path =~ m{ ^ login /? $ }x ? $c->req->uri : $c->forward('/login_url') );
-
-        $c->user_registration_enabled
-          and $c->stash( register_url => $c->uri_for_action('/user/register') );
+        $c->stash(    # login/register URLs with previous application path as query parameter
+            login_url    => $c->redirect_uri_for_action('/session/login'),
+            register_url => $c->user_registration_enabled
+            ? $c->redirect_uri_for_action('/user/register')
+            : undef,
+        );
     }
 
     if ( $c->has_capability('admin_view') ) {
         $c->stash( admin_url => $c->uri_for_action('/admin/index') );
+    }
+
+    # has current terms or has any terms (valid in future then)
+    if ( $c->model('DB::Terms')->exists ) {
+        $c->stash( terms_url => $c->uri_for_action('/terms/index') );
     }
 
     return 1;    # important
@@ -214,6 +225,43 @@ sub end : ActionClass('RenderView') {
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
         $_ = $c->uri_for_static($_);
     }
+}
+
+=head2 _validated_redirect
+
+Gets a redirect URL from the current request URI's query parameter C<redirect>
+and validates the URL path. If the paramter is present and the URL is valid,
+the client is redirected to this URL.
+
+In every other case the client is redirected to C</>.
+
+=cut
+
+sub _validated_redirect : Private {
+    my ( $self, $c ) = @_;
+
+    my $uri;
+
+  URI: for (1) {    # to exit easily with `last`
+        my $path = $c->req->params->get('redirect')
+          or last;
+
+        my @regexes = (    # TODO is this sufficient to assert security?
+            qr!\.\.!,       # path traversal
+            qr!^//!,        # same protocol URI
+            qr!^\w+://!,    # explicit protocol URI
+        );
+
+        for my $regex (@regexes) {
+            $path =~ $regex
+              and last URI;
+        }
+
+        $uri = $c->uri_for_local_part($path);
+    }
+
+    # don't $c->detach() here, caller can decide between visit() or detach()
+    $c->response->redirect( $uri || $c->uri_for('/') );
 }
 
 __PACKAGE__->meta->make_immutable;
