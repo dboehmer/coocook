@@ -3,6 +3,7 @@
 <table>
 <thead>
     <tr>
+        <th>📁</th>
         <th>🔒</th>
         <th>Project</th>
         <th>Created</th>
@@ -12,7 +13,8 @@
 <tbody>
 [% FOR proj IN projects %]
     <tr>
-        <td>[% '🔒' UNLESS proj.is_public %]</a></td>
+        <td>[% '📁' IF proj.archived %]</td>
+        <td>[% '🔒' UNLESS proj.is_public %]</td>
         <td><a href="[% proj.url %]">[% proj.name | html %]</a></td>
         <td>[% proj.created %]</td>
         <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
