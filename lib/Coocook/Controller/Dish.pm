@@ -153,7 +153,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
             value   => $c->req->params->get('value'),
             unit    => $c->req->params->get('unit'),
             comment => $c->req->params->get('comment'),
-            prepare => $c->req->params->get('prepare') ? '1' : '0',
+            prepare => !!$c->req->params->get('prepare'),
         }
     );
 

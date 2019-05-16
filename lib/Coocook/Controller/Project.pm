@@ -195,7 +195,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
       or
       $c->redirect_detach( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
 
-    my $is_public = $c->req->params->get('is_public') ? 1 : 0;
+    my $is_public = !!$c->req->params->get('is_public');
 
     ( $is_public or $c->has_capability('create_private_project') )
       or $c->redirect_detach(
@@ -271,7 +271,7 @@ sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_v
 
     my $project = $c->stash->{project};
 
-    $project->update( { is_public => $c->req->params->get('public') ? 1 : 0 } );
+    $project->update( { is_public => !!$c->req->params->get('public') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }

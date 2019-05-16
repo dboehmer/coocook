@@ -119,7 +119,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
     $recipe->create_related(
         ingredients => {
-            prepare => ( $c->req->params->get('prepare') ? 1 : 0 ),
+            prepare => !!$c->req->params->get('prepare'),
             article => $c->req->params->get('article'),
             value   => $c->req->params->get('value'),
             unit    => $c->req->params->get('unit'),
@@ -192,7 +192,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
                     $ingredient->update(
                         {
-                            prepare => ( $c->req->params->get( 'prepare' . $ingredient->id ) ? 1 : 0 ),
+                            prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
                             value   => $c->req->params->get( 'value' . $ingredient->id ),
                             unit    => $c->req->params->get( 'unit' . $ingredient->id ),
                             comment => $c->req->params->get( 'comment' . $ingredient->id ),
