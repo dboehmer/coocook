@@ -14,7 +14,7 @@ __PACKAGE__->meta->make_immutable;
 sub prepared {
     my $self = shift;
 
-    return $self->search( { $self->me('prepare') => 1 } );
+    return $self->search( { -bool => $self->me('prepare') } );
 }
 
 sub unassigned {

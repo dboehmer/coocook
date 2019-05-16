@@ -24,7 +24,7 @@ sub find_by_url_name {
 sub public {
     my $self = shift;
 
-    return $self->search( { is_public => 1 } );
+    return $self->search( { -bool => 'is_public' } );
 }
 
 =head2 stale
