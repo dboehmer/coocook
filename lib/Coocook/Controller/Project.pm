@@ -50,6 +50,8 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
             shop_sections    => $c->project_uri('/shop_section/index'),
             units            => $c->project_uri('/unit/index'),
             import           => $c->project_uri('/project/get_import'),
+            archive          => $c->project_uri('/project/archive'),
+            unarchive        => $c->project_uri('/project/unarchive'),
         },
     );
 }
@@ -236,6 +238,22 @@ sub update : POST Chained('base') Args(0) RequiresCapability('update_project') {
         { description => $c->req->params->get('description') // $c->detach('/error/bad_request') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
+}
+
+sub archive : POST Chained('base') Args(0) RequiresCapability('archive_project') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{project}->archive();
+
+    $c->response->redirect( $c->project_uri('/project/show') );
+}
+
+sub unarchive : POST Chained('base') Args(0) RequiresCapability('unarchive_project') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{project}->unarchive();
+
+    $c->response->redirect( $c->project_uri('/project/show') );
 }
 
 sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {

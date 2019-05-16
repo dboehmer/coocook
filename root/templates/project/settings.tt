@@ -27,6 +27,15 @@
     </fieldset>
 </form>
 
+<fieldset>
+    <legend>Archiving</legend>
+    <p>This project is [% project.archived ? '📁' : '<strong>not</strong>' %] archived.</p>
+
+    <form method="post" action="[% project.archived ? project_urls.unarchive : project_urls.archive %]">
+        <input type="submit" value="[% project.archived ? 'Un-archive' : 'Archive' %]">
+    </form>
+</fieldset>
+
 <form method="post" action="[% delete_url %]">
     <fieldset>
         <legend>Delete project <em>[% project.name | html %]</em></legend>
