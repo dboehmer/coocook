@@ -3,7 +3,7 @@ use warnings;
 
 use lib 't/lib/';
 
-use Test::Most tests => 7;
+use Test::Most tests => 8;
 use TestDB;
 
 my $db = TestDB->new;
@@ -54,4 +54,14 @@ subtest view_project => sub {
     hasnt_cap_ok
       view_project => { project => $project2, user => $user2 },
       "other user for private project";
+};
+
+subtest archiving => sub {
+    has_cap_ok archive_project     => { project => $project1, user => $user1 };
+    hasnt_cap_ok unarchive_project => { project => $project1, user => $user1 };
+
+    $project1->archive();
+
+    hasnt_cap_ok archive_project => { project => $project1, user => $user1 };
+    has_cap_ok unarchive_project => { project => $project1, user => $user1 };
 };

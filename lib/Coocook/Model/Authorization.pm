@@ -45,6 +45,7 @@ my @rules = (
         needs_input => [ 'project', 'user' ],
         rule        => sub {
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            $project->archived and return;
             return (
                      $user->has_role('site_admin')
                   or $user->has_any_project_role( $project, qw< editor admin owner > )
@@ -66,11 +67,20 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
+            my ( $project, $user, $capability ) = @{ +shift }{ 'project', 'user', 'capability' };
+
+            return if $capability eq 'archive_project'   and $project->archived;
+            return if $capability eq 'unarchive_project' and not $project->archived;
+
             return ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) );
         },
         capabilities => [
-            qw< view_project_settings create_project_permission update_project rename_project delete_project >],
+            qw<
+              view_project_settings create_project_permission
+              update_project rename_project delete_project
+              archive_project unarchive_project
+              >
+        ],
     },
     {
         needs_input => [ 'project', 'permission', 'user' ],
@@ -179,6 +189,8 @@ sub has_capability {
         $input->{$key}
           or return;
     }
+
+    local $input->{capability} = $capability;
 
     return $rule->{rule}->($input);
 }

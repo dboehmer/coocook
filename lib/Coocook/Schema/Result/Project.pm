@@ -3,6 +3,9 @@ package Coocook::Schema::Result::Project;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use Carp;
+use DateTime;
+
 extends 'Coocook::Schema::Result';
 
 use feature 'fc';    # Perl v5.16
@@ -57,6 +60,24 @@ before store_column => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
+
+sub archive {
+    my $self = shift;
+
+    $self->archived
+      and croak "Project already archived";
+
+    $self->update( { archived => DateTime->now() } );
+}
+
+sub unarchive {
+    my $self = shift;
+
+    $self->archived
+      or croak "Project not archived";
+
+    $self->update( { archived => undef } );
+}
 
 # pseudo-relationship
 sub dishes {
