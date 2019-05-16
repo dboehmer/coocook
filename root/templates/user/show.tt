@@ -4,6 +4,8 @@
 
 <p>Username: [% user_object.name %]</p>
 
+<p>Registered: [% user_object.created %]</p>
+
 <p>Global roles: [% user_object.roles.join(', ') %]</p>
 
 <p>Project permissions:</p>

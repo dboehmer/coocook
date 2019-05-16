@@ -17,6 +17,7 @@ __PACKAGE__->add_columns(
     description => { data_type => 'text' },
     is_public   => { data_type => 'bool', default_value => 1 },
     owner       => { data_type => 'int' },
+    created => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
 );
 
 __PACKAGE__->set_primary_key("id");

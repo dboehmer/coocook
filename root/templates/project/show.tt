@@ -28,3 +28,5 @@
 </p>
 
 [% INCLUDE 'print/project.tt' %]
+
+<p>Created at [% project.created %]</p>

@@ -7,6 +7,7 @@
         <th>Display Name</th>
         <th>Admin Comment</th>
         <th>Owned projects</th>
+        <th>Registerd</th>
         <th>Status</th>
     </tr>
 </thead>
@@ -22,6 +23,7 @@
             </form>
         </td>
         <td style="text-align:center">[% u.projects_count %]</td>
+        <td>[% u.created %]</td>
         <td>[% u.status %]</td>
     </tr>
 [% END %]

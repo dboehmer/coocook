@@ -17,6 +17,7 @@ __PACKAGE__->load_components(
       +Coocook::Schema::Component::ProxyMethods
       +Coocook::Schema::Component::Result::Boolify
       Helper::Row::SelfResultSet
+      TimeStamp
       >
 );
 

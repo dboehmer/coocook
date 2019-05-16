@@ -26,6 +26,7 @@ requires "DBIx::Class::Helpers::Util" => "0";
 requires "DBIx::Class::InflateColumn::DateTime" => "0";
 requires "DBIx::Class::ResultSet" => "0";
 requires "DBIx::Class::Schema::Config" => "0";
+requires "DBIx::Class::TimeStamp" => "0";
 requires "Data::Validate::Email" => "0";
 requires "DateTime" => "0";
 requires "HTML::Entities" => "0";
@@ -56,6 +57,7 @@ suggests "Sys::Hostname::FQDN" => "0";
 
 on 'test' => sub {
   requires "DBICx::TestDatabase" => "0";
+  requires "DBIx::Class::Schema" => "0";
   requires "DBIx::Class::Schema::Loader" => "0";
   requires "DateTime::Format::SQLite" => "0";
   requires "Email::Sender::Simple" => "0";
