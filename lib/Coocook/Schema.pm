@@ -69,7 +69,7 @@ sub connection {
         $$on_connect_do = [ $$on_connect_do, $enable_fk ];
     }
 
-    return $self->SUPER::connection(@_);
+    return $self->next::method(@_);
 }
 
 =head2 count(@resultsets?)

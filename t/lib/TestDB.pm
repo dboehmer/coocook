@@ -8,7 +8,7 @@ use parent 'DBICx::TestDatabase';
 sub new {
     my $class = shift;
 
-    my $schema = $class->SUPER::new( 'Coocook::Schema', @_ );
+    my $schema = $class->next::method( 'Coocook::Schema', @_ );
 
     open my $fh, '<', 'share/test_data.sql';
 

@@ -42,7 +42,7 @@ sub new {
 
     my $schema = delete $args{schema};
 
-    my $self = $class->SUPER::new(
+    my $self = $class->next::method(
         catalyst_app => 'Coocook',
         strict_forms => 1,           # change default to true
         %args
@@ -63,7 +63,7 @@ sub request {
     my $self = shift;
     my ($request) = @_;
 
-    my $response = $self->SUPER::request(@_);
+    my $response = $self->next::method(@_);
 
     if ($DEBUG) {
         note map { s/^/> /gm; $_ } $request->as_string;

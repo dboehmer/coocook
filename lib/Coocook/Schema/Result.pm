@@ -55,7 +55,7 @@ sub has_many {
         $_[3] = { cascade_copy => 0 };
     }
 
-    return $class->SUPER::has_many(@_);
+    return $class->next::method(@_);
 }
 
 __PACKAGE__->meta->make_immutable;
