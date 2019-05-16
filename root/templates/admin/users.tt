@@ -7,7 +7,7 @@
         <th>Display Name</th>
         <th>Admin Comment</th>
         <th>Owned projects</th>
-        <th>Registerd</th>
+        <th>Registered</th>
         <th>Status</th>
     </tr>
 </thead>
