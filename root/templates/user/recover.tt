@@ -1,3 +1,5 @@
+[% title = "Password recovery" %]
+
 <p>You can request a password recovery link to your e-mail address.
 When you click it you can set a new password for your account.</p>
 
