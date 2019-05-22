@@ -26,7 +26,10 @@ sub _test_has_capability {
 
     $input->{user} //= undef;    # make sure key is always present
 
-    ok( ( $authz->has_capability( $capability, $input ) xor !$expects_true ), $name );
+    my ($result) = my @result = $authz->has_capability( $capability, $input );
+
+    ok( ( $result xor !$expects_true ), $name );
+    ok( ( @result xor !$expects_true ), "... also in list content" );
 }
 
 is $authz->new => $authz, "is a singleton";

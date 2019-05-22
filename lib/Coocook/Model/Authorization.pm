@@ -192,7 +192,7 @@ sub has_capability {
 
     local $input->{capability} = $capability;
 
-    return $rule->{rule}->($input);
+    return $rule->{rule}->($input) ? 1 : ();
 }
 
 sub project_roles { qw< viewer editor admin owner > }
