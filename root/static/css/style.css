@@ -267,6 +267,11 @@ input[type="submit"]:hover, input[type="submit"]:active{
     background-color: #4CAF50;
 }
 
+/* <li>s with checkbox inside should not have any bullet point */
+li.checkbox {
+    list-style-type: none;
+}
+
 .markdown-preview {
     width: 50%;
     float: right;

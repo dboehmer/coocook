@@ -15,13 +15,8 @@
 [% FOR u IN users %]
     <tr>
         <td><a href="[% u.url %]">[% u.name %]</a></td>
-        <td><a href="[% u.url %]">[% u.display_name | html %]</a></td>
-        <td>
-            <form method="post" action="[% u.update_url %]" class="inline">
-                <input type="text" name="admin_comment" value="[% u.admin_comment | html %]">
-                <input type="submit" value="&#128190;">
-            </form>
-        </td>
+        <td>[% u.display_name | html %]</td>
+        <td>[% u.admin_comment | html %]</td>
         <td style="text-align:center">[% u.projects_count %]</td>
         <td>[% u.created %]</td>
         <td>[% u.status %]</td>

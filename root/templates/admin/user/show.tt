@@ -4,7 +4,26 @@
 
 <p>Registered: [% user_object.created %]</p>
 
-<p>Global roles: [% user_object.roles.join(', ') %]</p>
+<form method="post" action="[% update_url %]">
+    <p>
+        <label for="admin_comment">Admin comment:</label>
+        <input  id="admin_comment" type="text" name="admin_comment" value="[% user_object.admin_comment | html %]">
+    </p>
+
+    <p>Global roles:</p>
+
+    <input type="hidden" name="update_roles" value="on">
+    <ul>
+[% FOR role IN global_roles %]
+        <li class="checkbox">
+            <input  id="role_[% role %]" name="roles" value="[% role %]" type="checkbox" [% 'checked' IF roles.$role %]>
+            <label for="role_[% role %]">[% role %]</label>
+        </li>
+[% END %]
+    </ul>
+
+    <input type="submit" value="Update">
+</form>
 
 <p>Project permissions:</p>
 

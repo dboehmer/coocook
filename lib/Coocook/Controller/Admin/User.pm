@@ -15,8 +15,7 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
     my @users = $users->hri->all;
 
     for my $user (@users) {
-        $user->{url}        = $c->uri_for( $self->action_for('show'),   [ $user->{name} ] );
-        $user->{update_url} = $c->uri_for( $self->action_for('update'), [ $user->{name} ] );
+        $user->{url} = $c->uri_for( $self->action_for('show'), [ $user->{name} ] );
 
         if ( my $token_expires = $user->{token_expires} ) {
             if ( DateTime->now <= $users->parse_datetime($token_expires) ) {
@@ -37,8 +36,15 @@ sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
     $c->stash(
-        user_object    # don't overwrite $user!
-          => $c->model('DB::User')->find( { name_fc => fc $name } ) || $c->detach('/error/not_found')
+        user_object =>    # don't overwrite $user!
+          $c->model('DB::User')->find( { name_fc => fc $name } ) || $c->detach('/error/not_found'),
+
+        global_roles => [
+            qw<
+              private_projects
+              site_admin
+              >
+        ],
     );
 }
 
@@ -58,6 +64,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     $c->stash(
         permissions        => \my @permissions,
         public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
+        roles              => { map { $_ => 1 } $user->roles },
     );
 
     while ( my $permission = $permissions->next ) {
@@ -84,9 +92,20 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
         $user->set_column( admin_comment => $comment );
     }
 
+    if ( $c->req->params->get('update_roles') ) {
+        my %checked = map { $_ => 1 } $c->req->params->get_all('roles');
+
+        $user->roles_users->delete();
+
+        for my $role ( @{ $c->stash->{global_roles} } ) {
+            $checked{$role}
+              and $user->create_related( roles_users => { role => $role } );
+        }
+    }
+
     $user->update();
 
-    $c->redirect_detach( $c->uri_for( $self->action_for('index') ) );
+    $c->redirect_detach( $c->uri_for( $self->action_for('show'), [ $user->name ] ) );
 }
 
 __PACKAGE__->meta->make_immutable;
