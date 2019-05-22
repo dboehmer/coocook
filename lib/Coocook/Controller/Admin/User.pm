@@ -11,25 +11,19 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
   RequiresCapability('manage_users') {
     my ( $self, $c ) = @_;
 
-    my $users = $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name' } );
-    my @users = $users->hri->all;
+    $c->stash( users => \my @users );
 
-    for my $user (@users) {
-        $user->{url} = $c->uri_for( $self->action_for('show'), [ $user->{name} ] );
+    {
+        my $users = $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name_fc' } );
 
-        if ( my $token_expires = $user->{token_expires} ) {
-            if ( DateTime->now <= $users->parse_datetime($token_expires) ) {
-                $user->{status} = sprintf "user requested password recovery link (valid until %s)", $token_expires;
-            }
+        while ( my $user = $users->next ) {
+            push @users,
+              $user->as_hashref(
+                status => $user->status_description,
+                url    => $c->uri_for( $self->action_for('show'), [ $user->name ] ),
+              );
         }
-        elsif ( $user->{token_hash} ) {
-            $user->{status} = "user needs to verify e-mail address with verification link";
-        }
-
-        $user->{status} ||= "ok";
     }
-
-    $c->stash( users => \@users );
 }
 
 sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
@@ -53,6 +47,12 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
 
     my $user = $c->stash->{user_object};
 
+    my ( $status_code => $status_description ) = $user->status;
+
+    if ( $c->has_capability('discard_user') ) {
+        $c->stash( discard_url => $c->uri_for( $self->action_for('discard'), [ $user->name ] ) );
+    }
+
     my $permissions = $user->projects_users->search(
         undef,
         {
@@ -62,6 +62,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     );
 
     $c->stash(
+        status             => $status_description,
         permissions        => \my @permissions,
         public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
         update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
@@ -106,6 +107,14 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
     $user->update();
 
     $c->redirect_detach( $c->uri_for( $self->action_for('show'), [ $user->name ] ) );
+}
+
+sub discard : POST Chained('base') Args(0) RequiresCapability('discard_user') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{user_object}->delete();
+
+    $c->redirect_detach( $c->uri_for( $self->action_for('index') ) );
 }
 
 __PACKAGE__->meta->make_immutable;

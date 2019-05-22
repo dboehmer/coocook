@@ -2,6 +2,14 @@
 
 <p>Username: [% user_object.name %]</p>
 
+<p>Status: [% status %]</p>
+
+[% IF discard_url %]
+    <form method="post" action="[% discard_url %]">
+        <input type="submit" value="Discard user">
+    </form>
+[% END %]
+
 <p>Registered: [% user_object.created %]</p>
 
 <form method="post" action="[% update_url %]">

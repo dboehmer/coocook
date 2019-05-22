@@ -131,4 +131,23 @@ sub roles {
     return $self->roles_users->get_column('role')->all;
 }
 
+sub status_code        { ( shift->status )[0] }
+sub status_description { ( shift->status )[1] }
+
+sub status {
+    my $self = shift;
+
+    if ( my $token_expires = $self->token_expires ) {
+        if ( DateTime->now <= $token_expires ) {
+            return password_recovery => sprintf "requested password recovery link (valid until %s)",
+              $token_expires;
+        }
+    }
+    elsif ( $self->token_hash ) {
+        return unverified => "e-mail address not yet verified with verification link";
+    }
+
+    return ok => "ok";
+}
+
 1;

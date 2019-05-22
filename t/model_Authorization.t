@@ -3,8 +3,9 @@ use warnings;
 
 use lib 't/lib/';
 
-use Test::Most tests => 8;
+use Test::Most tests => 12;
 use TestDB;
+use Test::Deep;
 
 my $db = TestDB->new;
 
@@ -33,6 +34,12 @@ sub _test_has_capability {
 }
 
 is $authz->new => $authz, "is a singleton";
+
+ok !$authz->capability_exists('foo');
+ok $authz->capability_exists('view_project');
+
+is_deeply [ sort $authz->capability_needs_input('view_user') ] => [];
+is_deeply [ sort $authz->capability_needs_input('edit_project') ] => [ 'project', 'user' ];
 
 throws_ok { $authz->has_capability( foobar => {} ) } qr/capability/, "invalid capability";
 

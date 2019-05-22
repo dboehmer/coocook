@@ -81,11 +81,15 @@ C<\%input> may override information from stash.
 sub has_capability {
     my ( $c, $capability, $input ) = @_;
 
-    $input            //= {};
-    $input->{project} //= $c->project;
-    $input->{user}    //= $c->user;
+    my $authz = $c->model('Authorization');
 
-    return $c->model('Authorization')->has_capability( $capability, $input );
+    $input //= {};
+
+    for my $key ( 'project', 'user', $authz->capability_needs_input($capability) ) {
+        $input->{$key} //= $c->stash->{$key};
+    }
+
+    return $authz->has_capability( $capability, $input );
 }
 
 =head2 $c->project_uri($action, @arguments, \%query_params?)

@@ -131,6 +131,16 @@ my @rules = (
         rule         => sub { shift->{user}->has_role('site_admin') },
         capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
     },
+    {
+        needs_input => [ 'user', 'user_object' ],
+        rule        => sub {
+            my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
+            $user->has_role('site_admin') or return;
+            $user_object->status_code eq 'unverified' or return;
+            return 1;
+        },
+        capabilities => ['discard_user'],
+    },
 );
 
 my %capabilities;
@@ -167,6 +177,12 @@ sub capability_exists {
     my ( $self, $capability ) = @_;
 
     return exists $capabilities{$capability};
+}
+
+sub capability_needs_input {
+    my ( $self, $capability ) = @_;
+
+    return @{ $capabilities{$capability}->{needs_input} };
 }
 
 sub has_capability {
