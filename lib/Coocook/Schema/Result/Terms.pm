@@ -173,7 +173,7 @@ sub valid_until {
         return $next->valid_from->clone->subtract( days => 1 );
     }
     else {
-        return undef;
+        return (undef);
     }
 }
 

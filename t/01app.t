@@ -21,7 +21,10 @@ subtest "public actions are either GET or POST" => sub {
         my $controller = $app->controller($_);
 
         for my $action ( $controller->get_action_methods ) {
-            my %attrs = map { s/\(.+//; $_ => 1 } @{ $action->attributes };
+            my @attrs = @{ $action->attributes };
+            s/ \( .+ $ //x for @attrs;
+
+            my %attrs = map { $_ => 1 } @attrs;
 
             my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
 

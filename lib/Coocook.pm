@@ -22,6 +22,9 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
+## no critic
+# too bad Perl doesn't offer to check if a module is available
+# other code (that passes perlcritic) for testing this is much more verbose
 sub mod_installed ($) {
     my ($module) = @_;
 
@@ -29,6 +32,7 @@ sub mod_installed ($) {
 
     return eval("require $module; 1") ? $module : ();
 }
+## use critic
 
 use Catalyst (
     qw<

@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Test::Most;
 
+## no critic (BuiltinFunctions::ProhibitStringyEval)
 eval "use Test::Pod 1.14";
 plan skip_all => 'Test::Pod 1.14 required' if $@;
 

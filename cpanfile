@@ -86,6 +86,7 @@ on 'configure' => sub {
 
 on 'develop' => sub {
   requires "Test::Most" => "0";
+  requires "Test::Perl::Critic" => "0";
   requires "Test::PerlTidy" => "0";
 };
 

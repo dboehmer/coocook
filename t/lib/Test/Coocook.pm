@@ -66,8 +66,8 @@ sub request {
     my $response = $self->next::method(@_);
 
     if ($DEBUG) {
-        note map { s/^/> /gm; $_ } $request->as_string;
-        note map { s/^/< /gm; $_ } $response->as_string;
+        note map { my $s = $_; $s =~ s/^/> /gm; $s } $request->as_string;
+        note map { my $s = $_; $s =~ s/^/< /gm; $s } $response->as_string;
     }
 
     return $response;
