@@ -46,7 +46,7 @@ sub count_distinct {
 sub exists {
     my $self = shift;
 
-    return !!$self->exists_rs(@_)->single;
+    return $self->exists_rs(@_)->single ? 1 : ();
 }
 
 sub exists_rs {
