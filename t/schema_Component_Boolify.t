@@ -4,7 +4,7 @@ use warnings;
 use Test::Most;
 
 {
-
+    ## no critic (RequireFilenameMatchesPackage)
     package MySchema::Result::A;
 
     use parent 'DBIx::Class::Core';

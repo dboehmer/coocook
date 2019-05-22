@@ -169,7 +169,7 @@ sub dashboard : Private {
         my_projects                => \@my_projects,
         other_projects             => \@other_projects,
         project_create_url         => $c->uri_for_action('/project/create'),
-        can_create_private_project => $c->has_capability('create_private_project'),
+        can_create_private_project => !!$c->has_capability('create_private_project'),
     );
 }
 
