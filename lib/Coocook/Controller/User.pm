@@ -49,6 +49,9 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash( permissions => \my @permissions );
 
     while ( my $permission = $permissions->next ) {
+        $c->has_capability( view_project => { project => $permission->project } )
+          or next;
+
         my $project = $permission->project->as_hashref;
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
