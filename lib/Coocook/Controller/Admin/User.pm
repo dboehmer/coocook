@@ -15,7 +15,7 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
     my @users = $users->hri->all;
 
     for my $user (@users) {
-        $user->{url} = $c->uri_for_action( '/user/show', [ $user->{name} ] );
+        $user->{url}        = $c->uri_for( $self->action_for('show'),   [ $user->{name} ] );
         $user->{update_url} = $c->uri_for( $self->action_for('update'), [ $user->{name} ] );
 
         if ( my $token_expires = $user->{token_expires} ) {

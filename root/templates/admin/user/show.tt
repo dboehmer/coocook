@@ -1,0 +1,20 @@
+[% IF my_settings_url %]
+    <a href="[% my_settings_url %]">Edit your profile</a>
+[% END %]
+
+<p>Username: [% user_object.name %]</p>
+
+<p>Registered: [% user_object.created %]</p>
+
+<p>Global roles: [% user_object.roles.join(', ') %]</p>
+
+<p>Project permissions:</p>
+
+<ul>
+[% FOR permission IN permissions %]
+    <li>
+        [% '🔒' UNLESS permission.project.is_public %]<a href="[% permission.project.url %]">[% permission.project.name | html %]</a>
+        ([% permission.role %])
+    </li>
+[% END %]
+</ul>
