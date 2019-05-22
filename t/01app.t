@@ -9,10 +9,7 @@ use TestDB;
 use Test::Coocook;
 use Test::Most tests => 5;
 
-my $t = Test::Coocook->new(
-    max_redirect => 0,
-    schema       => TestDB->new(),
-);
+my $t = Test::Coocook->new( max_redirect => 0 );
 
 subtest "public actions are either GET or POST" => sub {
     my $app = $t->catalyst_app;

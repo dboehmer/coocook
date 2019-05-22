@@ -5,8 +5,11 @@ use warnings;
 
 our $DEBUG;
 
+use Carp;
+use DBICx::TestDatabase;
 use Email::Sender::Simple;
 use FindBin;
+use TestDB;
 use Test::Most;
 
 BEGIN {
@@ -37,10 +40,18 @@ use Coocook;
 
 use parent 'Test::WWW::Mechanize::Catalyst';
 
+=head1 CONSTRUCTOR
+
+=cut
+
 sub new {
     my ( $class, %args ) = @_;
 
+    defined( $args{deploy} ) && $args{schema}
+      and croak "Can't use both arguments 'deploy' and 'schema'";
+
     my $schema = delete $args{schema};
+    my $deploy = delete $args{deploy} // 1;
 
     my $self = $class->next::method(
         catalyst_app => 'Coocook',
@@ -52,12 +63,19 @@ sub new {
         $self->catalyst_app->log->disable('info');
     }
 
-    if ($schema) {
-        $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
-    }
+    $schema //=
+      $deploy
+      ? TestDB->new()
+      : DBICx::TestDatabase->new('Coocook::Schema');
+
+    $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
 
     return $self;
 }
+
+=head1 METHODS
+
+=cut
 
 sub request {
     my $self = shift;
@@ -79,6 +97,12 @@ sub emails {
 
 sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
 sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
+
+sub schema { shift->catalyst_app->model('DB')->schema(@_) }
+
+=head1 TEST METHODS
+
+=cut
 
 sub register_ok {
     my ( $self, $field_values, $name ) = @_;

@@ -8,7 +8,9 @@ use Test::Coocook;
 use Test::Most tests => 47;
 use Time::HiRes 'time';
 
-my $t = Test::Coocook->new( schema => my $schema = DBICx::TestDatabase->new('Coocook::Schema') );
+my $t = Test::Coocook->new( deploy => 0 );
+
+my $schema = $t->schema;
 
 $t->get_ok('/');
 

@@ -7,17 +7,15 @@ use TestDB;
 use Test::Coocook;
 use Test::Most;    # tests => 38;
 
-my $schema = TestDB->new();
+my $t = Test::Coocook->new();
 
-my $project = $schema->resultset('Project')->create(
+my $project = $t->schema->resultset('Project')->create(
     {
         name        => 'Test Project',
         description => "",
         owner       => 1,
     }
 );
-
-my $t = Test::Coocook->new( schema => $schema );
 
 $t->get_ok('/project/test-project');
 $t->content_like(qr/fresh project/)

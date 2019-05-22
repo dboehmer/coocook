@@ -7,11 +7,8 @@ use TestDB;
 use Test::Coocook;
 use Test::Most tests => 3;
 
-my $schema = TestDB->new();
+my $t = Test::Coocook->new();
 
-my $t = Test::Coocook->new( schema => $schema );
-
-#$Test::Coocook::DEBUG=1;
 $t->get('/');
 $t->login_ok( 'john_doe', 'P@ssw0rd' );
 
