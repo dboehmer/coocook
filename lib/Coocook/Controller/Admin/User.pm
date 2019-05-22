@@ -42,6 +42,39 @@ sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
     );
 }
 
+sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('manage_users') {
+    my ( $self, $c ) = @_;
+
+    my $user = $c->stash->{user_object};
+
+    my $permissions = $user->projects_users->search(
+        undef,
+        {
+            prefetch => 'project',
+            order_by => 'project.url_name_fc',
+        }
+    );
+
+    $c->stash(
+        permissions        => \my @permissions,
+        public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
+    );
+
+    while ( my $permission = $permissions->next ) {
+        my $project = $permission->project->as_hashref;
+
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+
+        push @permissions,
+          {
+            role    => $permission->role,
+            project => $project,
+          };
+    }
+
+    $c->escape_title( User => $user->display_name );
+}
+
 sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
     my ( $self, $c ) = @_;
 

@@ -1,6 +1,4 @@
-[% IF my_settings_url %]
-    <a href="[% my_settings_url %]">Edit your profile</a>
-[% END %]
+<a href="[% public_profile_url %]">Public user profile</a>
 
 <p>Username: [% user_object.name %]</p>
 

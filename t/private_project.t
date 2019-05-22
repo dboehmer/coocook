@@ -21,9 +21,4 @@ ok $project->update( { is_public => '' } ), "make project private";
 $t->get_ok("/user/$username");
 $t->text_lacks( $project->name );
 
-$t->login_ok( $username, 'P@ssw0rd' );
-
-$t->get_ok("/user/$username");
-$t->text_contains( $project->name );
-
 done_testing;

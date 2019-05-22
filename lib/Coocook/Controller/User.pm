@@ -38,34 +38,21 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     my $user = $c->stash->{user_object};
 
-    my $permissions = $user->projects_users->search(
-        undef,
-        {
-            prefetch => 'project',
-            order_by => 'project.url_name_fc',
-        }
-    );
+    my @projects = $user->owned_projects->public->hri->all;
 
-    $c->stash( permissions => \my @permissions );
-
-    while ( my $permission = $permissions->next ) {
-        $c->has_capability( view_project => { project => $permission->project } )
-          or next;
-
-        my $project = $permission->project->as_hashref;
-
+    for my $project (@projects) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
-
-        push @permissions,
-          {
-            role    => $permission->role,
-            project => $project,
-          };
     }
 
     if ( $c->user and $c->user->id == $user->id ) {
         $c->stash( my_settings_url => $c->uri_for_action('/settings/index') );
     }
+
+    if ( $c->has_capability('manage_users') ) {
+        $c->stash( profile_admin_url => $c->uri_for_action( '/admin/user/show', [ $user->name_fc ] ) );
+    }
+
+    $c->stash( projects => \@projects );
 
     $c->escape_title( User => $user->display_name );
 }
