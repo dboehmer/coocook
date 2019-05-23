@@ -12,6 +12,8 @@
 
 <p>Registered: [% user_object.created %]</p>
 
+<p>E-mail address: <a href="mailto:[% user_object.email %]">[% user_object.email %]</a></p>
+
 <form method="post" action="[% update_url %]">
     <p>
         <label for="admin_comment">Admin comment:</label>
