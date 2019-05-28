@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 5;
+use Test::Most tests => 6;
 
 my $t = Test::Coocook->new( max_redirect => 0 );
 
@@ -91,4 +91,37 @@ subtest "static URIs" => sub {
     Coocook->reload_config( static_base_uri => 'https://coocook-cdn.example/' );
     $t->get('/');
     $t->content_contains('https://coocook-cdn.example/css/style.css');
+};
+
+subtest "robots meta tag" => sub {
+    $t->get_ok('/');
+    $t->content_lacks('noarchive');
+    $t->content_lacks('noindex');
+
+    $t->get_ok('/user/john_doe');
+    $t->content_contains('noarchive');
+    $t->content_lacks('noindex');
+
+    subtest "under simulation of fatal mistake in permission" => sub {
+        $t->get('/project/Other-project');
+        $t->status_is(302);    # actually the login page
+
+        note "manipulating Model::Authorization ...";
+        no warnings 'redefine';
+        ok local *Coocook::Model::Authorization::has_capability = sub { 1 },    # everything allowed
+          "install simulation";
+
+        $t->reload;
+        $t->status_is(200);                                                     # not the login page
+
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
+    $t->max_redirect(1);
+
+    $t->login_ok( 'john_doe', 'P@ssw0rd' );
+    $t->get_ok('/');
+    $t->content_contains('noarchive');
+    $t->content_contains('noindex');
 };

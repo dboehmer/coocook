@@ -6,6 +6,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 # version 1.0.0 changed HTTP status code for SSL redirects to 301
 use Catalyst::ActionRole::RequireSSL v1.0.0;
 
+use HTML::Meta::Robots;
+
 # BEGIN-block necessary to make method attributes work
 BEGIN { extends 'Coocook::Controller' }
 
@@ -38,6 +40,9 @@ sub auto : Private {
 
     # TODO distinguish GET and POST requests
     # is some of this information useful for POST controller code, too?
+
+    # set these stash vars before any possible redirect_detach() calls
+    $c->stash( robots => my $robots = HTML::Meta::Robots->new() );
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
         if ( !$c->user and !$c->model('DB::User')->exists ) {
@@ -94,6 +99,8 @@ sub auto : Private {
     }
 
     if ( $c->user ) {
+        $robots->index(0);
+
         $c->stash(
             dashboard_url => $c->stash->{homepage_url},
             settings_url  => $c->uri_for_action('/settings/index'),
@@ -221,6 +228,8 @@ sub end : ActionClass('RenderView') {
     for ( @{ $c->stash->{css} }, @{ $c->stash->{js} } ) {
         $_ = $c->uri_for_static($_);
     }
+
+    $c->stash( meta_robots => $c->stash->{robots}->content );
 }
 
 =head2 _validated_redirect

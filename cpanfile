@@ -30,6 +30,7 @@ requires "DBIx::Class::TimeStamp" => "0";
 requires "Data::Validate::Email" => "0";
 requires "DateTime" => "0";
 requires "HTML::Entities" => "0";
+requires "HTML::Meta::Robots" => "0";
 requires "JSON::MaybeXS" => "0";
 requires "MIME::Base64::URLSafe" => "0";
 requires "Moose" => "0";

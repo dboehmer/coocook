@@ -35,6 +35,9 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
         # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
     }
 
+    $project->is_public
+      or $c->stash->{robots}->index(0);
+
     $c->stash( project => $project );
 
     $c->stash(

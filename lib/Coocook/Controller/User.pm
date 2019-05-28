@@ -54,6 +54,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     $c->stash( projects => \@projects );
 
+    $c->stash->{robots}->archive(0);
+
     $c->escape_title( User => $user->display_name );
 }
 
