@@ -1,5 +1,0 @@
-[%~ IF wrapper;
-    content WRAPPER $wrapper;
-ELSE;
-    content;
-END ~%]

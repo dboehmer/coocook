@@ -206,21 +206,13 @@ EOT
         cookie_httponly => 1,            # make browser send cookie only via HTTP(S), not to JavaScript code
     },
 
-    default_view => 'TT',
+    default_view => 'HTML',
 
-    'View::Email::Template' => {
-        default => {
-            view => 'TT',
-
-            content_type => 'text/plain',
-            charset      => 'utf-8',
-            encoding     => 'quoted-printable',
-        },
-        sender          => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
-        template_prefix => 'email',
+    'View::Email::TT' => {
+        INCLUDE_PATH => __PACKAGE__->path_to(qw< root email_templates >),
     },
 
-    'View::TT' => {
+    'View::HTML' => {
         INCLUDE_PATH => [
             __PACKAGE__->path_to(qw< root custom_templates >),    # allow overriding with custom files
             __PACKAGE__->path_to(qw< root templates >),

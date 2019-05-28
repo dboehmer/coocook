@@ -75,10 +75,6 @@ sub auto : Private {
         }
     }
 
-    # wrapper might be undef, e.g. after /email/begin
-    exists $c->stash->{wrapper}
-      or $c->stash( wrapper => 'wrapper.tt' );
-
     if ( not defined $c->stash->{errors} ) {
         $c->stash( errors => [ $c->req->query_params->get_all('error') ] );
     }

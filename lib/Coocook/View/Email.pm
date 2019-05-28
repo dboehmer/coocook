@@ -1,4 +1,4 @@
-package Coocook::View::Email::Template;
+package Coocook::View::Email;
 
 # ABSTRACT: create e-mails with TT templates
 
@@ -32,5 +32,16 @@ before process => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
+
+__PACKAGE__->config(
+    default => {
+        view => 'Email::TT',
+
+        content_type => 'text/plain',
+        charset      => 'utf-8',
+        encoding     => 'quoted-printable',
+    },
+    sender => { mailer => $ENV{EMAIL_SENDER_TRANSPORT} || 'SMTP' },
+);
 
 1;

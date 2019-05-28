@@ -18,8 +18,8 @@ sub begin : Private {
     }
 
     $c->stash(
-        name    => $c->config->{name},
-        wrapper => 'email.tt',
+        name => $c->config->{name},
+        view => 'Email',
     );
 }
 
@@ -123,7 +123,7 @@ sub end : Private {
       $c->config->{email_sender_name},
       $c->config->{email_from_address};
 
-    $c->forward( $c->view('Email::Template') );
+    $c->forward( $c->view('Email') );
 }
 
 __PACKAGE__->meta->make_immutable;
