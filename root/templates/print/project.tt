@@ -6,7 +6,7 @@ project.description | markdown %]
     <tr>
         <th>Day</th>
         <th>Meal</th>
-        <th>Dishes</td>
+        <th>Dishes</th>
 [% FOR column IN extra_columns %]
         <th>[% column | html %]</th>
 [% END %]
