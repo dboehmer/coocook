@@ -26,7 +26,7 @@
     <ul>
 [% FOR role IN global_roles %]
         <li class="checkbox">
-            <input  id="role_[% role %]" name="roles" value="[% role %]" type="checkbox" [% 'checked' IF roles.$role %]>
+            <input  id="role_[% role %]" name="roles" value="[% role %]" type="checkbox" [% 'checked' IF roles.$role %] [% 'disabled' IF locked_roles.$role %]>
             <label for="role_[% role %]">[% role %]</label>
         </li>
 [% END %]

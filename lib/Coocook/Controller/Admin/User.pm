@@ -29,9 +29,18 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
 sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
+    my $user = $c->model('DB::User')->find( { name_fc => fc $name } ) || $c->detach('/error/not_found');
+
     $c->stash(
-        user_object =>    # don't overwrite $user!
-          $c->model('DB::User')->find( { name_fc => fc $name } ) || $c->detach('/error/not_found'),
+        user_object => $user,    # don't overwrite $user!
+
+        locked_roles => {
+
+            # admins may not toggle their own 'site_owner' state
+            # non-site-owners may not gain that privilege, of course
+            # site owners should not loose that state and leave the site locked up
+            site_owner => $user->id == $c->user->id,
+        },
 
         global_roles => [
             qw<
@@ -96,11 +105,25 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
     if ( $c->req->params->get('update_roles') ) {
         my %checked = map { $_ => 1 } $c->req->params->get_all('roles');
 
-        $user->roles_users->delete();
+        {
+            my $roles        = $user->roles_users;
+            my $locked_roles = $c->stash->{locked_roles};
+
+            if ( my @locked_roles = grep { $locked_roles->{$_} } keys %$locked_roles ) {
+                $roles = $roles->search( { role => { -not_in => \@locked_roles } } );
+            }
+
+            $roles->delete();
+        }
 
         for my $role ( @{ $c->stash->{global_roles} } ) {
             $checked{$role}
-              and $user->create_related( roles_users => { role => $role } );
+              or next;
+
+            $c->stash->{locked_roles}{$role}
+              and $c->detach('/error/bad_request');
+
+            $user->create_related( roles_users => { role => $role } );
         }
     }
 
