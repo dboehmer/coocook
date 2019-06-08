@@ -7,6 +7,8 @@ use TestDB;
 
 use Test::Most tests => 5;
 
+our $USER = $ENV{USER} ||= 'coocook_test_user';
+
 use_ok 'Coocook::Script::Passwd';
 
 our @stdin;
@@ -20,10 +22,10 @@ my $schema = TestDB->new();
 my $user = $schema->resultset('User')->one_row;
 
 sub password_ok {
-    my ( $expected, $name ) = @_;
+    my ( $password, $name ) = @_;
 
     $user->discard_changes;
-    ok $user->check_password($expected), $name || "user accepts password '$expected'";
+    ok $user->check_password($password), $name || "user accepts password '$password'";
 }
 
 my $app = new_ok 'Coocook::Script::Passwd' => [
@@ -50,19 +52,17 @@ subtest "change password" => sub {
 };
 
 subtest "default username" => sub {
-    my $username = $ENV{USER}
-      or plan skip_all => '$ENV{USER} not set';
-
-    $user->update( { name => $username } );
+    $user->update( { name => $USER } );
 
     $app = new_ok
       'Coocook::Script::Passwd' => [ _schema => $schema ],
-      "create app without explicit username";
+      "app without explicit username";
 
     lives_ok {
         local @stdin = ('foobar') x 2;
         $app->run;
-    };
+    }
+    "run app with same password input twice";
 
     password_ok 'foobar';
 };
