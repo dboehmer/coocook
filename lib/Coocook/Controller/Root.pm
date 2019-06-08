@@ -131,7 +131,7 @@ sub auto : Private {
 sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->go( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
+    $c->detach( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
 }
 
 sub homepage : Private {
@@ -148,6 +148,7 @@ sub homepage : Private {
         meta_keywords    => $c->config->{homepage_meta_keywords},
         homepage_text_md => $c->config->{homepage_text_md},
         public_projects  => \@public_projects,
+        template         => 'homepage.tt',
     );
 }
 
@@ -173,6 +174,7 @@ sub dashboard : Private {
         other_projects             => \@other_projects,
         project_create_url         => $c->uri_for_action('/project/create'),
         can_create_private_project => !!$c->has_capability('create_private_project'),
+        template                   => 'dashboard.tt',
     );
 }
 
