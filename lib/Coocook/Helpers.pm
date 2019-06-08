@@ -161,7 +161,11 @@ sub redirect_uri_for_action {
     else {
         # URL built with current_uri_local_part() in POST request might be inaccessible via GET
         if ( $c->req->method eq 'GET' ) {    # TODO also HEAD?
-            $query->{redirect} = $c->current_uri_local_part();
+            my $current_uri_local_part = $c->current_uri_local_part();
+
+            if ( $current_uri_local_part ne '/' ) {
+                $query->{redirect} = $c->current_uri_local_part();
+            }
         }
     }
 

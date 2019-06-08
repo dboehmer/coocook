@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 6;
+use Test::Most tests => 7;
 
 my $t = Test::Coocook->new( max_redirect => 0 );
 
@@ -124,4 +124,25 @@ subtest "robots meta tag" => sub {
     $t->get_ok('/');
     $t->content_contains('noarchive');
     $t->content_contains('noindex');
+};
+
+subtest "Redirect URL parameter" => sub {
+    $t->logout_ok();
+
+    # no 'redirect' parameter for '/'
+    $t->get_ok('/');
+    $t->content_contains(q{/login"});
+
+    # default
+    $t->get_ok('/statistics');
+    $t->content_contains(q{/login?redirect=statistics"});
+
+    # query parameter
+    $t->get_ok('/?key=value');
+    $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
+
+    # query parameter 'error' is filtered
+    $t->get_ok('/?error=message&key=value');
+    local $TODO = "rework messaging system, then implement this if still necessary";
+    $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
 };

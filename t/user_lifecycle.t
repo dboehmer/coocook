@@ -259,6 +259,7 @@ subtest "malicious redirects are filtered on login" => sub {
         }
     );
     is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->is_logged_in("... but client is logged in anyway");
 };
 
 $t->create_project_ok( { name => "Test Project 1" } );
