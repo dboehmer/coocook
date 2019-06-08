@@ -136,11 +136,18 @@ END %]
 [% END %]
         </ul>
 
+[% IF admin_urls %]
+        <ul>
+            <h4><a href="[% admin_url %]">Admin</a></h4>
+            <li><a href="[% admin_urls.faq %]">FAQ</a></li>
+            <li><a href="[% admin_urls.projects %]">Projects</a></li>
+            <li><a href="[% admin_urls.terms %]">Terms</a></li>
+            <li><a href="[% admin_urls.users %]">Users</a></li>
+        </ul>
+[% END %]
+
         <ul>
             <h4>About [% name | html %]</h4>
-[% IF admin_url %]
-            <li><a href="[% admin_url %]">Admin</a></li>
-[% END %]
             <li><a href="[% statistics_url %]">Statistics</a></li>
             <li><a href="[% about_url %]">[% about_title %]</a></li>
 [% IF terms_url %]

@@ -117,7 +117,15 @@ sub auto : Private {
     }
 
     if ( $c->has_capability('admin_view') ) {
-        $c->stash( admin_url => $c->uri_for_action('/admin/index') );
+        $c->stash(
+            admin_url  => $c->uri_for_action('/admin/index'),
+            admin_urls => {
+                faq      => $c->uri_for_action('/admin/faq/index'),
+                projects => $c->uri_for_action('/admin/projects'),
+                terms    => $c->uri_for_action('/admin/terms/index'),
+                users    => $c->uri_for_action('/admin/user/index'),
+            },
+        );
     }
 
     # has current terms or has any terms (valid in future then)
