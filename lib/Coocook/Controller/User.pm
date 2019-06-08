@@ -175,18 +175,18 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             }
           );
 
-        my $site_admins_exist = $c->model('DB::RoleUser')->exists( { role => 'site_admin' } );
+        my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
 
-        if ( $site_admins_exist and $c->config->{notify_site_admins_about_registrations} ) {
-            for my $admin ( $c->model('DB::User')->site_admins->all ) {
+        if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
+            for my $admin ( $c->model('DB::User')->site_owners->all ) {
                 $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
             }
         }
 
         my @roles = @{ $c->config->{new_user_default_roles} || [] };
 
-        $site_admins_exist
-          or push @roles, 'site_admin';
+        $site_owners_exist
+          or push @roles, 'site_owner';
 
         $user->add_roles( \@roles );
     }

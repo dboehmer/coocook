@@ -8,12 +8,12 @@ extends 'Coocook::Schema::ResultSet';
 
 __PACKAGE__->meta->make_immutable;
 
-sub site_admins {
+sub site_owners {
     my $self = shift;
 
     return $self->search(
         {
-            'roles_users.role' => 'site_admin',
+            'roles_users.role' => 'site_owner',
         },
         {
             join => 'roles_users',

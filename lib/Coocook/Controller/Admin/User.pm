@@ -36,7 +36,7 @@ sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
         global_roles => [
             qw<
               private_projects
-              site_admin
+              site_owner
               >
         ],
     );

@@ -24,7 +24,7 @@ $t->register_ok(
 );
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
-    ok $user1->has_role('site_admin'),       "1st user created has 'site_admin' role";
+    ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
     ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
@@ -80,7 +80,7 @@ subtest "registration of existing e-mail address triggers e-mail" => sub {
 };
 
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
-    ok !$user2->has_role('site_admin'), "2nd user created hasn't 'site_admin' role";
+    ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 

@@ -159,8 +159,8 @@ EOT
         return $c->config->{name} . " " . $c->uri_for_action('/index');
     },
 
-    # send e-mails to site_admins about new users registered
-    notify_site_admins_about_registrations => 1,
+    # send e-mails to site_owners about new users registered
+    notify_site_owners_about_registrations => 1,
 
     project_deletion_confirmation => "I really want to loose my project",
 

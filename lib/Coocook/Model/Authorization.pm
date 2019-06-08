@@ -34,7 +34,7 @@ my @rules = (
                 $project->is_public
                   or (
                     $user
-                    and (  $user->has_role('site_admin')
+                    and (  $user->has_role('site_owner')
                         or $user->has_any_project_role( $project, qw< viewer editor admin owner > ) )
                   )
             );
@@ -47,7 +47,7 @@ my @rules = (
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             $project->archived and return;
             return (
-                     $user->has_role('site_admin')
+                     $user->has_role('site_owner')
                   or $user->has_any_project_role( $project, qw< editor admin owner > )
             );
         },
@@ -58,7 +58,7 @@ my @rules = (
         rule        => sub {
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return (
-                     $user->has_role('site_admin')
+                     $user->has_role('site_owner')
                   or $user->has_any_project_role( $project, qw< admin owner > )
             );
         },
@@ -72,7 +72,7 @@ my @rules = (
             return if $capability eq 'archive_project'   and $project->archived;
             return if $capability eq 'unarchive_project' and not $project->archived;
 
-            return ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) );
+            return ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) );
         },
         capabilities => [
             qw<
@@ -88,13 +88,13 @@ my @rules = (
             my ( $project, $permission, $user ) = @{ +shift }{ 'project', 'permission', 'user' };
             return (  $permission->user->id != $user->id
                   and $permission->role ne 'owner'
-                  and ( $user->has_role('site_admin') or $user->has_project_role( $project, 'owner' ) ) );
+                  and ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) ) );
         },
         capabilities => [qw< edit_project_permission revoke_project_permission >],
     },
     {
         needs_input  => 'user',
-        rule         => sub { shift->{user}->has_any_role( 'site_admin', 'private_projects' ) },
+        rule         => sub { shift->{user}->has_any_role( 'site_owner', 'private_projects' ) },
         capabilities => 'create_private_project',
     },
     {
@@ -102,7 +102,7 @@ my @rules = (
         rule        => sub {
             my ( $project, $user ) = @{ +shift }{ 'project', 'user' };
             return (
-                $user->has_role('site_admin')
+                $user->has_role('site_owner')
                   or ( $user->has_role('private_projects') and $user->has_project_role( $project, 'owner' ) )
             );
         },
@@ -120,7 +120,7 @@ my @rules = (
             return 1 if $user->has_project_role( $project, 'owner' );
 
             # allow transfer from site admin
-            return 1 if $user->has_role('site_admin');
+            return 1 if $user->has_role('site_owner');
 
             return;
         },
@@ -128,14 +128,14 @@ my @rules = (
     },
     {
         needs_input  => ['user'],
-        rule         => sub { shift->{user}->has_role('site_admin') },
+        rule         => sub { shift->{user}->has_role('site_owner') },
         capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
     },
     {
         needs_input => [ 'user', 'user_object' ],
         rule        => sub {
             my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
-            $user->has_role('site_admin') or return;
+            $user->has_role('site_owner') or return;
             $user_object->status_code eq 'unverified' or return;
             return 1;
         },
