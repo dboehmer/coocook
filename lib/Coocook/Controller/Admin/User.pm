@@ -98,36 +98,40 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
 
     my $user = $c->stash->{user_object};
 
-    if ( defined( my $comment = $c->req->params->get('admin_comment') ) ) {
-        $user->set_column( admin_comment => $comment );
-    }
-
-    if ( $c->req->params->get('update_roles') ) {
-        my %checked = map { $_ => 1 } $c->req->params->get_all('roles');
-
-        {
-            my $roles        = $user->roles_users;
-            my $locked_roles = $c->stash->{locked_roles};
-
-            if ( my @locked_roles = grep { $locked_roles->{$_} } keys %$locked_roles ) {
-                $roles = $roles->search( { role => { -not_in => \@locked_roles } } );
+    $user->txn_do(
+        sub {
+            if ( defined( my $comment = $c->req->params->get('admin_comment') ) ) {
+                $user->set_column( admin_comment => $comment );
             }
 
-            $roles->delete();
+            if ( $c->req->params->get('update_roles') ) {
+                my %checked = map { $_ => 1 } $c->req->params->get_all('roles');
+
+                {
+                    my $roles        = $user->roles_users;
+                    my $locked_roles = $c->stash->{locked_roles};
+
+                    if ( my @locked_roles = grep { $locked_roles->{$_} } keys %$locked_roles ) {
+                        $roles = $roles->search( { role => { -not_in => \@locked_roles } } );
+                    }
+
+                    $roles->delete();
+                }
+
+                for my $role ( @{ $c->stash->{global_roles} } ) {
+                    $checked{$role}
+                      or next;
+
+                    $c->stash->{locked_roles}{$role}
+                      and $c->detach('/error/bad_request');
+
+                    $user->create_related( roles_users => { role => $role } );
+                }
+            }
+
+            $user->update();
         }
-
-        for my $role ( @{ $c->stash->{global_roles} } ) {
-            $checked{$role}
-              or next;
-
-            $c->stash->{locked_roles}{$role}
-              and $c->detach('/error/bad_request');
-
-            $user->create_related( roles_users => { role => $role } );
-        }
-    }
-
-    $user->update();
+    );
 
     $c->redirect_detach( $c->uri_for( $self->action_for('show'), [ $user->name ] ) );
 }
