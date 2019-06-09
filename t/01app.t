@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 7;
+use Test::Most tests => 8;
 
 my $t = Test::Coocook->new( max_redirect => 0 );
 
@@ -145,4 +145,22 @@ subtest "Redirect URL parameter" => sub {
     $t->get_ok('/?error=message&key=value');
     local $TODO = "rework messaging system, then implement this if still necessary";
     $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
+};
+
+subtest favicons => sub {
+    $t->get_ok('/');
+    $t->content_lacks('icon');
+
+    $t->reload_config(
+        icon_url  => 'alpha.ico',
+        icon_type => 'image/x-icon',
+        icon_urls => {
+            ''      => 'beta.png',
+            '72x72' => '72.png',
+        },
+    );
+    $t->reload();
+    $t->content_contains(q{<link rel="icon" type="image/x-icon" href="alpha.ico">});
+    $t->content_contains(q{<link rel="apple-touch-icon-precomposed"  href="beta.png">});
+    $t->content_contains(q{<link rel="apple-touch-icon-precomposed" sizes="72x72" href="72.png">});
 };

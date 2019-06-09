@@ -62,6 +62,7 @@ sub auto : Private {
           help_links
           icon_type
           icon_url
+          icon_urls
           >
     );
 
