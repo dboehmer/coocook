@@ -107,7 +107,7 @@ subtest "robots meta tag" => sub {
         $t->status_is(302);    # actually the login page
 
         note "manipulating Model::Authorization ...";
-        no warnings 'redefine';
+        no warnings qw< once redefine >;
         ok local *Coocook::Model::Authorization::has_capability = sub { 1 },    # everything allowed
           "install simulation";
 
