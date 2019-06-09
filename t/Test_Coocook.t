@@ -12,7 +12,7 @@ throws_ok { Test::Coocook->new( deploy => 0, schema => "schema_object" ) } qr/ar
 
 my $t = new_ok 'Test::Coocook';
 
-can_ok $t->catalyst_app => 'reload_config';
+can_ok $t => 'reload_config';
 
 $ENV{DBIC_KEEP_TEST}
   or is(    # turn undef into '' because of https://github.com/DBD-SQLite/DBD-SQLite/issues/50

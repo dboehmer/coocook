@@ -23,21 +23,6 @@ BEGIN {
 # don't spill STDERR with info messages when not in verbose mode
 our $DISABLE_LOG_LEVEL_INFO //= !$ENV{TEST_VERBOSE};
 
-use Coocook;
-
-*Coocook::reload_config = sub {
-    my $class = shift;
-
-    $class->setup_finished(0);
-
-    # Plugin::Static::Simple warns if $c->config->{static} exists
-    # but creates this hash key itself in before(setup_finalize => sub {...})
-    delete $class->config->{static};
-
-    $class->config(@_);
-    $class->setup_finalize();
-};
-
 use parent 'Test::WWW::Mechanize::Catalyst';
 
 =head1 CONSTRUCTOR
@@ -97,6 +82,21 @@ sub emails {
 
 sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
 sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
+
+sub reload_config {
+    my $self = shift;
+
+    my $app = $self->catalyst_app;
+
+    $app->setup_finished(0);
+
+    # Plugin::Static::Simple warns if $c->config->{static} exists
+    # but creates this hash key itself in before(setup_finalize => sub {...})
+    delete $app->config->{static};
+
+    $app->config(@_);
+    $app->setup_finalize();
+}
 
 sub schema { shift->catalyst_app->model('DB')->schema(@_) }
 

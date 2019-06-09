@@ -43,7 +43,7 @@ $t->clear_emails();
 
 $t->content_lacks('Sign up');
 
-Coocook->reload_config( enable_user_registration => 1 );
+$t->reload_config( enable_user_registration => 1 );
 
 $t->get('/');
 

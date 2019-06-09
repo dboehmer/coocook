@@ -69,7 +69,7 @@ subtest "HTTP Strict Transport Security" => sub {
     $t->get_ok('https://localhost');
     $t->header_is( 'Strict-Transport-Security' => 'max-age=' . 365 * 24 * 60 * 60, "default" );
 
-    Coocook->reload_config(
+    $t->reload_config(
         'Plugin::StrictTransportSecurity' => {
             max_age             => 63072000,
             include_sub_domains => 1,
@@ -88,7 +88,7 @@ subtest "static URIs" => sub {
     $t->get('/');
     $t->content_contains('https://localhost/static/css/style.css');
 
-    Coocook->reload_config( static_base_uri => 'https://coocook-cdn.example/' );
+    $t->reload_config( static_base_uri => 'https://coocook-cdn.example/' );
     $t->get('/');
     $t->content_contains('https://coocook-cdn.example/css/style.css');
 };
