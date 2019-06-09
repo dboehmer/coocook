@@ -14,14 +14,15 @@
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            [% IF item.offset;
+            [% USE NiceNumber;
+            IF item.offset;
                 item.value;
                 ' - ';
                 0 - item.offset;
                 ' = ';
-                item.value + item.offset;
+                item.value + item.offset | $NiceNumber;
             ELSE;
-                item.value;
+                item.value | $NiceNumber;
             END;
             '&nbsp;' IF unit.space;
             display_unit(item.unit, {html=>1}) %]
@@ -30,7 +31,8 @@
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
             <li>
-                [% ingredient.value;
+                [% USE NiceNumber;
+                ingredient.value | $NiceNumber;
                 '&nbsp;' IF unit.space;
                 display_unit(ingredient.unit, {html=>1}) %]
                 –
