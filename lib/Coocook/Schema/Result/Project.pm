@@ -4,11 +4,10 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 use Carp;
+use Coocook::Util;
 use DateTime;
 
 extends 'Coocook::Schema::Result';
-
-use feature 'fc';    # Perl v5.16
 
 __PACKAGE__->table("projects");
 
@@ -48,14 +47,7 @@ before store_column => sub {
     my ( $self, $column, $value ) = @_;
 
     if ( $column eq 'name' ) {
-        ( my $url_name = $value ) =~ s/\W+/-/g;
-
-        $self->set_columns(
-            {
-                url_name    => $url_name,
-                url_name_fc => fc $url_name,
-            }
-        );
+        $self->set_columns( Coocook::Util::url_names_hashref($value) );
     }
 };
 

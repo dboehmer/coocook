@@ -2,6 +2,8 @@ package Coocook::Controller::Recipe;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+
+use Coocook::Util;
 use Scalar::Util qw(looks_like_number);
 
 BEGIN { extends 'Coocook::Controller' }
@@ -51,23 +53,30 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
             my $project = $projects{ $recipe->{project} }
               or die "Project for project ID not found";
 
-            $recipe->{project} = $project;
+            $recipe->{project}  = $project;
+            $recipe->{url_name} = Coocook::Util::url_name( $recipe->{name} );
 
             $c->user
-              and $recipe->{import_url} = $c->uri_for( $self->action_for('public_import'), [ $recipe->{id} ] );
+              and $recipe->{import_url} =
+              $c->uri_for( $self->action_for('public_import'), [ $recipe->{id}, $recipe->{url_name} ] );
 
             $recipe->{url} =
-              $c->uri_for( $self->action_for('public_show'), [ $recipe->{id} ] );
+              $c->uri_for( $self->action_for('public_show'), [ $recipe->{id}, $recipe->{url_name} ] );
         }
     }
 
     $c->stash( recipes => \@recipes );
 }
 
-sub public_recipe_base : Chained('/base') PathPart('recipe') CaptureArgs(1) {
-    my ( $self, $c, $id ) = @_;
+sub public_recipe_base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
+    my ( $self, $c, $id, $url_name ) = @_;
 
-    $c->stash( recipe => $c->model('DB::Recipe')->find($id) || $c->detach('/error/not_found') );
+    my $recipe = $c->model('DB::Recipe')->find($id)
+      or $c->detach('/error/not_found');
+
+    # TODO for redirect on wrong $url_name, see Controller::Project->base()
+
+    $c->stash( recipe => $recipe );
 }
 
 sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Args(0) {
@@ -75,7 +84,8 @@ sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Ar
 
     my $recipe = $c->stash->{recipe};
 
-    $recipe->{url} = $c->uri_for( $self->action_for('public_show'), [ $recipe->id ] );
+    $recipe->{url} =
+      $c->uri_for( $self->action_for('public_show'), [ $recipe->id, $recipe->url_name ] );
     $recipe->project->{url} = $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
 
     # TODO should site admins see a list of all projects??
@@ -378,7 +388,8 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
     my @recipes = $recipes->search( undef, { prefetch => { project => 'owner' } } )->all;
 
     for my $recipe (@recipes) {
-        $recipe->{url} = $c->uri_for( $self->action_for('public_show'), [ $recipe->id ] );
+        $recipe->{url} =
+          $c->uri_for( $self->action_for('public_show'), [ $recipe->id, $recipe->url_name ] );
 
         $recipe->project->{url} ||= $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
 

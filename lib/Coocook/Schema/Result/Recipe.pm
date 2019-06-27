@@ -3,6 +3,8 @@ package Coocook::Schema::Result::Recipe;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use Coocook::Util;
+
 extends 'Coocook::Schema::Result';
 
 __PACKAGE__->table("recipes");
@@ -51,5 +53,7 @@ sub duplicate {
 
     return $self->copy($args);
 }
+
+sub url_name { Coocook::Util::url_name( shift->name ) }
 
 1;
