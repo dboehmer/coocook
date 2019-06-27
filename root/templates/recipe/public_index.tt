@@ -1,6 +1,7 @@
 [% IF user;
-    title = "Recipes";
-ELSE;
+    title = "Recipes" %]
+    <div>This list also includes private recipes which you are allowed to view.</div>
+[% ELSE;
     title = "Public Recipes" %]
     <div>These are <em>only</em> public recipes. <a href="[% login_url %]">Sign in</a> to view private recipes, too.</div>
 [% END %]
@@ -14,7 +15,7 @@ ELSE;
         </form>
     [% END %]
         <a href="[% recipe.url %]">[% recipe.name | html %]</a>
-        (from <a href="[% recipe.project.url %]">[% recipe.project.name | html %]</a>
+        (from <a href="[% recipe.project.url %]">[% '🔒' UNLESS project.is_public; recipe.project.name | html %]</a>
         by <a href="[% recipe.project.owner.url %]">[% recipe.project.owner.display_name | html %]</a>)
     </li>
 [% END %]
