@@ -39,7 +39,7 @@ sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
             # admins may not toggle their own 'site_owner' state
             # non-site-owners may not gain that privilege, of course
             # site owners should not loose that state and leave the site locked up
-            site_owner => $user->id == $c->user->id,
+            site_owner => !$c->has_capability( toggle_site_owner => { user_object => $user } ),
         },
 
         global_roles => [

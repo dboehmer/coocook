@@ -136,6 +136,16 @@ my @rules = (
         rule        => sub {
             my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
             $user->has_role('site_owner') or return;
+            $user->id != $user_object->id or return;
+            return 1;
+        },
+        capabilities => ['toggle_site_owner'],
+    },
+    {
+        needs_input => [ 'user', 'user_object' ],
+        rule        => sub {
+            my ( $user, $user_object ) = @{ +shift }{ 'user', 'user_object' };
+            $user->has_role('site_owner') or return;
             $user_object->status_code eq 'unverified' or return;
             return 1;
         },
