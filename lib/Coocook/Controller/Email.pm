@@ -40,14 +40,20 @@ sub email_address_reused : Private {
 sub notify_admin_about_registration : Private {
     my ( $self, $c, $user, $admin ) = @_;
 
+    my $email_anonymized = $user->email;
+    $email_anonymized =~ s/ ^ .+ \@ /***@/x;
+
     $c->stash(
         email => {
             to       => $admin->email,
             subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
             template => 'notify_admin_about_registration.tt',
         },
-        admin => $admin,
-        user  => $user,
+        admin            => $admin,
+        email_anonymized => $email_anonymized,
+        user             => $user,
+        user_url         => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        user_admin_url   => $c->uri_for_action( '/admin/user/show', [ $user->name ] ),
     );
 }
 
@@ -113,6 +119,7 @@ sub verification : Private {
             template => 'verify.tt',
         },
         verification_url => $c->uri_for_action( '/user/verify', [ $user->name, $token->to_base64 ] ),
+        user             => $user,
     );
 }
 

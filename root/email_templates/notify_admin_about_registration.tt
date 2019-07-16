@@ -2,11 +2,16 @@ Hi [% admin.display_name %],
 
 somebody registered an account at [% name %].
 
-Username:       "[% user.name %]"
-Display name:   "[% user.display_name %]"
+Username: "[% user.name %]"
+
+E-mail address: [% email_anonymized %]
+
+User page: [% user_url %]
+
+User page for site admins: [% user_admin_url %]
 
 This is just a notification. Everything is probably fine.
 
-You received this e-mail because you are a site admin at [% name %].
+You received this e-mail because you are site owner at [% name %].
 
 [% name %]

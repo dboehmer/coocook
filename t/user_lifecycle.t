@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 47;
+use Test::Most tests => 55;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -56,9 +56,19 @@ $t->register_ok(
     }
 );
 
+# TODO Test::Cooocook warns that 2 e-mails are stored but that is correct
+$t->email_like(qr/Hi test2/);
+$t->email_like(qr/Please verify/);
 $t->shift_emails();
-$t->email_like(qr/registered/);
-$t->clear_emails();
+
+$t->email_like(qr/Hi test\b/);
+$t->email_like(qr/somebody registered/);
+$t->email_like(qr/test2/);
+$t->email_like(qr/example\.com/);    # contains domain part of e-mail address
+$t->email_unlike(qr/test2.+example.+com/);
+$t->email_like(qr{ /user/test2 }x);    # URLs to user info pages
+$t->email_like(qr{ /admin/user/test2 }x);
+$t->shift_emails();
 
 my $content_after_registration = $t->content;
 

@@ -145,8 +145,11 @@ sub verify_email_ok {
     );
 }
 
-sub email_like {
-    my ( $self, $regex, $name ) = @_;
+sub email_like   { shift->_email_un_like( 1, @_ ) }
+sub email_unlike { shift->_email_un_like( 0, @_ ) }
+
+sub _email_un_like {
+    my ( $self, $like, $regex, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -161,7 +164,7 @@ sub email_like {
     }
 
     @$emails > 1
-      and warn "More than 1 e-mail stored";
+      and carp "More than 1 e-mail stored";
 
     my $email = $emails->[0]->{email};    # use first e-mail
 
@@ -169,9 +172,13 @@ sub email_like {
 
     my @matches = ( $email->get_body =~ m/$regex/g );
 
-    ok @matches >= 1, $name;
-
-    return @matches;
+    if ($like) {
+        ok @matches >= 1, $name;
+        return @matches;
+    }
+    else {
+        ok @matches == 0, $name;
+    }
 }
 
 sub is_logged_in {
