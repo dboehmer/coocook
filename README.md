@@ -38,10 +38,14 @@ Get source code:
 
     $ git clone https://github.com/dboehmer/coocook.git
 
-Install Perl5 dependencies:
+Install Perl5 dependencies required for running the application:
 
     $ cd coocook/
     $ cpanm --installdeps .
+
+For development purposes there are a few *recommended* dependencies. To install these as well run:
+
+    $ cpanm --with-develop --with-recommends --with-suggests --installdeps .
 
 Install database into a local SQLite file and start development server in development mode:
 
