@@ -32,7 +32,7 @@
     This project is stale (all meals and purchase lists in are in the past).
     You can
     <form class="inline" method="post" action="[% project_urls.archive %]">
-        <input type="submit" value="Archive this project">
+        <input type="submit" value="📁Archive this project">
     </form>
 [% ELSE %]
     Once you've finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
