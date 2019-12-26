@@ -30,22 +30,18 @@ sub new {
         # the line currently looked at is not a complete SQL-Statement and we can't
         # execute it via DBICx::TestDatabase and first need to add all following lines
         # to our statement until we find a semicolon at the end of a line.
-        if ($line !~ m/ ; $ /x) {
-            $continued_line = $continued_line." ".$line; 
+        length $continued_line
+          and $continued_line .= ' ';
 
-        } elsif (length($continued_line)) {
-            $continued_line = $continued_line." ".$line;
+        $continued_line .= $line;
+
+        if ( $line =~ m/ ; $ /x ) {    # SQL statement is complete
+            $ENV{DBIC_TRACE}
+              and warn "$continued_line\n";
+
             $schema->storage->dbh_do( sub { $_[1]->do($continued_line) } );
 
-            $ENV{DBIC_TRACE}
-              and warn $continued_line;
-
             $continued_line = "";
-
-        } else {
-            $schema->storage->dbh_do( sub { $_[1]->do($line) } );
-            $ENV{DBIC_TRACE}
-              and warn $line;
         }
     }
 
