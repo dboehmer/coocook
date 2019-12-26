@@ -189,6 +189,20 @@ sub is_stale {
     return $self->self_rs->stale($pivot_date)->exists();
 }
 
+=head2 tags_from_names($names)
+
+Returns a resultset with all tags matching names in C<$names>.
+
+TODO: Should probably autocreate tags that do not yet exist.
+
+=cut
+
+sub tags_from_names {
+    my ( $self, $names ) = @_;
+
+    return $self->tags->from_names($names);
+}
+
 =head2 other_projects
 
 Returns a resultset to all projects except itself.

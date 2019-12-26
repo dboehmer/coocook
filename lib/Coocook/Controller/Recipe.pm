@@ -201,7 +201,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                 }
 
                 # tags
-                my $tags = $c->model('DB::Tag')->from_names( $c->req->params->get('tags') );
+                my $tags = $c->project->tags_from_names( $c->req->params->get('tags') );
                 $recipe->set_tags( [ $tags->all ] );
             }
         );
