@@ -1,9 +1,11 @@
 PRAGMA foreign_keys = ON;
 -- password: P@ssw0rd
 INSERT INTO 'users'
-(id,       name,    name_fc,                                                                 password_hash, display_name,                   admin_comment,                  email,    email_verified, token_hash, token_expires,           created) VALUES
-( 1, 'john_doe', 'john_doe', '$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP),
-( 2,    'other',    'other',                                                                       'other', 'Other User', 'other test user from test SQL',    'other@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP);
+(id,       name,    name_fc, password_hash, display_name,                   admin_comment,                  email,    email_verified, token_hash, token_expires,           created) VALUES
+( 1, 'john_doe', 'john_doe',        'KOHL',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP),
+( 2,    'other',    'other',       'other', 'Other User', 'other test user from test SQL',    'other@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP);
+
+UPDATE 'users' SET password_hash = '$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw' WHERE id = 1;
 
 INSERT INTO 'roles_users'
 (        role, user) VALUES
@@ -28,12 +30,12 @@ INSERT INTO 'shop_sections'
 
 INSERT INTO 'articles'
 (id, project, shop_section, shelf_life_days, preorder_servings, preorder_workdays,            name, comment) VALUES
-( 1,       1,            1, 	       NULL,              NULL,              NULL,         'flour',      ''),
+( 1,       1,            1,            NULL,              NULL,              NULL,         'flour',      ''),
 ( 2,       1,            1,            NULL,              NULL,              NULL,          'salt',      ''),
 ( 3,       1,         NULL,            NULL,              NULL,              NULL,         'water',      ''),
-( 4,       1,            2,            NULL,		  NULL,		     NULL,        'cheese',	 ''),
-( 5,       1,         NULL,            NULL,		  NULL,		     NULL,          'love',	 ''), -- has no unit
-( 6,       2,            9,            NULL,		  NULL,		     NULL, 'other article',	 '');
+( 4,       1,            2,            NULL,              NULL,              NULL,        'cheese',      ''),
+( 5,       1,         NULL,            NULL,              NULL,              NULL,          'love',      ''), -- has no unit
+( 6,       2,            9,            NULL,              NULL,              NULL, 'other article',      '');
 
 INSERT INTO 'meals'
 (id, project,        date,         name,                comment) VALUES
@@ -103,10 +105,10 @@ INSERT INTO 'purchase_lists'
 INSERT INTO 'items'
 (id, purchase_list, value, offset, unit, article, purchased, comment) VALUES
 ( 1,             1,  1000,    0.0,    1,       1,         0,      ''),
-( 2,   		 1,  37.5,    0.0,    1,       2,	  0,	  '');
+( 2,             1,  37.5,    0.0,    1,       2,         0,      '');
 
-UPDATE 'dish_ingredients' SET 'item' = 1 WHERE id IN (1,4);
-UPDATE 'dish_ingredients' SET 'item' = 2 WHERE id IN (6,8);
+UPDATE 'dish_ingredients' SET item = 1 WHERE id IN (1,4);
+UPDATE 'dish_ingredients' SET item = 2 WHERE id IN (6,8);
 
 INSERT INTO 'tag_groups'
 (id, project,    color,        name,    comment) VALUES
@@ -114,9 +116,9 @@ INSERT INTO 'tag_groups'
 
 INSERT INTO 'tags'
 (id, project, tag_group,        name) VALUES
-( 1, 	   1,         1,    'gluten'),
-( 2,	   1,	      1,   'lactose'),
-( 3,	   1,	   NULL, 'delicious');
+( 1,       1,         1,    'gluten'),
+( 2,       1,         1,   'lactose'),
+( 3,       1,      NULL, 'delicious');
 
 INSERT INTO 'articles_tags'
 (article, tag) VALUES
