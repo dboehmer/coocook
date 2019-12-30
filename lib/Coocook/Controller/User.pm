@@ -101,7 +101,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         push @errors, "username must not be empty";
     }
     elsif ( $username !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
-        push @errors, "username must not other characters than 0-9, a-z and A-Z.";
+        push @errors, "username must not contain other characters than 0-9, a-z and A-Z.";
     }
     elsif ( $c->model('DB::User')->exists( { name_fc => fc($username) } ) ) {
         push @errors, "username already in use";
@@ -140,6 +140,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
                 email    => $email,
             },
         );
+
+        $c->res->status(400);
 
         $c->go('register');
     }

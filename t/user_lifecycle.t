@@ -94,23 +94,17 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 
-subtest "registration of existing username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
+$t->register_fails_like(
+    { username => 'TEST2' },
+    qr/username already in use/,
+    "registration of existing username fails"
+);
 
-    $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
-
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
-
-subtest "registration with invalid username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
-
-    $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
-
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
+$t->register_fails_like(
+    { username => 'foobar ' },    # note space char
+    qr/username must not contain/,
+    "registration with invalid existing username fails"
+);
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 

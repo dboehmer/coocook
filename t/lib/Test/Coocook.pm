@@ -118,6 +118,20 @@ sub register_ok {
     };
 }
 
+sub register_fails_like {
+    my ( $self, $field_values, $error_regex, $name ) = @_;
+
+    subtest $name || "register fails like '$error_regex'" => sub {
+        $self->follow_link_ok( { text => 'Sign up' } );
+
+        note "Register account '$$field_values{username}' ...";
+        $self->submit_form( with_fields => $field_values );
+
+        $self->status_is(400) and $self->content_like($error_regex)
+          or note $self->content;
+    };
+}
+
 sub get_email_link_ok {
     my ( $self, $url_regex, $name ) = @_;
 
