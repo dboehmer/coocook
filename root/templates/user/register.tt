@@ -3,23 +3,29 @@
 <p><a href="[% login_url %]">Already have an account? Sign in here.</a></p>
 
 <form method="post" action="[% post_register_url %]">
-<table>
-    <tr>
+<table class="register">
+    <tr class="username">
         <th><label for="username">Username</label></th>
         <td>
             <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]">
             [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
         </td>
     </tr>
-    <tr>
+    <tr class="email">
         <th><label for="email">E-mail address</label></th>
         <td><input  id="email" type="email" name="email" placeholder="e-mail address" value="[% last_input.email | html %]"></td>
     </tr>
-    <tr>
+[%~ IF use_hidden_input %]
+    <tr class="url">
+        <th><label for="url">Website</label></th>
+        <td><input  id="url" type="url" name="url" placeholder="address of your website" value="[%# THIS INPUT FIELD ONLY WORKS AS CAPTCHA! %]"></td>
+    </tr>
+[%~ END %]
+    <tr class="password">
         <th><label for="password">Password</label></th>
         <td><input  id="password"  type="password" placeholder="password" name="password"></td>
     </tr>
-    <tr>
+    <tr class="password2">
         <th><label for="password2">Confirm password</label></th>
         <td><input  id="password2" type="password" placeholder="password" name="password2"></td>
     </tr>

@@ -70,7 +70,8 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
 # with an external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config( name => 'Coocook' );
+### DEFAULT/FACTORY SETTINGS ###
+__PACKAGE__->config( name => 'Coocook' );    # referenced in next block
 
 __PACKAGE__->config(
 
@@ -121,10 +122,16 @@ EOT
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
+    captcha => {
+        form_min_time_secs => undef,    # minimum time between GET and POST /register
+        form_max_time_secs => undef,    # maximum time between GET and POST /register
+        use_hidden_input   => 0,        # lure bots into filling <input> hidden by CSS
+    },
+
     registration_example_username => 'daniel_boehmer42',
 
     email_from_address => do {
-        my $username =    # see https://stackoverflow.com/a/3526587/498634
+        my $username =                  # see https://stackoverflow.com/a/3526587/498634
              ( $^O ne 'riscos' && $^O ne 'MSWin32' ? getpwuid($<) : undef )
           || ( $^O ne 'riscos' ? getlogin() : undef )
           || $ENV{USER}

@@ -16,10 +16,10 @@ $t->get_ok('/');
 
 $t->register_ok(
     {
-        username  => "test",
-        email     => "test\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
+        username  => 'test',
+        email     => 'test@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
     }
 );
 

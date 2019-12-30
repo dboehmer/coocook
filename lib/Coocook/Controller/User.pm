@@ -69,6 +69,10 @@ sub register : GET HEAD Chained('/base') Args(0) {
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
 
+    $c->session( register_form_served_epoch => time() );
+
+    push @{ $c->stash->{css} }, '/css/user/register.css';
+
     push @{ $c->stash->{js} }, qw<
       /js/user/register.js
       /lib/zxcvbn.js
@@ -81,6 +85,7 @@ sub register : GET HEAD Chained('/base') Args(0) {
 
     $c->stash(
         example_username  => $c->config->{registration_example_username},
+        use_hidden_input  => $c->config->{captcha}{use_hidden_input},
         post_register_url => $c->redirect_uri_for_action( $self->action_for('post_register') ),
     );
 }
@@ -127,6 +132,29 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
         $id == $terms->id
           or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
+    }
+
+    # CAPTCHA only if no content errors above
+    if ( @errors == 0 ) {
+        my $robot = 0;                                            # expect the best
+
+        if ( my $time_served = $c->session->{register_form_served_epoch} ) {
+            my $timespan = time() - $time_served;
+
+            if ( my $min = $c->config->{captcha}{form_min_time_secs} ) { $min <= $timespan or $robot++ }
+            if ( my $max = $c->config->{captcha}{form_max_time_secs} ) { $timespan <= $max or $robot++ }
+        }
+        else {                                                    # form never served
+            $robot++;
+        }
+
+        if ( $c->config->{captcha}{use_hidden_input} ) {
+            length $c->req->params->get('url') > 0
+              and $robot++;
+        }
+
+        $robot
+          and push @errors, "We think you might be a robot. Please try again.";
     }
 
     if (@errors) {
