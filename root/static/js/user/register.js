@@ -1,4 +1,6 @@
 $( function() {
+    var MAX_STARS = 5;
+
     let $password  = $('input[name="password"]');
     let $password2 = $('input[name="password2"]');
     let $meter = $( '<span>' );
@@ -7,14 +9,16 @@ $( function() {
     $meter.before('&nbsp;');
 
     $password.on( 'change input', function() {
-        var result = zxcvbn( $password.val() );
+        let password = $password.val();
 
-        var html = 'strength: ';
-        html += '&#x2605;'.repeat( 1 + result.score );
-        html += '&#x2606;'.repeat( 4 - result.score );
+        let stars = password == '' ? 0 : ( zxcvbn(password).score + 1 );
+
+        let html = 'strength: ';
+        html += '&#x2605;'.repeat(             stars );
+        html += '&#x2606;'.repeat( MAX_STARS - stars );
 
         $meter.html( html );
-        $meter.attr( 'title', ( 1 + result.score ) + ' of 5' );
+        $meter.attr( 'title', stars + ' of ' + MAX_STARS );
     });
 
     $password.change();
