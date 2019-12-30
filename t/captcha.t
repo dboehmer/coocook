@@ -23,15 +23,19 @@ subtest "POST /register without session" => sub {
     $t->content_like(qr/robot/);
 };
 
-$t->reload_config( captcha => { use_hidden_input => 1 } );
-$t->register_fails_like( { %ok_input, url => 'https://www.spam.example/' },
-    qr/robot/, "use_hidden_input" );
+{
+    my $guard = $t->reload_config( captcha => { use_hidden_input => 1 } );
+    $t->register_fails_like( { %ok_input, url => 'https://www.spam.example/' },
+        qr/robot/, "use_hidden_input" );
+}
 
-$t->reload_config( captcha => { form_min_time_secs => 42 } );
-$t->register_fails_like( \%ok_input, qr/robot/, "form_min_time_secs" );
+{
+    my $guard = $t->local_config_guard( captcha => { form_min_time_secs => 42 } );
+    $t->register_fails_like( \%ok_input, qr/robot/, "form_min_time_secs" );
+}
 
 subtest "form_max_time_secs" => sub {
-    $t->reload_config( captcha => { form_max_time_secs => 1 } );
+    my $guard = $t->local_config_guard( captcha => { form_max_time_secs => 1 } );
 
     $t->get_ok('/register');
     sleep 2;
@@ -41,7 +45,6 @@ subtest "form_max_time_secs" => sub {
     $t->content_like(qr/robot/);
 };
 
-$t->reload_config( captcha => { form_min_time_secs => undef } );
 ok !$t->schema->resultset('User')->find( { name => $_ } ), "no user '$_' has been created"
   for $ok_input{username};
 

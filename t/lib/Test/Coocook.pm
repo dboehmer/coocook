@@ -3,7 +3,7 @@ package Test::Coocook;
 use strict;
 use warnings;
 
-our $DEBUG;
+our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
 
 use Carp;
 use DBICx::TestDatabase;
@@ -82,6 +82,31 @@ sub emails {
 
 sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
 sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
+
+{
+
+    package Test::Coocook::Guard;    # TODO is "guard" the right term?
+
+    sub DESTROY {
+        my $self = shift;
+        ##warn "Restoring original config\n";
+        $self->{t}->reload_config( $self->{original_config} );
+    }
+}
+
+sub local_config_guard {
+    my $self = shift;
+
+    my $guard = bless {
+        t               => $self,
+        original_config => $self->catalyst_app->config,
+      },
+      'Test::Coocook::Guard';
+
+    $self->reload_config(@_);
+
+    return $guard;
+}
 
 sub reload_config {
     my $self = shift;
