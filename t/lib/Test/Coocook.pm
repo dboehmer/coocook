@@ -345,4 +345,13 @@ sub status_is {
       $name || "Response has status code $expected";
 }
 
+sub status_like {
+    my ( $self, $expected, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    like $self->response->code => $expected,
+      $name || "Response has status code like '$expected'";
+}
+
 1;

@@ -2,7 +2,6 @@ requires "App::DH" => "0";
 requires "Carp" => "0";
 requires "Catalyst" => "0";
 requires "Catalyst::Action::RenderView" => "0";
-requires "Catalyst::ActionRole::RequireSSL" => "v1.0.0";
 requires "Catalyst::Authentication::Store::DBIx::Class" => "0";
 requires "Catalyst::Controller" => "0";
 requires "Catalyst::Model" => "0";

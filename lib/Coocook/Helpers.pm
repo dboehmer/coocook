@@ -123,17 +123,17 @@ sub project {
     $c->stash->{project};
 }
 
-=head2 $c->redirect_detach($uri)
+=head2 $c->redirect_detach(@redirect_args)
 
 Set HTTP C<Location:> header to redirect URI and detach from Catalyst request flow in 1 step.
-Method never returns.
+Passes all arguments to C<< $c->response->redirect() >>. Method never returns.
 
 =cut
 
 sub redirect_detach {
-    my ( $c, $uri ) = @_;
+    my $c = shift;
 
-    $c->response->redirect($uri);
+    $c->response->redirect(@_);
     $c->detach;
 }
 

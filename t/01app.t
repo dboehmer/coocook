@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 8;
+use Test::Most tests => 9;
 
 my $t = Test::Coocook->new( max_redirect => 0 );
 
@@ -54,10 +54,19 @@ subtest "public actions are either GET or POST" => sub {
     }
 };
 
-subtest "HTTP redirects to HTTPS" => sub {
+subtest "GET http://... redirects to HTTPS" => sub {
     $t->get('http://localhost/');
     $t->status_is(301);    # moved permanently
     $t->header_is( Location => 'https://localhost/' );
+
+    $t->get('http://localhost/path_doesnt_exist');
+    $t->status_is(301);    # moved permanently
+    $t->header_is( Location => 'https://localhost/path_doesnt_exist' );
+};
+
+subtest "POST http://... is catched as well" => sub {    # TODO define exact behavior
+    $t->post('http://localhost/');
+    $t->status_like(qr/ ^[34] /x);
 };
 
 $t->get_ok('https://localhost');

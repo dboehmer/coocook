@@ -3,9 +3,6 @@ package Coocook::Controller::Root;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-# version 1.0.0 changed HTTP status code for SSL redirects to 301
-use Catalyst::ActionRole::RequireSSL v1.0.0;
-
 use HTML::Meta::Robots;
 
 # BEGIN-block necessary to make method attributes work
@@ -23,7 +20,20 @@ The root page (/)
 
 =cut
 
-sub base : Chained('/') PathPart('') CaptureArgs(0) Does('RequireSSL') { }
+sub base : Chained('/') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    if ( not $c->req->secure ) {    # accepts HTTP from localhost as secure
+        if ( $c->req->method eq 'POST' ) {
+            $c->detach('/error/bad_request');    # TODO is this the best to do?
+        }
+        else {
+            my $uri = $c->req->uri->clone;
+            $uri->scheme('https');
+            $c->redirect_detach( $uri, 301 );
+        }
+    }
+}
 
 sub begin : Private {
     my ( $self, $c ) = @_;
