@@ -26,7 +26,7 @@ __PACKAGE__->has_many(
 
         return {
             "$args->{foreign_alias}.project" => { -ident => "$args->{self_alias}.project" },
-            "$args->{foreign_alias}.user" => { '!=' => { -ident => "$args->{self_alias}.user" } },
+            "$args->{foreign_alias}.user"    => { '!='   => { -ident => "$args->{self_alias}.user" } },
         };
     }
 );

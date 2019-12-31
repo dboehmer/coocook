@@ -38,7 +38,7 @@ is $authz->new => $authz, "is a singleton";
 ok !$authz->capability_exists('foo');
 ok $authz->capability_exists('view_project');
 
-is_deeply [ sort $authz->capability_needs_input('view_user') ] => [];
+is_deeply [ sort $authz->capability_needs_input('view_user') ]    => [];
 is_deeply [ sort $authz->capability_needs_input('edit_project') ] => [ 'project', 'user' ];
 
 throws_ok { $authz->has_capability( foobar => {} ) } qr/capability/, "invalid capability";

@@ -45,7 +45,7 @@ sub redirect_is {
     $dish->update( { servings => $number } );
 
     my $res = request('https://localhost/badge/dishes_served.svg');
-    is $res->code => $_, "is $_ redirect" for 302;
+    is $res->code               => $_,   "is $_ redirect" for 302;
     is $res->header('Location') => $url, "$number => $url";
 }
 

@@ -209,7 +209,7 @@ sub dishes_recipes : Private {
         my $recipe = $dish->from_recipe;
 
         my $meal = $dish->meal;
-        $dish = $dish->as_hashref;
+        $dish         = $dish->as_hashref;
         $dish->{url}  = $c->project_uri( '/dish/edit', $dish->{id} );
         $dish->{meal} = $meal;
 
