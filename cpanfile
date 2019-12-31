@@ -78,7 +78,6 @@ on 'test' => sub {
 
 on 'test' => sub {
   recommends "CPAN::Meta" => "2.120900";
-  recommends "Test::Pod::Coverage" => "0";
 };
 
 on 'configure' => sub {
@@ -89,6 +88,7 @@ on 'develop' => sub {
   requires "Test::Most" => "0";
   requires "Test::Perl::Critic" => "0";
   requires "Test::PerlTidy" => "0";
+  requires "Test::Pod::Coverage" => "0";
 };
 
 on 'develop' => sub {

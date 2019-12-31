@@ -18,7 +18,7 @@ __PACKAGE__->add_columns(
     unit     => { data_type => 'int' },
     value    => { data_type => 'real' },
     comment  => { data_type => 'text' },
-    item     => { data_type => 'int', is_nullable       => 1 },    # from purchase list
+    item => { data_type => 'int', is_nullable => 1 },    # from purchase list
 );
 
 __PACKAGE__->set_primary_key("id");

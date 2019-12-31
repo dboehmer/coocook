@@ -151,7 +151,7 @@ sub redirect_uri_for_action {
 
     # complex signature of Catalyst->uri_for_action()
     my $query = @_ >= 2 && ref $_[-1] eq 'HASH'
-      ? $_[-1]    # use existing hashref
+      ? $_[-1]                             # use existing hashref
       : do { push @_, my $q = {}; $q };    # push hashref to @_
 
     if ( my $redirect = $c->req->query_params->get('redirect') ) {
