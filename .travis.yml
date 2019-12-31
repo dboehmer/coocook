@@ -8,6 +8,6 @@ perl:
 - "5.12"
 - "5.10"
 env:
-- PERL_CPANM_OPT="--with-configure"
+- PERL_CPANM_OPT="--with-configure --with-develop"
 script:
 - 'perl Makefile.PL && make test TEST_FILES="t/*.t xt/*.t"'    # same as Travis' default but run extended tests, too
