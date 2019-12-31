@@ -1,6 +1,6 @@
 language: perl
 perl:
-- "dev"
+- "5.30"
 - "5.22"
 env:
 - PERL_CPANM_OPT="--with-configure --with-develop"
