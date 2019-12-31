@@ -10,4 +10,4 @@ perl:
 env:
 - PERL_CPANM_OPT="--with-configure"
 script:
-- 'perl Makefile.PL && make TEST_FILES="t/*.t xt/*.t"'    # same as Travis' default but run extended tests, too
+- 'perl Makefile.PL && make test TEST_FILES="t/*.t xt/*.t"'    # same as Travis' default but run extended tests, too
