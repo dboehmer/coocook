@@ -23,14 +23,19 @@ The root page (/)
 sub base : Chained('/') PathPart('') CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    if ( not $c->req->secure ) {    # accepts HTTP from localhost as secure
-        if ( $c->req->method eq 'POST' ) {
-            $c->detach('/error/bad_request');    # TODO is this the best to do?
+    if ( not $c->req->secure ) {
+        if ( $c->debug ) {
+            $c->log->warn("Not redirecting to HTTPS in debug mode");
         }
         else {
-            my $uri = $c->req->uri->clone;
-            $uri->scheme('https');
-            $c->redirect_detach( $uri, 301 );
+            if ( $c->req->method eq 'POST' ) {
+                $c->detach('/error/bad_request');    # TODO is this the best to do?
+            }
+            else {
+                my $uri = $c->req->uri->clone;
+                $uri->scheme('https');
+                $c->redirect_detach( $uri, 301 );
+            }
         }
     }
 }

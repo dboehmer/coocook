@@ -59,13 +59,6 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
 
     # print e-mails on STDOUT in debugging mode
     $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
-
-    __PACKAGE__->config(
-        require_ssl => {
-            disabled       => 1,
-            ignore_on_post => 1,    # 'disabled' seems not to apply to POST requests
-        },
-    );
 }
 
 # Configure the application.
