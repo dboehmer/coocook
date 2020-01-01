@@ -47,6 +47,7 @@ requires "Term::ReadKey" => "0";
 requires "URI" => "0";
 requires "feature" => "0";
 requires "lib" => "0";
+requires "open" => "0";
 requires "parent" => "0";
 requires "perl" => "v5.16.0";
 requires "strict" => "0";
