@@ -12,12 +12,7 @@ use feature 'fc';    # Perl v5.16
 
 with 'MooseX::Getopt';
 
-has dsn => (
-    is            => 'rw',
-    isa           => 'Str',
-    default       => 'development',
-    documentation => "key in dbic.yaml or DBI DSN string",
-);
+with 'Coocook::Script::Role::HasSchema';
 
 has user => (
     accessor      => 'username',
@@ -38,19 +33,6 @@ has _readline => (
         sub { <> }
     },
 );
-
-has _schema => (
-    is      => 'rw',
-    isa     => 'Coocook::Schema',
-    lazy    => 1,
-    builder => '_build__schema',
-);
-
-sub _build__schema {
-    my $self = shift;
-
-    return Coocook::Schema->connect( $self->dsn );
-}
 
 sub run {
     my $self = shift;

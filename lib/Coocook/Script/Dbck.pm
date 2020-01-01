@@ -9,31 +9,13 @@ use Coocook::Schema;
 
 with 'MooseX::Getopt';
 
+with 'Coocook::Script::Role::HasSchema';
+
 has debug => (
     is            => 'rw',
     isa           => 'Bool',
     documentation => "enable debugging output",
 );
-
-has dsn => (
-    is            => 'rw',
-    isa           => 'Str',
-    default       => 'development',
-    documentation => "key in dbic.yaml or DBI DSN string",
-);
-
-has _schema => (
-    is      => 'rw',
-    isa     => 'Coocook::Schema',
-    lazy    => 1,
-    builder => '_build__schema',
-);
-
-sub _build__schema {
-    my $self = shift;
-
-    return Coocook::Schema->connect( $self->dsn );
-}
 
 sub run {
     my $self = shift;
