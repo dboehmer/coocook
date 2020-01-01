@@ -9,10 +9,17 @@ use feature 'say';
 use open OUT => ':locale';    # respect locale setting of STDOUT (terminal)
 
 use Coocook::Schema;
+use DateTime;
 
 with 'MooseX::Getopt';
 
 with 'Coocook::Script::Role::HasSchema';
+
+has created => (
+    is            => 'rw',
+    isa           => 'Str',
+    documentation => 'limit by date of creation. [+|-]number[d|w|m|y]',
+);
 
 has email_verified => (
     is  => 'rw',
@@ -56,6 +63,8 @@ sub run {
           $users->search( { email_verified => ( $self->email_verified ? { '!=' => undef } : undef ) } );
     }
 
+    $users = $users->search( $self->_parse_created( $self->created ) );
+
     if ( $self->display_name or $self->username ) {
         my $total = 0;
 
@@ -81,6 +90,32 @@ sub run {
     else {
         $self->_print_total( $users->count );
     }
+}
+
+sub _parse_created {
+    my ( $self, $created, $now ) = @_;
+
+    $now = $now ? $now->clone : DateTime->now();
+
+    defined $created
+      or return;
+
+    $created =~ / ^ (?<sign>[+-]) (?<number>\d+) (?<unit>[dwmy]) /x
+      or die "Invalid value for --created!\n";
+
+    my $op = $+{sign} eq '-' ? '>=' : '<=';    # same logic as -ctime for `find`
+
+    my $unit = {
+        d => 'days',
+        w => 'weeks',
+        m => 'months',
+        y => 'years',
+    }->{ $+{unit} }
+      || die "matched unit not in hash table";
+
+    my $dt = $now->subtract( $unit => $+{number} );
+
+    return { created => { $op => $self->_schema->storage->datetime_parser->format_datetime($dt) } };
 }
 
 sub _print_total {
