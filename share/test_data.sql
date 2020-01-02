@@ -75,10 +75,10 @@ INSERT INTO 'faqs' VALUES(2,1,'what','What is Coocook?','Coocook is a web applic
 INSERT INTO 'terms' VALUES(1,'1999-01-01','All your recipes are belong to us.');
 INSERT INTO 'terms' VALUES(2,'2100-01-01','Just STEAL ALL THE COOKING INSTRUCTIONS!');
 
-INSERT INTO 'blacklist_usernames' ('username') VALUES('admin');
-INSERT INTO 'blacklist_usernames' ('username', 'wildcard') VALUES('*coocook*', 1);
+INSERT INTO 'blacklist_usernames' ('username_fc') VALUES('admin');
+INSERT INTO 'blacklist_usernames' ('username_fc', 'wildcard') VALUES('*coocook*', 1);
 
-INSERT INTO 'blacklist_emails' ('email') VALUES('somebody@example.com');
-INSERT INTO 'blacklist_emails' ('email', 'wildcard') VALUES(  '*@coocook.example', 1);
-INSERT INTO 'blacklist_emails' ('email', 'wildcard') VALUES(  '*@coocook.org', 1);
-INSERT INTO 'blacklist_emails' ('email', 'wildcard') VALUES('*@*.coocook.org', 1);
+INSERT INTO 'blacklist_emails' ('email_fc') VALUES('somebody@example.com');
+INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.example', 1);
+INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.org', 1);
+INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES('*@*.coocook.org', 1);

@@ -3,6 +3,8 @@ package Coocook::Schema::Component::ResultSet::Blacklist;
 use strict;
 use warnings;
 
+use feature 'fc';    # Perl v5.16
+
 # ABSTRACT: common methods for blacklist tables
 
 =head1 METHODS
@@ -15,6 +17,8 @@ Returns boolish value. True means the value is B<not> blacklisted.
 
 sub is_value_ok {
     my ( $self, $column_name, $value ) = @_;
+
+    $value = fc $value;
 
     $self->exists( { $column_name => $value } )
       and return '';    # TODO return () or "false" aka ''?
