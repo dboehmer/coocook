@@ -18,6 +18,7 @@ requires "Catalyst::View::Email::Template" => "0";
 requires "Catalyst::View::TT" => "0";
 requires "Config::General" => "0";
 requires "Crypt::Argon2" => "0";
+requires "Crypt::Digest::SHA256" => "0";
 requires "DBIx::Class::Core" => "0";
 requires "DBIx::Class::FilterColumn" => "0";
 requires "DBIx::Class::Helpers" => "0";

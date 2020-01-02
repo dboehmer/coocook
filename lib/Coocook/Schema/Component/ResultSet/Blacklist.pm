@@ -9,19 +9,29 @@ use feature 'fc';    # Perl v5.16
 
 =head1 METHODS
 
-=head2 is_value_ok($column_name, $value)
+=head2 _is_value_ok($column_name, $value)
 
 Returns boolish value. True means the value is B<not> blacklisted.
 
 =cut
 
-sub is_value_ok {
+sub _is_value_ok {
     my ( $self, $column_name, $value ) = @_;
 
     $value = fc $value;
 
-    $self->exists( { $column_name => $value } )
-      and return '';    # TODO return () or "false" aka ''?
+    return not( $self->_blacklist_contains_literal( $column_name, $value )
+        or $self->_blacklist_wildcard_matches( $column_name, $value ) );
+}
+
+sub _blacklist_contains_literal {
+    my ( $self, $column_name, $value ) = @_;
+
+    return $self->exists( { -not_bool => 'wildcards', $column_name => $value } );
+}
+
+sub _blacklist_wildcard_matches {
+    my ( $self, $column_name, $value ) = @_;
 
     my $wildcards = $self->search( { -bool => 'wildcard' } )->get_column($column_name);
 
@@ -29,10 +39,10 @@ sub is_value_ok {
         $wildcard =~ s/\*/.*/g;    # convert to regexp
 
         $value =~ m/ ^ $wildcard $ /x
-          and return '';
+          and return 1;
     }
 
-    return 1;
+    return;
 }
 
 1;

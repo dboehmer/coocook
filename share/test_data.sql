@@ -78,7 +78,7 @@ INSERT INTO 'terms' VALUES(2,'2100-01-01','Just STEAL ALL THE COOKING INSTRUCTIO
 INSERT INTO 'blacklist_usernames' ('username_fc') VALUES('admin');
 INSERT INTO 'blacklist_usernames' ('username_fc', 'wildcard') VALUES('*coocook*', 1);
 
-INSERT INTO 'blacklist_emails' ('email_fc') VALUES('somebody@example.com');
+INSERT INTO 'blacklist_emails' ('email_fc') VALUES('eH1bfAbKCiHJZDbMfIEX5v4EbQ/X3tyujJO/wUuOXfc='); -- somebody@example.com
 INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.example', 1);
 INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.org', 1);
 INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES('*@*.coocook.org', 1);
