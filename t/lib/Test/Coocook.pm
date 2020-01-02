@@ -132,6 +132,8 @@ sub schema { shift->catalyst_app->model('DB')->schema(@_) }
 sub register_ok {
     my ( $self, $field_values, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "register", sub {
         $self->follow_link_ok( { text => 'Sign up' } );
 
@@ -146,6 +148,8 @@ sub register_ok {
 sub register_fails_like {
     my ( $self, $field_values, $error_regex, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "register fails like '$error_regex'" => sub {
         $self->follow_link_ok( { text => 'Sign up' } );
 
@@ -159,6 +163,8 @@ sub register_fails_like {
 
 sub get_email_link_ok {
     my ( $self, $url_regex, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "GET link from first e-mail", sub {
         my @urls = $self->email_like($url_regex);
@@ -257,6 +263,8 @@ sub login {
 sub login_ok {
     my ( $self, $username, $password, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "login with $username:$password", sub {
         $self->login( $username, $password );
 
@@ -266,6 +274,8 @@ sub login_ok {
 
 sub login_fails {
     my ( $self, $username, $password, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "login with $username:$password fails", sub {
         $self->login( $username, $password );
@@ -286,6 +296,8 @@ sub logout_ok {
 sub change_password_ok {
     my ( $self, $field_values, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "change password", sub {
         $self->follow_link_ok( { text => 'Account Settings' } );
 
@@ -295,6 +307,8 @@ sub change_password_ok {
 
 sub change_display_name_ok {
     my ( $self, $display_name, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "change display name", sub {
         $self->follow_link_ok( { text => 'Account Settings' } );
@@ -312,6 +326,8 @@ sub change_display_name_ok {
 
 sub request_recovery_link_ok {
     my ( $self, $email, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "request recovery link for $email", sub {
         $self->follow_link_ok( { text => 'Sign in' } );
@@ -335,6 +351,8 @@ sub request_recovery_link_ok {
 sub reset_password_ok {
     my ( $self, $password, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "reset password to '$password'", sub {
         $self->get_email_link_ok(
             qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
@@ -356,6 +374,8 @@ sub reset_password_ok {
 sub recover_account_ok {
     my ( $self, $email, $password, $name ) = @_;
 
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     subtest $name || "reset password for $email to '$password'", sub {
         $self->request_recovery_link_ok($email);
         $self->reset_password_ok($password);
@@ -364,6 +384,8 @@ sub recover_account_ok {
 
 sub create_project_ok {
     my ( $self, $fields, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "create project '$fields->{name}'", sub {
         $self->get_ok('/');
