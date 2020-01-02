@@ -13,19 +13,6 @@ my $blacklist;    # allow access from sub
 subtest BlacklistEmail => sub {
     ok $blacklist = $db->resultset('BlacklistEmail'), "table exists";
 
-    ok $blacklist->populate(
-        [
-            { email => 'foo@example.com' },
-            { email => 'bar@example.com' },
-
-            { email => '*@foo.example', wildcard => 1 },
-
-            { email => '*@bar.example',   wildcard => 1 },
-            { email => '*@*.bar.example', wildcard => 1, comment => "subdomains also" },
-        ]
-      ),
-      "populate";
-
     can_ok $blacklist, 'is_email_ok';
 
     sub email_ok {
@@ -40,15 +27,14 @@ subtest BlacklistEmail => sub {
         ok !$blacklist->is_email_ok($email), $name || "$email is not ok";
     }
 
-    email_not_ok 'foo@example.com';
-    email_not_ok 'bar@example.com';
-    email_ok 'baz@example.com';
+    email_not_ok 'somebody@example.com';
+    email_ok 'anybody-else@example.com';
 
-    email_not_ok 'any@foo.example';
-    email_ok 'any@safe-subdomain.foo.example';
+    email_not_ok 'any@coocook.example';
+    email_ok 'any@safe-subdomain.coocook.example';
 
-    email_not_ok 'any@foobar.example';
-    email_not_ok 'any@any-subdomain.foobar.example';
+    email_not_ok 'any@coocook.org';
+    email_not_ok 'any@any-subdomain.coocook.org';
 };
 
 subtest BlacklistUsername => sub {

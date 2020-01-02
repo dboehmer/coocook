@@ -1,5 +1,8 @@
 package Coocook::Schema::Component::ResultSet::Blacklist;
 
+use strict;
+use warnings;
+
 # ABSTRACT: common methods for blacklist tables
 
 =head1 METHODS
