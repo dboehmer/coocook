@@ -21,6 +21,12 @@ has created => (
     documentation => 'limit by date of creation. [+|-]number[d|w|m|y]',
 );
 
+has discard => (
+    is            => 'rw',
+    isa           => 'Bool',
+    documentation => "discard selected users (DANGEROUS)",
+);
+
 has email_verified => (
     is  => 'rw',
     isa => 'Str',
@@ -56,6 +62,11 @@ has total => (
 sub run {
     my $self = shift;
 
+    if ( $self->discard ) {
+        defined $self->email_verified and $self->email_verified eq '0'
+          or die "Option --discard requires --email_verified=0!\n";
+    }
+
     my $users = $self->_schema->resultset('User');
 
     if ( defined $self->email_verified and length $self->email_verified ) {
@@ -69,10 +80,17 @@ sub run {
         my $total = 0;
 
         while ( my $user = $users->next ) {
-            my $str = $self->username ? $user->name : '';
+            my $str = '';
+
+            if ( $self->discard ) {
+                $user->delete();
+                $str .= "discarded ";
+            }
+
+            $self->username and $str .= $user->name;
 
             if ( $self->display_name ) {
-                length $str and $str .= ": ";
+                $self->username and $str .= ": ";
                 $str .= $user->display_name;
             }
 
@@ -89,6 +107,9 @@ sub run {
     }
     else {
         $self->_print_total( $users->count );
+
+        $self->discard
+          and $users->delete();
     }
 }
 
