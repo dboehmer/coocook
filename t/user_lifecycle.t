@@ -5,23 +5,36 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 55;
+use Test::Most tests => 56;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
 
 my $schema = $t->schema;
 
+$schema->populate( BlacklistEmail    => [ { email_fc    => 'blacklisted@example.com' } ] );
+$schema->populate( BlacklistUsername => [ { username_fc => 'blacklisted' } ] );
+
 $t->get_ok('/');
 
-$t->register_ok(
-    {
+{
+    my %userdata_ok = (
         username  => 'test',
         email     => 'test@example.com',
         password  => 's3cr3t',
         password2 => 's3cr3t',
-    }
-);
+    );
+
+    $t->register_fails_like(
+        { %userdata_ok, email => 'blacklisted@example.com' },
+        qr/e-mail address is invalid or already taken/
+    );
+
+    $t->register_fails_like( { %userdata_ok, username => 'blacklisted' },
+        qr/username is not available/ );
+
+    $t->register_ok( \%userdata_ok );
+}
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
     ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
@@ -49,10 +62,10 @@ $t->get('/');
 
 $t->register_ok(
     {
-        username  => "test2",
-        email     => "test2\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
+        username  => 'test2',
+        email     => 'test2@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
     }
 );
 
@@ -70,25 +83,6 @@ $t->email_like(qr{ /user/test2 }x);    # URLs to user info pages
 $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
-my $content_after_registration = $t->content;
-
-subtest "registration of existing e-mail address triggers e-mail" => sub {
-    $t->register_ok(
-        {
-            username  => 'test_other',
-            email     => 'test2@example.com',
-            password  => 's3cr3t',
-            password2 => 's3cr3t',
-        }
-    );
-
-    $t->content_is( $content_after_registration, "content is same as with new e-mail address" );
-
-    $t->email_like(qr/ (try|tried) .+ register /x);
-
-    $t->clear_emails();
-};
-
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
@@ -96,7 +90,7 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 
 $t->register_fails_like(
     { username => 'TEST2' },
-    qr/username already in use/,
+    qr/username is not available/,
     "registration of existing username fails"
 );
 

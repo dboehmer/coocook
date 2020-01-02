@@ -108,8 +108,10 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     elsif ( $username !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
         push @errors, "username must not contain other characters than 0-9, a-z and A-Z.";
     }
-    elsif ( $c->model('DB::User')->exists( { name_fc => fc($username) } ) ) {
-        push @errors, "username already in use";
+    else {
+        !$c->model('DB::User')->exists( { name_fc => fc($username) } )
+          and $c->model('DB::BlacklistUsername')->is_username_ok($username)
+          or push @errors, "username is not available";
     }
 
     if ( length $password == 0 ) {
@@ -121,22 +123,24 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     }
 
-    $email = is_email($email)
-      or push @errors, "e-mail address is not valid";
+    is_email($email)
+      and !$c->model('DB::User')->exists( { email => $email } )    # TODO handle uppercase
+      and $c->model('DB::BlacklistEmail')->is_email_ok($email)
+      or push @errors, "e-mail address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;
 
     if ($terms) {
         my $id = $c->req->params->get('accept_terms')
-          or $c->detach('/error/bad_request');    # parameter missing
+          or $c->detach('/error/bad_request');                     # parameter missing
 
         $id == $terms->id
-          or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
+          or push @errors, "you need accept the newest terms";     # invalid or outdated Terms id
     }
 
     # CAPTCHA only if no content errors above
     if ( @errors == 0 ) {
-        my $robot = 0;                                            # expect the best
+        my $robot = 0;                                             # expect the best
 
         if ( my $time_served = $c->session->{register_form_served_epoch} ) {
             my $timespan = time() - $time_served;
@@ -144,7 +148,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             if ( my $min = $c->config->{captcha}{form_min_time_secs} ) { $min <= $timespan or $robot++ }
             if ( my $max = $c->config->{captcha}{form_max_time_secs} ) { $timespan <= $max or $robot++ }
         }
-        else {                                                    # form never served
+        else {                                                     # form never served
             $robot++;
         }
 
@@ -174,52 +178,47 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         $c->go('register');
     }
 
-    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
-        $c->visit( '/email/email_address_reused' => [$user] );
-    }
-    else {    # e-mail address is unique
-        my $token = $c->model('Token')->new();
+    my $token = $c->model('Token')->new();
 
-        my $user = $c->model('DB::User')->create(
-            {
-                name         => $username,
-                password     => $password,
-                display_name => $username,
-                email        => $email,
-                token_hash   => $token->to_salted_hash,
-                token_expires => undef,    # never: token only for verification, doesn't allow password reset
-            }
-        );
-
-        # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
-        $password = 'x' x length $password;
-        undef $password;
-
-        $c->visit( '/email/verification', [ $user, $token ] );
-
-        $terms
-          and $user->create_related(
-            terms_users => {
-                terms    => $terms->id,
-                approved => $terms->format_datetime( DateTime->now ),
-            }
-          );
-
-        my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
-
-        if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
-            for my $admin ( $c->model('DB::User')->site_owners->all ) {
-                $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
-            }
+    my $user = $c->model('DB::User')->create(
+        {
+            name         => $username,
+            password     => $password,
+            display_name => $username,
+            email        => $email,
+            token_hash   => $token->to_salted_hash,
+            token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
+    );
 
-        my @roles = @{ $c->config->{new_user_default_roles} || [] };
+    # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
+    $password = 'x' x length $password;
+    undef $password;
 
-        $site_owners_exist
-          or push @roles, 'site_owner';
+    $c->visit( '/email/verification', [ $user, $token ] );
 
-        $user->add_roles( \@roles );
+    $terms
+      and $user->create_related(
+        terms_users => {
+            terms    => $terms->id,
+            approved => $terms->format_datetime( DateTime->now ),
+        }
+      );
+
+    my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
+
+    if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
+        for my $admin ( $c->model('DB::User')->site_owners->all ) {
+            $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
+        }
     }
+
+    my @roles = @{ $c->config->{new_user_default_roles} || [] };
+
+    $site_owners_exist
+      or push @roles, 'site_owner';
+
+    $user->add_roles( \@roles );
 
     $c->redirect_detach(
         $c->uri_for(
