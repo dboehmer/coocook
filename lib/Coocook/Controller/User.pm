@@ -98,7 +98,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     my $username = $c->req->params->get('username');    # use key 'username' just like login form
     my $password = $c->req->params->get('password');
-    my $email    = $c->req->params->get('email');
+    my $email    = lc $c->req->params->get('email');
 
     my @errors;
 

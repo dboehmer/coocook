@@ -5,15 +5,18 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 56;
+use Test::Most tests => 59;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
 
 my $schema = $t->schema;
 
-$schema->populate( BlacklistEmail    => [ { email_fc    => 'blacklisted@example.com' } ] );
-$schema->populate( BlacklistUsername => [ { username_fc => 'blacklisted' } ] );
+$schema->populate(
+    BlacklistEmail => [ { email_fc => my $blacklist_email = 'blacklisted@example.com' } ] );
+
+$schema->populate(
+    BlacklistUsername => [ { username_fc => my $blacklist_username = 'blacklisted' } ] );
 
 $t->get_ok('/');
 
@@ -25,13 +28,23 @@ $t->get_ok('/');
         password2 => 's3cr3t',
     );
 
+    $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
+        qr/e-mail address is invalid or already taken/ );
+
     $t->register_fails_like(
-        { %userdata_ok, email => 'blacklisted@example.com' },
-        qr/e-mail address is invalid or already taken/
+        { %userdata_ok, email => uc $blacklist_email },
+        qr/e-mail address is invalid or already taken/,
+        "blacklisted e-mail in uppercase"
     );
 
-    $t->register_fails_like( { %userdata_ok, username => 'blacklisted' },
+    $t->register_fails_like( { %userdata_ok, username => $blacklist_username },
         qr/username is not available/ );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => uc $blacklist_username },
+        qr/username is not available/,
+        "blacklisted username in uppercase"
+    );
 
     $t->register_ok( \%userdata_ok );
 }
@@ -89,9 +102,15 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 }
 
 $t->register_fails_like(
+    { username => 'new_user', email => 'TEST2@example.com' },
+    qr/e-mail address is invalid or already taken/,
+    "registration of existing e-mail address (in uppercase) fails"
+);
+
+$t->register_fails_like(
     { username => 'TEST2' },
     qr/username is not available/,
-    "registration of existing username fails"
+    "registration of existing username (in uppercase) fails"
 );
 
 $t->register_fails_like(
