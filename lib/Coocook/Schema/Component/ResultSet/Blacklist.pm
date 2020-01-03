@@ -5,6 +5,8 @@ use warnings;
 
 use feature 'fc';    # Perl v5.16
 
+use Crypt::Digest::SHA256 qw(sha256_b64);
+
 # ABSTRACT: common methods for blacklist tables
 
 =head1 METHODS
@@ -15,34 +17,56 @@ Returns boolish value. True means the value is B<not> blacklisted.
 
 =cut
 
+sub _blacklist_default_type { 'cleartext' }
+
+sub _add_value {
+    my $self  = shift;
+    my $value = fc(shift);
+
+    my $type      = $self->_blacklist_default_type;
+    my $type_col  = $self->_blacklist_type_column;
+    my $value_col = $self->_blacklist_value_column;
+
+    if ( $type eq 'sha256_b64' ) {
+        $value = sha256_b64($value);
+    }
+    else {
+        $type eq 'cleartext'
+          or $type eq 'wildcard'
+          or die "Unsupported type '$type'";
+    }
+
+    return $self->create( { $value_col => $value, $type_col => $type, @_ } );
+}
+
 sub _is_value_ok {
-    my ( $self, $column_name, $value ) = @_;
+    my ( $self, $value ) = @_;
 
     $value = fc $value;
 
-    return not( $self->_blacklist_contains_literal( $column_name, $value )
-        or $self->_blacklist_wildcard_matches( $column_name, $value ) );
-}
+    my $blacklist = $self->hri;
 
-sub _blacklist_contains_literal {
-    my ( $self, $column_name, $value ) = @_;
+    my $type_col  = $self->_blacklist_type_column;
+    my $value_col = $self->_blacklist_value_column;
 
-    return $self->exists( { -not_bool => 'wildcards', $column_name => $value } );
-}
+    $self->exists( { $type_col => 'cleartext', $value_col => $value } )
+      and return '';
 
-sub _blacklist_wildcard_matches {
-    my ( $self, $column_name, $value ) = @_;
+    $self->exists( { $type_col => 'sha256_b64', $value_col => sha256_b64($value) } )
+      and return '';
 
-    my $wildcards = $self->search( { -bool => 'wildcard' } )->get_column($column_name);
+    {
+        my $wildcards = $self->search( { $type_col => 'wildcard' } )->get_column($value_col);
 
-    while ( my $wildcard = $wildcards->next ) {
-        $wildcard =~ s/\*/.*/g;    # convert to regexp
+        while ( my $wildcard = $wildcards->next ) {
+            $wildcard =~ s/\*/.*/g;    # convert to regexp
 
-        $value =~ m/ ^ $wildcard $ /x
-          and return 1;
+            $value =~ m/ ^ $wildcard $ /x
+              and return '';
+        }
     }
 
-    return;
+    return 1;                          # nothing matched -> value is ok
 }
 
 1;

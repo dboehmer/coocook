@@ -332,12 +332,12 @@ schema:
       fields:
         comment:
           data_type: text
-          default_value: ''
+          default_value: ~
           is_nullable: 0
           is_primary_key: 0
           is_unique: 0
           name: comment
-          order: 5
+          order: 4
           size:
             - 0
         created:
@@ -348,7 +348,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: created
-          order: 4
+          order: 5
           size:
             - 0
         email_fc:
@@ -361,6 +361,16 @@ schema:
           order: 2
           size:
             - 0
+        email_type:
+          data_type: text
+          default_value: cleartext
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: email_type
+          order: 3
+          size:
+            - 0
         id:
           data_type: int
           default_value: ~
@@ -370,16 +380,6 @@ schema:
           is_unique: 0
           name: id
           order: 1
-          size:
-            - 0
-        wildcard:
-          data_type: bool
-          default_value: 0
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: wildcard
-          order: 3
           size:
             - 0
       indices: []
@@ -415,12 +415,12 @@ schema:
       fields:
         comment:
           data_type: text
-          default_value: ''
+          default_value: ~
           is_nullable: 0
           is_primary_key: 0
           is_unique: 0
           name: comment
-          order: 5
+          order: 4
           size:
             - 0
         created:
@@ -431,7 +431,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: created
-          order: 4
+          order: 5
           size:
             - 0
         id:
@@ -455,13 +455,13 @@ schema:
           order: 2
           size:
             - 0
-        wildcard:
-          data_type: bool
-          default_value: 0
+        username_type:
+          data_type: text
+          default_value: cleartext
           is_nullable: 0
           is_primary_key: 0
           is_unique: 0
-          name: wildcard
+          name: username_type
           order: 3
           size:
             - 0

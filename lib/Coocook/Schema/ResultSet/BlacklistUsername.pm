@@ -15,6 +15,9 @@ See L<Coocook::Schema::Component::ResultSet::Blacklist>.
 
 =cut
 
-sub is_username_ok { shift->_is_value_ok( username_fc => @_ ) }
+sub is_username_ok { shift->_is_value_ok(@_) }
+
+sub _blacklist_type_column  { 'username_type' }
+sub _blacklist_value_column { 'username_fc' }
 
 1;

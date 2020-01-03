@@ -75,10 +75,10 @@ INSERT INTO 'faqs' VALUES(2,1,'what','What is Coocook?','Coocook is a web applic
 INSERT INTO 'terms' VALUES(1,'1999-01-01','All your recipes are belong to us.');
 INSERT INTO 'terms' VALUES(2,'2100-01-01','Just STEAL ALL THE COOKING INSTRUCTIONS!');
 
-INSERT INTO 'blacklist_usernames' ('username_fc') VALUES('admin');
-INSERT INTO 'blacklist_usernames' ('username_fc', 'wildcard') VALUES('*coocook*', 1);
+INSERT INTO 'blacklist_usernames' ('comment','username_fc') VALUES('test_data.sql','admin');
+INSERT INTO 'blacklist_usernames' ('comment','username_fc', 'username_type') VALUES('test_data.sql','*coocook*', 'wildcard');
 
-INSERT INTO 'blacklist_emails' ('email_fc') VALUES('eH1bfAbKCiHJZDbMfIEX5v4EbQ/X3tyujJO/wUuOXfc='); -- somebody@example.com
-INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.example', 1);
-INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES(  '*@coocook.org', 1);
-INSERT INTO 'blacklist_emails' ('email_fc', 'wildcard') VALUES('*@*.coocook.org', 1);
+INSERT INTO 'blacklist_emails' ('comment','email_fc','email_type') VALUES('test_data.sql','eH1bfAbKCiHJZDbMfIEX5v4EbQ/X3tyujJO/wUuOXfc=','sha256_b64'); -- somebody@example.com
+INSERT INTO 'blacklist_emails' ('comment','email_fc', 'email_type') VALUES('test_data.sql',  '*@coocook.example', 'wildcard');
+INSERT INTO 'blacklist_emails' ('comment','email_fc', 'email_type') VALUES('test_data.sql',  '*@coocook.org', 'wildcard');
+INSERT INTO 'blacklist_emails' ('comment','email_fc', 'email_type') VALUES('test_data.sql','*@*.coocook.org', 'wildcard');

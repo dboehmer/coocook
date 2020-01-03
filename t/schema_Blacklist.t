@@ -45,7 +45,7 @@ subtest BlacklistEmail => sub {
         my $literal = 'literal@example.com';
 
         ok $blacklist->is_email_ok($literal);
-        ok $blacklist->add_email($literal);
+        ok $blacklist->add_email( $literal, comment => __FILE__ );
         ok !$blacklist->is_email_ok($literal);
         ok !$blacklist->is_email_ok( uc $literal ), "uppercase";
         ok !$blacklist->exists( { email_fc => $literal } ),

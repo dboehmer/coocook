@@ -12,10 +12,11 @@ my $t = Test::Coocook->new( deploy => 0 );
 
 my $schema = $t->schema;
 
-$schema->resultset('BlacklistEmail')->add_email( my $blacklist_email = 'blacklisted@example.com' );
+$schema->resultset('BlacklistEmail')
+  ->add_email( my $blacklist_email = 'blacklisted@example.com', comment => __FILE__ );
 
-$schema->populate(
-    BlacklistUsername => [ { username_fc => my $blacklist_username = 'blacklisted' } ] );
+$schema->populate( BlacklistUsername =>
+      [ { username_fc => my $blacklist_username = 'blacklisted', comment => __FILE__ } ] );
 
 $t->get_ok('/');
 
