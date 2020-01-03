@@ -28,24 +28,24 @@ sub email_address_reused : Private {
 
     $c->stash(
         email => {
-            to       => $user->email,
+            to       => $user->email_fc,
             subject  => "Your e-mail address was registered at " . $c->config->{name},
             template => 'email_address_reused.tt',
         },
         user         => $user,
-        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email } ),
+        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email_fc } ),
     );
 }
 
 sub notify_admin_about_registration : Private {
     my ( $self, $c, $user, $admin ) = @_;
 
-    my $email_anonymized = $user->email;
+    my $email_anonymized = $user->email_fc;
     $email_anonymized =~ s/ ^ .+ \@ /***@/x;
 
     $c->stash(
         email => {
-            to       => $admin->email,
+            to       => $admin->email_fc,
             subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
             template => 'notify_admin_about_registration.tt',
         },
@@ -62,12 +62,12 @@ sub password_changed : Private {
 
     $c->stash(
         email => {
-            to       => $user->email,
+            to       => $user->email_fc,
             subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
             template => 'password_changed.tt',
         },
         user         => $user,
-        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email } ),
+        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email_fc } ),
     );
 }
 
@@ -86,7 +86,7 @@ sub recovery_link : Private {
 
     $c->stash(
         email => {
-            to       => $user->email,
+            to       => $user->email_fc,
             subject  => "Account recovery at " . $c->config->{name},
             template => 'recovery_link.tt',
         },
@@ -114,7 +114,7 @@ sub verification : Private {
 
     $c->stash(
         email => {
-            to       => $user->email,
+            to       => $user->email_fc,
             subject  => "Verify your Account at " . $c->config->{name},
             template => 'verify.tt',
         },

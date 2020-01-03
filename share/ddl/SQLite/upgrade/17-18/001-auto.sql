@@ -28,6 +28,5 @@ CREATE TABLE blacklist_usernames (
 CREATE UNIQUE INDEX blacklist_usernames_username_fc ON blacklist_usernames (username_fc);
 
 ;
-
 COMMIT;
 

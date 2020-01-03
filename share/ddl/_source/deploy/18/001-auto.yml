@@ -2800,9 +2800,9 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
-            - email
+            - email_fc
           match_type: ''
-          name: users_email
+          name: users_email_fc
           on_delete: ''
           on_update: ''
           options: []
@@ -2889,13 +2889,13 @@ schema:
           order: 5
           size:
             - 0
-        email:
+        email_fc:
           data_type: text
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
           is_unique: 1
-          name: email
+          name: email_fc
           order: 7
           size:
             - 0

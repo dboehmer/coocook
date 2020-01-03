@@ -18,7 +18,7 @@ __PACKAGE__->add_columns(
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
-    email          => { data_type => 'text' },
+    email_fc       => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable => 1 },
     token_hash     => { data_type => 'text', is_nullable => 1 },
     token_expires  => { data_type => 'datetime', is_nullable => 1 },
@@ -28,7 +28,7 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints(
-    ['name'], ['name_fc'], ['email'],
+    ['name'], ['name_fc'], ['email_fc'],
     ['password_hash'],    # passwords might be equal but salted hash MUST be unique
     ['token_hash'],
 );

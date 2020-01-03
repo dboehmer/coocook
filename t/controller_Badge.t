@@ -10,7 +10,7 @@ my $schema = DBICx::TestDatabase->new('Coocook::Schema');
 Coocook->model('DB')->schema->storage( $schema->storage );
 
 my $user = $schema->resultset('User')
-  ->create( { map { $_ => '' } qw< name display_name password_hash email > } );
+  ->create( { map { $_ => '' } qw< name display_name password_hash email_fc > } );
 
 my $project = $user->create_related(
     owned_projects => {

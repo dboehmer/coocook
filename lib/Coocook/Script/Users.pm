@@ -96,7 +96,7 @@ sub run {
 
             if ( $self->email_address ) {
                 length $str and $str .= " ";
-                $str .= "<" . $user->email . ">";
+                $str .= "<" . $user->email_fc . ">";
             }
 
             say $str;

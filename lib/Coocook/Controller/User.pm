@@ -98,7 +98,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     my $username = $c->req->params->get('username');    # use key 'username' just like login form
     my $password = $c->req->params->get('password');
-    my $email    = lc $c->req->params->get('email');
+    my $email_fc = fc $c->req->params->get('email');
 
     my @errors;
 
@@ -123,24 +123,24 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     }
 
-    is_email($email)
-      and !$c->model('DB::User')->exists( { email => $email } )    # TODO handle uppercase
-      and $c->model('DB::BlacklistEmail')->is_email_ok($email)
+    is_email($email_fc)
+      and !$c->model('DB::User')->exists( { email_fc => $email_fc } )
+      and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
       or push @errors, "e-mail address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;
 
     if ($terms) {
         my $id = $c->req->params->get('accept_terms')
-          or $c->detach('/error/bad_request');                     # parameter missing
+          or $c->detach('/error/bad_request');    # parameter missing
 
         $id == $terms->id
-          or push @errors, "you need accept the newest terms";     # invalid or outdated Terms id
+          or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
     }
 
     # CAPTCHA only if no content errors above
     if ( @errors == 0 ) {
-        my $robot = 0;                                             # expect the best
+        my $robot = 0;                                            # expect the best
 
         if ( my $time_served = $c->session->{register_form_served_epoch} ) {
             my $timespan = time() - $time_served;
@@ -148,7 +148,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             if ( my $min = $c->config->{captcha}{form_min_time_secs} ) { $min <= $timespan or $robot++ }
             if ( my $max = $c->config->{captcha}{form_max_time_secs} ) { $timespan <= $max or $robot++ }
         }
-        else {                                                     # form never served
+        else {                                                    # form never served
             $robot++;
         }
 
@@ -169,7 +169,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             template   => 'user/register.tt',
             last_input => {
                 username => $username,
-                email    => $email,
+                email    => $email_fc,
             },
         );
 
@@ -185,7 +185,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
             name         => $username,
             password     => $password,
             display_name => $username,
-            email        => $email,
+            email_fc     => $email_fc,
             token_hash   => $token->to_salted_hash,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
@@ -243,17 +243,17 @@ sub recover : GET HEAD Chained('/base') Args(0) {
 sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
     my ( $self, $c ) = @_;
 
-    my $email = $c->req->params->get('email');
+    my $email_fc = fc $c->req->params->get('email');
 
-    is_email($email)
+    is_email($email_fc)
       or $c->redirect_detach(
         $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
 
-    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
+    if ( my $user = $c->model('DB::User')->find( { email_fc => $email_fc } ) ) {
         $c->visit( '/email/recovery_link', [$user] );
     }
     else {
-        $c->visit( '/email/recovery_unregistered', [$email] );
+        $c->visit( '/email/recovery_unregistered', [$email_fc] );
     }
 
     $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );

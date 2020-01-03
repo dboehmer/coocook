@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Jan  3 08:28:25 2020
+-- Created on Fri Jan  3 09:54:20 2020
 -- 
 
 ;
@@ -66,13 +66,13 @@ CREATE TABLE users (
   password_hash text NOT NULL,
   display_name text NOT NULL,
   admin_comment text NOT NULL DEFAULT '',
-  email text NOT NULL,
+  email_fc text NOT NULL,
   email_verified datetime,
   token_hash text,
   token_expires datetime,
   created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE UNIQUE INDEX users_email ON users (email);
+CREATE UNIQUE INDEX users_email_fc ON users (email_fc);
 CREATE UNIQUE INDEX users_name ON users (name);
 CREATE UNIQUE INDEX users_name_fc ON users (name_fc);
 CREATE UNIQUE INDEX users_password_hash ON users (password_hash);
