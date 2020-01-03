@@ -18,7 +18,7 @@ __PACKAGE__->add_columns(
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
-    email          => { data_type => 'text' },
+    email_fc       => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable => 1 },
     token_hash     => { data_type => 'text', is_nullable => 1 },
     token_expires  => { data_type => 'datetime', is_nullable => 1 },
@@ -28,7 +28,7 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints(
-    ['name'], ['name_fc'], ['email'],
+    ['name'], ['name_fc'], ['email_fc'],
     ['password_hash'],    # passwords might be equal but salted hash MUST be unique
     ['token_hash'],
 );
@@ -66,6 +66,18 @@ around [ 'set_column', 'store_column' ] => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
+
+sub blacklist {
+    my $self = shift;
+
+    $self->txn_do(
+        sub {
+            $self->result_source->schema->resultset('BlacklistEmail')->add_email( $self->email_fc, @_ );
+            $self->result_source->schema->resultset('BlacklistUsername')->add_username( $self->name, @_ );
+        },
+        @_
+    );
+}
 
 sub check_password {    # method name defined by Catalyst::Authentication::Credential::Password
     my ( $self, $password ) = @_;
@@ -137,17 +149,18 @@ sub status_description { ( shift->status )[1] }
 sub status {
     my $self = shift;
 
-    if ( my $token_expires = $self->token_expires ) {
-        if ( DateTime->now <= $token_expires ) {
-            return password_recovery => sprintf "requested password recovery link (valid until %s)",
-              $token_expires;
+    if ( $self->email_verified ) {
+        if ( my $token_expires = $self->token_expires ) {
+            if ( DateTime->now <= $token_expires ) {
+                return password_recovery => sprintf "requested password recovery link (valid until %s)",
+                  $token_expires;
+            }
         }
-    }
-    elsif ( $self->token_hash ) {
-        return unverified => "e-mail address not yet verified with verification link";
+
+        return ok => "ok";
     }
 
-    return ok => "ok";
+    return unverified => "e-mail address not yet verified with verification link";
 }
 
 1;

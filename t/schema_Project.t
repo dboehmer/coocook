@@ -89,6 +89,8 @@ subtest delete => sub {
     }
 
     my %unaffected_sources = map { $_ => 1 } qw<
+      BlacklistEmail
+      BlacklistUsername
       FAQ
       RoleUser
       Terms

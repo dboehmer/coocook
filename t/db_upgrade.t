@@ -22,6 +22,8 @@ use TestDB;
 # older than version 13.
 my $FIRST_TESTED_VERSION = 13;
 
+plan tests => ( $Coocook::Schema::VERSION - $FIRST_TESTED_VERSION + 1 ) * 4 + 2;
+
 my $schema_from_code = TestDB->new();
 my $schema_from_deploy;
 my $schema_from_upgrades;
@@ -58,8 +60,6 @@ schema_eq(
     $schema_from_upgrades => $schema_from_code,
     "schema from upgrade SQLs and schema from Coocook::Schema code are equal"
 );
-
-done_testing;
 
 sub install_ok {
     my ( $dh, $version, $name ) = @_;

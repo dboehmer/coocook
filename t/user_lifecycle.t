@@ -5,23 +5,49 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 55;
+use Test::Most tests => 59;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
 
 my $schema = $t->schema;
 
+$schema->resultset('BlacklistEmail')
+  ->add_email( my $blacklist_email = 'blacklisted@example.com', comment => __FILE__ );
+
+$schema->resultset('BlacklistUsername')
+  ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
+
 $t->get_ok('/');
 
-$t->register_ok(
-    {
-        username  => "test",
-        email     => "test\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
-    }
-);
+{
+    my %userdata_ok = (
+        username  => 'test',
+        email     => 'test@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
+    );
+
+    $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
+        qr/e-mail address is invalid or already taken/ );
+
+    $t->register_fails_like(
+        { %userdata_ok, email => uc $blacklist_email },
+        qr/e-mail address is invalid or already taken/,
+        "blacklisted e-mail in uppercase"
+    );
+
+    $t->register_fails_like( { %userdata_ok, username => $blacklist_username },
+        qr/username is not available/ );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => uc $blacklist_username },
+        qr/username is not available/,
+        "blacklisted username in uppercase"
+    );
+
+    $t->register_ok( \%userdata_ok );
+}
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
     ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
@@ -49,10 +75,10 @@ $t->get('/');
 
 $t->register_ok(
     {
-        username  => "test2",
-        email     => "test2\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
+        username  => 'test2',
+        email     => 'test2@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
     }
 );
 
@@ -70,47 +96,28 @@ $t->email_like(qr{ /user/test2 }x);    # URLs to user info pages
 $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
-my $content_after_registration = $t->content;
-
-subtest "registration of existing e-mail address triggers e-mail" => sub {
-    $t->register_ok(
-        {
-            username  => 'test_other',
-            email     => 'test2@example.com',
-            password  => 's3cr3t',
-            password2 => 's3cr3t',
-        }
-    );
-
-    $t->content_is( $content_after_registration, "content is same as with new e-mail address" );
-
-    $t->email_like(qr/ (try|tried) .+ register /x);
-
-    $t->clear_emails();
-};
-
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 
-subtest "registration of existing username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
+$t->register_fails_like(
+    { username => 'new_user', email => 'TEST2@example.com' },
+    qr/e-mail address is invalid or already taken/,
+    "registration of existing e-mail address (in uppercase) fails"
+);
 
-    $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
+$t->register_fails_like(
+    { username => 'TEST2' },
+    qr/username is not available/,
+    "registration of existing username (in uppercase) fails"
+);
 
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
-
-subtest "registration with invalid username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
-
-    $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
-
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
+$t->register_fails_like(
+    { username => 'foobar ' },    # note space char
+    qr/username must not contain/,
+    "registration with invalid existing username fails"
+);
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 
