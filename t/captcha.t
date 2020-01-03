@@ -24,7 +24,7 @@ subtest "POST /register without session" => sub {
 };
 
 {
-    my $guard = $t->reload_config( captcha => { use_hidden_input => 1 } );
+    my $guard = $t->local_config_guard( captcha => { use_hidden_input => 1 } );
     $t->register_fails_like( { %ok_input, url => 'https://www.spam.example/' },
         qr/robot/, "use_hidden_input" );
 }
