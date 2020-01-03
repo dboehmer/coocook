@@ -15,6 +15,9 @@ qr/discard/, "rejects discard=1 and email_verified=''";
 throws_ok { Coocook::Script::Users->new( discard => 1, email_verified => 1 )->run() }
 qr/discard/, "rejects discard=1 and email_verified=1";
 
+throws_ok { Coocook::Script::Users->new( discard => 0, blacklist => 1 )->run() }
+qr/blacklist/, "rejects blacklist=1 unless discard=1";
+
 my $now = DateTime::Format::SQLite->parse_datetime('2000-01-01 12:34:56');
 
 sub parse { $script->_parse_created( shift, $now ) }

@@ -15,8 +15,8 @@ my $schema = $t->schema;
 $schema->resultset('BlacklistEmail')
   ->add_email( my $blacklist_email = 'blacklisted@example.com', comment => __FILE__ );
 
-$schema->populate( BlacklistUsername =>
-      [ { username_fc => my $blacklist_username = 'blacklisted', comment => __FILE__ } ] );
+$schema->resultset('BlacklistUsername')
+  ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
 
 $t->get_ok('/');
 

@@ -9,6 +9,12 @@ __PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::Blacklist'
 
 =head1 METHODS
 
+=head2 add_username($username, %additional_column_data)
+
+=cut
+
+sub add_username { shift->_add_value(@_) }
+
 =head2 is_username_ok($username)
 
 See L<Coocook::Schema::Component::ResultSet::Blacklist>.

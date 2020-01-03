@@ -67,6 +67,18 @@ around [ 'set_column', 'store_column' ] => sub {
 
 __PACKAGE__->meta->make_immutable;
 
+sub blacklist {
+    my $self = shift;
+
+    $self->txn_do(
+        sub {
+            $self->result_source->schema->resultset('BlacklistEmail')->add_email( $self->email_fc, @_ );
+            $self->result_source->schema->resultset('BlacklistUsername')->add_username( $self->name, @_ );
+        },
+        @_
+    );
+}
+
 sub check_password {    # method name defined by Catalyst::Authentication::Credential::Password
     my ( $self, $password ) = @_;
 

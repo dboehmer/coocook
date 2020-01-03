@@ -15,6 +15,12 @@ with 'MooseX::Getopt';
 
 with 'Coocook::Script::Role::HasSchema';
 
+has blacklist => (
+    is            => 'rw',
+    isa           => 'Bool',
+    documentation => "blacklist username and e-mail address of discarded users",
+);
+
 has created => (
     is            => 'rw',
     isa           => 'Str',
@@ -66,6 +72,10 @@ sub run {
         defined $self->email_verified and $self->email_verified eq '0'
           or die "Option --discard requires --email_verified=0!\n";
     }
+    else {
+        $self->blacklist
+          and die "Option --blacklist is only applicable if --discard\n";
+    }
 
     my $users = $self->_schema->resultset('User');
 
@@ -76,41 +86,50 @@ sub run {
 
     $users = $users->search( $self->_parse_created( $self->created ) );
 
-    if ( $self->display_name or $self->username ) {
-        my $total = 0;
+    $self->_schema->txn_do(
+        sub {
+            if ( $self->display_name or $self->username or $self->blacklist ) {
+                my $total = 0;
 
-        while ( my $user = $users->next ) {
-            my $str = '';
+                while ( my $user = $users->next ) {
+                    my $str = '';
 
-            if ( $self->discard ) {
-                $user->delete();
-                $str .= "discarded ";
+                    if ( $self->discard ) {
+                        $user->delete();
+                        $str .= "discarded ";
+
+                        if ( $self->blacklist ) {
+                            $user->blacklist( comment => $0 );
+                            $str .= "and blacklisted ";
+                        }
+                    }
+
+                    $self->username and $str .= $user->name;
+
+                    if ( $self->display_name ) {
+                        $self->username and $str .= ": ";
+                        $str .= $user->display_name;
+                    }
+
+                    if ( $self->email_address ) {
+                        length $str and $str .= " ";
+                        $str .= "<" . $user->email_fc . ">";
+                    }
+
+                    say $str;
+                    $total++;
+                }
+
+                $self->_print_total($total);
             }
+            else {
+                $self->_print_total( $users->count );
 
-            $self->username and $str .= $user->name;
-
-            if ( $self->display_name ) {
-                $self->username and $str .= ": ";
-                $str .= $user->display_name;
+                $self->discard
+                  and $users->delete();
             }
-
-            if ( $self->email_address ) {
-                length $str and $str .= " ";
-                $str .= "<" . $user->email_fc . ">";
-            }
-
-            say $str;
-            $total++;
         }
-
-        $self->_print_total($total);
-    }
-    else {
-        $self->_print_total( $users->count );
-
-        $self->discard
-          and $users->delete();
-    }
+    );
 }
 
 sub _parse_created {

@@ -139,7 +139,14 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
 sub discard : POST Chained('base') Args(0) RequiresCapability('discard_user') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{user_object}->delete();
+    $c->model('DB')->txn_do(
+        sub {
+            $c->req->params->get('blacklist')
+              and $c->stash->{user_object}->blacklist( comment => "discarded by " . $c->user->name );
+
+            $c->stash->{user_object}->delete();
+        }
+    );
 
     $c->redirect_detach( $c->uri_for( $self->action_for('index') ) );
 }
