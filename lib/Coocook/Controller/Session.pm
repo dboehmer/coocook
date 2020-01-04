@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub login : GET HEAD Chained('/base') Args(0) {
+sub login : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     if ( $c->user ) {    # user is already logged in, probably via other browser tab
@@ -23,7 +23,7 @@ sub login : GET HEAD Chained('/base') Args(0) {
     );
 }
 
-sub post_login : POST Chained('/base') PathPart('login') Args(0) {
+sub post_login : POST Chained('/base') PathPart('login') Args(0) Public {
     my ( $self, $c ) = @_;
 
     # slow down brute-force-attacks by sleeping for a while

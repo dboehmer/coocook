@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub index : GET HEAD Chained('/base') PathPart('terms') Args(0) {
+sub index : GET HEAD Chained('/base') PathPart('terms') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $terms = $c->model('DB::Terms')->valid_today()
@@ -14,7 +14,7 @@ sub index : GET HEAD Chained('/base') PathPart('terms') Args(0) {
     $c->response->redirect( $c->uri_for( $self->action_for('show'), $terms->id ) );
 }
 
-sub show : GET HEAD Chained('/base') PathPart('terms') Args(1) {
+sub show : GET HEAD Chained('/base') PathPart('terms') Args(1) Public {
     my ( $self, $c, $id ) = @_;
 
     my $terms = $c->model('DB::Terms')->find($id)

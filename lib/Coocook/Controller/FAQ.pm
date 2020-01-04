@@ -5,7 +5,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub index : GET HEAD Chained('/base') PathPart('faq') Args(0) {
+sub index : GET HEAD Chained('/base') PathPart('faq') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my @faqs = $c->model('DB::FAQ')->search( undef, { order_by => 'position' } )->hri->all;

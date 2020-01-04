@@ -31,7 +31,7 @@ An endpoint to receive an HTML page which can be saved and displayed as static 5
 
 =cut
 
-sub internal_server_error : HEAD GET Chained('/base') {
+sub internal_server_error : HEAD GET Chained('/base') Public {
     my ( $self, $c ) = @_;
 
     # do NOT set status to 500 because this actually works
@@ -45,7 +45,7 @@ Standard 404 error page
 
 =cut
 
-sub not_found : AnyMethod Chained('/base') PathPart('') {
+sub not_found : AnyMethod Chained('/base') PathPart('') Public {
     my ( $self, $c ) = @_;
 
     $c->response->status(404);
