@@ -255,6 +255,16 @@ sub end : ActionClass('RenderView') {
         $_ = $c->uri_for_static($_);
     }
 
+    {
+        my $errors = $c->stash->{errors};
+        my $status = $c->res->status;
+
+        if ( ref $errors eq 'ARRAY' ? @$errors > 0 : $errors or $status =~ m/^[45]..$/ ) {
+            $c->stash->{robots}->archive(0);
+            $c->stash->{robots}->index(0);
+        }
+    }
+
     $c->stash( meta_robots => $c->stash->{robots}->content );
 }
 

@@ -107,6 +107,22 @@ subtest "robots meta tag" => sub {
     $t->content_lacks('noarchive');
     $t->content_lacks('noindex');
 
+    subtest "404 pages" => sub {
+        $t->get('/doesnt_exist');
+        $t->status_is(404);
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
+    subtest "URLs with 'error' key in query parameters" => sub {
+        my $unique_word = "Dampfschifffahrt";
+        $t->content_lacks($unique_word);
+        $t->get_ok("/?error=$unique_word");
+        $t->content_contains($unique_word);
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
     $t->get_ok('/user/john_doe');
     $t->content_contains('noarchive');
     $t->content_lacks('noindex');
