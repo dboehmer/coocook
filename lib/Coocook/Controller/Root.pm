@@ -152,7 +152,7 @@ sub auto : Private {
     return 1;    # important
 }
 
-sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
+sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->detach( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
@@ -202,13 +202,13 @@ sub dashboard : Private {
     );
 }
 
-sub statistics : GET HEAD Chained('/base') Args(0) {
+sub statistics : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash( statistics => $c->model('DB')->statistics );
 }
 
-sub about : GET HEAD Chained('/base') Args(0) {
+sub about : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash(

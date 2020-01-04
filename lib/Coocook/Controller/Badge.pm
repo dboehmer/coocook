@@ -6,7 +6,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub dishes_served : GET HEAD Chained('/base') PathPart('badge/dishes_served.svg') Args(0) {
+sub dishes_served : GET HEAD Chained('/base') PathPart('badge/dishes_served.svg') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $dishes = $c->model('DB::Dish')->in_past_or_today->sum_servings;

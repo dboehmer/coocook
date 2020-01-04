@@ -59,7 +59,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->escape_title( User => $user->display_name );
 }
 
-sub register : GET HEAD Chained('/base') Args(0) {
+sub register : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     if ( $c->user ) {    # user is already logged in, probably via other browser tab
@@ -90,7 +90,7 @@ sub register : GET HEAD Chained('/base') Args(0) {
     );
 }
 
-sub post_register : POST Chained('/base') PathPart('register') Args(0) {
+sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->user_registration_enabled
@@ -231,7 +231,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
     );
 }
 
-sub recover : GET HEAD Chained('/base') Args(0) {
+sub recover : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -240,7 +240,7 @@ sub recover : GET HEAD Chained('/base') Args(0) {
     );
 }
 
-sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
+sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $email_fc = fc $c->req->params->get('email');
@@ -259,7 +259,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
     $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
 }
 
-sub reset_password : GET HEAD Chained('base') Args(1) {
+sub reset_password : GET HEAD Chained('base') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};
@@ -274,7 +274,7 @@ sub reset_password : GET HEAD Chained('base') Args(1) {
           $c->uri_for( $self->action_for('post_reset_password'), [ $user->name, $base64_token ] ) );
 }
 
-sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) {
+sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};
@@ -310,7 +310,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     $c->response->redirect( $c->uri_for_action('/index') );
 }
 
-sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) {
+sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};

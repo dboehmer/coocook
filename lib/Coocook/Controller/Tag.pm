@@ -65,7 +65,8 @@ sub index : GET HEAD Chained('submenu') PathPart('tags') Args(0)
     );
 }
 
-sub new_tag : GET HEAD Chained('submenu') PathPart('tags/new') Args(0) {
+sub new_tag : GET HEAD Chained('submenu') PathPart('tags/new') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash(
@@ -74,7 +75,8 @@ sub new_tag : GET HEAD Chained('submenu') PathPart('tags/new') Args(0) {
     );
 }
 
-sub index_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups') Args(0) {
+sub index_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my @groups = $c->project->tag_groups->sorted->hri->all;
@@ -86,7 +88,8 @@ sub index_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups') Args(0)
     $c->stash( tag_groups => \@groups );
 }
 
-sub new_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups/new') Args(0) {
+sub new_tag_group : GET HEAD Chained('submenu') PathPart('tag_groups/new') Args(0)
+  RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( create_url => $c->project_uri( $self->action_for('create_group') ) );
