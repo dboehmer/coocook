@@ -235,9 +235,16 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
 
     # extract properties selected in form
     my @properties =
-      grep { $c->req->params->get("property_$_") } map { $_->{key} } @{ $importer->properties };
+      grep { my $key = $_->{key}; $c->req->params->get("property_$key") } @{ $importer->properties };
 
-    $importer->import_data( $source => $target, \@properties );
+    if ( @properties == 0 ) {
+        $c->messages->error("No property selected");
+        $c->redirect_detach( $c->project_uri( $c->action ) );
+    }
+
+    $importer->import_data( $source => $target, [ map { $_->{key} } @properties ] );
+
+    $c->messages->info( "Successfully imported " . join ", ", map { $_->{name} } @properties );
 
     $c->detach( redirect => [$target] );
 }
