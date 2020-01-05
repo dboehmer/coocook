@@ -197,7 +197,7 @@ sub exportable_projects : Private {
           $c->project->other_projects->all ];
 }
 
-sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
+sub get_import : GET HEAD Chained('base') PathPart('import') Args(0) Does('~HasCSS')
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
