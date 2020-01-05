@@ -70,6 +70,15 @@ subtest "[un]importable_properties" => sub {
       [qw< articles quantities recipes shop_sections tags units >],
       "importable(target project)"
       or explain \@target_importable;
+
+    ok my $quantity = $target->quantities->create( { name => 'foo' } ), "create a quantity in target";
+
+    my @target_importable2 = map { $_->{key} } $importer->importable_properties($target);
+    is_deeply [ sort @target_importable2 ] => [qw< articles shop_sections tags >],
+      "importable(target project)"
+      or explain \@target_importable2;
+
+    ok $quantity->delete(), "delete quantity";
 };
 
 throws_ok { $importer->import_data() } qr/argument/, "import_data() dies without arguments";

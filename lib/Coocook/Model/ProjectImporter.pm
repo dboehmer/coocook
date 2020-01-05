@@ -168,12 +168,14 @@ sub _importable_properties {
 
     my @stack = @public_properties{ keys %unimportable };
 
-    # walk dependency tree and mark all dependencies as unimportable
+    # walk dependency tree and mark all depending properties as unimportable
     while ( my $property = shift @stack ) {
-        my $dependencies = $property->{depends_on};
+        $unimportable{ $property->{key} } = 1;    # TODO done twice for initial @stack
+
+        my $depending = $property->{dependency_of};
 
         # push those to stack which are not yet indexed
-        push @stack, map { $public_properties{$_} || die } grep { not $unimportable{$_} } @$dependencies;
+        push @stack, map { $public_properties{$_} || die } grep { not $unimportable{$_} } @$depending;
     }
 
     my @to_report = $properties ? @public_properties{@$properties} : values %public_properties;
