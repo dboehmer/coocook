@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 59;
+use Test::Most tests => 61;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -149,29 +149,34 @@ $t->logout_ok();
 
 $t->get_ok('/login');
 
-$t->content_like( qr/ name="username" .+ value="test" /x,
-    "last username is prefilled in login form" );
+$t->content_unlike( qr/ name="username" .+ value="test" /x,
+    "username is deleted from session cookie by logout" );
 
-is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
-  "'username' cookie contains username 'test'";
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
+  "username is not stored in persistent cookie";
+
+$t->login_ok( 'test', 'P@ssw0rd', store_username => 'on' );
+
+$t->logout_ok();
 
 {
     my $original_length = length $t->cookie_jar->as_string;
 
-    $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' );
+    $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' )
+      and note "deleted session cookie";
 
     $original_length > length $t->cookie_jar->as_string
       or die "failed to delete session cookie";
 }
 
-$t->reload();
+$t->get_ok('/login');
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
+  "'username' cookie contains username 'test'";
+
 $t->content_like( qr/ name="username" .+ value="test" /x,
-    "... but last username is still prefilled in login form" )
+    "username is prefilled from persistent cookie" )
   or diag $t->content;
-
-$t->login_ok( 'test', 'P@ssw0rd' );
-
-$t->logout_ok();
 
 subtest "expired password reset token URL" => sub {
     $t->request_recovery_link_ok('test@example.com');

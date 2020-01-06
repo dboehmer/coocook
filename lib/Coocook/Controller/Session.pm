@@ -44,13 +44,15 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) Public {
     if ($user) {
         $c->session->{username} = $user->name;
 
-        $c->res->cookies->{username} = {
-            value    => $user->name,
-            expires  => '+12M',        # in 12 months (syntax supported by CGI::Simple)
-            path     => '/login',
-            secure   => 1,             # only via HTTPS
-            httponly => 1,             # not accessible by client-side JavaScript
-        };
+        if ( $c->req->body_params->get('store_username') ) {
+            $c->res->cookies->{username} = {
+                value    => $user->name,
+                expires  => '+12M',        # in 12 months (syntax supported by CGI::Simple)
+                path     => '/login',
+                secure   => 1,             # only via HTTPS
+                httponly => 1,             # not accessible by client-side JavaScript
+            };
+        }
 
         $c->detach('/_validated_redirect');
     }
@@ -72,6 +74,8 @@ sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
     my ( $self, $c ) = @_;
 
     $c->logout();
+
+    delete $c->session->{username};    # if user wants to store username, it's in persistent cookie
 
     $c->detach('/_validated_redirect');
 }

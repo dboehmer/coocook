@@ -245,7 +245,9 @@ sub is_logged_out {
 }
 
 sub login {
-    my ( $self, $username, $password ) = @_;
+    my ( $self, $username, $password, %additional_fields ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $self->follow_link_ok( { text => 'Sign in' } );
 
@@ -254,19 +256,25 @@ sub login {
             with_fields => {
                 username => $username,
                 password => $password,
+                %additional_fields
             },
         },
         "submit login form"
     );
 }
 
+=head2 $t->login_ok($username, $password, %additional_fields?, $name?)
+
+=cut
+
 sub login_ok {
-    my ( $self, $username, $password, $name ) = @_;
+    my $name = @_ % 2 ? undef : pop(@_);
+    my ( $self, $username, $password, %additional_fields ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "login with $username:$password", sub {
-        $self->login( $username, $password );
+        $self->login( $username, $password, %additional_fields );
 
         $self->is_logged_in();
     };
