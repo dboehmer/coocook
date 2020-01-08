@@ -84,7 +84,7 @@ sub base : Chained('submenu') PathPart('purchase_list') CaptureArgs(1) {
     $c->stash( list => $c->project->purchase_lists->find($id) || $c->detach('/error/not_found') );
 }
 
-sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edit_project') {
+sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
     my $list = $c->model('PurchaseList')->new( list => $c->stash->{list} );
@@ -93,6 +93,11 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
         sections => $list->shop_sections,
         units    => $list->units,
     );
+
+    $c->escape_title( "Purchase list" => $c->stash->{list}->name );
+
+    $c->has_capability('edit_project')
+      or return;
 
     for my $sections ( @{ $c->stash->{sections} } ) {
         for my $item ( @{ $sections->{items} } ) {
@@ -104,8 +109,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
             }
         }
     }
-
-    $c->escape_title( "Purchase list" => $c->stash->{list}->name );
 }
 
 sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/remove_ingredient')
