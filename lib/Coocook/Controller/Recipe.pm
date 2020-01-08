@@ -71,12 +71,15 @@ sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public 
 sub public_recipe_base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     my ( $self, $c, $id, $url_name ) = @_;
 
-    my $recipe = $c->model('DB::Recipe')->find($id)
+    my $recipe = $c->model('DB::Recipe')->search( undef, { prefetch => 'project' } )->find($id)
       or $c->detach('/error/not_found');
 
     # TODO for redirect on wrong $url_name, see Controller::Project->base()
 
-    $c->stash( recipe => $recipe );
+    $c->stash(
+        recipe  => $recipe,
+        project => $recipe->project,
+    );
 }
 
 sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Args(0) {
