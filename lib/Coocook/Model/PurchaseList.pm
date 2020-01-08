@@ -124,6 +124,14 @@ sub BUILD {
         $section->{items} = $items_per_section{ $section->{id} };
     }
 
+    # sort sections
+    @sections = sort { $a->{name} cmp $b->{name} } @sections;
+
+    # items with no shop section
+    if ( my $items = $items_per_section{''} ) {
+        push @sections, { items => $items };
+    }
+
     # sort products alphabetically
     for my $section (@sections) {
         my $items = $section->{items};
@@ -134,14 +142,6 @@ sub BUILD {
               or $a->{unit}{to_quantity_default} <=> $b->{unit}{to_quantity_default}    # 2. conversion factor
               or $a->{unit}{id} <=> $b->{unit}{id}                                      # 3. unit ID
         } @$items;
-    }
-
-    # sort sections
-    @sections = sort { $a->{name} cmp $b->{name} } @sections;
-
-    # items with no shop section
-    if ( my $items = $items_per_section{''} ) {
-        push @sections, { items => $items };
     }
 
     $self->units( [ values %units ] );
