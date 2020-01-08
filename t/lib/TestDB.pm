@@ -23,19 +23,18 @@ sub new {
         $line =~ s/^ \s+ | \s+ $//xg;
 
         # Skip empty lines
-        #chomp();
         length($line) or next;
 
-        # Check if last character of a line is not a semicolon, because in this case
-        # the line currently looked at is not a complete SQL-Statement and we can't
-        # execute it via DBICx::TestDatabase and first need to add all following lines
-        # to our statement until we find a semicolon at the end of a line.
+        # All lines get concatenated to $continued_line, only when a semicolon is found
+        # at the end of a line $continued_line gets executed and cleared
         length $continued_line
           and $continued_line .= ' ';
 
         $continued_line .= $line;
 
-        if ( $line =~ m/ ; $ /x ) {    # SQL statement is complete
+        # Only let DBICx::TestDatabase execute the SQL-Statement if it is complete, i.e.
+        # there is a semicolon at the end of the line
+        if ( $line =~ m/ ; $ /x ) {
             $ENV{DBIC_TRACE}
               and warn "$continued_line\n";
 
