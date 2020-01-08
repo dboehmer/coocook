@@ -6,12 +6,30 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 37;
+use Test::Most tests => 38;
 
 my $t = Test::Coocook->new();
 
 subtest "project not found" => sub {
     ok $t->get('https://localhost/project/999/foobar');
+    $t->status_is(404);
+};
+
+# TODO deprecated: remove fallback and UNIQUE constraint on projects.name[_fc]
+subtest "deprecated: fallback redirects from old URL scheme" => sub {
+    $t->redirect_is(
+        'https://localhost/project/Test-Project/foo?bar=baz' =>
+          "https://localhost/project/1/Test-Project/foo?bar=baz",
+        301    # permanent
+    );
+
+    $t->redirect_is(
+        'https://localhost/project/Test-Project/foo/bar/baz' =>
+          "https://localhost/project/1/Test-Project/foo/bar/baz",
+        301    # permanent
+    );
+
+    ok $t->get($_), "GET $_" for 'https://localhost/project/doesnt-exist/foo';
     $t->status_is(404);
 };
 

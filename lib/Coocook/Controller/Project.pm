@@ -16,6 +16,33 @@ Catalyst Controller.
 
 =head1 METHODS
 
+=cut
+
+sub fallback_old_url_scheme : Chained('/base') PathPart('project')
+  Args GET HEAD Public {    # TODO deprecated
+    my ( $self, $c ) = @_;
+
+    if ( $c->req->method eq 'GET' or $c->req->method eq 'POST' ) {
+        my $args = $c->req->args;
+
+        if ( @$args >= 1 ) {
+            my ($url_name) = @$args;
+
+            if ( my $project = $c->model('DB::Project')->find_by_url_name($url_name) ) {
+                $args->[0] = $project->url_name;    # might change lower/upper case
+                unshift @$args, $project->id;
+
+                my $uri = $c->uri_for( '/project', @$args );
+                $uri->query( $c->req->uri->query );
+
+                $c->redirect_detach( $uri, 301 );
+            }
+        }
+    }
+
+    $c->detach('/error/not_found');
+}
+
 =head2 base
 
 Chain action that captures the project ID and stores the
@@ -25,6 +52,9 @@ C<Result::Project> object in the stash.
 
 sub base : Chained('/base') PathPart('project') CaptureArgs(2) {
     my ( $self, $c, $id, $url_name ) = @_;
+
+    $id =~ m/[^0-9]/
+      and $c->detach('fallback_old_url_scheme');    # TODO deprecated
 
     my $project = $c->model('DB::Project')->find( { id => $id } )
       or $c->detach('/error/not_found');
