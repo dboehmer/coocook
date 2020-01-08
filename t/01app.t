@@ -62,13 +62,15 @@ subtest "attributes of controller actions" => sub {
 };
 
 subtest "GET http://... redirects to HTTPS" => sub {
-    $t->get('http://localhost/');
-    $t->status_is(301);    # moved permanently
-    $t->header_is( Location => 'https://localhost/' );
+    $t->redirect_is(
+        'http://localhost/' => 'https://localhost/',
+        301    # moved permanently
+    );
 
-    $t->get('http://localhost/path_doesnt_exist');
-    $t->status_is(301);    # moved permanently
-    $t->header_is( Location => 'https://localhost/path_doesnt_exist' );
+    $t->redirect_is(
+        'http://localhost/path_doesnt_exist' => 'https://localhost/path_doesnt_exist',
+        301    # moved permanently
+    );
 };
 
 subtest "POST http://... is catched as well" => sub {    # TODO define exact behavior

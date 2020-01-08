@@ -420,6 +420,23 @@ sub create_project_ok {
     };
 }
 
+sub redirect_is {
+    my ( $self, $url, $expected, $status, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    subtest $name || "GET $url redirects $status $expected" => sub {
+        my $original_max_redirect = $self->max_redirect();
+        $self->max_redirect(0);
+
+        ok $self->get($url), "GET $url";
+        $self->status_is($status);
+        $self->header_is( Location => $expected );
+
+        $self->max_redirect($original_max_redirect);
+    };
+}
+
 sub status_is {
     my ( $self, $expected, $name ) = @_;
 
