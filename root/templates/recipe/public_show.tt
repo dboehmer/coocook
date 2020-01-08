@@ -1,7 +1,14 @@
 [% escape_title( 'Recipe', recipe.name ) %]
 
 [% IF project_url %]
-    <p>from project <a href="[% project_url %]">[% recipe.project.name | html %]</a>
+    <p>
+        from project <a href="[% project_url %]">[% recipe.project.name | html %]</a>
+     [% IF import_url %]
+        <form method="get" action="[% import_url %]" class="inline">
+            <input type="submit" value="Import" title="Import this recipe into one of your projects">
+        </form>
+    [% END %]
+    </p>
 [% ELSE %]
     <p>from a private project</p>
 [% END %]

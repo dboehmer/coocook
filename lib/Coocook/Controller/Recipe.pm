@@ -146,6 +146,11 @@ sub public_show : GET HEAD Chained('public_recipe_base') PathPart('') Args(0) Pu
         $c->stash( project_url => $c->uri_for_action( '/project/show', [ $project->url_name ] ) );
     }
 
+    $c->user
+      and $c->stash(
+        import_url => $c->uri_for( $self->action_for('public_import'), [ $recipe->id, $recipe->url_name ] )
+      );
+
     $c->stash(
         recipe                   => $recipe,
         servings                 => $servings,
