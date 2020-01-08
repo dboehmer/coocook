@@ -20,13 +20,14 @@ my @rules = (
         capabilities => ['view_user'],
     },
     {
-        needs_input => ['user'],
-        rule        => sub { !!$_->{user} },    # simply: is anyone logged in?
-        capabilities =>
-          [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
+        needs_input  => ['user'],
+        rule         => sub { !!$_->{user} },    # simply: is anyone logged in?
+        capabilities => [
+            qw< dashboard logout list_own_projects create_project view_user_settings change_display_name change_password >
+        ],
     },
     {
-        needs_input => ['project'],             # optional: user
+        needs_input => ['project'],              # optional: user
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (

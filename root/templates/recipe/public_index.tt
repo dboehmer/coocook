@@ -3,7 +3,10 @@
     <div>This list also includes private recipes which you are allowed to view.</div>
 [% ELSE;
     title = "Public Recipes" %]
-    <div>These are <em>only</em> public recipes. <a href="[% login_url %]">Sign in</a> to view private recipes, too.</div>
+    <div>
+        These are <em>only</em> public recipes.
+        <a href="[% login_url %]">Sign in</a> to view private recipes, too, or to import a recipe into one of your projects.
+    </div>
 [% END %]
 
 <ul>

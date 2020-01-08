@@ -7,7 +7,7 @@ Import
 <br>
 recipe <a href="[% recipe.url %]">[% recipe.name | html %]</a>
 <br>
-from project <a href="[% recipe.project.url %]">[% recipe.project.name %]</a>
+from project <a href="[% recipe.project.url %]">[% '🔒' UNLESS recipe.project.is_public; recipe.project.name %]</a>
 <br>
 into …
         </td>

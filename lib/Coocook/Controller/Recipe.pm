@@ -82,7 +82,8 @@ sub public_recipe_base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     );
 }
 
-sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Args(0) {
+sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Args(0)
+  RequiresCapability('export_from_project') RequiresCapability('list_own_projects') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe};
