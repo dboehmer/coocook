@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 61;
+use Test::Most tests => 69;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -150,7 +150,18 @@ $t->logout_ok();
 $t->get_ok('/login');
 
 $t->content_unlike( qr/ name="username" .+ value="test" /x,
-    "username is deleted from session cookie by logout" );
+    "... username is deleted from session cookie by logout" );
+
+$t->content_unlike( qr/ name="store_username" .+ checked /x,
+    '... checkbox "store username" is NOT checked' );
+
+$t->get_ok('/login?username=from_query');
+
+$t->content_like( qr/ name="username" .+ value="from_query" /x,
+    "... username is prefilled from URL query" );
+
+$t->content_unlike( qr/ name="store_username" .+ checked /x,
+    '... checkbox "store username" is NOT checked' );
 
 is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
   "username is not stored in persistent cookie";
@@ -177,6 +188,15 @@ is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
 $t->content_like( qr/ name="username" .+ value="test" /x,
     "username is prefilled from persistent cookie" )
   or diag $t->content;
+
+$t->content_like( qr/ name="store_username" .+ checked /x, 'checkbox "store username" is checked' );
+
+$t->login_ok( 'test', 'P@ssw0rd', store_username => '' );
+
+$t->logout_ok();
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
+  "... username was deleted from persistent cookie";
 
 subtest "expired password reset token URL" => sub {
     $t->request_recovery_link_ok('test@example.com');

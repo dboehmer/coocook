@@ -11,7 +11,7 @@
         <input type="submit" value="Sign in">
     </p>
     <p>
-        <input  id="store_username" type="checkbox" name="store_username">
+        <input  id="store_username" type="checkbox" name="store_username" [% 'checked' IF store_username %]>
         <label for="store_username">Permanently store username in browser</label>
     </p>
 </form>

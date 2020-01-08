@@ -18,6 +18,7 @@ sub login : GET HEAD Chained('/base') Args(0) Public {
               || $c->session->{username}    # session is more trustworthy than plaintext cookie
               || map { $_ ? $_->value : undef } $c->req->cookie('username')
         ),
+        store_username => !!$c->req->cookie('username'),         # preselect checkbox only if already stored
         recover_url    => $c->uri_for_action('/user/recover'),
         post_login_url => $c->redirect_uri_for_action( $self->action_for('post_login') ),
     );
