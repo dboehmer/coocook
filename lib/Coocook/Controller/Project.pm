@@ -19,7 +19,7 @@ Catalyst Controller.
 =cut
 
 # TODO rename because this also shows private projects if logged in
-sub public_index : GET HEAD Chained('/base') PathPart('projects') Args(0) {
+sub public_index : GET HEAD Chained('/base') PathPart('projects') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $projects = $c->model('DB::Project')->public;

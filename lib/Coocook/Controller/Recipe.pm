@@ -21,7 +21,7 @@ Catalyst Controller.
 =cut
 
 # TODO rename sub because this shows private recipes, too
-sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) {
+sub public_index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $recipes = $c->model('DB::Recipe')->public;
@@ -111,7 +111,7 @@ sub public_import : GET HEAD Chained('public_recipe_base') PathPart('import') Ar
     $c->stash( projects => \@projects );
 }
 
-sub public_show : GET HEAD Chained('public_recipe_base') PathPart('') Args(0) {
+sub public_show : GET HEAD Chained('public_recipe_base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
     my $recipe  = $c->stash->{recipe};
