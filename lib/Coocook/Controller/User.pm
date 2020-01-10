@@ -162,8 +162,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     }
 
     if (@errors) {
-        my $errors = $c->stash->{errors} ||= [];
-        push @$errors, @errors;
+        $c->messages->error($_) for @errors;
 
         $c->stash(
             template   => 'user/register.tt',
@@ -220,15 +219,10 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
 
     $user->add_roles( \@roles );
 
-    $c->redirect_detach(
-        $c->uri_for(
-            '/',
-            {
-                error => "You should receive an e-mail with a web link."
-                  . " Please click that link to verify your e-mail address.",
-            }
-        )
-    );
+    $c->messages->info( "You should receive an e-mail with a web link."
+          . " Please click that link to verify your e-mail address." );
+
+    $c->redirect_detach( $c->uri_for('/') );
 }
 
 sub recover : GET HEAD Chained('/base') Args(0) Public {
@@ -245,9 +239,11 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
 
     my $email_fc = fc $c->req->params->get('email');
 
-    is_email($email_fc)
-      or $c->redirect_detach(
-        $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
+    if ( not is_email($email_fc) ) {
+        $c->messages->error("Enter a valid e-mail address");
+
+        $c->redirect_detach( $c->uri_for( $self->action_for('recover') ) );
+    }
 
     if ( my $user = $c->model('DB::User')->find( { email_fc => $email_fc } ) ) {
         $c->visit( '/email/recovery_link', [$user] );
@@ -256,7 +252,8 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
         $c->visit( '/email/recovery_unregistered', [$email_fc] );
     }
 
-    $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
+    $c->messages->info("Recovery link sent");
+    $c->response->redirect( $c->uri_for_action('/index') );
 }
 
 sub reset_password : GET HEAD Chained('base') Args(1) Public {
@@ -266,9 +263,11 @@ sub reset_password : GET HEAD Chained('base') Args(1) Public {
 
     # accept only limited tokens
     # because password reset allows hijacking of valueable accounts
-    ( $user->token_expires and $user->check_base64_token($base64_token) )
-      or $c->redirect_detach(
-        $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
+    if ( not( $user->token_expires and $user->check_base64_token($base64_token) ) ) {
+        $c->messages->error("Your password reset link is invalid or expired!");
+
+        $c->redirect_detach( $c->uri_for_action('/index') );
+    }
 
     $c->stash( reset_password_url =>
           $c->uri_for( $self->action_for('post_reset_password'), [ $user->name, $base64_token ] ) );

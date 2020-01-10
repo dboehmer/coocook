@@ -121,11 +121,12 @@ subtest "robots meta tag" => sub {
         $t->content_contains('noindex');
     };
 
-    subtest "URLs with 'error' key in query parameters" => sub {
-        my $unique_word = "Dampfschifffahrt";
-        $t->content_lacks($unique_word);
-        $t->get_ok("/?error=$unique_word");
-        $t->content_contains($unique_word);
+    subtest "bad request pages" => sub {
+        my $guard = $t->local_config_guard( enable_user_registration => 1 );
+
+        $t->get_ok('/register');
+        ok $t->submit_form( with_fields => { username => '' } ), "submit form";
+        $t->status_is(400);
         $t->content_contains('noarchive');
         $t->content_contains('noindex');
     };

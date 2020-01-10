@@ -250,11 +250,13 @@ sub check_name : Private {
     $c->log->info("name$name");
     my $current_page = $args->{current_page};
     my $result       = 1;
+
     if ( length($name) <= 0 ) {
-        $c->response->redirect(
-            $c->uri_for( $current_page, { error => "Cannot create recipe with empty name!" } ) );
+        $c->messages->error("Cannot create recipe with empty name!");
+        $c->response->redirect( $c->uri_for($current_page) );
         $result = 0;
     }
+
     return $result;
 }
 

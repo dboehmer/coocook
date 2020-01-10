@@ -236,12 +236,17 @@ code {
     padding:       0.25em;
 }
 
-.error {
-    border: 2px solid red;
-    padding: 0.5em;
-    background-color: #f5f5ef;
-    color: Red;
+.message {
+    border: 2px solid;
+    border-radius: 0.5em;
+    padding: 0 0.5em;
+    margin:  0.5em 0;
 }
+
+.message-debug { background-color: #f5f5ef;                          color: DarkGrey; }
+.message-info  { background-color: #dfd;                             color: DarkGreen; }
+.message-warn  { background-color: orange; border-color: DarkOrange; color: black; }
+.message-error { background-color: #f55;   border-color: DarkRed;    color: black; }
 
 .inline,
 .inline * {
