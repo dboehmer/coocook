@@ -199,7 +199,7 @@ EOT
         enabled => 1,
     },
 
-    session => {
+    'Plugin::Session' => {
         dbic_class      => 'DB::Session',
         expires         => 24 * 60 * 60, # 24h
         cookie_secure   => 2,            # deliver and accept only via HTTPS
