@@ -27,6 +27,9 @@ sub base : Chained('/') PathPart('') CaptureArgs(0) {
         if ( $c->debug ) {
             $c->log->warn("Not redirecting to HTTPS in debug mode");
         }
+        elsif ( $c->req->uri->port == 3000 and $c->req->uri->host eq 'localhost' ) {
+            $c->log->warn("Not redirecting to HTTPS on development port localhost:3000");
+        }
         else {
             if ( $c->req->method eq 'POST' ) {
                 $c->detach('/error/bad_request');    # TODO is this the best to do?
