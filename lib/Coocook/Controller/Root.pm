@@ -107,8 +107,8 @@ sub auto : Private {
 
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
-        recipes_url    => $c->uri_for_action('/recipe/public_index'),
-        projects_url   => $c->uri_for_action('/project/public_index'),
+        recipes_url    => $c->uri_for_action('/browse/recipe/index'),
+        projects_url   => $c->uri_for_action('/browse/project/index'),
         statistics_url => $c->uri_for_action('/statistics'),
         about_url      => $c->uri_for_action('/about'),
     );
