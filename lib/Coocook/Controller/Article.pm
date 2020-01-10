@@ -234,9 +234,11 @@ sub update_or_insert : Private {
 
     # $name contains nothing more than whitespace
     # TODO preserve form input
-    $name =~ m/\S/
-      or $c->redirect_detach(
-        $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
+    if ( $name !~ m/\S/ ) {
+        $c->messages->error("Name must not be empty");
+
+        $c->redirect_detach( $c->project_uri( '/article/edit', $article->id ) );
+    }
 
     my @tags = $c->project->tags->from_names( $c->req->params->get('tags') )->only_id_col->all;
 

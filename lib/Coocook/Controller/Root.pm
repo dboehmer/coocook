@@ -56,15 +56,17 @@ sub auto : Private {
     # TODO distinguish GET and POST requests
     # is some of this information useful for POST controller code, too?
 
+    $c->stash->{messages} = $c->session->{messages} ||= $c->model('Messages')->new;
+
     # set these stash vars before any possible redirect_detach() calls
     $c->stash( robots => my $robots = HTML::Meta::Robots->new() );
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
         if ( !$c->user and !$c->model('DB::User')->exists ) {
-            my $message = "There are currently no users registered at this Coocook installation."
-              . " The first user you register will be site admin!";
+            $c->messages->info( "There are currently no users registered at this Coocook installation."
+                  . " The first user you register will be site admin!" );
 
-            $c->redirect_detach( $c->uri_for_action( '/user/register', { error => $message } ) );
+            $c->redirect_detach( $c->uri_for_action('/user/register') );
         }
     }
 
@@ -94,10 +96,6 @@ sub auto : Private {
         if ( my $config = $c->config->{$key} ) {
             push @{ $c->stash->{$key} }, ref $config eq 'ARRAY' ? @$config : $config;
         }
-    }
-
-    if ( not defined $c->stash->{errors} ) {
-        $c->stash( errors => [ $c->req->query_params->get_all('error') ] );
     }
 
     if ( my $about = $c->config->{about_page_title} ) {

@@ -60,13 +60,12 @@ sub post_login : POST Chained('/base') PathPart('login') Args(0) Public {
 
     $c->logout();
 
+    $c->messages->error("Sign in failed!");
+
     $c->response->redirect(
         $c->redirect_uri_for_action(
             $self->action_for('login'),
-            {
-                error    => "Sign in failed!",
-                username => $c->req->params->get('username'),
-            }
+            { username => $c->req->params->get('username') }
         )
     );
 }

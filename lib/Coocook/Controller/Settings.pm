@@ -52,9 +52,11 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
 }
 
 sub redirect : Private {
-    my ( $self, $c, $query ) = @_;
+    my ( $self, $c, $message ) = @_;
 
-    $c->response->redirect( $c->uri_for( $self->action_for('index'), $query || () ) );
+    $c->messages->add($message);
+
+    $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
 }
 
 __PACKAGE__->meta->make_immutable;

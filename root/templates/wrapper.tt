@@ -111,8 +111,8 @@ END %]
 [% ELSIF   title %]<h2>[% title | html %]</h2>
 [% END %]
 
-[% FOREACH message IN messages %]
-    <div class="[% message.class %]">
+[% WHILE (message = messages.next) %]
+    <div class="message message-[% message.type %]">
     [% IF message.html;
         message.html;
     ELSE %]

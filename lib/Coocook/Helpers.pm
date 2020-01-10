@@ -92,15 +92,26 @@ sub has_capability {
     return $authz->has_capability( $capability, $input );
 }
 
+=head2 $c->messages
+
+Returns the L<Coocook::Model::Messages> object for the current session.
+
+    $c->messages->debug("add message");    # call methods on object
+    my @messages = @{ $c->messages };     # use as arrayref
+
+=cut
+
+sub messages { return shift->stash->{messages} }
+
 =head2 $c->project_uri($action, @arguments, \%query_params?)
 
 Return URI for project-specific Catalyst action with the current project's C<url_name>
 plus any number of C<@arguments> and possibly C<\%query_params>.
 
-    my $uri = $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } );
-    # http://localhost/project/MyProject/article/42?error=Name%20must%20not%20be%20empty
+    my $uri = $c->project_uri( '/article/edit', $article->id, { key => 'value' } );
+    # http://localhost/project/MyProject/article/42?key=value
 
-    my $uri = $c->project_uri( $self->action_for('edit'), $article->id, { error => "Name must not be empty" } );
+    my $uri = $c->project_uri( $self->action_for('edit'), $article->id, { key => 'value' } );
     # the same
 
 =cut
