@@ -98,7 +98,8 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
         }
     )->search_related(
         project => {
-            id => { '!=' => $recipe->get_column('project') },    # not this recipe's source project
+            archived => undef,                                         # projects are not yet archived
+            id       => { '!=' => $recipe->get_column('project') },    # not this recipe's source project
         }
     );
 
