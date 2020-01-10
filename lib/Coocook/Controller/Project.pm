@@ -52,6 +52,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
             print            => $c->project_uri('/print/index'),
             shop_sections    => $c->project_uri('/shop_section/index'),
             units            => $c->project_uri('/unit/index'),
+            quantities       => $c->project_uri('/quantity/index'),
             import           => $c->project_uri('/project/get_import'),
             archive          => $c->project_uri('/project/archive'),
             unarchive        => $c->project_uri('/project/unarchive'),
