@@ -79,7 +79,16 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     );
 
     while ( my $permission = $permissions->next ) {
-        my $project = $permission->project->as_hashref;
+        my $project = $permission->project;
+
+        # !!! WARNING !!!
+        # locally set owner to existing Result::User object
+        # otherwise $project->as_hashref retrieves every user related as owner
+        #
+        # THIS MUST NOT BE STORED TO THE DATABASE.
+        $project->owner( $c->user->get_object );
+
+        $project = $project->as_hashref;
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
 
