@@ -65,10 +65,10 @@ sub submenu : Chained('base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "Show project",     action => 'project/show' },
-            { text => "Edit project",     action => 'project/edit' },
-            { text => "Permissions",      action => 'permission/index' },
-            { text => "Project settings", action => 'project/settings' },
+            { text => "Show project",   action => 'project/show' },
+            { text => "Meals & Dishes", action => 'project/edit' },
+            { text => "Permissions",    action => 'permission/index' },
+            { text => "Settings",       action => 'project/settings' },
         ],
     );
 }

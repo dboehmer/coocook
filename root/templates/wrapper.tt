@@ -81,7 +81,7 @@
     <li><a href="[% homepage_url %]">Start</a></li>
 [% END %]
 [% IF project_urls %]
-    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+    <li><a href="[% project_urls.project %]">Project</a></li>
     <li><a href="[% project_urls.recipes %]">Recipes</a></li>
     <li><a href="[% project_urls.articles %]">Articles</a></li>
     <li><a href="[% project_urls.tags %]">Tags</a></li>
