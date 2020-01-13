@@ -9,7 +9,7 @@ use TestDB;
 use Test::Coocook;
 use Test::Most tests => 9;
 
-my $t = Test::Coocook->new( max_redirect => 0 );
+my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 
 subtest "attributes of controller actions" => sub {
     my $app = $t->catalyst_app;
@@ -173,6 +173,13 @@ subtest "Redirect URL parameter" => sub {
     # query parameter
     $t->get_ok('/?key=value');
     $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
+
+    # redirect path is passed around between login/redirect
+    $t->get_ok('/statistics?key=value');
+    $t->follow_link_ok( { text => 'Sign up' } );
+    $t->max_redirect(1);
+    $t->login_ok( 'john_doe', 'P@ssw0rd' );
+    is $t->uri => $_, "URI is $_" for 'https://localhost/statistics?key=value';
 };
 
 subtest favicons => sub {

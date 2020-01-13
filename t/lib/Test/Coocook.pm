@@ -35,8 +35,9 @@ sub new {
     defined( $args{deploy} ) && $args{schema}
       and croak "Can't use both arguments 'deploy' and 'schema'";
 
-    my $schema = delete $args{schema};
+    my $config = delete $args{config};
     my $deploy = delete $args{deploy} // 1;
+    my $schema = delete $args{schema};
 
     my $self = $class->next::method(
         catalyst_app => 'Coocook',
@@ -54,6 +55,9 @@ sub new {
       : DBICx::TestDatabase->new('Coocook::Schema');
 
     $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
+
+    $config
+      and $self->reload_config($config);
 
     return $self;
 }
@@ -274,9 +278,14 @@ sub login_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "login with $username:$password", sub {
+        my $orig_max_redirect = $self->max_redirect;
+        $self->max_redirect(3);
+
         $self->login( $username, $password, %additional_fields );
 
         $self->is_logged_in();
+
+        $self->max_redirect($orig_max_redirect);
     };
 }
 
