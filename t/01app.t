@@ -173,11 +173,6 @@ subtest "Redirect URL parameter" => sub {
     # query parameter
     $t->get_ok('/?key=value');
     $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
-
-    # query parameter 'error' is filtered
-    $t->get_ok('/?error=message&key=value');
-    local $TODO = "rework messaging system, then implement this if still necessary";
-    $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
 };
 
 subtest favicons => sub {
