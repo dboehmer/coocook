@@ -179,7 +179,7 @@ subtest "Redirect URL parameter" => sub {
     $t->follow_link_ok( { text => 'Sign up' } );
     $t->max_redirect(1);
     $t->login_ok( 'john_doe', 'P@ssw0rd' );
-    is $t->uri => $_, "URI is $_" for 'https://localhost/statistics?key=value';
+    $t->base_is('https://localhost/statistics?key=value');
 };
 
 subtest favicons => sub {

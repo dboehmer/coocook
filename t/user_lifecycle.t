@@ -240,9 +240,7 @@ subtest "redirects after login/logout" => sub {
 
     $t->logout_ok();
 
-    is $t->uri->path => '/about',
-      "client is redirected to last page after logout"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/about', "client is redirected to last page after logout" );
 
     # pass link around between login/register
     $t->follow_link_ok( { text => 'Sign up' } );
@@ -253,32 +251,26 @@ subtest "redirects after login/logout" => sub {
 
     $t->login_ok( 'test', 'new, nice & shiny' );
 
-    is $t->uri->path => '/about',
-      "client is redirected to last page after login"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/about', "client is redirected to last page after login" );
 };
 
 subtest "refreshing login page after logging in other browser tab" => sub {
     $t->get_ok('/login?redirect=statistics');
 
-    is $t->uri->path => '/statistics',
-      "client is redirected immediately"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };
 
 subtest "refreshing register page after logging in other browser tab" => sub {
     $t->get_ok('/register?redirect=statistics');
 
-    is $t->uri->path => '/statistics',
-      "client is redirected immediately"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };
 
 subtest "malicious redirects are filtered on logout" => sub {
     $t->is_logged_in();
 
     $t->post('/logout?redirect=https://malicious.example/');
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
 
     $t->is_logged_out("... but client is logged out anyway");
 };
@@ -288,7 +280,7 @@ subtest "malicious redirects are filtered on login" => sub {
         '/login?redirect=https://malicious.example/',
         { username => 'test', password => 'new, nice & shiny' }
     );
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
     $t->is_logged_in();
 
     $t->logout_ok();
@@ -300,22 +292,20 @@ subtest "malicious redirects are filtered on login" => sub {
             password => 'new, nice & shiny'
         }
     );
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
     $t->is_logged_in("... but client is logged in anyway");
 };
 
 $t->create_project_ok( { name => "Test Project 1" } );
 
-unlike $t->uri => qr/import/,
-  "not redirected to importer for first project";
+$t->base_unlike( qr/import/, "not redirected to importer for first project" );
 
 note "remove all roles from user";
 $schema->resultset('RoleUser')->search( { user => '1' } )->delete;
 
 $t->create_project_ok( { name => "Test Project 2" } );
 
-like $t->uri => qr/import/,
-  "redirected to importer";
+$t->base_like( qr/import/, "redirected to importer" );
 
 $t->content_contains("Test Project 1");
 
