@@ -7,23 +7,23 @@
     <tr class="username">
         <th><label for="username">Username</label></th>
         <td>
-            <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]">
+            <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]" [% 'autofocus' IF NOT last_input.username %]>
             [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
         </td>
     </tr>
     <tr class="email">
         <th><label for="email">E-mail address</label></th>
-        <td><input  id="email" type="email" name="email" placeholder="e-mail address" value="[% last_input.email | html %]"></td>
+        <td><input  id="email" type="email" name="email" placeholder="e-mail address" value="[% last_input.email | html %]" [% 'autofocus' IF last_input.username AND NOT last_input.email %]></td>
     </tr>
 [%~ IF use_hidden_input %]
     <tr class="url">
         <th><label for="url">Website</label></th>
-        <td><input  id="url" type="url" name="url" placeholder="address of your website" value="[%# THIS INPUT FIELD ONLY WORKS AS CAPTCHA! %]"></td>
+        <td><input  id="url" type="url" name="url" placeholder="address of your website" value="[%# THIS INPUT FIELD ONLY WORKS AS CAPTCHA! %]" ></td>
     </tr>
 [%~ END %]
     <tr class="password">
         <th><label for="password">Password</label></th>
-        <td><input  id="password"  type="password" placeholder="password" name="password"></td>
+        <td><input  id="password"  type="password" placeholder="password" name="password" [% 'autofocus' IF last_input.username AND last_input.email %]></td>
     </tr>
     <tr class="password2">
         <th><label for="password2">Confirm password</label></th>
