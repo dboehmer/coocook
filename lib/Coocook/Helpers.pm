@@ -174,8 +174,12 @@ sub redirect_uri_for_action {
         if ( $c->req->method eq 'GET' ) {    # TODO also HEAD?
             my $current_uri_local_part = $c->current_uri_local_part();
 
-            if ( $current_uri_local_part ne '/' ) {
-                $query->{redirect} = $c->current_uri_local_part();
+            for ($current_uri_local_part) {
+                last if $_ eq '/';
+                last if $_ eq 'login';
+                last if $_ eq 'register';
+
+                $query->{redirect} = $current_uri_local_part;
             }
         }
     }

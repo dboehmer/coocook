@@ -162,9 +162,12 @@ subtest "robots meta tag" => sub {
 subtest "Redirect URL parameter" => sub {
     $t->logout_ok();
 
-    # no 'redirect' parameter for '/'
-    $t->get_ok('/');
-    $t->content_contains(q{/login"});
+    # no 'redirect' parameter for these paths
+    for my $path ( '/', '/login', '/register' ) {
+        $t->get_ok($path);
+        $t->content_contains(q{href="https://localhost/login"});
+        $t->content_contains(q{href="https://localhost/register"});
+    }
 
     # default
     $t->get_ok('/statistics');
