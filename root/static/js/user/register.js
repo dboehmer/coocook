@@ -1,4 +1,6 @@
 $( function() {
+    $('input[name="url"]').attr('tabindex', -1);
+
     var MAX_STARS = 5;
 
     let $password  = $('input[name="password"]');
