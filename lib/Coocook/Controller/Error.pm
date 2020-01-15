@@ -51,7 +51,8 @@ sub not_found : AnyMethod Chained('/base') PathPart('') Public {
     $c->response->status(404);
 
     $c->stash(
-        template => 'error/not_found.tt',    # set explicitly to allow $c->detach('/error/not_found')
+        canonical_url => undef,
+        template      => 'error/not_found.tt',    # set explicitly to allow $c->detach('/error/not_found')
     );
 }
 

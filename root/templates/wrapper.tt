@@ -13,6 +13,10 @@
     <meta name="keywords"    content="[% meta_keywords %]">
     <meta name="robots"      content="[% meta_robots %]">
 
+[% IF canonical_url %]
+    <link rel="canonical" href="[% canonical_url %]">
+[% END %]
+
 [% IF icon_url %]
     <link rel="icon" type="[% icon_type %]" href="[% icon_url %]">
 [% END %]

@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 9;
+use Test::Most tests => 10;
 
 my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 
@@ -201,4 +201,22 @@ subtest favicons => sub {
     $t->content_contains(q{<link rel="icon" type="image/x-icon" href="alpha.ico">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed"  href="beta.png">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed" sizes="72x72" href="72.png">});
+};
+
+subtest "canonical URLs" => sub {
+    $t->get_ok('/');
+    $t->content_lacks('canonical');
+
+    my $url_base = 'https://www.coocook.example/coocook/';
+
+    my $guard = $t->local_config_guard( canonical_url_base => $url_base );
+
+    $t->get_ok('/');
+    $t->content_contains(qq{<link rel="canonical" href="$url_base">});
+
+    $t->get_ok('/statistics?key=value#anchor');
+    $t->content_contains(qq{<link rel="canonical" href="${url_base}statistics">});
+
+    ok $t->get($_), "GET $_", for '/doesnt-exist';
+    $t->content_lacks('canonical');
 };

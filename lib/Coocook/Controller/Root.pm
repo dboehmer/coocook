@@ -111,6 +111,14 @@ sub auto : Private {
         about_url      => $c->uri_for_action('/about'),
     );
 
+    if ( my $base = $c->config->{canonical_url_base} ) {
+        my $rel_path = '.' . $c->current_uri_local_part;
+        my $uri      = URI->new_abs( $rel_path, $base );
+        $uri->query(undef);
+
+        $c->stash( canonical_url => $uri );
+    }
+
     if ( $c->model('DB::FAQ')->exists ) {
         $c->stash( faq_url => $c->uri_for_action('/faq/index') );
     }
