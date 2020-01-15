@@ -171,7 +171,7 @@ subtest "Redirect URL parameter" => sub {
 
     # default
     $t->get_ok('/statistics');
-    $t->content_contains(q{/login?redirect=statistics"});
+    $t->content_contains(q{/login?redirect=%2Fstatistics"});
 
     # query parameter
     $t->get_ok('/?key=value');

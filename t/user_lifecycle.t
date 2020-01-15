@@ -255,13 +255,13 @@ subtest "redirects after login/logout" => sub {
 };
 
 subtest "refreshing login page after logging in other browser tab" => sub {
-    $t->get_ok('/login?redirect=statistics');
+    $t->get_ok('/login?redirect=/statistics');
 
     $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };
 
 subtest "refreshing register page after logging in other browser tab" => sub {
-    $t->get_ok('/register?redirect=statistics');
+    $t->get_ok('/register?redirect=/statistics');
 
     $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };

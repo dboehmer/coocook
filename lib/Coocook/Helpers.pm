@@ -21,7 +21,9 @@ sub current_uri_local_part {
     my ($c) = @_;
 
     my $current_uri = $c->req->uri->rel( $c->req->base );
-    $current_uri =~ s/\.//;
+
+    $current_uri =~ s! ^ \. / !/!x    #          ./     => /
+      or $current_uri = '/' . $current_uri;    # foobar => /foobar
 
     return $current_uri;
 }
@@ -176,8 +178,8 @@ sub redirect_uri_for_action {
 
             for ($current_uri_local_part) {
                 last if $_ eq '/';
-                last if $_ eq 'login';
-                last if $_ eq 'register';
+                last if $_ eq '/login';
+                last if $_ eq '/register';
 
                 $query->{redirect} = $current_uri_local_part;
             }

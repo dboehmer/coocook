@@ -299,6 +299,9 @@ sub _validated_redirect : Private {
               and last URI;
         }
 
+        $path =~ s! ^/ !!x    # paths must be absolute to app root
+          or last;
+
         $uri = $c->uri_for_local_part($path);
     }
 
