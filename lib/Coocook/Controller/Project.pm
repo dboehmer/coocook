@@ -140,8 +140,6 @@ sub settings : GET HEAD Chained('submenu') PathPart('settings') Args(0)
         delete_url            => $c->project_uri('/project/delete'),
         deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
-
-    $c->escape_title( "Project settings" => $c->project->name );
 }
 
 sub importable_projects : Private {

@@ -141,8 +141,6 @@ sub purchase_list : GET HEAD Chained('/purchase_list/submenu') PathPart('print/p
         sections => $model_list->shop_sections,
         units    => $model_list->units,
     );
-
-    $c->escape_title( "Purchase list" => $list->name );
 }
 
 __PACKAGE__->meta->make_immutable;

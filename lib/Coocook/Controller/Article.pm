@@ -114,8 +114,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         selected_units => { map { $_ => 1 } $units->get_column('id')->all },
         units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
-
-    $c->escape_title( Article => $article->name );
 }
 
 =head1 CRUD ENDPOINTS

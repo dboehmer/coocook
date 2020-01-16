@@ -1,3 +1,5 @@
+[% escape_title( 'User', user_object.display_name ) %]
+
 [% IF my_settings_url %]
     <p><a href="[% my_settings_url %]">Edit your profile</a></p>
 [% END %]

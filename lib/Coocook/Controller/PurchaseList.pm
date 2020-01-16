@@ -94,8 +94,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         units    => $list->units,
     );
 
-    $c->escape_title( "Purchase list" => $c->stash->{list}->name );
-
     $c->has_capability('edit_project')
       or return;
 

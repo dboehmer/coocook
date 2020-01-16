@@ -1,3 +1,5 @@
+[% escape_title( 'Recipe', recipe.name ) %]
+
 <form method="post" action="[% update_url %]">
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>

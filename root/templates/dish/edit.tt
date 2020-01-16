@@ -1,3 +1,5 @@
+[% escape_title( 'Dish', dish.name ) %]
+
 <p>for meal <em>[% dish.meal.name | html %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
 
 [% IF dish.recipe %]

@@ -1,3 +1,5 @@
+[% escape_title( 'Purchase list', list.name ) %]
+
 [% FOREACH section IN sections %]
 <h3>[% section.name | html %]</h3>
 

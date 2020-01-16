@@ -1,3 +1,5 @@
+[% escape_title( 'User', user_object.display_name ) %]
+
 <a href="[% public_profile_url %]">Public user profile</a>
 
 <p>Username: [% user_object.name %]</p>

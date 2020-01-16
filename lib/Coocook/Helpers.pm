@@ -2,7 +2,6 @@ package Coocook::Helpers;
 
 # ABSTRACT: role with useful Controller helper methods as $c->my_helper(...)
 
-use HTML::Entities ();
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -39,31 +38,6 @@ sub uri_for_local_part {
     my ( $c, $local_part ) = @_;
 
     return $c->req->base . $local_part;
-}
-
-sub encode_entities {
-    my ( $self, $text ) = @_;
-    return HTML::Entities::encode_entities($text);
-}
-
-=head2 $c->escape_title( $title, $text )
-
-Set C<< $c->stash->{title} >> and C<< $c->stash->{html_title} >> in 1 step.
-
-    $c->escape_title( User => $user->display_name ); # Cool guy :->
-    # html_title: User <em>Cool guy:-&gt;</em>
-    #      title: User "Cool guy:->"
-    #             can be escaped with TT filter 'html' to: &quot;Cool guy:-&gt;&quot;
-
-=cut
-
-sub escape_title {
-    my ( $self, $title, $text ) = @_;
-
-    $self->stash(
-        title      => "$title \"$text\"",
-        html_title => "$title <em>" . $self->encode_entities($text) . "</em>",
-    );
 }
 
 =head2 $c->has_capability( $capability, \%input? )

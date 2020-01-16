@@ -98,8 +98,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
             project => $project,
           };
     }
-
-    $c->escape_title( User => $user->display_name );
 }
 
 sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {

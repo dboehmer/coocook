@@ -98,8 +98,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/recipe/reposition', $ingredient->{id} );
     }
-
-    $c->escape_title( Recipe => $recipe->name );
 }
 
 sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
