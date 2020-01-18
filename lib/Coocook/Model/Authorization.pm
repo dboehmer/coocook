@@ -127,6 +127,22 @@ my @rules = (
         capabilities => 'transfer_project_ownership',
     },
     {
+        needs_input => ['recipe'],
+        rule        => sub {
+            my ( $recipe, $user ) = @$_{ 'recipe', 'user' };
+
+            return 1 if $recipe->project->is_public;
+
+            return 1
+              if $user and $user->has_any_project_role( $recipe->project, qw< viewer editor admin owner > );
+
+            return 1 if $user and $user->has_role('site_owner');
+
+            return;
+        },
+        capabilities => ['view_recipe'],
+    },
+    {
         needs_input => [ 'user', 'project', 'recipe' ],
         rule        => sub {
             my ( $user, $project, $recipe ) = @$_{ 'user', 'project', 'recipe' };

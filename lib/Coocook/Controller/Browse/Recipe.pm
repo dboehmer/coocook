@@ -125,7 +125,7 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
     $c->stash( projects => \@projects );
 }
 
-sub show : GET HEAD Chained('base') PathPart('') Args(0) Public {
+sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_recipe') {
     my ( $self, $c ) = @_;
 
     my $recipe  = $c->stash->{recipe};
