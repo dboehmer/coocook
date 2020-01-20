@@ -20,14 +20,13 @@ my @rules = (
         capabilities => ['view_user'],
     },
     {
-        needs_input  => ['user'],
-        rule         => sub { !!$_->{user} },    # simply: is anyone logged in?
-        capabilities => [
-            qw< dashboard logout list_own_projects create_project view_user_settings change_display_name change_password >
-        ],
+        needs_input => ['user'],
+        rule        => sub { !!$_->{user} },    # simply: is anyone logged in?
+        capabilities =>
+          [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
     },
     {
-        needs_input => ['project'],              # optional: user
+        needs_input => ['project'],             # optional: user
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
@@ -39,7 +38,21 @@ my @rules = (
                   )
             );
         },
-        capabilities => [qw< view_project export_from_project >],
+        capabilities => [qw< view_project >],
+    },
+    {
+        needs_input => [
+            'source_project', 'user'  # export_from_project requires $user to present list of their own projects
+        ],
+        rule => sub {
+            my ( $source_project, $user ) = @$_{ 'source_project', 'user' };
+            return (
+                     $source_project->is_public
+                  or $user->has_role('site_owner')
+                  or $user->has_any_project_role( $source_project, qw< viewer editor admin owner > )
+            );
+        },
+        capabilities => [qw< export_from_project >],
     },
     {
         needs_input => [ 'project', 'user' ],

@@ -86,13 +86,13 @@ sub base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     }
 
     $c->stash(
-        recipe  => $recipe,
-        project => $recipe->project,
+        recipe         => $recipe,
+        source_project => $recipe->project,
     );
 }
 
 sub import : GET HEAD Chained('base') PathPart('import') Args(0)
-  RequiresCapability('export_from_project') RequiresCapability('list_own_projects') {
+  RequiresCapability('export_from_project') {
     my ( $self, $c ) = @_;
 
     my $recipe = $c->stash->{recipe};

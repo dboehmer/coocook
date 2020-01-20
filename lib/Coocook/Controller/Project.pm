@@ -145,7 +145,7 @@ sub settings : GET HEAD Chained('submenu') PathPart('settings') Args(0)
 sub exportable_projects : Private {
     my ( $self, $c ) = @_;
 
-    return [ grep { $c->has_capability( export_from_project => { project => $_ } ) }
+    return [ grep { $c->has_capability( export_from_project => { source_project => $_ } ) }
           $c->project->other_projects->all ];
 }
 
@@ -175,7 +175,7 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
 
     my $target = $c->project;
 
-    $c->has_capability( export_from_project => { project => $source } )
+    $c->has_capability( export_from_project => { source_project => $source } )
       or $c->detach('/error/forbidden');
 
     # extract properties selected in form
