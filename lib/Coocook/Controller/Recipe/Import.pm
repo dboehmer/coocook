@@ -3,7 +3,7 @@ package Coocook::Controller::Recipe::Import;
 use Moose;
 
 use MooseX::MarkAsMethods autoclean => 1;
-use JSON::MaybeXS;
+use JSON::MaybeXS ();
 
 BEGIN { extends 'Coocook::Controller' }
 
@@ -74,7 +74,7 @@ sub preview : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('
 
     $c->stash(
         new_recipe_name            => $new_recipe_name,
-        existing_recipe_names_json => encode_json( \@existing_recipe_names ),
+        existing_recipe_names_json => JSON::MaybeXS->new->encode( \@existing_recipe_names ),
         ingredients                => $importer->ingredients,
         units                      => $importer->target_units,
         articles                   => $importer->target_articles,
