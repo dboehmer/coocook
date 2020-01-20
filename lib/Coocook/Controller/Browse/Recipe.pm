@@ -117,7 +117,7 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
 
     for my $project (@projects) {
         $project->{import_url} =
-          $c->uri_for_action( '/recipe/import_preview', [ $project->{url_name}, $recipe->id ] );
+          $c->uri_for_action( '/recipe/import/preview', [ $project->{url_name}, $recipe->id ] );
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
     }

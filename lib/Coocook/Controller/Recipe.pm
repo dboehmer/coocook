@@ -4,6 +4,7 @@ use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 use Coocook::Util;
+use JSON::MaybeXS;
 use Scalar::Util qw(looks_like_number);
 
 BEGIN { extends 'Coocook::Controller' }
@@ -264,26 +265,10 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
         $recipe->project->owner->{url} ||=
           $c->uri_for_action( '/user/show', [ $recipe->project->owner->name ] );
 
-        $recipe->{import_url} = $c->project_uri( $self->action_for('import_preview'), $recipe->id );
+        $recipe->{import_url} = $c->project_uri( '/recipe/import/preview', $recipe->id );
     }
 
     $c->stash( recipes => \@recipes );
-}
-
-sub external_recipe_base : Chained('/project/base') PathPart('recipes/import') CaptureArgs(1) {
-    my ( $self, $c, $id ) = @_;
-
-    my $external_recipes =
-      $c->model('DB::Recipe')->search( { project => { '!=' => $c->project->id } } );
-
-    $c->stash( recipe => $external_recipes->find($id) || $c->detach('/error/not_found') );
-}
-
-sub import_preview : GET HEAD Chained('external_recipe_base') PathPart('') Args(0)
-  RequiresCapability('import_recipe') {
-    my ( $self, $c ) = @_;
-
-    my $recipe = $c->stash->{recipe};
 }
 
 sub check_name : Private {

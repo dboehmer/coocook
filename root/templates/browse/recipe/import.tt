@@ -1,4 +1,4 @@
-[% title = "Import recipe" %]
+[% escape_title( 'Import recipe', recipe.name ) %]
 
 <table>
     <tr>

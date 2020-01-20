@@ -1,5 +1,0 @@
-[% title = "Import" %]
-
-[% project.name | html %]
-
-[% recipe.name | html %]

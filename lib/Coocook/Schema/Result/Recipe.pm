@@ -41,6 +41,15 @@ __PACKAGE__->has_many(
     }
 );
 
+__PACKAGE__->has_many(
+    ingredients_sorted => 'Coocook::Schema::Result::RecipeIngredient',
+    'recipe',
+    {
+        cascade_copy => 1,            # see above
+        order_by     => 'position',
+    }
+);
+
 __PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag' );
 __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );
 

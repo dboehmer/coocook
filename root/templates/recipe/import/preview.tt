@@ -1,0 +1,64 @@
+[% title = BLOCK %]Import recipe "[% recipe.name %]"[% END;
+html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name | html %]</em></a> from project <a href="[% source_project_url %]"><em>[% recipe.project.name | html %]</em></a>[% END %]
+
+<form method="post" action="[% import_url %]">
+
+<p>Name: <input type="text" name="name" value="[% recipe.name | html %]" required></p>
+
+<p>Servings: <input type="number" name="servings" min="1" step="1" value="[% recipe.servings %]" required></p>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">Source</th>
+            <th></th>
+            <th colspan="3">Target</th>
+        </tr>
+    </thead>
+    <tbody>
+[% FOR ingredient IN ingredients %]
+        <tr>
+            <td>
+                <label for="value[% ingredient.id %]">[% ingredient.value %]</label>
+                [%~ '&nbsp;' IF ingredient.unit.space ~%]
+                <label for="unit[% ingredient.id %]"><span title="[% ingredient.unit.long_name | html %]">[% ingredient.unit.short_name | html %]</span></label>
+            </td>
+            <td><label for="article[% ingredient.id %]">[% ingredient.article.name | html %]</a></td>
+            <td>→</td>
+            <td class="value"><input id="value[% ingredient.id %]" type="number" min="0" step="any" name="value[% ingredient.id %]" value="[% ingredient.value %]" required></td>
+            <td class="unit">
+                <select id="unit[% ingredient.id %]" name="unit[% ingredient.id %]" required>
+                    <option value="">-- please select --</option>
+    [% FOR unit IN units %]
+                    <option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.target_candidate.id %]>[% unit.short_name %] ([% unit.long_name %])</option>
+    [% END %]
+                </select>
+            </td>
+            <td class="article">
+                <select id="article[% ingredient.id %]" name="article[% ingredient.id %]" required>
+                    <option value="">-- please select --</option>
+    [% FOR article IN articles %]
+                    <option value="[% article.id %]" data-units="[% article.unit_ids_joined %]" [% 'selected' IF article.id == ingredient.article.target_candidate.id %]>[% article.name | html %]</option>
+    [% END %]
+                </select>
+            </td>
+        </tr>
+[% END %]
+    </tbody>
+</table>
+
+<h3>Preparation</h3>
+
+[% USE Markdown; recipe.preparation | markdown %]
+
+<h3>Description</h3>
+
+[% recipe.description | markdown %]
+
+<input type="submit" value="Import">
+
+</form>
+
+<script>
+existingRecipeNames = [% existing_recipe_names_json %];
+</script>
