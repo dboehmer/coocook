@@ -152,9 +152,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         )->as_arrayref;
     }
 
-    # link to project if project is visible to public/user
-    if ( $project->is_public or $c->has_capability( view_project => { project => $project } ) ) {
-        $c->stash( project_url => $c->uri_for_action( '/project/show', [ $project->url_name ] ) );
+    # link to recipe in project if project is visible to public/user
+    if ( $c->has_capability( view_project => { project => $project } ) ) {
+        $c->stash(
+            project_url => $c->uri_for_action( '/recipe/edit', [ $project->url_name, $recipe->id ] ) );
     }
 
     $c->user
