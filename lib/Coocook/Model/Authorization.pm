@@ -238,7 +238,10 @@ sub capability_exists {
 sub capability_needs_input {
     my ( $self, $capability ) = @_;
 
-    return @{ $capabilities{$capability}->{needs_input} };
+    my $rule = $capabilities{$capability}
+      or croak "no such capability '$capability'";
+
+    return @{ $rule->{needs_input} };
 }
 
 sub has_capability {
