@@ -23,10 +23,29 @@ Catalyst Controller.
 sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
     my ( $self, $c ) = @_;
 
-    my $recipes = $c->model('DB::Recipe')->public;
+    my $recipes = $c->model('DB::Recipe');
 
-    if ( my $user = $c->user ) {
-        $recipes = $recipes->union( $user->projects->search_related('recipes') );
+    if ( $c->req->params->get('show_all') ) {
+        if ( not $c->has_capability('view_all_recipes') ) {
+            if ( $c->user ) {
+                $c->detach('/error/forbidden');
+            }
+            else {
+                $c->redirect_detach( $c->stash->{login_url} );
+            }
+        }
+
+        $c->stash( show_less_url => $c->uri_for( $c->action ) );
+    }
+    else {
+        $c->has_capability('view_all_recipes')
+          and $c->stash( show_all_url => $c->uri_for( $c->action, { show_all => 1 } ) );
+
+        $recipes = $recipes->public;
+
+        if ( my $user = $c->user ) {
+            $recipes = $recipes->union( $user->projects->search_related('recipes') );
+        }
     }
 
     my @recipes = $recipes->hri->all;

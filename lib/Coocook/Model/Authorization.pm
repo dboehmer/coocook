@@ -184,7 +184,7 @@ my @rules = (
     {
         needs_input  => ['user'],
         rule         => sub { $_->{user}->has_role('site_owner') },
-        capabilities => [ 'admin_view', 'manage_faqs', 'manage_terms', 'manage_users' ],
+        capabilities => [qw< admin_view manage_faqs manage_terms manage_users view_all_recipes >],
     },
     {
         needs_input => [ 'user', 'user_object' ],

@@ -1,12 +1,28 @@
 [% IF user;
-    title = "Recipes" %]
-    <div>This list also includes private recipes which you are allowed to view.</div>
-[% ELSE;
-    title = "Public Recipes" %]
-    <div>
+    title = "Recipes";
+ELSE;
+    title = "Public Recipes";
+END %]
+
+[% IF show_all_url %]
+<div class="message message-info">
+    <p>As a site admin you can <a href="[% show_all_url %]">view all recipes</a>.</p>
+</div>
+[% ELSIF show_less_url %]
+<div class="message message-info">
+    <p>These are all recipes. You can also <a href="[% show_less_url %]">view only yours</a>.</p>
+</div>
+[% ELSIF user %]
+<div class="message message-info">
+    <p>This list also includes private recipes which you are allowed to view.</p>
+</div>
+[% ELSE %]
+<div class="message message-info">
+    <p>
         These are <em>only</em> public recipes.
         <a href="[% login_url %]">Sign in</a> to view private recipes, too, or to import a recipe into one of your projects.
-    </div>
+    </p>
+</div>
 [% END %]
 
 <ul>
