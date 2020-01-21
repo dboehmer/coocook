@@ -156,14 +156,14 @@ isa_ok my $target_recipe =
   "return value of import_data()";
 
 cmp_deeply $_ => [
-    superhashof( { position => 1, value => 0.5, comment => "" } ),
-    superhashof( { position => 2, value => 1,   comment => "" } ),
-    superhashof( { position => 3, value => 15,  comment => $comment } ),
-    superhashof( { position => 4, value => 10,  comment => "if you like salty" } ),
+    superhashof( { value => 0.5, comment => "" } ),
+    superhashof( { value => 1,   comment => "" } ),
+    superhashof( { value => 15,  comment => $comment } ),
+    superhashof( { value => 10,  comment => "if you like salty" } ),
   ],
   "new recipe's ingredients"
   or note explain $_
-  for [ $target_recipe->ingredients->hri->all ];
+  for [ $target_recipe->ingredients_sorted->hri->all ];
 
 {
     local $TODO = "implement precheck or exception handling";
