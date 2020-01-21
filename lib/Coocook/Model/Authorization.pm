@@ -99,9 +99,18 @@ my @rules = (
         needs_input => [ 'project', 'permission', 'user' ],
         rule        => sub {
             my ( $project, $permission, $user ) = @$_{ 'project', 'permission', 'user' };
-            return (  $permission->user->id != $user->id
-                  and $permission->role ne 'owner'
-                  and ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) ) );
+            return (
+                $permission->role ne 'owner'    # owner must never be removed/degraded (transfer ownership first)
+                  and (
+                    $user->has_role('site_owner')    # either user is site owner
+                    or (                             # or user is project owner and this is not owner
+                                                     # (yes, this checked twice: $permission must not be owner's
+                                                     #  and $user must be owner and must not be $permission->user)
+
+                        $permission->user->id != $user->id and $user->has_project_role( $project, 'owner' )
+                    )
+                  )
+            );
         },
         capabilities => [qw< edit_project_permission revoke_project_permission >],
     },
