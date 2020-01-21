@@ -1,0 +1,7 @@
+table th {
+    text-align: center;
+}
+
+table tr.skip {
+    color: grey;
+}

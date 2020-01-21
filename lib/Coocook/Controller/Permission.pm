@@ -36,7 +36,7 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
         }
     }
 
-    if ( my @other_users = $c->project->users_without_permission->all ) {
+    if ( my @other_users = $c->project->users_without_permission->sorted->all ) {
         $c->stash(
             add_permission_url => $c->project_uri( $self->action_for('add') ),
             other_users        => \@other_users,

@@ -2,6 +2,9 @@ package Coocook::Controller::Recipe;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+
+use Coocook::Util;
+use JSON::MaybeXS;
 use Scalar::Util qw(looks_like_number);
 
 BEGIN { extends 'Coocook::Controller' }
@@ -23,8 +26,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All recipes", action => 'recipe/index' },
-            { text => "Add recipe",  action => 'recipe/new_recipe' },
+            { text => "All recipes",    action => 'recipe/index' },
+            { text => "Add recipe",     action => 'recipe/new_recipe' },
+            { text => "Import recipes", action => 'recipe/importable_recipes' },
         ]
     );
 }
@@ -98,6 +102,11 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/recipe/reposition', $ingredient->{id} );
     }
+
+    $c->user
+      and $c->stash(
+        import_url => $c->uri_for_action( '/browse/recipe/import', [ $recipe->id, $recipe->url_name ] ) );
+
 }
 
 sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
@@ -240,6 +249,31 @@ sub redirect : Private {
     else {
         $c->response->redirect( $c->project_uri( $self->action_for('index') ) );
     }
+}
+
+sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') Args(0)
+  RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    my $recipes = $c->model('DB::Recipe')->public;    # public projects
+
+    $recipes = $recipes->union( $c->user->projects->search_related('recipes') )    # + user's projects
+      ->search( { $recipes->me('project') => { '!=' => $c->project->id } } );      # - this project
+
+    my @recipes = $recipes->search( undef, { prefetch => { project => 'owner' } } )->all;
+
+    for my $recipe (@recipes) {
+        $recipe->{url} = $c->uri_for_action( '/browse/recipe/show', [ $recipe->id, $recipe->url_name ] );
+
+        $recipe->project->{url} ||= $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
+
+        $recipe->project->owner->{url} ||=
+          $c->uri_for_action( '/user/show', [ $recipe->project->owner->name ] );
+
+        $recipe->{import_url} = $c->project_uri( '/recipe/import/preview', $recipe->id );
+    }
+
+    $c->stash( recipes => \@recipes );
 }
 
 sub check_name : Private {

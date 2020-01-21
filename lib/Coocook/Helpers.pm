@@ -2,6 +2,7 @@ package Coocook::Helpers;
 
 # ABSTRACT: role with useful Controller helper methods as $c->my_helper(...)
 
+use Carp;
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -96,7 +97,8 @@ sub project_uri {
     my $c      = shift;
     my $action = shift;
 
-    my $project = $c->stash->{project} || die;
+    my $project = $c->stash->{project}
+      or croak "Missing 'project' in stash";
 
     # if last argument is hashref that's the \%query_values argument
     my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();

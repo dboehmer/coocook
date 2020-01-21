@@ -1,5 +1,11 @@
 [% escape_title( 'Recipe', recipe.name ) %]
 
+[% IF import_url %]
+    <form method="get" action="[% import_url %]" class="inline">
+        <input type="submit" value="Import into another project" title="Import this recipe into another one of your projects">
+    </form>
+[% END %]
+
 <form method="post" action="[% update_url %]">
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]"></p>
 <p>Servings: <input type="number" name="servings" value="[% recipe.servings %]"></p>

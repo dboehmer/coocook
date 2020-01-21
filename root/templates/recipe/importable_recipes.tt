@@ -1,0 +1,14 @@
+[% title = "Import recipes" %]
+
+<ul>
+[% FOR recipe IN recipes %]
+    <li>
+        <form method="get" action="[% recipe.import_url %]" class="inline">
+            <input type="submit" value="Import">
+        </form>
+        <a href="[% recipe.url %]">[% recipe.name | html %]</a>
+        (from <a href="[% recipe.project.url %]">[% recipe.project.name | html %]</a>
+        by <a href="[% recipe.project.owner.url %]">[% recipe.project.owner.display_name | html %]</a>)
+    </li>
+[% END %]
+</ul>

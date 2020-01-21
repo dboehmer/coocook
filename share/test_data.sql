@@ -37,9 +37,10 @@ INSERT INTO 'articles_units' VALUES(3,3);
 INSERT INTO 'articles_units' VALUES(4,1);
 INSERT INTO 'articles_units' VALUES(4,2);
 INSERT INTO 'recipes' VALUES(1,1,'pizza','','',4);
-INSERT INTO 'recipe_ingredients' VALUES(1,1,1,0,1,2,1.0,'');
-INSERT INTO 'recipe_ingredients' VALUES(2,2,1,0,3,3,0.5,'');
-INSERT INTO 'recipe_ingredients' VALUES(3,3,1,0,2,1,25.0,'');
+INSERT INTO 'recipe_ingredients' VALUES(1,3,1,0,2,1,15.0,'');
+INSERT INTO 'recipe_ingredients' VALUES(2,2,1,0,1,2,1.0,'');
+INSERT INTO 'recipe_ingredients' VALUES(3,1,1,0,3,3,0.5,'');
+INSERT INTO 'recipe_ingredients' VALUES(4,4,1,0,2,1,10.0,'if you like salty'); -- 2nd ingredient with same article/unit
 INSERT INTO 'dishes' VALUES(1,1,NULL,'pancakes',4,NULL,'','Make them really sweet!','');
 INSERT INTO 'dishes' VALUES(2,2,1,'pizza',2,NULL,'','','');
 INSERT INTO 'dishes' VALUES(3,3,NULL,'bread',4,2,'Bake bread!','','');

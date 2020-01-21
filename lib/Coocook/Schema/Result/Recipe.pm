@@ -3,6 +3,8 @@ package Coocook::Schema::Result::Recipe;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
+use Coocook::Util;
+
 extends 'Coocook::Schema::Result';
 
 __PACKAGE__->table("recipes");
@@ -39,6 +41,15 @@ __PACKAGE__->has_many(
     }
 );
 
+__PACKAGE__->has_many(
+    ingredients_sorted => 'Coocook::Schema::Result::RecipeIngredient',
+    'recipe',
+    {
+        cascade_copy => 1,            # see above
+        order_by     => 'position',
+    }
+);
+
 __PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag' );
 __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );
 
@@ -51,5 +62,7 @@ sub duplicate {
 
     return $self->copy($args);
 }
+
+sub url_name { Coocook::Util::url_name( shift->name ) }
 
 1;
