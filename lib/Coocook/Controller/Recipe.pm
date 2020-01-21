@@ -102,6 +102,11 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/recipe/reposition', $ingredient->{id} );
     }
+
+    $c->user
+      and $c->stash(
+        import_url => $c->uri_for_action( '/browse/recipe/import', [ $recipe->id, $recipe->url_name ] ) );
+
 }
 
 sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
