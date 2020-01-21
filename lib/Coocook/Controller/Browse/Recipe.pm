@@ -48,10 +48,13 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
         }
     }
 
-    my @recipes = $recipes->hri->all;
+    my @recipes = $recipes->search( undef, { columns => [qw< id project name >] } )->hri->all;
 
     {
-        my $projects = $recipes->search_related('project');
+        my $projects =
+          $recipes->search_related( 'project', undef,
+            { columns => [qw< id owner name url_name is_public >] } );
+
         my %projects = map { $_->{id} => $_ } $projects->hri->all;
 
         my %users = map { $_->{id} => $_ } $projects->search_related('owner')->hri->all;
