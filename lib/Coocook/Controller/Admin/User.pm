@@ -14,7 +14,7 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
     $c->stash( users => \my @users );
 
     {
-        my $users = $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name_fc' } );
+        my $users = $c->model('DB::User')->with_projects_count->sorted;
 
         while ( my $user = $users->next ) {
             push @users,
