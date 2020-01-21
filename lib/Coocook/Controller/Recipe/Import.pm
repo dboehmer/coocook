@@ -94,12 +94,15 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
     for my $ingredient ( @{ $importer->ingredients } ) {
         my $id = $ingredient->{id};
 
-        $ingredients{$id} = {
+        $ingredients{$id} =
+          ( $c->req->params->get("import$id") // '' ) eq 'on'
+          ? {
             value   => $c->req->params->get("value$id"),
             unit    => $c->req->params->get("unit$id"),
             article => $c->req->params->get("article$id"),
             comment => $c->req->params->get("comment$id"),
-        };
+          }
+          : { skip => 1 };
     }
 
     my $new_recipe = $importer->import_data(

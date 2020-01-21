@@ -7,9 +7,10 @@ html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name
 
 <p>Servings: <input type="number" name="servings" min="1" step="1" value="[% recipe.servings %]" required></p>
 
-<table>
+<table id="ingredients">
     <thead>
         <tr>
+            <th>Import?</th>
             <th colspan="2">Source</th>
             <th></th>
             <th colspan="3">Target</th>
@@ -18,6 +19,9 @@ html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name
     <tbody>
 [% FOR ingredient IN ingredients %]
         <tr>
+            <td class="import">
+                <input type="checkbox" name="import[% ingredient.id %]" checked>
+            </td>
             <td>
                 <label for="value[% ingredient.id %]">[% ingredient.value %]</label>
                 [%~ '&nbsp;' IF ingredient.unit.space ~%]

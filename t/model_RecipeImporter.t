@@ -150,6 +150,7 @@ my %ingredients = (
 ##note explain \%ingredients;
 
 $ingredients{1}{comment} = my $comment = "comment from line " . __LINE__;
+$ingredients{2} = { skip => 1 };
 
 isa_ok my $target_recipe =
   $importer->import_data( ingredients => \%ingredients ) => 'Coocook::Schema::Result::Recipe',
@@ -157,7 +158,6 @@ isa_ok my $target_recipe =
 
 cmp_deeply $_ => [
     superhashof( { value => 0.5, comment => "" } ),
-    superhashof( { value => 1,   comment => "" } ),
     superhashof( { value => 15,  comment => $comment } ),
     superhashof( { value => 10,  comment => "if you like salty" } ),
   ],
@@ -179,7 +179,7 @@ cmp_deeply [ $target_project->recipes->hri->all ] => [
   ],
   "created recipes in target project";
 
-is $target_recipe2->ingredients->count => 4,
+is $target_recipe2->ingredients->count => 3,
   "number of created recipe ingredients";
 
 done_testing;

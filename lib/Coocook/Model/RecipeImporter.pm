@@ -147,6 +147,9 @@ sub import_data {    # import() used by 'use'
                 my $mapping = delete $ingredients{$ingredient_id}
                   or croak "missing mapping for ingredient $ingredient_id";
 
+                $mapping->{skip}
+                  and next;
+
                 my $unit    = $units{ $mapping->{unit} }       || croak "invalid unit " . $mapping->{unit};
                 my $article = $articles{ $mapping->{article} } || croak "invalid article " . $mapping->{article};
                 my $comment = $mapping->{comment} // $ingredient->{comment};
