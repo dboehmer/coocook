@@ -147,9 +147,10 @@ sub import_data {    # import() used by 'use'
                 my $mapping = delete $ingredients{$ingredient_id}
                   or croak "missing mapping for ingredient $ingredient_id";
 
-                my $unit    = $units{ $mapping->{unit} }       || croak "invalid unit";
-                my $article = $articles{ $mapping->{article} } || croak "invalid article";
-                my $value = $mapping->{value} // $ingredient->{value};
+                my $unit    = $units{ $mapping->{unit} }       || croak "invalid unit " . $mapping->{unit};
+                my $article = $articles{ $mapping->{article} } || croak "invalid article " . $mapping->{article};
+                my $comment = $mapping->{comment} // $ingredient->{comment};
+                my $value   = $mapping->{value}   // $ingredient->{value};
 
                 $articles_units_rs->exists( { article => $article->{id}, unit => $unit->{id} } )
                   or croak "invalid combination of article and unit";
@@ -160,6 +161,7 @@ sub import_data {    # import() used by 'use'
                         article => $article->{id},
                         unit    => $unit->{id},
                         value   => $value,
+                        comment => $comment,
                     }
                 );
             }

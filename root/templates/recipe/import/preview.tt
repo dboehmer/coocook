@@ -42,6 +42,7 @@ html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name
     [% END %]
                 </select>
             </td>
+            <td class="comment"><input id="comment[% ingredient.id %]" type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment %]" placeholder="comment"></td>
         </tr>
 [% END %]
     </tbody>

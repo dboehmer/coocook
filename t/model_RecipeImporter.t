@@ -149,15 +149,17 @@ my %ingredients = (
 );
 ##note explain \%ingredients;
 
+$ingredients{1}{comment} = my $comment = "comment from line " . __LINE__;
+
 isa_ok my $target_recipe =
   $importer->import_data( ingredients => \%ingredients ) => 'Coocook::Schema::Result::Recipe',
   "return value of import_data()";
 
 cmp_deeply $_ => [
-    superhashof( { position => 1, value => 0.5 } ),
-    superhashof( { position => 2, value => 1 } ),
-    superhashof( { position => 3, value => 15 } ),
-    superhashof( { position => 4, value => 10, comment => "if you like salty" } ),
+    superhashof( { position => 1, value => 0.5, comment => "" } ),
+    superhashof( { position => 2, value => 1,   comment => "" } ),
+    superhashof( { position => 3, value => 15,  comment => $comment } ),
+    superhashof( { position => 4, value => 10,  comment => "if you like salty" } ),
   ],
   "new recipe's ingredients"
   or note explain $_

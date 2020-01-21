@@ -98,6 +98,7 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
             value   => $c->req->params->get("value$id"),
             unit    => $c->req->params->get("unit$id"),
             article => $c->req->params->get("article$id"),
+            comment => $c->req->params->get("comment$id"),
         };
     }
 
