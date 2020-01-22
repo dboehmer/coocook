@@ -2,7 +2,6 @@ requires "App::DH" => "0";
 requires "Carp" => "0";
 requires "Catalyst" => "0";
 requires "Catalyst::Action::RenderView" => "0";
-requires "Catalyst::ActionRole::RequireSSL" => "v1.0.0";
 requires "Catalyst::Authentication::Store::DBIx::Class" => "0";
 requires "Catalyst::Controller" => "0";
 requires "Catalyst::Model" => "0";
@@ -19,6 +18,7 @@ requires "Catalyst::View::Email::Template" => "0";
 requires "Catalyst::View::TT" => "0";
 requires "Config::General" => "0";
 requires "Crypt::Argon2" => "0";
+requires "Crypt::Digest::SHA256" => "0";
 requires "DBIx::Class::Core" => "0";
 requires "DBIx::Class::FilterColumn" => "0";
 requires "DBIx::Class::Helpers" => "0";
@@ -48,6 +48,7 @@ requires "Term::ReadKey" => "0";
 requires "URI" => "0";
 requires "feature" => "0";
 requires "lib" => "0";
+requires "open" => "0";
 requires "parent" => "0";
 requires "perl" => "v5.16.0";
 requires "strict" => "0";
@@ -65,7 +66,7 @@ on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
   requires "FindBin" => "0";
-  requires "Test::Compile" => "0";
+  requires "Test::Compile" => "v2.2.2";
   requires "Test::Deep" => "0";
   requires "Test::Memory::Cycle" => "0";
   requires "Test::MockObject" => "0";
@@ -78,7 +79,6 @@ on 'test' => sub {
 
 on 'test' => sub {
   recommends "CPAN::Meta" => "2.120900";
-  recommends "Test::Pod::Coverage" => "0";
 };
 
 on 'configure' => sub {
@@ -89,6 +89,7 @@ on 'develop' => sub {
   requires "Test::Most" => "0";
   requires "Test::Perl::Critic" => "0";
   requires "Test::PerlTidy" => "0";
+  requires "Test::Pod::Coverage" => "0";
 };
 
 on 'develop' => sub {

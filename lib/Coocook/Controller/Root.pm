@@ -3,9 +3,6 @@ package Coocook::Controller::Root;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
-# version 1.0.0 changed HTTP status code for SSL redirects to 301
-use Catalyst::ActionRole::RequireSSL v1.0.0;
-
 use HTML::Meta::Robots;
 
 # BEGIN-block necessary to make method attributes work
@@ -23,7 +20,28 @@ The root page (/)
 
 =cut
 
-sub base : Chained('/') PathPart('') CaptureArgs(0) Does('RequireSSL') { }
+sub base : Chained('/') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    if ( not $c->req->secure ) {
+        if ( $c->debug ) {
+            $c->log->warn("Not redirecting to HTTPS in debug mode");
+        }
+        elsif ( $c->req->uri->port == 3000 and $c->req->uri->host eq 'localhost' ) {
+            $c->log->warn("Not redirecting to HTTPS on development port localhost:3000");
+        }
+        else {
+            if ( $c->req->method eq 'POST' ) {
+                $c->detach('/error/bad_request');    # TODO is this the best to do?
+            }
+            else {
+                my $uri = $c->req->uri->clone;
+                $uri->scheme('https');
+                $c->redirect_detach( $uri, 301 );
+            }
+        }
+    }
+}
 
 sub begin : Private {
     my ( $self, $c ) = @_;
@@ -41,15 +59,17 @@ sub auto : Private {
     # TODO distinguish GET and POST requests
     # is some of this information useful for POST controller code, too?
 
+    $c->stash->{messages} = $c->session->{messages} ||= $c->model('Messages')->new;
+
     # set these stash vars before any possible redirect_detach() calls
     $c->stash( robots => my $robots = HTML::Meta::Robots->new() );
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
         if ( !$c->user and !$c->model('DB::User')->exists ) {
-            my $message = "There are currently no users registered at this Coocook installation."
-              . " The first user you register will be site admin!";
+            $c->messages->info( "There are currently no users registered at this Coocook installation."
+                  . " The first user you register will be site admin!" );
 
-            $c->redirect_detach( $c->uri_for_action( '/user/register', { error => $message } ) );
+            $c->redirect_detach( $c->uri_for_action('/user/register') );
         }
     }
 
@@ -81,19 +101,25 @@ sub auto : Private {
         }
     }
 
-    if ( not defined $c->stash->{errors} ) {
-        $c->stash( errors => [ $c->req->query_params->get_all('error') ] );
-    }
-
     if ( my $about = $c->config->{about_page_title} ) {
         $c->stash( about_title => $about );
     }
 
     $c->stash(
         homepage_url   => $c->uri_for_action('/index'),
+        recipes_url    => $c->uri_for_action('/browse/recipe/index'),
+        projects_url   => $c->uri_for_action('/browse/project/index'),
         statistics_url => $c->uri_for_action('/statistics'),
         about_url      => $c->uri_for_action('/about'),
     );
+
+    if ( my $base = $c->config->{canonical_url_base} ) {
+        my $rel_path = '.' . $c->current_uri_local_part;
+        my $uri      = URI->new_abs( $rel_path, $base );
+        $uri->query(undef);
+
+        $c->stash( canonical_url => $uri );
+    }
 
     if ( $c->model('DB::FAQ')->exists ) {
         $c->stash( faq_url => $c->uri_for_action('/faq/index') );
@@ -137,7 +163,7 @@ sub auto : Private {
     return 1;    # important
 }
 
-sub index : GET HEAD Chained('/base') PathPart('') Args(0) {
+sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->detach( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
@@ -187,13 +213,13 @@ sub dashboard : Private {
     );
 }
 
-sub statistics : GET HEAD Chained('/base') Args(0) {
+sub statistics : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash( statistics => $c->model('DB')->statistics );
 }
 
-sub about : GET HEAD Chained('/base') Args(0) {
+sub about : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -240,6 +266,16 @@ sub end : ActionClass('RenderView') {
         $_ = $c->uri_for_static($_);
     }
 
+    {
+        my $errors = $c->stash->{errors};
+        my $status = $c->res->status;
+
+        if ( ref $errors eq 'ARRAY' ? @$errors > 0 : $errors or $status =~ m/^[45]..$/ ) {
+            $c->stash->{robots}->archive(0);
+            $c->stash->{robots}->index(0);
+        }
+    }
+
     $c->stash( meta_robots => $c->stash->{robots}->content );
 }
 
@@ -272,6 +308,9 @@ sub _validated_redirect : Private {
             $path =~ $regex
               and last URI;
         }
+
+        $path =~ s! ^/ !!x    # paths must be absolute to app root
+          or last;
 
         $uri = $c->uri_for_local_part($path);
     }

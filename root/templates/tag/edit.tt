@@ -1,3 +1,5 @@
+[% escape_title( 'Tag', tag.name ) %]
+
 [% IF delete_url %]
 <form method="post" action="[% delete_url %]">
     <input type="submit" value="Delete Tag">

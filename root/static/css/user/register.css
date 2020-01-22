@@ -1,0 +1,12 @@
+/*
+ * hide form element as part of CAPTCHA
+ * but give multiple elements a CSS rule
+ * to make detection harder which form
+ * elements are actually relevant
+ */
+
+table.register tr.username  { position: relative; left: calc( 500px - 500px ) }
+table.register tr.email     { position: relative; top: 0px; }
+table.register tr.url       { position: absolute; left: -500px; }
+table.register tr.password  { position: relative; right: 500xyz; }
+table.register tr.password2 { position: relative; left: foobar; }

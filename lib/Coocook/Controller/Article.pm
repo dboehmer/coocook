@@ -114,8 +114,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         selected_units => { map { $_ => 1 } $units->get_column('id')->all },
         units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
-
-    $c->escape_title( Article => $article->name );
 }
 
 =head1 CRUD ENDPOINTS
@@ -209,7 +207,7 @@ sub dishes_recipes : Private {
         my $recipe = $dish->from_recipe;
 
         my $meal = $dish->meal;
-        $dish = $dish->as_hashref;
+        $dish         = $dish->as_hashref;
         $dish->{url}  = $c->project_uri( '/dish/edit', $dish->{id} );
         $dish->{meal} = $meal;
 
@@ -234,9 +232,11 @@ sub update_or_insert : Private {
 
     # $name contains nothing more than whitespace
     # TODO preserve form input
-    $name =~ m/\S/
-      or $c->redirect_detach(
-        $c->project_uri( '/article/edit', $article->id, { error => "Name must not be empty" } ) );
+    if ( $name !~ m/\S/ ) {
+        $c->messages->error("Name must not be empty");
+
+        $c->redirect_detach( $c->project_uri( '/article/edit', $article->id ) );
+    }
 
     my @tags = $c->project->tags->from_names( $c->req->params->get('tags') )->only_id_col->all;
 

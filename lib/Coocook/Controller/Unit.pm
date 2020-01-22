@@ -140,8 +140,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
         articles   => \@articles,
         update_url => $c->project_uri( $self->action_for('update'), $unit->id ),
     );
-
-    $c->escape_title( Unit => $unit->long_name );
 }
 
 sub create : POST Chained('/project/base') PathPart('units/create') Args(0)

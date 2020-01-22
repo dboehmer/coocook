@@ -14,7 +14,7 @@ sub index : GET HEAD Chained('/admin/base') PathPart('users') Args(0)
     $c->stash( users => \my @users );
 
     {
-        my $users = $c->model('DB::User')->with_projects_count->search( undef, { order_by => 'name_fc' } );
+        my $users = $c->model('DB::User')->with_projects_count->sorted;
 
         while ( my $user = $users->next ) {
             push @users,
@@ -79,7 +79,16 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     );
 
     while ( my $permission = $permissions->next ) {
-        my $project = $permission->project->as_hashref;
+        my $project = $permission->project;
+
+        # !!! WARNING !!!
+        # locally set owner to existing Result::User object
+        # otherwise $project->as_hashref retrieves every user related as owner
+        #
+        # THIS MUST NOT BE STORED TO THE DATABASE.
+        $project->owner( $c->user->get_object );
+
+        $project = $project->as_hashref;
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
 
@@ -89,8 +98,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
             project => $project,
           };
     }
-
-    $c->escape_title( User => $user->display_name );
 }
 
 sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
@@ -139,7 +146,14 @@ sub update : POST Chained('base') Args(0) RequiresCapability('manage_users') {
 sub discard : POST Chained('base') Args(0) RequiresCapability('discard_user') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{user_object}->delete();
+    $c->model('DB')->txn_do(
+        sub {
+            $c->req->params->get('blacklist')
+              and $c->stash->{user_object}->blacklist( comment => "discarded by " . $c->user->name );
+
+            $c->stash->{user_object}->delete();
+        }
+    );
 
     $c->redirect_detach( $c->uri_for( $self->action_for('index') ) );
 }

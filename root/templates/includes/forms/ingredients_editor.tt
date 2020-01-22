@@ -29,7 +29,7 @@
             </td>
             <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
             <td>[% ingredient.article.name | html; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
-            <td><input type="number" step="0.001" name="value[% ingredient.id %]" value="[% ingredient.value %]"></td>
+            <td><input type="number" step="any" name="value[% ingredient.id %]" required value="[% ingredient.value %]"></td>
             <td>
                 <select name="unit[% ingredient.id %]">
     [% FOR unit IN ingredient.article.units %]

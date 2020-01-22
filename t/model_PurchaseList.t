@@ -29,7 +29,7 @@ cmp_deeply $sections => [
                         value       => 1000,
                         unit        => superhashof( { short_name => "g" } ),
                         article     => superhashof( { name => "flour" } ),
-                        ingredients => [                                       #perltidy
+                        ingredients => [
                             superhashof(
                                 {
                                     id   => 1,

@@ -55,11 +55,9 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash( projects => \@projects );
 
     $c->stash->{robots}->archive(0);
-
-    $c->escape_title( User => $user->display_name );
 }
 
-sub register : GET HEAD Chained('/base') Args(0) {
+sub register : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     if ( $c->user ) {    # user is already logged in, probably via other browser tab
@@ -68,6 +66,10 @@ sub register : GET HEAD Chained('/base') Args(0) {
 
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
+
+    $c->session( register_form_served_epoch => time() );
+
+    push @{ $c->stash->{css} }, '/css/user/register.css';
 
     push @{ $c->stash->{js} }, qw<
       /js/user/register.js
@@ -81,11 +83,12 @@ sub register : GET HEAD Chained('/base') Args(0) {
 
     $c->stash(
         example_username  => $c->config->{registration_example_username},
+        use_hidden_input  => $c->config->{captcha}{use_hidden_input},
         post_register_url => $c->redirect_uri_for_action( $self->action_for('post_register') ),
     );
 }
 
-sub post_register : POST Chained('/base') PathPart('register') Args(0) {
+sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->user_registration_enabled
@@ -93,7 +96,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
 
     my $username = $c->req->params->get('username');    # use key 'username' just like login form
     my $password = $c->req->params->get('password');
-    my $email    = $c->req->params->get('email');
+    my $email_fc = fc $c->req->params->get('email');
 
     my @errors;
 
@@ -101,10 +104,12 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         push @errors, "username must not be empty";
     }
     elsif ( $username !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
-        push @errors, "username must not other characters than 0-9, a-z and A-Z.";
+        push @errors, "username must not contain other characters than 0-9, a-z and A-Z.";
     }
-    elsif ( $c->model('DB::User')->exists( { name_fc => fc($username) } ) ) {
-        push @errors, "username already in use";
+    else {
+        !$c->model('DB::User')->exists( { name_fc => fc($username) } )
+          and $c->model('DB::BlacklistUsername')->is_username_ok($username)
+          or push @errors, "username is not available";
     }
 
     if ( length $password == 0 ) {
@@ -116,8 +121,10 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
         }
     }
 
-    $email = is_email($email)
-      or push @errors, "e-mail address is not valid";
+    is_email($email_fc)
+      and !$c->model('DB::User')->exists( { email_fc => $email_fc } )
+      and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
+      or push @errors, "e-mail address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;
 
@@ -129,80 +136,94 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) {
           or push @errors, "you need accept the newest terms";    # invalid or outdated Terms id
     }
 
+    # CAPTCHA only if no content errors above
+    if ( @errors == 0 ) {
+        my $robot = 0;                                            # expect the best
+
+        if ( my $time_served = $c->session->{register_form_served_epoch} ) {
+            my $timespan = time() - $time_served;
+
+            if ( my $min = $c->config->{captcha}{form_min_time_secs} ) { $min <= $timespan or $robot++ }
+            if ( my $max = $c->config->{captcha}{form_max_time_secs} ) { $timespan <= $max or $robot++ }
+        }
+        else {                                                    # form never served
+            $robot++;
+        }
+
+        if ( $c->config->{captcha}{use_hidden_input} ) {
+            length $c->req->params->get('url') > 0
+              and $robot++;
+        }
+
+        $robot
+          and push @errors, "We think you might be a robot. Please try again.";
+    }
+
     if (@errors) {
-        my $errors = $c->stash->{errors} ||= [];
-        push @$errors, @errors;
+        $c->messages->error($_) for @errors;
 
         $c->stash(
             template   => 'user/register.tt',
             last_input => {
                 username => $username,
-                email    => $email,
+                email    => $email_fc,
             },
         );
+
+        $c->res->status(400);
 
         $c->go('register');
     }
 
-    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
-        $c->visit( '/email/email_address_reused' => [$user] );
-    }
-    else {    # e-mail address is unique
-        my $token = $c->model('Token')->new();
+    my $token = $c->model('Token')->new();
 
-        my $user = $c->model('DB::User')->create(
-            {
-                name         => $username,
-                password     => $password,
-                display_name => $username,
-                email        => $email,
-                token_hash   => $token->to_salted_hash,
-                token_expires => undef,    # never: token only for verification, doesn't allow password reset
-            }
-        );
-
-        # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
-        $password = 'x' x length $password;
-        undef $password;
-
-        $c->visit( '/email/verification', [ $user, $token ] );
-
-        $terms
-          and $user->create_related(
-            terms_users => {
-                terms    => $terms->id,
-                approved => $terms->format_datetime( DateTime->now ),
-            }
-          );
-
-        my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
-
-        if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
-            for my $admin ( $c->model('DB::User')->site_owners->all ) {
-                $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
-            }
+    my $user = $c->model('DB::User')->create(
+        {
+            name         => $username,
+            password     => $password,
+            display_name => $username,
+            email_fc     => $email_fc,
+            token_hash   => $token->to_salted_hash,
+            token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
+    );
 
-        my @roles = @{ $c->config->{new_user_default_roles} || [] };
+    # TODO this isn't secure in Perl. Is there any XS module for secure string erasure?
+    $password = 'x' x length $password;
+    undef $password;
 
-        $site_owners_exist
-          or push @roles, 'site_owner';
+    $c->visit( '/email/verification', [ $user, $token ] );
 
-        $user->add_roles( \@roles );
+    $terms
+      and $user->create_related(
+        terms_users => {
+            terms    => $terms->id,
+            approved => $terms->format_datetime( DateTime->now ),
+        }
+      );
+
+    my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
+
+    if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
+        for my $admin ( $c->model('DB::User')->site_owners->all ) {
+            $c->visit( '/email/notify_admin_about_registration' => [ $user, $admin ] );
+        }
     }
 
-    $c->redirect_detach(
-        $c->uri_for(
-            '/',
-            {
-                error => "You should receive an e-mail with a web link."
-                  . " Please click that link to verify your e-mail address.",
-            }
-        )
-    );
+    my @roles = @{ $c->config->{new_user_default_roles} || [] };
+
+    $site_owners_exist
+      or push @roles, 'site_owner';
+
+    $user->add_roles( \@roles );
+
+    $c->messages->info( "You should receive an e-mail with a web link."
+          . " Please click that link to verify your e-mail address." );
+
+    $c->redirect_detach( $c->uri_for('/') );
 }
 
-sub recover : GET HEAD Chained('/base') Args(0) {
+sub recover : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -211,41 +232,46 @@ sub recover : GET HEAD Chained('/base') Args(0) {
     );
 }
 
-sub post_recover : POST Chained('/base') PathPart('recover') Args(0) {
+sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
     my ( $self, $c ) = @_;
 
-    my $email = $c->req->params->get('email');
+    my $email_fc = fc $c->req->params->get('email');
 
-    is_email($email)
-      or $c->redirect_detach(
-        $c->uri_for( $self->action_for('recover'), { error => "Enter a valid e-mail address" } ) );
+    if ( not is_email($email_fc) ) {
+        $c->messages->error("Enter a valid e-mail address");
 
-    if ( my $user = $c->model('DB::User')->find( { email => $email } ) ) {
+        $c->redirect_detach( $c->uri_for( $self->action_for('recover') ) );
+    }
+
+    if ( my $user = $c->model('DB::User')->find( { email_fc => $email_fc } ) ) {
         $c->visit( '/email/recovery_link', [$user] );
     }
     else {
-        $c->visit( '/email/recovery_unregistered', [$email] );
+        $c->visit( '/email/recovery_unregistered', [$email_fc] );
     }
 
-    $c->response->redirect( $c->uri_for_action( '/index', { error => "Recovery link sent" } ) );
+    $c->messages->info("Recovery link sent");
+    $c->response->redirect( $c->uri_for_action('/index') );
 }
 
-sub reset_password : GET HEAD Chained('base') Args(1) {
+sub reset_password : GET HEAD Chained('base') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};
 
     # accept only limited tokens
     # because password reset allows hijacking of valueable accounts
-    ( $user->token_expires and $user->check_base64_token($base64_token) )
-      or $c->redirect_detach(
-        $c->uri_for_action( '/index', { error => "Your password reset link is invalid or expired!" } ) );
+    if ( not( $user->token_expires and $user->check_base64_token($base64_token) ) ) {
+        $c->messages->error("Your password reset link is invalid or expired!");
+
+        $c->redirect_detach( $c->uri_for_action('/index') );
+    }
 
     $c->stash( reset_password_url =>
           $c->uri_for( $self->action_for('post_reset_password'), [ $user->name, $base64_token ] ) );
 }
 
-sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) {
+sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};
@@ -281,7 +307,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     $c->response->redirect( $c->uri_for_action('/index') );
 }
 
-sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) {
+sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) Public {
     my ( $self, $c, $base64_token ) = @_;
 
     my $user = $c->stash->{user_object};

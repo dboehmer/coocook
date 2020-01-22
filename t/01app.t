@@ -7,11 +7,11 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 8;
+use Test::Most tests => 10;
 
-my $t = Test::Coocook->new( max_redirect => 0 );
+my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 
-subtest "public actions are either GET or POST" => sub {
+subtest "attributes of controller actions" => sub {
     my $app = $t->catalyst_app;
 
     for ( $app->controllers ) {
@@ -25,39 +25,55 @@ subtest "public actions are either GET or POST" => sub {
 
             my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
 
-            exists $attrs{Private}
-              and next;
+            my $action_pkg_name = $action->package_name . "::" . $action->name . "()";
 
             if ( exists $attrs{CaptureArgs} )
             {    # actions with CaptureArgs are chain elements and automatically private
-                $methods eq ''
-                  or warn "Chain action "
-                  . $action->package_name . "::"
-                  . $action->name
-                  . " is restricted to HTTP methods "
-                  . $methods . "\n";
-
+                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
                 next;
             }
 
-            exists $attrs{AnyMethod}    # special keyword indicating any method will be ok
-              and next;
+            if ( exists $attrs{Private} ) {
+                note "Skipping $action_pkg_name: has 'Private' attribute";
+                next;
+            }
 
-            $action->name eq 'end'
-              and next;
+            if ( $action->name eq 'end' ) {
+                note "Skipping $action_pkg_name: is 'end' action";
+                next;
+            }
 
             ok(
-                ( $methods eq 'GET+HEAD' or $methods eq 'POST' ),
-                $action->package_name . "::" . $action->name . "()"
+                ( exists $attrs{Public} xor exists $attrs{RequiresCapability} ),
+                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute"
+            );
+
+            if ( exists $attrs{AnyMethod} ) {    # special keyword indicating any method will be ok
+                $methods .= '+' if length $methods;
+                $methods .= 'any';
+            }
+
+            ok(
+                ( $methods eq 'any' or $methods eq 'GET+HEAD' or $methods eq 'POST' ),
+                "$action_pkg_name has 'AnyMethod' or is GET & HEAD or POST"
             ) or note "HTTP methods: " . $methods;
         }
     }
 };
 
-subtest "HTTP redirects to HTTPS" => sub {
+subtest "GET http://... redirects to HTTPS" => sub {
     $t->get('http://localhost/');
     $t->status_is(301);    # moved permanently
     $t->header_is( Location => 'https://localhost/' );
+
+    $t->get('http://localhost/path_doesnt_exist');
+    $t->status_is(301);    # moved permanently
+    $t->header_is( Location => 'https://localhost/path_doesnt_exist' );
+};
+
+subtest "POST http://... is catched as well" => sub {    # TODO define exact behavior
+    $t->post('http://localhost/');
+    $t->status_like(qr/ ^[34] /x);
 };
 
 $t->get_ok('https://localhost');
@@ -98,6 +114,23 @@ subtest "robots meta tag" => sub {
     $t->content_lacks('noarchive');
     $t->content_lacks('noindex');
 
+    subtest "404 pages" => sub {
+        $t->get('/doesnt_exist');
+        $t->status_is(404);
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
+    subtest "bad request pages" => sub {
+        my $guard = $t->local_config_guard( enable_user_registration => 1 );
+
+        $t->get_ok('/register');
+        ok $t->submit_form( with_fields => { username => '' } ), "submit form";
+        $t->status_is(400);
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
     $t->get_ok('/user/john_doe');
     $t->content_contains('noarchive');
     $t->content_lacks('noindex');
@@ -129,22 +162,27 @@ subtest "robots meta tag" => sub {
 subtest "Redirect URL parameter" => sub {
     $t->logout_ok();
 
-    # no 'redirect' parameter for '/'
-    $t->get_ok('/');
-    $t->content_contains(q{/login"});
+    # no 'redirect' parameter for these paths
+    for my $path ( '/', '/login', '/register' ) {
+        $t->get_ok($path);
+        $t->content_contains(q{href="https://localhost/login"});
+        $t->content_contains(q{href="https://localhost/register"});
+    }
 
     # default
     $t->get_ok('/statistics');
-    $t->content_contains(q{/login?redirect=statistics"});
+    $t->content_contains(q{/login?redirect=%2Fstatistics"});
 
     # query parameter
     $t->get_ok('/?key=value');
     $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
 
-    # query parameter 'error' is filtered
-    $t->get_ok('/?error=message&key=value');
-    local $TODO = "rework messaging system, then implement this if still necessary";
-    $t->content_contains(q{/login?redirect=%2F%3Fkey%3Dvalue"});
+    # redirect path is passed around between login/redirect
+    $t->get_ok('/statistics?key=value');
+    $t->follow_link_ok( { text => 'Sign up' } );
+    $t->max_redirect(1);
+    $t->login_ok( 'john_doe', 'P@ssw0rd' );
+    $t->base_is('https://localhost/statistics?key=value');
 };
 
 subtest favicons => sub {
@@ -163,4 +201,22 @@ subtest favicons => sub {
     $t->content_contains(q{<link rel="icon" type="image/x-icon" href="alpha.ico">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed"  href="beta.png">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed" sizes="72x72" href="72.png">});
+};
+
+subtest "canonical URLs" => sub {
+    $t->get_ok('/');
+    $t->content_lacks('canonical');
+
+    my $url_base = 'https://www.coocook.example/coocook/';
+
+    my $guard = $t->local_config_guard( canonical_url_base => $url_base );
+
+    $t->get_ok('/');
+    $t->content_contains(qq{<link rel="canonical" href="$url_base">});
+
+    $t->get_ok('/statistics?key=value#anchor');
+    $t->content_contains(qq{<link rel="canonical" href="${url_base}statistics">});
+
+    ok $t->get($_), "GET $_", for '/doesnt-exist';
+    $t->content_lacks('canonical');
 };

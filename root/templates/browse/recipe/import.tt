@@ -1,0 +1,27 @@
+[% escape_title( 'Import recipe', recipe.name ) %]
+
+<table>
+    <tr>
+        <td style="width: 50%; text-align: center; vertical-align: middle">
+Import
+<br>
+recipe <a href="[% recipe.url %]">[% recipe.name | html %]</a>
+<br>
+from project <a href="[% recipe.project.url %]">[% '🔒' UNLESS recipe.project.is_public; recipe.project.name %]</a>
+<br>
+into …
+        </td>
+        <td style="width: 50%">
+<ul>
+[% FOR proj IN projects %]
+    <li>
+        <form method="get" action="[% proj.import_url %]" class="inline">
+            <input type="submit" value="Import">
+        </form>
+        <a href="[% proj.url %]">[% proj.name | html %]</a>
+    </li>
+[% END %]
+</ul>
+        </td>
+    </tr>
+</table>

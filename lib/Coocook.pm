@@ -22,7 +22,7 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-## no critic
+## no critic (BuiltinFunctions::ProhibitStringyEval Subroutines::ProhibitSubroutinePrototypes)
 # too bad Perl doesn't offer to check if a module is available
 # other code (that passes perlcritic) for testing this is much more verbose
 sub mod_installed ($) {
@@ -59,13 +59,6 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
 
     # print e-mails on STDOUT in debugging mode
     $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
-
-    __PACKAGE__->config(
-        require_ssl => {
-            disabled       => 1,
-            ignore_on_post => 1,    # 'disabled' seems not to apply to POST requests
-        },
-    );
 }
 
 # Configure the application.
@@ -77,7 +70,8 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
 # with an external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config( name => 'Coocook' );
+### DEFAULT/FACTORY SETTINGS ###
+__PACKAGE__->config( name => 'Coocook' );    # referenced in next block
 
 __PACKAGE__->config(
 
@@ -128,10 +122,16 @@ EOT
     # enable registration as self service, defaults to false
     enable_user_registration => 0,
 
+    captcha => {
+        form_min_time_secs => undef,    # minimum time between GET and POST /register
+        form_max_time_secs => undef,    # maximum time between GET and POST /register
+        use_hidden_input   => 0,        # lure bots into filling <input> hidden by CSS
+    },
+
     registration_example_username => 'daniel_boehmer42',
 
     email_from_address => do {
-        my $username =    # see https://stackoverflow.com/a/3526587/498634
+        my $username =                  # see https://stackoverflow.com/a/3526587/498634
              ( $^O ne 'riscos' && $^O ne 'MSWin32' ? getpwuid($<) : undef )
           || ( $^O ne 'riscos' ? getlogin() : undef )
           || $ENV{USER}
@@ -199,7 +199,7 @@ EOT
         enabled => 1,
     },
 
-    session => {
+    'Plugin::Session' => {
         dbic_class      => 'DB::Session',
         expires         => 24 * 60 * 60, # 24h
         cookie_secure   => 2,            # deliver and accept only via HTTPS

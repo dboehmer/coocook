@@ -1,43 +1,63 @@
-<p>
+<div class="message message-info">
 [% IF project.archived %]
-    📁 This project is archived (read-only).
-    You can
-    <form class="inline" method="post" action="[% project_urls.unarchive %]">
-        <input type="submit" value="Un-archive this project">
+    <form method="post" action="[% project_urls.unarchive %]">
+        <p>
+            📁 This project is archived (read-only).
+            You can
+            <input type="submit" value="Un-archive this project">
+        </p>
     </form>
 [% ELSIF inventory.quantities == 0 AND inventory.articles == 0 AND inventory.shop_sections == 0 AND inventory.tags == 0 %]
-    This is a fresh project without any data.
-    You can <a href="[% project_urls.import %]">import data</a> from other projects
-    or start from scratch, e.g. by <a href="[% project_urls.quantities %]">creating quantities</a>.
+    <p>
+        This is a fresh project without any data.
+        You can <a href="[% project_urls.import %]">import data</a> from other projects
+        or start from scratch, e.g. by <a href="[% project_urls.quantities %]">creating quantities</a>.
+    </p>
 [% ELSIF inventory.quantities == 0 %]
-    This project lacks any quantities. You can <a href="[% project_urls.import %]">import them</a>
-    or <a href="[% project_urls.quantities %]">create some</a> from scratch.
+    <p>
+        This project lacks any quantities. You can <a href="[% project_urls.import %]">import them</a>
+        or <a href="[% project_urls.quantities %]">create some</a> from scratch.
+    </p>
 [% ELSIF inventory.units == 0 %]
-    This project lacks any units. You can <a href="[% project_urls.units %]">create some</a>.
+    <p>
+        This project lacks any units. You can <a href="[% project_urls.units %]">create some</a>.
+    </p>
 [% ELSIF inventory.articles == 0 %]
-    This project lacks any articles. You can <a href="[% project_urls.import %]">import them</a>
-    or <a href="[% project_urls.articles %]">create some</a> from scratch.
+    <p>
+        This project lacks any articles. You can <a href="[% project_urls.import %]">import them</a>
+        or <a href="[% project_urls.articles %]">create some</a> from scratch.
+    </p>
 [% ELSIF inventory.meals == 0 OR inventory.dishes == 0 %]
-    This project lacks any [% inventory.meals == 0 ? 'meals' : 'dishes' %].
-    You can <a href="[% project_urls.edit %]">create some</a> now.
+    <p>
+        This project lacks any [% inventory.meals == 0 ? 'meals' : 'dishes' %].
+        You can <a href="[% project_urls.edit %]">create some</a> now.
     [% IF inventory.recipes == 0 %]
-    You can also <a href="[% project_urls.recipes %]">create a recipe</a> for dishes.
+        You can also <a href="[% project_urls.recipes %]">create a recipe</a> for dishes.
     [% END %]
+    </p>
 [% ELSIF inventory.purchase_lists == 0 %]
-    This project lacks any purchase lists. You can <a href="[% project_urls.purchase_lists %]">create some</a>.
+    <p>
+        This project lacks any purchase lists. You can <a href="[% project_urls.purchase_lists %]">create some</a>.
+    </p>
 [% ELSIF inventory.unassigned_items > 0 %]
-    There are some ingredient items not yet assigned to a purchase list.
-    You can <a href="[% project_urls.unassigned_items %]">assign items to purchase lists</a> now.
+    <p>
+        There are some ingredient items not yet assigned to a purchase list.
+        You can <a href="[% project_urls.unassigned_items %]">assign items to purchase lists</a> now.
+    </p>
 [% ELSIF project.is_stale %]
-    This project is stale (all meals and purchase lists in are in the past).
-    You can
-    <form class="inline" method="post" action="[% project_urls.archive %]">
-        <input type="submit" value="Archive this project">
+    <form method="post" action="[% project_urls.archive %]">
+        <p>
+            This project is stale (all meals and purchase lists in are in the past).
+            You can
+            <input type="submit" value="📁Archive this project">
+        </p>
     </form>
 [% ELSE %]
-    Once you've finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
+    <p>
+        Once you've finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
+    </p>
 [% END %]
-</p>
+</div>
 
 [% INCLUDE 'print/project.tt' %]
 

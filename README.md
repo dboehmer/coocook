@@ -84,6 +84,6 @@ Daniel Böhmer <post@daniel-boehmer.de>
 
 ## Copyright and License
 
-This software is copyright (c) 2015-2019 by Daniel Böhmer.
+This software is copyright (c) 2015-2020 by Daniel Böhmer.
 This web application is free software, licensed under the
 [GNU Affero General Public License, Version 3, 19 November 2007](https://www.gnu.org/licenses/agpl-3.0.en.html).

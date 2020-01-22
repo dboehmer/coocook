@@ -1,3 +1,5 @@
+[% escape_title( 'Article', article.name ) %]
+
 <form method="post" action="[% update_url %]">
     <p>Applicable units:</p>
 

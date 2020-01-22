@@ -5,23 +5,49 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 55;
+use Test::Most tests => 69;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
 
 my $schema = $t->schema;
 
+$schema->resultset('BlacklistEmail')
+  ->add_email( my $blacklist_email = 'blacklisted@example.com', comment => __FILE__ );
+
+$schema->resultset('BlacklistUsername')
+  ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
+
 $t->get_ok('/');
 
-$t->register_ok(
-    {
-        username  => "test",
-        email     => "test\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
-    }
-);
+{
+    my %userdata_ok = (
+        username  => 'test',
+        email     => 'test@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
+    );
+
+    $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
+        qr/e-mail address is invalid or already taken/ );
+
+    $t->register_fails_like(
+        { %userdata_ok, email => uc $blacklist_email },
+        qr/e-mail address is invalid or already taken/,
+        "blacklisted e-mail in uppercase"
+    );
+
+    $t->register_fails_like( { %userdata_ok, username => $blacklist_username },
+        qr/username is not available/ );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => uc $blacklist_username },
+        qr/username is not available/,
+        "blacklisted username in uppercase"
+    );
+
+    $t->register_ok( \%userdata_ok );
+}
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
     ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
@@ -49,10 +75,10 @@ $t->get('/');
 
 $t->register_ok(
     {
-        username  => "test2",
-        email     => "test2\@example.com",
-        password  => "s3cr3t",
-        password2 => "s3cr3t",
+        username  => 'test2',
+        email     => 'test2@example.com',
+        password  => 's3cr3t',
+        password2 => 's3cr3t',
     }
 );
 
@@ -70,47 +96,28 @@ $t->email_like(qr{ /user/test2 }x);    # URLs to user info pages
 $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
-my $content_after_registration = $t->content;
-
-subtest "registration of existing e-mail address triggers e-mail" => sub {
-    $t->register_ok(
-        {
-            username  => 'test_other',
-            email     => 'test2@example.com',
-            password  => 's3cr3t',
-            password2 => 's3cr3t',
-        }
-    );
-
-    $t->content_is( $content_after_registration, "content is same as with new e-mail address" );
-
-    $t->email_like(qr/ (try|tried) .+ register /x);
-
-    $t->clear_emails();
-};
-
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
     ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 
-subtest "registration of existing username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
+$t->register_fails_like(
+    { username => 'new_user', email => 'TEST2@example.com' },
+    qr/e-mail address is invalid or already taken/,
+    "registration of existing e-mail address (in uppercase) fails"
+);
 
-    $t->submit_form_ok( { with_fields => { username => 'TEST2' }, }, "register account 'TEST2'" );
+$t->register_fails_like(
+    { username => 'TEST2' },
+    qr/username is not available/,
+    "registration of existing username (in uppercase) fails"
+);
 
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
-
-subtest "registration with invalid username fails" => sub {
-    $t->follow_link_ok( { text => 'Sign up' } );
-
-    $t->submit_form_ok( { with_fields => { username => $_ } }, "register account '$_'" ) for "foobar ";
-
-    $t->content_like(qr/username/)
-      or note $t->content;
-};
+$t->register_fails_like(
+    { username => 'foobar ' },    # note space char
+    qr/username must not contain/,
+    "registration with invalid existing username fails"
+);
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 
@@ -142,29 +149,54 @@ $t->logout_ok();
 
 $t->get_ok('/login');
 
-$t->content_like( qr/ name="username" .+ value="test" /x,
-    "last username is prefilled in login form" );
+$t->content_unlike( qr/ name="username" .+ value="test" /x,
+    "... username is deleted from session cookie by logout" );
 
-is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
-  "'username' cookie contains username 'test'";
+$t->content_unlike( qr/ name="store_username" .+ checked /x,
+    '... checkbox "store username" is NOT checked' );
+
+$t->get_ok('/login?username=from_query');
+
+$t->content_like( qr/ name="username" .+ value="from_query" /x,
+    "... username is prefilled from URL query" );
+
+$t->content_unlike( qr/ name="store_username" .+ checked /x,
+    '... checkbox "store username" is NOT checked' );
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
+  "username is not stored in persistent cookie";
+
+$t->login_ok( 'test', 'P@ssw0rd', store_username => 'on' );
+
+$t->logout_ok();
 
 {
     my $original_length = length $t->cookie_jar->as_string;
 
-    $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' );
+    $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' )
+      and note "deleted session cookie";
 
     $original_length > length $t->cookie_jar->as_string
       or die "failed to delete session cookie";
 }
 
-$t->reload();
+$t->get_ok('/login');
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
+  "'username' cookie contains username 'test'";
+
 $t->content_like( qr/ name="username" .+ value="test" /x,
-    "... but last username is still prefilled in login form" )
+    "username is prefilled from persistent cookie" )
   or diag $t->content;
 
-$t->login_ok( 'test', 'P@ssw0rd' );
+$t->content_like( qr/ name="store_username" .+ checked /x, 'checkbox "store username" is checked' );
+
+$t->login_ok( 'test', 'P@ssw0rd', store_username => '' );
 
 $t->logout_ok();
+
+is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
+  "... username was deleted from persistent cookie";
 
 subtest "expired password reset token URL" => sub {
     $t->request_recovery_link_ok('test@example.com');
@@ -208,9 +240,7 @@ subtest "redirects after login/logout" => sub {
 
     $t->logout_ok();
 
-    is $t->uri->path => '/about',
-      "client is redirected to last page after logout"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/about', "client is redirected to last page after logout" );
 
     # pass link around between login/register
     $t->follow_link_ok( { text => 'Sign up' } );
@@ -221,32 +251,26 @@ subtest "redirects after login/logout" => sub {
 
     $t->login_ok( 'test', 'new, nice & shiny' );
 
-    is $t->uri->path => '/about',
-      "client is redirected to last page after login"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/about', "client is redirected to last page after login" );
 };
 
 subtest "refreshing login page after logging in other browser tab" => sub {
-    $t->get_ok('/login?redirect=statistics');
+    $t->get_ok('/login?redirect=/statistics');
 
-    is $t->uri->path => '/statistics',
-      "client is redirected immediately"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };
 
 subtest "refreshing register page after logging in other browser tab" => sub {
-    $t->get_ok('/register?redirect=statistics');
+    $t->get_ok('/register?redirect=/statistics');
 
-    is $t->uri->path => '/statistics',
-      "client is redirected immediately"
-      or diag "uri: " . $t->uri;
+    $t->base_is( 'https://localhost/statistics', "client is redirected immediately" );
 };
 
 subtest "malicious redirects are filtered on logout" => sub {
     $t->is_logged_in();
 
     $t->post('/logout?redirect=https://malicious.example/');
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
 
     $t->is_logged_out("... but client is logged out anyway");
 };
@@ -256,7 +280,7 @@ subtest "malicious redirects are filtered on login" => sub {
         '/login?redirect=https://malicious.example/',
         { username => 'test', password => 'new, nice & shiny' }
     );
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
     $t->is_logged_in();
 
     $t->logout_ok();
@@ -268,22 +292,20 @@ subtest "malicious redirects are filtered on login" => sub {
             password => 'new, nice & shiny'
         }
     );
-    is $t->uri => 'https://localhost/', "client is redirected to /";
+    $t->base_is( 'https://localhost/', "client is redirected to /" );
     $t->is_logged_in("... but client is logged in anyway");
 };
 
 $t->create_project_ok( { name => "Test Project 1" } );
 
-unlike $t->uri => qr/import/,
-  "not redirected to importer for first project";
+$t->base_unlike( qr/import/, "not redirected to importer for first project" );
 
 note "remove all roles from user";
 $schema->resultset('RoleUser')->search( { user => '1' } )->delete;
 
 $t->create_project_ok( { name => "Test Project 2" } );
 
-like $t->uri => qr/import/,
-  "redirected to importer";
+$t->base_like( qr/import/, "redirected to importer" );
 
 $t->content_contains("Test Project 1");
 

@@ -81,8 +81,6 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/dish/reposition', $ingredient->{id} );
     }
-
-    $c->escape_title( Dish => $dish->name );
 }
 
 sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('edit_project') {
@@ -150,7 +148,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     $dish->create_related(
         ingredients => {
             article => $c->req->params->get('article'),
-            value   => $c->req->params->get('value'),
+            value   => $c->req->params->get('value') + 0,
             unit    => $c->req->params->get('unit'),
             comment => $c->req->params->get('comment'),
             prepare => !!$c->req->params->get('prepare'),
@@ -190,12 +188,8 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
                 $ingredient->update(
                     {
-                        prepare => (
-                            $c->req->params->get( 'prepare' . $ingredient->id )
-                            ? '1'
-                            : '0'
-                        ),
-                        value   => $c->req->params->get( 'value' . $ingredient->id ),
+                        prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
+                        value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
                         unit    => $c->req->params->get( 'unit' . $ingredient->id ),
                         comment => $c->req->params->get( 'comment' . $ingredient->id ),
                     }

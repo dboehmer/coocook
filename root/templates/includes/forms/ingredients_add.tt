@@ -19,7 +19,7 @@ END %]
     </p>
     <p>
         Value:
-        <input type="number" step="0.001" name="value" value="1">
+        <input type="number" step="any" name="value" value="1">
     </p>
     <p>
         Unit:

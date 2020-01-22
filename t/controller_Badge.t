@@ -10,7 +10,7 @@ my $schema = DBICx::TestDatabase->new('Coocook::Schema');
 Coocook->model('DB')->schema->storage( $schema->storage );
 
 my $user = $schema->resultset('User')
-  ->create( { map { $_ => '' } qw< name display_name password_hash email > } );
+  ->create( { map { $_ => '' } qw< name display_name password_hash email_fc > } );
 
 my $project = $user->create_related(
     owned_projects => {
@@ -45,7 +45,7 @@ sub redirect_is {
     $dish->update( { servings => $number } );
 
     my $res = request('https://localhost/badge/dishes_served.svg');
-    is $res->code => $_, "is $_ redirect" for 302;
+    is $res->code               => $_,   "is $_ redirect" for 302;
     is $res->header('Location') => $url, "$number => $url";
 }
 

@@ -52,6 +52,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
             print            => $c->project_uri('/print/index'),
             shop_sections    => $c->project_uri('/shop_section/index'),
             units            => $c->project_uri('/unit/index'),
+            quantities       => $c->project_uri('/quantity/index'),
             import           => $c->project_uri('/project/get_import'),
             archive          => $c->project_uri('/project/archive'),
             unarchive        => $c->project_uri('/project/unarchive'),
@@ -64,10 +65,10 @@ sub submenu : Chained('base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "Show project",     action => 'project/show' },
-            { text => "Edit project",     action => 'project/edit' },
-            { text => "Permissions",      action => 'permission/index' },
-            { text => "Project settings", action => 'project/settings' },
+            { text => "Show project",   action => 'project/show' },
+            { text => "Meals & Dishes", action => 'project/edit' },
+            { text => "Permissions",    action => 'permission/index' },
+            { text => "Settings",       action => 'project/settings' },
         ],
     );
 }
@@ -139,14 +140,12 @@ sub settings : GET HEAD Chained('submenu') PathPart('settings') Args(0)
         delete_url            => $c->project_uri('/project/delete'),
         deletion_confirmation => $c->config->{project_deletion_confirmation},
     );
-
-    $c->escape_title( "Project settings" => $c->project->name );
 }
 
-sub importable_projects : Private {
+sub exportable_projects : Private {
     my ( $self, $c ) = @_;
 
-    return [ grep { $c->has_capability( import_from_project => { project => $_ } ) }
+    return [ grep { $c->has_capability( export_from_project => { source_project => $_ } ) }
           $c->project->other_projects->all ];
 }
 
@@ -154,10 +153,10 @@ sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my $importer = $c->model('Importer');
+    my $importer = $c->model('ProjectImporter');
 
     $c->stash(
-        projects        => $c->forward('importable_projects'),
+        projects        => $c->forward('exportable_projects'),
         properties      => $importer->properties,
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
@@ -169,14 +168,14 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
-    my $importer = $c->model('Importer');
+    my $importer = $c->model('ProjectImporter');
 
     my $source = $c->model('DB::Project')->find( $c->req->params->get('source_project') )
       or $c->detach('/error/bad_request');
 
     my $target = $c->project;
 
-    $c->has_capability( import_from_project => { project => $source } )
+    $c->has_capability( export_from_project => { source_project => $source } )
       or $c->detach('/error/forbidden');
 
     # extract properties selected in form
@@ -226,10 +225,10 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
 
     $project->insert();
 
-    my $importable_projects = $c->forward('importable_projects');
+    my $exportable_projects = $c->forward('exportable_projects');
 
     $c->response->redirect(
-        $c->project_uri( $self->action_for( @$importable_projects > 0 ? 'get_import' : 'show' ) ) );
+        $c->project_uri( $self->action_for( @$exportable_projects > 0 ? 'get_import' : 'show' ) ) );
 }
 
 sub update : POST Chained('base') Args(0) RequiresCapability('update_project') {

@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 -- password: P@ssw0rd
 INSERT INTO 'users'
-(id,       name,    name_fc, password_hash, display_name,                   admin_comment,                  email,    email_verified, token_hash, token_expires,           created) VALUES
+(id,       name,    name_fc, password_hash, display_name,                   admin_comment,               email_fc,    email_verified, token_hash, token_expires,           created) VALUES
 ( 1, 'john_doe', 'john_doe',        'KOHL',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP),
 ( 2,    'other',    'other',       'other', 'Other User', 'other test user from test SQL',    'other@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP);
 
@@ -74,10 +74,12 @@ INSERT INTO 'recipes'
 ( 1,       1,  'pizza',          '',          '',        4);
 
 INSERT INTO 'recipe_ingredients'
-(id, position, recipe, prepare, article, unit, value, comment) VALUES
-( 1,        1,      1,       0,       1,    2,   1.0,      ''),
-( 2,        2,      1,       0,       3,    3,   0.5,      ''),
-( 3,        3,      1,       0,       2,    1,  25.0,      '');
+(id, position, recipe, prepare, article, unit, value,             comment) VALUES
+( 1,        3,      1,       0,       2,    1,  15.0,                  ''),
+( 2,        2,      1,       0,       1,    2,   1.0,                  ''),
+( 3,        1,      1,       0,       3,    3,   0.5,                  ''),
+( 4,        4,      1,       0,       2,    1,  10.0, 'if you like salty'); -- 2nd ingredient with same article/unit
+
 
 INSERT INTO 'dishes'
 (id, meal, from_recipe,         name, servings, prepare_at_meal,    preparation,                 description, comment) VALUES
@@ -138,3 +140,15 @@ INSERT INTO 'terms'
 (id,   valid_from,                                 content_md) VALUES
 ( 1, '1999-01-01',       'All your recipes are belong to us.'),
 ( 2, '2100-01-01', 'Just STEAL ALL THE COOKING INSTRUCTIONS!');
+
+INSERT INTO 'blacklist_usernames' 
+(       'comment', 'username_fc', 'username_type') VALUES
+( 'test_data.sql',   '*coocook*',      'wildcard'),
+( 'test_data.sql',       'admin',     'cleartext');
+
+INSERT INTO 'blacklist_emails' 
+(       'comment',                                     'email_fc', 'email_type') VALUES
+( 'test_data.sql', 'eH1bfAbKCiHJZDbMfIEX5v4EbQ/X3tyujJO/wUuOXfc=', 'sha256_b64'), -- somebody@example.com
+( 'test_data.sql',                            '*@coocook.example',   'wildcard'),
+( 'test_data.sql',                                '*@coocook.org',   'wildcard'),
+( 'test_data.sql',                              '*@*.coocook.org',   'wildcard');

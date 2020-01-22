@@ -1,3 +1,5 @@
+[% escape_title( "Project settings", project.name ) %]
+
 <form method="post" action="[% update_url %]">
     <textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% project.description | html %]</textarea>
 

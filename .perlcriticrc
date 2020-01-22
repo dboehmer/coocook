@@ -1,0 +1,2 @@
+exclude = TestingAndDebugging::ProhibitNoStrict
+include = Miscellanea::ProhibitUnrestrictedNoCritic TestingAndDebugging::ProhibitProlongedStrictureOverride

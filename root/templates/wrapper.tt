@@ -13,6 +13,10 @@
     <meta name="keywords"    content="[% meta_keywords %]">
     <meta name="robots"      content="[% meta_robots %]">
 
+[% IF canonical_url %]
+    <link rel="canonical" href="[% canonical_url %]">
+[% END %]
+
 [% IF icon_url %]
     <link rel="icon" type="[% icon_type %]" href="[% icon_url %]">
 [% END %]
@@ -80,8 +84,10 @@
 [% ELSIF homepage_url %]
     <li><a href="[% homepage_url %]">Start</a></li>
 [% END %]
+
 [% IF project_urls %]
-    <li><a href="[% project_urls.project %]">Meals &amp; Dishes</a></li>
+    |
+    <li><a href="[% project_urls.project %]">Project</a></li>
     <li><a href="[% project_urls.recipes %]">Recipes</a></li>
     <li><a href="[% project_urls.articles %]">Articles</a></li>
     <li><a href="[% project_urls.tags %]">Tags</a></li>
@@ -111,14 +117,28 @@ END %]
 [% ELSIF   title %]<h2>[% title | html %]</h2>
 [% END %]
 
-[% FOREACH error IN errors %]
-    <p class="error">[% error | html %]</p>
+[% WHILE (message = messages.next) %]
+    <div class="message message-[% message.type %]">
+    [% IF message.html;
+        message.html;
+    ELSE %]
+        <p>[% message.text | html %]</p>
+    [% END %]
+    </div>
 [% END %]
 
 [% content %]
 </main>
 
 <footer>
+    <nav>
+        <ul>
+            <h4>Browse</h4>
+            <li><a href="[% recipes_url %]">Recipes</a></li>
+            <li><a href="[% projects_url %]">Projects</a></li>
+        </ul>
+    </nav>
+
     <nav>
 [% IF project_urls %]
         <ul>

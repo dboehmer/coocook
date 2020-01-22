@@ -9,37 +9,20 @@ use Coocook::Schema;
 
 with 'MooseX::Getopt';
 
+with 'Coocook::Script::Role::HasSchema';
+
 has debug => (
     is            => 'rw',
     isa           => 'Bool',
     documentation => "enable debugging output",
 );
 
-has dsn => (
-    is            => 'rw',
-    isa           => 'Str',
-    default       => 'development',
-    documentation => "key in dbic.yaml or DBI DSN string",
-);
-
-has _schema => (
-    is      => 'rw',
-    isa     => 'Coocook::Schema',
-    lazy    => 1,
-    builder => '_build__schema',
-);
-
-sub _build__schema {
-    my $self = shift;
-
-    return Coocook::Schema->connect( $self->dsn );
-}
-
 sub run {
     my $self = shift;
 
     $self->check_schema();
     $self->check_rows();
+    $self->check_values();
 }
 
 sub check_schema {
@@ -126,7 +109,7 @@ sub check_rows {
             undef,
             {
                 columns => {
-                    ( map { $_ => $_ } @pk_cols ),    # e.g. id             => id
+                    ( map { $_              => $_ } @pk_cols ),                # e.g. id             => id
                     ( map { $_ . '_project' => $_ . '.project' } @tables ),    # e.g. recipe_project => recipe.project
                 },
                 join => [ grep { $_ ne 'me' } @$joins ],
@@ -156,6 +139,21 @@ sub check_rows {
                     next ROW;
                 }
             }
+        }
+    }
+}
+
+sub check_values {
+    my $self = shift;
+
+    my $schema = $self->_schema;
+
+    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite allows '' for an INTEGER column
+        for my $table (qw< DishIngredient RecipeIngredient Item >) {
+            my $count = $schema->resultset($table)->search( { value => '' } );
+
+            $count > 0
+              and warn "Found $count rows with value of empty string '' in table $table\n";
         }
     }
 }

@@ -7,7 +7,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
 use DBIx::Class::Helpers::Util qw< normalize_connect_info >;
 
-our $VERSION = 17;    # version of schema definition, not software version!
+our $VERSION = 19;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 
@@ -110,7 +110,7 @@ sub sqlite_pragma {
     $self->storage->sqlt_type eq 'SQLite'
       or die "only implemented for SQLite";
 
-    my $sql = 'PRAGMA foreign_keys';
+    my $sql = "PRAGMA '$pragma'";
 
     defined $set_value
       and $sql .= " = '$set_value'";

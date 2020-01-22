@@ -8,9 +8,9 @@ use Test::Most;
 
 my $db = TestDB->new;
 
-use_ok 'Coocook::Model::Importer';
+use_ok 'Coocook::Model::ProjectImporter';
 
-my $importer = new_ok 'Coocook::Model::Importer';
+my $importer = new_ok 'Coocook::Model::ProjectImporter';
 
 subtest properties => sub {
     isa_ok my $properties = $importer->properties => 'ARRAY';

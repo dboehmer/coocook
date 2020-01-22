@@ -1,3 +1,5 @@
+[% escape_title( 'Unit', unit.long_name ) %]
+
 <form method="post" action="[% update_url %]">
     <p>
         <label for="short_name">Short name:</label>
