@@ -73,8 +73,12 @@ sub request {
     my $response = $self->next::method(@_);
 
     if ($DEBUG) {
-        note map { my $s = $_; $s =~ s/^/> /gm; $s } $request->as_string;
-        note map { my $s = $_; $s =~ s/^/< /gm; $s } $response->as_string;
+        for ( [ '> ', $request ], [ '< ', $response ] ) {
+            my ( $prefix, $message ) = @$_;
+
+            note map { my $s = $_; $s =~ s/^/$prefix/gm; $s } $message->headers->as_string, "\n",
+              ( $message->content_length > 0 ? $message->decoded_content : () );
+        }
     }
 
     return $response;
