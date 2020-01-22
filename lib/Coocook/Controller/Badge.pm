@@ -24,13 +24,11 @@ sub dishes_served : GET HEAD Chained('/base') PathPart('badge/dishes_served.svg'
         $dishes = sprintf $format, $dishes;
     }
 
-    # TODO build SVG instead of redirect to external service
-    my $url = 'https://img.shields.io/badge/dishes_served-' . $dishes . '-blue.svg';
+    my $badge = $c->model('Badge')->create_badge( "dishes served", $dishes, "#007ec6" );
 
-    $c->res->headers->header(
-        Expires => DateTime->today->add( days => 1 )->strftime("%a, %d %b %Y %H:%M:%S %Z") );
-
-    $c->redirect_detach($url);
+    $c->response->content_type('image/svg+xml');
+    $c->response->body($badge);
+    return;
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -1,15 +1,15 @@
 use strict;
 use warnings;
 
+use lib 't/lib/';
+
 use DBICx::TestDatabase;
-use Test::Most;
+use Test::Coocook;
+use Test::Most tests => 26;
 
-use Catalyst::Test 'Coocook';
+my $t = Test::Coocook->new( deploy => 0 );
 
-my $schema = DBICx::TestDatabase->new('Coocook::Schema');
-Coocook->model('DB')->schema->storage( $schema->storage );
-
-my $user = $schema->resultset('User')
+my $user = $t->schema->resultset('User')
   ->create( { map { $_ => '' } qw< name display_name password_hash email_fc > } );
 
 my $project = $user->create_related(
@@ -37,32 +37,37 @@ my $dish = $meal->create_related(
     }
 );
 
-sub redirect_is {
-    my ( $number, $url ) = @_;
+$t->get_ok('/badge/dishes_served.svg');
+$t->header_like( 'Content-Type' => qr{ ^ image/svg\+xml \b }x );
+$t->content_contains('<svg ');
+$t->content_contains('</svg>');
+
+sub dish_badge_contains {
+    my ( $number, $text ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     $dish->update( { servings => $number } );
 
-    my $res = request('https://localhost/badge/dishes_served.svg');
-    is $res->code               => $_,   "is $_ redirect" for 302;
-    is $res->header('Location') => $url, "$number => $url";
+    $t->get_ok('/badge/dishes_served.svg');
+    $t->content_contains( ">$text</text>", "$number => $text" )
+      or note $t->content;
 }
 
-redirect_is 0 => 'https://img.shields.io/badge/dishes_served-0-blue.svg';
-redirect_is 1 => 'https://img.shields.io/badge/dishes_served-1-blue.svg';
+dish_badge_contains 0 => '0';
+dish_badge_contains 1 => '1';
 
-redirect_is 999  => 'https://img.shields.io/badge/dishes_served-999-blue.svg';
-redirect_is 1000 => 'https://img.shields.io/badge/dishes_served-1.0k-blue.svg';
+dish_badge_contains 999  => '999';
+dish_badge_contains 1000 => '1.0k';
 
-redirect_is 1050 => 'https://img.shields.io/badge/dishes_served-1.1k-blue.svg';
+dish_badge_contains 1050 => '1.1k';
 
-redirect_is 999_499 => 'https://img.shields.io/badge/dishes_served-999k-blue.svg';
-redirect_is 999_500 => 'https://img.shields.io/badge/dishes_served-1.0m-blue.svg';
+dish_badge_contains 999_499 => '999k';
+dish_badge_contains 999_500 => '1.0m';
 
-redirect_is 999_499_999 => 'https://img.shields.io/badge/dishes_served-999m-blue.svg';
-redirect_is 999_500_000 => 'https://img.shields.io/badge/dishes_served-1.0b-blue.svg';
+dish_badge_contains 999_499_999 => '999m';
+dish_badge_contains 999_500_000 => '1.0b';
 
-redirect_is 1_234_567_890 => 'https://img.shields.io/badge/dishes_served-1.2b-blue.svg';
+dish_badge_contains 1_234_567_890 => '1.2b';
 
-done_testing;
+dish_badge_contains 1_000_000_000_000 => '1000b';
