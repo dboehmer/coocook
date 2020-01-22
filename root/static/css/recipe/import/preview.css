@@ -1,7 +1,7 @@
-table th {
+form#import table th {
     text-align: center;
 }
 
-table tr.skip {
+form#import table tr.skip {
     color: grey;
 }

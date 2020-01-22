@@ -1,7 +1,7 @@
 [% title = BLOCK %]Import recipe "[% recipe.name %]"[% END;
 html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name | html %]</em></a> from project <a href="[% source_project_url %]"><em>[% recipe.project.name | html %]</em></a>[% END %]
 
-<form method="post" action="[% import_url %]">
+<form method="post" action="[% import_url %]" id="import">
 
 <p>Name: <input type="text" name="name" value="[% recipe.name | html %]" required></p>
 

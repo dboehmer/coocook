@@ -1,5 +1,5 @@
 $( function() {
-    $('td.article select').change(function() {
+    $('form#import table td.article select').change(function() {
         let $this = $(this);
 
         let $selectedOption = $this.find('option:selected');
@@ -29,14 +29,14 @@ $( function() {
     }).trigger('change');
 
     // check uniqueness of recipe name
-    $('input[name="name"]').on('change input', function() {
+    $('form#import input[name="name"]').on('change input', function() {
         let name = this.value;
 
         this.setCustomValidity( existingRecipeNames.indexOf(name) == -1 ? '' : "This recipe name already exists in this project" );
     }).trigger('input');
 
     // skip checkboxes
-    $('td.import input[type="checkbox"]').on( 'change', function() {
+    $('form#import table td.import input[type="checkbox"]').on( 'change', function() {
         let skip = !this.checked;
         let $tr = $(this).closest('tr');
 
