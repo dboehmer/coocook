@@ -6,7 +6,7 @@ use lib 't/lib/';
 use Coocook::Model::ProjectImporter;
 use TestDB;
 use Test::Deep;
-use Test::Most;
+use Test::Most tests => 33;
 
 my $schema = TestDB->new( { deploy => 1 } );
 
@@ -128,6 +128,7 @@ is $target_project->units->count    => scalar(@units);
 $target_project->search_related($_)->delete for qw< articles units recipes >;
 
 note "Importing articles and units from source project ...";
+$target_project->search_related($_)->delete for 'articles', 'quantities';
 Coocook::Model::ProjectImporter->new->import_data(
     $source_project => $target_project,
     [qw< articles quantities units >]
@@ -181,5 +182,3 @@ cmp_deeply [ $target_project->recipes->hri->all ] => [
 
 is $target_recipe2->ingredients->count => 3,
   "number of created recipe ingredients";
-
-done_testing;

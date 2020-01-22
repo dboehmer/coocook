@@ -4,7 +4,7 @@ use warnings;
 use FindBin '$Bin';
 use lib "$Bin/lib";
 use TestDB;
-use Test::Most;
+use Test::Most tests => 12;
 
 my $db = TestDB->new;
 
@@ -84,4 +84,5 @@ subtest "complete import" => sub {
     note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
 };
 
-done_testing;
+throws_ok { $importer->import_data( $source, $target, ['quantities'] ) } qr/quantities.+not empty/,
+  "repeated import is rejected";

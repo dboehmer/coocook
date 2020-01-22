@@ -12,6 +12,7 @@ use Test::Most tests => 10;
 
 my $t = Test::Coocook->new;
 
+$t->schema->resultset($_)->search( { project => 2 } )->delete() for 'Article', 'Quantity';
 Coocook::Model::ProjectImporter->new->import_data(
     $t->schema->resultset('Project')->find(1),
     $t->schema->resultset('Project')->find(2),

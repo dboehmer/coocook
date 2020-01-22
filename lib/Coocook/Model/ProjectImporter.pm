@@ -156,6 +156,13 @@ sub import_data {    # import() is used by 'use'
                 my @imports = map { ref eq 'ARRAY' ? @$_ : $_ } $property->{import};
 
                 while ( my $import = shift @imports ) {
+                    {
+                        my ($target_rs) = $import->($target);
+
+                        $target_rs->exists
+                          and croak sprintf "target table '%s' not empty", $target_rs->result_source->name;
+                    }
+
                     my ( $rs, $translate ) = $import->($source);
                     my %translate = $translate ? %$translate : ( project => 'projects' );
 
