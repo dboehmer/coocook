@@ -165,7 +165,6 @@ sub import_data {    # import() is used by 'use'
                     # 'shop_sections?' => undef           (if not already translated)
                     for ( values %translate ) {
                         if (s/\?$//) {    # column name had '?' appended, '?' is removed
-                            $DB::single = 1;
                             exists $new_id{$_}
                               or $_ = undef;
                         }
