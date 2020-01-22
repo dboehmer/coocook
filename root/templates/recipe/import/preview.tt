@@ -60,7 +60,7 @@ html_title = BLOCK %]Import recipe <a href="[% recipe_url %]"><em>[% recipe.name
 
 [% recipe.description | markdown %]
 
-<input type="submit" value="Import">
+<input type="submit" name="import" value="Import">
 
 </form>
 
