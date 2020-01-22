@@ -14,8 +14,9 @@ sub new {
 
     my $continued_line = "";
 
-    while (my $line = <$fh>) {
+    while ( my $line = <$fh> ) {
         chomp $line;
+
         # Remove comments from SQL-File
         $line =~ s/ -- .* $//x;
 
