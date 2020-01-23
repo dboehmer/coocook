@@ -1,10 +1,10 @@
 # German Perl Workshop 2019: *rule-based authorization in Catalyst*
 
-[Recording of the talk](https://youtu.be/Y-HF7gSXnCA) (21min 32sec)
+* [Recording of the talk](https://youtu.be/Y-HF7gSXnCA) (German speech, 21min 32sec)
 
-[Presentation slides](catalyst-authz.html) (download and open in browser)
+* [Presentation slides](catalyst-authz.html) (English, download and open in browser)
 
-Links to implementation in Coocook:
+Links to implementation in Coocook at the time of the talk:
 
 | Component | Implementation in Coocook |
 | --- | --- |
@@ -13,8 +13,10 @@ Links to implementation in Coocook:
 | `MyApp::ActionRole::RequiresCapability` | [`Coocook::ActionRole::RequiresCapability`](lib/Coocook/ActionRole/RequiresCapability.pm) |
 | `MyApp->has_capability()` | [`Coocook::Helpers`](lib/Coocook/Helpers.pm#L56) |
 | `MyApp::Controller` | [`Cooocook::Controller`](lib/Coocook/Controller.pm#L12) |
-| `MyApp::Controller::Foo` | [`Coocook::Controller::Project`](lib/Coocook/Controller/Project.pm) |
+| `MyApp::Controller::Foo` | any in [`lib/Coocook/Controller/`](lib/Coocook/Controller/), e.g. [`Coocook::Controller::Project`](lib/Coocook/Controller/Project.pm) |
 | `MyApp::Model::Authorization` | [`Coocook::Model::Authorization`](lib/Coocook/Model/Authorization.pm) <br> [`t/model_Authorization.t`](t/model_Authorization.t) |
+
+For current implementation and information see [`master` branch](https://github.com/dboehmer/coocook).
 
 # Coocook
 
