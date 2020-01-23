@@ -1,6 +1,8 @@
 # German Perl Workshop 2019: *rule-based authorization in Catalyst*
 
-[Presentation slides](catalyst-authz.html)
+[Recording of the talk](https://youtu.be/Y-HF7gSXnCA) (21min 32sec)
+
+[Presentation slides](catalyst-authz.html) (download and open in browser)
 
 Links to implementation in Coocook:
 
