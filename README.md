@@ -80,7 +80,8 @@ Daniel Böhmer <post@daniel-boehmer.de>
 
 ## Contributors
 
-* Christina Sixtus
+* [@ChristinaSi](https://github.com/ChristinaSi) Christina Sixtus
+* [@moseschmiedel](https://github.com/moseschmiedel) Mose Schmiedel
 
 ## Copyright and License
 
