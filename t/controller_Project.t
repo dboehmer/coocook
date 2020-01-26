@@ -6,7 +6,7 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 25;
+use Test::Most tests => 27;
 
 my $t = Test::Coocook->new();
 
@@ -15,8 +15,13 @@ my $project = $t->schema->resultset('Project')->create(
         name        => 'Test Project',
         description => "",
         owner       => 1,
+        archived    => '2000-01-01 00:00:00',
     }
 );
+
+message_contains('archived');
+
+$project->update( { archived => undef } );
 
 $t->get_ok('/project/test-project');
 $t->content_lacks( 'message-info', "no message at all if not logged in" );

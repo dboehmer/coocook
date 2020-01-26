@@ -59,6 +59,10 @@
     </p>
 [% END %]
 </div>
+[% ELSIF project.archived %]
+    <div class="message message-info">
+        <p>📁 This project has been archived.</p>
+    </div>
 [% END %]
 
 [% INCLUDE 'print/project.tt' %]
