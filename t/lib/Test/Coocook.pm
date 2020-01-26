@@ -3,6 +3,8 @@ package Test::Coocook;
 use strict;
 use warnings;
 
+use open ':locale';    # respect encoding configured in terminal
+
 our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
 
 use Carp;
