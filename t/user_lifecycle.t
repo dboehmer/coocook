@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 69;
+use Test::Most tests => 70;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -27,6 +27,8 @@ $t->get_ok('/');
         password  => 's3cr3t',
         password2 => 's3cr3t',
     );
+
+    $t->register_fails_like( { %userdata_ok, password2 => 'something-else' }, qr/match/ );
 
     $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
         qr/e-mail address is invalid or already taken/ );

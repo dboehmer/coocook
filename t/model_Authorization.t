@@ -3,7 +3,7 @@ use warnings;
 
 use lib 't/lib/';
 
-use Test::Most tests => 12;
+use Test::Most tests => 13;
 use TestDB;
 use Test::Deep;
 
@@ -34,6 +34,9 @@ sub _test_has_capability {
 }
 
 is $authz->new => $authz, "is a singleton";
+
+cmp_deeply [ $authz->project_roles ] => bag(qw< owner admin editor viewer >),
+  "project_roles()";
 
 ok !$authz->capability_exists('foo');
 ok $authz->capability_exists('view_project');
