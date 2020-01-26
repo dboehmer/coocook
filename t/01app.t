@@ -7,7 +7,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 10;
+use Test::Most tests => 11;
 
 my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 
@@ -77,6 +77,13 @@ subtest "POST http://... is catched as well" => sub {    # TODO define exact beh
 };
 
 $t->get_ok('https://localhost');
+
+subtest "POST /xmlrpc.php (GitHub issue #106)" => sub {
+    note 'https://github.com/dboehmer/coocook/issues/106';
+
+    ok $t->post($_), "POST $_" for '/xmlrpc.php';
+    $t->status_is(404);
+};
 
 subtest "HTTP Strict Transport Security" => sub {
     $t->get('http://localhost');
