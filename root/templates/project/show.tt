@@ -1,3 +1,4 @@
+[% IF can_edit %]
 <div class="message message-info">
 [% IF project.archived %]
     <form method="post" action="[% project_urls.unarchive %]">
@@ -58,6 +59,7 @@
     </p>
 [% END %]
 </div>
+[% END %]
 
 [% INCLUDE 'print/project.tt' %]
 

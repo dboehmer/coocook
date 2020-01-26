@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most;    # tests => 38;
+use Test::Most tests => 23;
 
 my $t = Test::Coocook->new();
 
@@ -16,6 +16,11 @@ my $project = $t->schema->resultset('Project')->create(
         owner       => 1,
     }
 );
+
+$t->get_ok('/project/test-project');
+$t->content_lacks( 'message-info', "no message at all if not logged in" );
+
+$t->login_ok( john_doe => 'P@ssw0rd' );
 
 $t->get_ok('/project/test-project');
 $t->content_like(qr/fresh project/)
@@ -88,5 +93,3 @@ $ingredient->assign_to_purchase_list($list);
 $t->get_ok('/project/test-project');
 $t->content_like(qr/ print /x)
   or note $t->content;
-
-done_testing;
