@@ -3,9 +3,10 @@ use warnings;
 
 use lib 't/lib';
 
+use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 23;
+use Test::Most tests => 25;
 
 my $t = Test::Coocook->new();
 
@@ -89,6 +90,12 @@ $t->text_like(qr/ items /x)
   or note $t->text;
 
 $ingredient->assign_to_purchase_list($list);
+
+$t->get_ok('/project/test-project');
+$t->text_like(qr/ stale /x)
+  or note $t->text;
+
+$list->update( { date => $list->format_date( DateTime->today->add( years => 1 ) ) } );
 
 $t->get_ok('/project/test-project');
 $t->text_like(qr/ print /x)
