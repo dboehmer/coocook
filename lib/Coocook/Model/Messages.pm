@@ -56,7 +56,7 @@ sub add {
 
     my %message = @_ == 1 ? %{ $_[0] } : @_;
 
-    if ( %message == 1 ) {
+    if ( keys %message == 1 ) {
         my ( $type => $text ) = %message;
 
         exists $types{$type} or croak "Unsupported type";
