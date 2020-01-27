@@ -6,7 +6,7 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 27;
+use Test::Most tests => 29;
 
 my $t = Test::Coocook->new();
 
@@ -28,6 +28,14 @@ $t->content_lacks( 'message-info', "no message at all if not logged in" );
 
 $t->login_ok( john_doe => 'P@ssw0rd' );
 message_contains('fresh project');
+
+{
+    my $meal =
+      $project->create_related( meals => { date => '1970-01-01', name => 'breakfast', comment => '' } );
+
+    message_like(qr/ lacks .+ quantities /x);
+    $meal->delete();
+}
 
 $project->create_related( tags => { name => 'foo' } );
 message_like(qr/ lacks .+ quantities /x);

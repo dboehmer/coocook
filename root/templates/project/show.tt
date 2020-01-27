@@ -8,7 +8,11 @@
             <input type="submit" value="Un-archive this project">
         </p>
     </form>
-[% ELSIF inventory.quantities == 0 AND inventory.articles == 0 AND inventory.shop_sections == 0 AND inventory.tags == 0 %]
+[% ELSIF inventory.quantities == 0
+     AND inventory.articles == 0
+     AND inventory.meals == 0
+     AND inventory.shop_sections == 0
+     AND inventory.tags == 0 %]
     <p>
         This is a fresh project without any data.
         You can <a href="[% project_urls.import %]">import data</a> from other projects
