@@ -87,9 +87,10 @@ sub show : GET HEAD Chained('submenu') PathPart('') Args(0) RequiresCapability('
     }
 
     $c->stash(
-        can_edit  => !!$c->has_capability('edit_project'),
-        days      => $days,
-        inventory => $c->project->inventory,
+        can_edit      => !!$c->has_capability('edit_project'),
+        can_unarchive => !!$c->has_capability('unarchive_project'),
+        days          => $days,
+        inventory     => $c->project->inventory,
     );
 }
 

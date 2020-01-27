@@ -1,6 +1,6 @@
-[% IF can_edit %]
-<div class="message message-info">
 [% IF project.archived %]
+<div class="message message-info">
+    [% IF can_unarchive %]
     <form method="post" action="[% project_urls.unarchive %]">
         <p>
             📁 This project is archived (read-only).
@@ -8,7 +8,13 @@
             <input type="submit" value="Un-archive this project">
         </p>
     </form>
-[% ELSIF inventory.quantities == 0
+    [% ELSE %]
+        <p>📁 This project has been archived.</p>
+    [% END %]
+</div>
+[% ELSIF can_edit %]
+<div class="message message-info">
+[% IF inventory.quantities == 0
      AND inventory.articles == 0
      AND inventory.meals == 0
      AND inventory.shop_sections == 0
@@ -63,10 +69,6 @@
     </p>
 [% END %]
 </div>
-[% ELSIF project.archived %]
-    <div class="message message-info">
-        <p>📁 This project has been archived.</p>
-    </div>
 [% END %]
 
 [% INCLUDE 'print/project.tt' %]

@@ -6,7 +6,7 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 29;
+use Test::Most tests => 35;
 
 my $t = Test::Coocook->new();
 
@@ -20,11 +20,16 @@ my $project = $t->schema->resultset('Project')->create(
 );
 
 message_contains('archived');
+$t->content_lacks('Un-archive this project');
+
+$t->login_ok( john_doe => 'P@ssw0rd' );
+message_contains('archived');
+$t->content_contains('Un-archive this project');
+$t->logout_ok();
 
 $project->update( { archived => undef } );
 
-$t->get_ok('/project/test-project');
-$t->content_lacks( 'message-info', "no message at all if not logged in" );
+message_lacks( 'message-info', "no message at all if not logged in" );
 
 $t->login_ok( john_doe => 'P@ssw0rd' );
 message_contains('fresh project');
@@ -82,12 +87,18 @@ message_contains('print');
 
 sub message_contains {
     $t->get_ok('/project/test-project');
-    $t->text_contains(shift)
+    $t->text_contains(@_)
+      or note $t->text;
+}
+
+sub message_lacks {
+    $t->get_ok('/project/test-project');
+    $t->text_lacks(@_)
       or note $t->text;
 }
 
 sub message_like {
     $t->get_ok('/project/test-project');
-    $t->text_like(shift)
+    $t->text_like(@_)
       or note $t->text;
 }
