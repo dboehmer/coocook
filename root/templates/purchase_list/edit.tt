@@ -16,27 +16,14 @@
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            [% USE NiceNumber;
-            IF item.offset;
-                item.value;
-                ' - ';
-                0 - item.offset;
-                ' = ';
-                item.value + item.offset | $NiceNumber;
-            ELSE;
-                item.value | $NiceNumber;
-            END;
-            '&nbsp;' IF unit.space;
-            display_unit(item.unit, {html=>1}) %]
+            [% '~' IF item.offset;
+            display_value_unit( item.value + item.offset, item.unit, {html=>1} ) %]
         </td>
         <td>[% item.article.name | html %]</td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
             <li>
-                [% USE NiceNumber;
-                ingredient.value | $NiceNumber;
-                '&nbsp;' IF unit.space;
-                display_unit(ingredient.unit, {html=>1}) %]
+                [% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]
                 –
                 [% ingredient.dish.meal.date.strftime('%a, %F') %]
                 [% ingredient.dish.meal.name | html %]:
@@ -46,6 +33,9 @@
                 <form class="inline" method="post" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
                 [% END %]
             </li>
+        [% END %]
+        [% IF item.offset %]
+            <li>offset: [% display_value_unit( item.offset, ingredient.unit, {html=>1} ) %]</li>
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>

@@ -181,19 +181,37 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
             $dish->set_tags( [ $tags->all ] );
 
             for my $ingredient ( $dish->ingredients->all ) {
+                my $item = $ingredient->item;
+
                 if ( $c->req->params->get( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
-                    next;
+
+                    if ( not $item->ingredients->exists ) {
+                        $item->delete();
+                        next;
+                    }
+                }
+                else {
+                    $ingredient->update(
+                        {
+                            prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
+                            value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
+                            unit    => $c->req->params->get( 'unit' . $ingredient->id ),
+                            comment => $c->req->params->get( 'comment' . $ingredient->id ),
+                        }
+                    );
                 }
 
-                $ingredient->update(
-                    {
-                        prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
-                        value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
-                        unit    => $c->req->params->get( 'unit' . $ingredient->id ),
-                        comment => $c->req->params->get( 'comment' . $ingredient->id ),
-                    }
-                );
+                my $sum = $item->ingredients->get_column('value')->sum();
+
+                if ( $item->value != $sum ) {
+                    $item->update(
+                        {
+                            value  => $sum,
+                            offset => 0,      # reset
+                        }
+                    );
+                }
             }
         }
     );
