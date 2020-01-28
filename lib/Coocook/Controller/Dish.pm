@@ -186,7 +186,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                 if ( $c->req->params->get( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
 
-                    if ( not $item->ingredients->exists ) {
+                    if ( not( $item and $item->ingredients->exists ) ) {
                         $item->delete();
                         next;
                     }
@@ -201,6 +201,8 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                         }
                     );
                 }
+
+                next unless $item;
 
                 my $sum = $item->ingredients->get_column('value')->sum();
 
