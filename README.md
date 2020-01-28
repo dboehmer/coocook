@@ -47,12 +47,15 @@ For development purposes there are a few *recommended* dependencies. To install 
 
     $ cpanm --with-develop --with-recommends --with-suggests --installdeps .
 
-Install database into a local SQLite file and start development server in development mode:
+Install database into a local SQLite file and start development server in debug mode:
 
     $ script/coocook_deploy.pl install
     $ script/coocook_server.pl --debug
     ...
     HTTP::Server::PSGI: Accepting connections at http://0:3000/
+
+Hint: With the `--restart` option the development server restarts automatically when files in `lib/` are changed.
+This requires `Catalyst::Restarter`.
 
 ## Mailing list
 
