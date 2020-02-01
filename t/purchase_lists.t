@@ -26,9 +26,10 @@ sub article_has_items {    # value + unit->short_name joined with space: "420g 4
       $name || sprintf( "article %i '%s' has items '%s'", $article->id, $article->name, $expected );
 }
 
-my $list            = $db->resultset('PurchaseList')->find(1)   || die;
-my $next_ingredient = $db->resultset('DishIngredient')->find(7) || die;
-my $flour           = $db->resultset('Article')->find(1)        || die;
+my $list              = $db->resultset('PurchaseList')->find(1)    || die;
+my $next_ingredient   = $db->resultset('DishIngredient')->find(7)  || die;
+my $delete_ingredient = $db->resultset('DishIngredient')->find(11) || die;
+my $flour             = $db->resultset('Article')->find(1)         || die;
 
 article_has_items $flour => "1000g";
 
@@ -44,11 +45,27 @@ article_has_items $flour => "1000g 1kg";
 my $grams = $db->resultset('Unit')->find( { short_name => 'g' } );
 ok $item->convert($grams), "convert item to grams";
 
-$next_ingredient->discard_changes;
-
 article_has_items $flour => "2000g";
 
+$next_ingredient->discard_changes;
+
 ok $next_ingredient->remove_from_purchase_list, "DishIngredient->remove_from_purchase_list";
+
+article_has_items $flour => "1000g";
+
+ok $item = $delete_ingredient->assign_to_purchase_list($list),
+  "assign_to_purchase_list (different units)";
+
+article_has_items $flour => "1000g 12.5kg";
+
+ok $item->convert($grams), "convert item to grams";
+
+article_has_items $flour => "13500g";
+
+$delete_ingredient->discard_changes;
+
+ok $delete_ingredient->remove_from_purchase_list,
+  "DishIngredient->remove_from_purchase_list (different units)";
 
 article_has_items $flour => "1000g";
 

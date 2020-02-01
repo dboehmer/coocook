@@ -69,38 +69,50 @@ sub assign_to_purchase_list {
     return $item;
 }
 
+=head2 update_on_purchase_list()
+
+Returns boolish value indicating if there's an item that was updated
+
+=cut
+
+sub update_on_purchase_list {
+    my $self = shift;
+
+    $self->txn_do(
+        sub {
+            my $item = $self->item or return;
+
+            $item->update_from_ingredients;
+        }
+    ) or return;
+
+    return 1;
+}
+
+=head2 remove_from_purchase_list()
+
+Returns boolish value indicating if there's an item that was updated
+
+=cut
+
 sub remove_from_purchase_list {
     my $self = shift;
 
     $self->txn_do(
         sub {
-            my $item = $self->item
-              or return
-              warn "Trying to remove ingredient " . $self->id . " that's not assigned to any purchase list";
+            my $item = $self->item or return;
 
             $self->update( { item => undef } );
 
             if ( $item->ingredients->exists ) {
-                my $value = $self->value;
-
-                # if item got converted to other unit, convert $value, too
-                if ( $self->get_column('unit') != $item->get_column('unit') ) {
-                    my $unit1 = $self->unit;
-                    my $unit2 = $item->unit;
-
-                    $unit1->get_column('quantity') == $unit2->get_column('quantity')
-                      or die "Units not of same quantity";
-
-                    $value *= $unit1->to_quantity_default / $unit2->to_quantity_default;
-                }
-
-                $item->update( { value => $item->value - $value } );
+                $item->update_from_ingredients;
             }
-            else {    # item belongs to other ingredients
+
+            else {    # item belongs to no other ingredients
                 $item->delete;
             }
         }
-    );
+    ) or return;
 
     return 1;
 }

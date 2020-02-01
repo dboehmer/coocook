@@ -24,7 +24,7 @@ subtest inventory => sub {
         shop_sections    => 2,
         tags             => 3,
         units            => 5,
-        unassigned_items => 6,
+        unassigned_items => 7,
       }
       or explain $inventory;
 };

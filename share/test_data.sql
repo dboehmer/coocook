@@ -99,7 +99,8 @@ INSERT INTO 'dish_ingredients'
 ( 7,        1,    3,       1,       1,    2,    1.0,      '', NULL),
 ( 8,        2,    3,       1,       2,    1,   25.0,      '', NULL),
 ( 9,        3,    3,       1,       3,    3,    1.0,      '', NULL),
-(10,        4,    3,       0,       4,    1,  500.0,      '', NULL);
+(10,        4,    3,       0,       4,    1,  500.0,      '', NULL),
+(11,        5,    3,       0,       1,    2,   12.5,      '', NULL);
 
 INSERT INTO 'purchase_lists'
 (id, project,         name,        date) VALUES
