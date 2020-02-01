@@ -66,4 +66,18 @@ sub recalculate {
     );
 }
 
+sub update_items_and_delete {
+    my $self = shift;
+
+    $self->txn_do(
+        sub {
+            for my $ingredient ( $self->ingredients->all ) {
+                $ingredient->remove_from_purchase_list;
+                $ingredient->delete;
+            }
+            $self->delete;
+        }
+    );
+}
+
 1;

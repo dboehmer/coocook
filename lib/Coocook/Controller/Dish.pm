@@ -86,7 +86,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{dish}->delete;
+    $c->stash->{dish}->update_items_and_delete;
 
     $c->response->redirect( $c->project_uri('/project/edit') );
 }
@@ -184,12 +184,8 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                 my $item = $ingredient->item;
 
                 if ( $c->req->params->get( 'delete' . $ingredient->id ) ) {
+                    $ingredient->remove_from_purchase_list;
                     $ingredient->delete;
-
-                    if ( $item ? not $item->ingredients->exists : 1 ) {
-                        $item->delete() if $item;
-                        next;
-                    }
                 }
                 else {
                     $ingredient->update(
@@ -202,18 +198,10 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                     );
                 }
 
-                next unless $item;
+                $item and $item->in_storage or next;
 
-                my $sum = $item->ingredients->get_column('value')->sum();
+                $item->update_from_ingredients();
 
-                if ( $item->value != $sum ) {
-                    $item->update(
-                        {
-                            value  => $sum,
-                            offset => 0,      # reset
-                        }
-                    );
-                }
             }
         }
     );

@@ -90,4 +90,34 @@ sub convert {
     );
 }
 
+sub update_from_ingredients {
+    my $self = shift;
+
+    my $item_value = 0;
+
+    for my $ingredient ( $self->ingredients->all ) {
+
+        my $ingredient_value = $ingredient->value;
+
+        if ( $self->get_column('unit') != $ingredient->get_column('unit') ) {
+            my $unit1 = $ingredient->unit;
+            my $unit2 = $self->unit;
+
+            $unit1->get_column('quantity') == $unit2->get_column('quantity')
+              or die "Units not of same quantity";
+
+            $ingredient_value *= $unit1->to_quantity_default / $unit2->to_quantity_default;
+        }
+
+        $item_value += $ingredient_value;
+    }
+
+    $self->update(
+        {
+            value  => $item_value,
+            offset => 0
+        }
+    );
+}
+
 1;
