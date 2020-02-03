@@ -186,8 +186,8 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                 if ( $c->req->params->get( 'delete' . $ingredient->id ) ) {
                     $ingredient->delete;
 
-                    if ( not( $item and $item->ingredients->exists ) ) {
-                        $item->delete();
+                    if ( $item ? not $item->ingredients->exists : 1 ) {
+                        $item->delete() if $item;
                         next;
                     }
                 }
