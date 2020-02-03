@@ -2,10 +2,13 @@ package Coocook::Script::Dbck;
 
 # ABSTRACT: script for checking the database integrity just like `fsck` checks filesystems
 
+use feature 'fc';    # Perl 5.16
+use open ':locale';
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 use Coocook::Schema;
+use Coocook::Util;
 
 with 'MooseX::Getopt';
 
@@ -155,6 +158,24 @@ sub check_values {
             $count > 0
               and warn "Found $count rows with value of empty string '' in table $table\n";
         }
+    }
+
+    my $users = $schema->resultset('User');
+
+    while ( my $user = $users->next ) {
+        $user->name_fc eq fc( $user->name )
+          or warn sprintf "Incorrect name_fc for user '%s': '%s'\n", $user->name, $user->name_fc;
+    }
+
+    my $projects = $schema->resultset('Project');
+
+    while ( my $project = $projects->next ) {
+        $project->url_name eq Coocook::Util::url_name( $project->name )
+          or warn sprintf "Incorrect url_name for project '%s': '%s'\n", $project->name, $project->url_name;
+
+        $project->url_name_fc eq Coocook::Util::url_name( fc $project->name )
+          or warn sprintf "Incorrect url_name_fc for project '%s': '%s'\n", $project->name,
+          $project->url_name_fc;
     }
 }
 
