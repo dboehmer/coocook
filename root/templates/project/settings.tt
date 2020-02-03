@@ -34,7 +34,7 @@
     <p>This project is [% project.archived ? '📁' : '<strong>not</strong>' %] archived.</p>
 
     <form method="post" action="[% project.archived ? project_urls.unarchive : project_urls.archive %]">
-        <input type="submit" value="[% project.archived ? 'Un-archive' : 'Archive' %]">
+        <input type="submit" value="[% project.archived ? 'Un-archive' : '📁 Archive' %]">
     </form>
 </fieldset>
 
