@@ -7,7 +7,7 @@ use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
 use DBIx::Class::Helpers::Util qw< normalize_connect_info >;
 
-our $VERSION = 19;    # version of schema definition, not software version!
+our $VERSION = 20;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 

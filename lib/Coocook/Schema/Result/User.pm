@@ -43,20 +43,22 @@ __PACKAGE__->has_many(
     }
 );
 
+__PACKAGE__->has_many( groups_users => 'Coocook::Schema::Result::GroupUser' );
+__PACKAGE__->many_to_many( groups => groups_users => 'group' );
+
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
 
 __PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
 __PACKAGE__->many_to_many( terms => terms_users => 'terms' );
 
-# support virtual 'password' column
 around [ 'set_column', 'store_column' ] => sub {
     my ( $orig, $self, $column => $value ) = @_;
 
-    if ( $column eq 'name' ) {
+    if ( $column eq 'name' ) {    # automatically set 'name_fc' from 'name'
         $self->$orig( name_fc => fc($value) );
     }
-    elsif ( $column eq 'password' ) {
+    elsif ( $column eq 'password' ) {    # support virtual 'password' column
         my $password = Coocook::Model::Token->from_string($value);
 
         ( $column => $value ) = ( password_hash => $password->to_salted_hash );

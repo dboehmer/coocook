@@ -29,6 +29,9 @@ __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
 __PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
 
+__PACKAGE__->has_many( groups_projects => 'Coocook::Schema::Result::GroupProject' );
+__PACKAGE__->many_to_many( groups => groups_projects => 'group' );
+
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( users => projects_users => 'user' );
 
