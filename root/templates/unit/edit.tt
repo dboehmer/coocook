@@ -12,9 +12,9 @@
     </p>
 
     <p>
-        <label for="to_quantity_default">Factor to quantity's default unit:</label>
+        <label for="to_quantity_default">Factor to quantity’s default unit:</label>
 [% IF unit.is_quantity_default %]
-        <strong>is quantity's default unit</strong>
+        <strong>is quantity’s default unit</strong>
 [% ELSE %]
         [% display_value_unit(1, unit, {html=>1}) %] =
         <input  id="to_quantity_default" type="text" name="to_quantity_default" value="[% unit.to_quantity_default %]">

@@ -1,7 +1,7 @@
 [% title = "Sign In" %]
 
 [% IF register_url %]
-<p>You don't have an account yet? <a href="[% register_url %]">Sign up now!</a></p>
+<p>You don’t have an account yet? <a href="[% register_url %]">Sign up now!</a></p>
 [% END %]
 
 <form method="post" action="[% post_login_url %]">

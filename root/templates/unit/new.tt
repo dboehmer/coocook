@@ -26,7 +26,7 @@
     </p>
 
     <p>
-        <label for="new_to_quantity_default">Factor to quantity's default unit:</label>
+        <label for="new_to_quantity_default">Factor to quantity’s default unit:</label>
         <input  id="new_to_quantity_default" type="text" name="to_quantity_default" value="1">
     </p>
 

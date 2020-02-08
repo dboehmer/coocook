@@ -13,7 +13,7 @@
 <form action="[% dish.update_url %]" method="post">
 <p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
 <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
-<p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn't recalculate values!</em></p>
+<p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn’t recalculate values!</em></p>
 <p>Tags: <input type="text" name="tags" value="[% dish.tags_joined %]"></p>
 <p><label for="prepare_at_meal">Prepare at meal:</label>
     <select id="prepare_at_meal" name="prepare_at_meal">
