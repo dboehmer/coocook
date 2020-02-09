@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 70;
+use Test::Most tests => 72;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -17,6 +17,15 @@ $schema->resultset('BlacklistEmail')
 
 $schema->resultset('BlacklistUsername')
   ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
+
+my $group = $schema->resultset('Group')->create(
+    {
+        name           => "TestGroup",
+        display_name   => "Test Group",
+        description_md => __FILE__,
+        owner          => 9999
+    }
+);
 
 $t->get_ok('/');
 
@@ -46,6 +55,18 @@ $t->get_ok('/');
         { %userdata_ok, username => uc $blacklist_username },
         qr/username is not available/,
         "blacklisted username in uppercase"
+    );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => $group->name },
+        qr/username is not available/,
+        "group name"
+    );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => uc $group->name },
+        qr/username is not available/,
+        "group name in uppercase"
     );
 
     $t->register_ok( \%userdata_ok );

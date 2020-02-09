@@ -107,7 +107,10 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
         push @errors, "username must not contain other characters than 0-9, a-z and A-Z.";
     }
     else {
-        !$c->model('DB::User')->exists( { name_fc => fc($username) } )
+        my $name_fc = fc($username);
+
+        !$c->model('DB::Group')->exists( { name_fc => $name_fc } )
+          and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
           and $c->model('DB::BlacklistUsername')->is_username_ok($username)
           or push @errors, "username is not available";
     }
