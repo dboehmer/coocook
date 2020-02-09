@@ -14,6 +14,7 @@ sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vi
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
         change_password_url     => $c->uri_for( $self->action_for('change_password') ),
+        create_group_url        => $c->uri_for_action('/group/create'),
     );
 }
 

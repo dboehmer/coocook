@@ -16,17 +16,26 @@ use Carp;
 my @rules = (
     {
         needs_input  => [],
-        rule         => sub { 1 },       # currently no actual check required
-        capabilities => ['view_user'],
+        rule         => sub { 1 },                      # currently no actual check required
+        capabilities => [qw< view_group view_user >],
     },
     {
-        needs_input => ['user'],
-        rule        => sub { !!$_->{user} },    # simply: is anyone logged in?
-        capabilities =>
-          [qw< dashboard logout create_project view_user_settings change_display_name change_password >],
+        needs_input  => ['user'],
+        rule         => sub { !!$_->{user} },           # simply: is anyone logged in?
+        capabilities => [
+            qw< dashboard logout create_project view_user_settings change_display_name change_password create_group >
+        ],
     },
     {
-        needs_input => ['project'],             # optional: user
+        needs_input => [ 'group', 'user' ],
+        rule        => sub {
+            my ( $group, $user ) = @$_{ 'group', 'user' };
+            return ( $user->has_role('site_owner') or $user->has_any_group_rule( $group, 'owner', 'admin' ) );
+        },
+        capabilities => [qw< edit_group >],
+    },
+    {
+        needs_input => ['project'],    # optional: user
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
@@ -280,6 +289,8 @@ sub has_capability {
 
     return $rule->{rule}->() ? 1 : ();
 }
+
+sub group_roles { qw< member admin owner > }
 
 sub project_roles { qw< viewer editor admin owner > }
 

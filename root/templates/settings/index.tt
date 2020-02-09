@@ -18,3 +18,15 @@
     <input type="submit" value="Change password">
 </fieldset>
 </form>
+
+<form method="post" action="[% create_group_url %]">
+<fieldset>
+    <legend>Create a new user group</legend>
+    <p>You can pool users in groups and grant groups permissions on projects.
+    You will be member and owner of the new group.</p>
+
+    <input type="text" name="name" placeholder="group name">
+
+    <input type="submit" value="Create group">
+</fieldset>
+</form>
