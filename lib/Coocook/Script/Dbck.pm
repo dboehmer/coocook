@@ -10,15 +10,9 @@ use MooseX::MarkAsMethods autoclean => 1;
 use Coocook::Schema;
 use Coocook::Util;
 
-with 'MooseX::Getopt';
-
+with 'Coocook::Script::Role::HasDebug';
 with 'Coocook::Script::Role::HasSchema';
-
-has debug => (
-    is            => 'rw',
-    isa           => 'Bool',
-    documentation => "enable debugging output",
-);
+with 'MooseX::Getopt';
 
 sub run {
     my $self = shift;
