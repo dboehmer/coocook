@@ -29,11 +29,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     my $project = $c->model('DB::Project')->find_by_url_name($url_name)
       or $c->detach('/error/not_found');
 
-    if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {
-
-        # TODO redirect to same URL with $url_name in exact case
-        # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
-    }
+    $c->redirect_canonical_case( 0 => $project->url_name );
 
     $project->is_public
       or $c->stash->{robots}->index(0);

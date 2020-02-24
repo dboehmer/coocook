@@ -112,6 +112,43 @@ sub project {
     $c->stash->{project};
 }
 
+=head2 $c->redirect_canonical_case( $args_index, $value )
+
+Check the value of C<< $c->req->args >> at index C<$args_index>. If the value has
+different case than C<$value> redirects to the same URL with the correct value
+at index C<$args_index>.
+
+Effective only for GET and HEAD requests. Does nothing for any other request.
+
+    # given an object identified by 'Name':
+
+    POST /my_action/nAmE  # ignored because POST
+    GET  /my_action/nAmE  # redirects to:
+    GET  /my_action/Name
+
+=cut
+
+sub redirect_canonical_case {
+    my ( $c, $args_index, $value ) = @_;
+
+    $c->req->method eq 'GET'
+      or $c->req->method eq 'HEAD'
+      or return;
+
+    my $url_value = $c->req->args->[$args_index];
+
+    $url_value eq $value
+      and return 1;
+
+    my @args = @{ $c->req->captures };    # $c->req->args contains only args for current chain element
+    $args[$args_index] = $value;
+
+    my $uri = $c->uri_for( $c->action, \@args );
+    $uri->query( $c->req->uri->query );
+
+    $c->redirect_detach( $uri, 301 );
+}
+
 =head2 $c->redirect_detach(@redirect_args)
 
 Set HTTP C<Location:> header to redirect URI and detach from Catalyst request flow in 1 step.

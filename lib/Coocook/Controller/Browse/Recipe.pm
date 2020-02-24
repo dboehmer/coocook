@@ -95,17 +95,7 @@ sub base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     my $recipe = $c->model('DB::Recipe')->search( undef, { prefetch => 'project' } )->find($id)
       or $c->detach('/error/not_found');
 
-    if ( $c->req->method eq 'GET' or $c->req->method eq 'HEAD' ) {
-        if ( $url_name ne $recipe->url_name ) {
-            my $args = $c->req->args;
-            $args->[1] = $recipe->url_name;
-
-            my $uri = $c->uri_for( $c->action, $args );
-            $uri->query( $c->req->uri->query );
-
-            $c->redirect_detach( $uri, 301 );
-        }
-    }
+    $c->redirect_canonical_case( 1 => $recipe->url_name );
 
     $c->stash(
         recipe         => $recipe,

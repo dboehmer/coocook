@@ -37,9 +37,11 @@ sub create : POST Chained('/base') PathPart('group/create') Args(0)
 sub base : Chained('/base') PathPart('group') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
-    $c->stash( group => $c->model('Groups')->find_by_name($name) || $c->detach('/error/not_found') );
+    my $group = $c->model('Groups')->find_by_name($name) || $c->detach('/error/not_found');
 
-    # TODO redirect if case of $name doesn't match $user->name
+    $c->redirect_canonical_case( 0 => $group->name );
+
+    $c->stash( group => $group );
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_group') {
