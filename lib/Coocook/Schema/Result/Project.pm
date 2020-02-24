@@ -198,6 +198,24 @@ sub tags_from_names {
     return $self->tags->from_names($names);
 }
 
+=head2 groups_without_permission
+
+Returns a resultset with all C<Result::Group>s without any related C<groups_projects> record.
+
+=cut
+
+sub groups_without_permission {
+    my $self = shift;
+
+    my $permitted_groups = $self->groups_projects->get_column('group');
+
+    return $self->result_source->schema->resultset('Group')->search(
+        {
+            id => { -not_in => $permitted_groups->as_query },
+        }
+    );
+}
+
 =head2 other_projects
 
 Returns a resultset to all projects except itself.
@@ -210,7 +228,7 @@ sub other_projects {
     return $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
 }
 
-=head2 other_users
+=head2 users_without_permission
 
 Returns a resultset with all C<Result::User>s without any related C<projects_users> record.
 
