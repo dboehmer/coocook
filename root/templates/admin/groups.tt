@@ -1,0 +1,7 @@
+[% title = "Groups" %]
+
+<ul>
+[% FOR group IN groups %]
+    <li><a href="[% group.url %]">[% group.name %]</a> [% group.display_name | html %]</li>
+[% END %]
+</ul>

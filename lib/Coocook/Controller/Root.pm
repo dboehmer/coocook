@@ -146,8 +146,9 @@ sub auto : Private {
     if ( $c->has_capability('admin_view') ) {
         $c->stash(
             admin_url  => $c->uri_for_action('/admin/index'),
-            admin_urls => {
+            admin_urls => {                                     # TODO list duplicates code in Controller::Admin
                 faq      => $c->uri_for_action('/admin/faq/index'),
+                groups   => $c->uri_for_action('/admin/groups'),
                 projects => $c->uri_for_action('/admin/projects'),
                 terms    => $c->uri_for_action('/admin/terms/index'),
                 users    => $c->uri_for_action('/admin/user/index'),
