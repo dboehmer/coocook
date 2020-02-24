@@ -21,3 +21,11 @@
     </li>
 [% END %]
 </ul>
+
+<p>Member of the following groups:</p>
+
+<ul>
+[% FOR group IN groups %]
+    <li><a href="[% group.url %]">[% group.name %]</a> [% group.display_name | html %]</li>
+[% END %]
+</ul>

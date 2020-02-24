@@ -40,6 +40,12 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     my $user = $c->stash->{user_object};
 
+    my @groups = $user->groups->sorted->hri->all;
+
+    for my $group (@groups) {
+        $group->{url} = $c->uri_for_action( '/group/show', [ $group->{name} ] );
+    }
+
     my @projects = $user->owned_projects->public->hri->all;
 
     for my $project (@projects) {
@@ -54,7 +60,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $c->stash( profile_admin_url => $c->uri_for_action( '/admin/user/show', [ $user->name_fc ] ) );
     }
 
-    $c->stash( projects => \@projects );
+    $c->stash(
+        groups   => \@groups,
+        projects => \@projects,
+    );
 
     $c->stash->{robots}->archive(0);
 }

@@ -62,20 +62,21 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
         $c->stash( discard_url => $c->uri_for( $self->action_for('discard'), [ $user->name ] ) );
     }
 
+    $c->stash(
+        status             => $status_description,
+        group_memberships  => \my @group_memberships,
+        permissions        => \my @permissions,
+        public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
+        roles              => { map { $_ => 1 } $user->roles },
+    );
+
     my $permissions = $user->projects_users->search(
         undef,
         {
             prefetch => 'project',
             order_by => 'project.url_name_fc',
         }
-    );
-
-    $c->stash(
-        status             => $status_description,
-        permissions        => \my @permissions,
-        public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
-        update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
-        roles              => { map { $_ => 1 } $user->roles },
     );
 
     while ( my $permission = $permissions->next ) {
@@ -88,7 +89,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
         # THIS MUST NOT BE STORED TO THE DATABASE.
         $project->owner( $c->user->get_object );
 
-        $project = $project->as_hashref;
+        $project = $project->as_hashref;    # TODO make as_hashref() not inflate relationships
+                                            # (at least on request) to avoid hack above
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
 
@@ -96,6 +98,28 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
           {
             role    => $permission->role,
             project => $project,
+          };
+    }
+
+    my $memberships = $user->search_related(
+        groups_users => undef,
+        {
+            prefetch => 'group',
+            order_by => 'group.name',
+        }
+    );
+
+    while ( my $membership = $memberships->next ) {
+        my $group = $membership->group;
+        $group->owner( $c->user->get_object );    # TODO see above
+        $group = $group->as_hashref;
+
+        $group->{url} = $c->uri_for_action( '/group/show', [ $group->{name} ] );
+
+        push @group_memberships,
+          {
+            role  => $membership->role,
+            group => $group,
           };
     }
 }
