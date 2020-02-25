@@ -1,3 +1,5 @@
+[% title = "Terms" %]
+
 [% IF previous_url %]
     <a href="[% previous_url %]">previous</a>
 [% END %]
