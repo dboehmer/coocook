@@ -23,7 +23,7 @@ my @rules = (
         needs_input  => ['user'],
         rule         => sub { !!$_->{user} },           # simply: is anyone logged in?
         capabilities => [
-            qw< dashboard logout create_project view_user_settings change_display_name change_password create_group >
+            qw< view_dashboard logout create_project view_user_settings change_display_name change_password create_group >
         ],
     },
     {

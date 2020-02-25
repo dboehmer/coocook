@@ -167,7 +167,7 @@ sub auto : Private {
 sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
-    $c->detach( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
+    $c->detach( $c->has_capability('view_dashboard') ? 'dashboard' : 'homepage' );
 }
 
 sub homepage : Private {
