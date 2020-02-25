@@ -212,6 +212,7 @@ sub dashboard : Private {
     $c->stash(
         my_projects                => \@my_projects,
         other_projects             => \@other_projects,
+        all_my_projects_url        => $c->uri_for_action('/settings/projects'),
         project_create_url         => $c->uri_for_action('/project/create'),
         can_create_private_project => !!$c->has_capability('create_private_project'),
         template                   => 'dashboard.tt',

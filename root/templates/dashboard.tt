@@ -6,6 +6,8 @@
 [% END %]
 </ul>
 
+<p><a href="[% all_my_projects_url %]">All my projects</a></p>
+
 <form method="post" action="[% project_create_url %]">
 <fieldset>
     <legend>Create new project</legend>

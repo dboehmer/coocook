@@ -68,6 +68,18 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
 }
 
+sub projects : GET HEAD Chained('base') {
+    my ( $self, $c ) = @_;
+
+    my @projects = $c->user->projects->sorted->hri->all;
+
+    for my $project (@projects) {
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+    }
+
+    $c->stash( projects => \@projects );
+}
+
 sub redirect : Private {
     my ( $self, $c, $message ) = @_;
 
