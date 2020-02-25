@@ -41,6 +41,25 @@ sub uri_for_local_part {
     return $c->req->base . $local_part;
 }
 
+=head2 $c->uri_for(...)
+
+Overrides L<< $c->uri_for()|Catalyst/"$c->uri_for( $path?, @args?, \%query_values?, \$fragment? )" >>
+to raise an exception if the URI can't be generated.
+
+=cut
+
+around uri_for => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $uri = $self->$orig(@_);
+
+    return $uri if $uri;
+
+    local @Coocook::Helpers::CARP_NOT = 'Class::MOP::Method::Wrapped';
+    croak 'Catalyst->uri_for() returned undef';
+};
+
 =head2 $c->has_capability( $capability, \%input? )
 
 Returns boolish value from L<Coocook::Model::Authorization> whether current
