@@ -1,4 +1,4 @@
-<h2>My projects</h2>
+<h2>My active projects</h2>
 
 <ul>
 [% FOR proj IN my_projects; # don't overwrite $project! %]

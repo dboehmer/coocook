@@ -191,15 +191,19 @@ sub homepage : Private {
 sub dashboard : Private {
     my ( $self, $c ) = @_;
 
-    my $my_projects = $c->user->projects;
+    my $my_projects = $c->user->projects->union(
+        $c->user->groups->search_related('groups_projects')->search_related('project') )->not_archived;
 
     my @my_projects = $my_projects->sorted->hri->all;
 
-    my @other_projects = $c->model('DB::Project')->public->search(
-        {
-            id => { -not_in => $my_projects->get_column('id')->as_query },
-        }
-    )->sorted->hri->all;
+    my $other_projects = $c->model('DB::Project')->not_archived->public;
+
+    if ( @my_projects > 0 ) {
+        $other_projects =  # TODO for users with extremely many projects the SQL statement will be too large
+          $other_projects->search( { id => { -not_in => [ map { $_->{id} } @my_projects ] } } );
+    }
+
+    my @other_projects = $other_projects->sorted->hri->all;
 
     for my $project ( @my_projects, @other_projects ) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );

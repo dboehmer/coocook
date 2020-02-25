@@ -21,6 +21,8 @@ sub find_by_url_name {
     return $self->find( { url_name_fc => fc $url_name} );
 }
 
+sub not_archived { shift->search( { archived => undef } ) }
+
 sub public {
     my $self = shift;
 
