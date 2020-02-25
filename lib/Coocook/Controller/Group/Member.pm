@@ -39,6 +39,11 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
             $_->{transfer_ownership_url} =
               $c->uri_for( $self->action_for('make_owner'), [ $group->name, $group_user->user->name ] );
         }
+
+        if ( $c->has_capability( remove_user_from_group => { membership => $group_user } ) ) {
+            $_->{remove_url} =
+              $c->uri_for( $self->action_for('remove'), [ $group->name, $group_user->user->name ] );
+        }
     }
 
     if ( my @other_users = $group->users_without_membership->sorted->hri->all ) {
@@ -89,6 +94,13 @@ sub make_owner : POST Chained('base') PathPart('make_owner') Args(0)
     my ( $self, $c ) = @_;
 
     $c->stash->{membership}->make_owner;
+    $c->detach('redirect');
+}
+
+sub remove : POST Chained('base') Args(0) RequiresCapability('remove_user_from_group') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{membership}->delete();
     $c->detach('redirect');
 }
 

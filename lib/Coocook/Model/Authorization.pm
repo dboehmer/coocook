@@ -65,6 +65,27 @@ my @rules = (
     {
         needs_input => [ 'user', 'group', 'membership' ],
         rule        => sub {
+            my ( $user, $group, $membership ) = @$_{ 'user', 'group', 'membership' };
+
+            return if $membership->role eq 'owner';
+            return if $membership->user->id == $user->id and not $user->has_any_role('site_owner');
+
+            return (
+                $user->has_any_role('site_owner')
+                  or (
+                    $user->has_group_role(
+                        $group, $membership->role eq 'viewer'
+                        ? ( 'owner', 'admin' )
+                        : ('owner')
+                    )
+                  )
+            );
+        },
+        capabilities => 'remove_user_from_group',
+    },
+    {
+        needs_input => [ 'user', 'group', 'membership' ],
+        rule        => sub {
             my ( $group, $user, $membership ) = @$_{ 'group', 'user', 'membership' };
             return (
                 $membership->role eq 'admin'    # can be transferred only to admin
