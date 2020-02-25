@@ -28,16 +28,7 @@ around execute => sub {
     my ( $controller, $c ) = @_;
 
     if ( my $capabilities = $self->attributes->{RequiresCapability} ) {
-        for my $capability (@$capabilities) {
-            next if $c->has_capability( $capability, $c->stash );
-
-            # not logged in? try login and redirect here again
-            if ( $c->req->method eq 'GET' and not $c->user ) {
-                $c->redirect_detach( $c->redirect_uri_for_action('/session/login') );
-            }
-
-            $c->detach('/error/forbidden');
-        }
+        $c->requires_capability( $_, $c->stash ) for @$capabilities;
     }
 
     $self->$orig(@_);

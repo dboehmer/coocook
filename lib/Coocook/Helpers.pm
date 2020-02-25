@@ -88,6 +88,31 @@ sub has_capability {
     return $authz->has_capability( $capability, $input );
 }
 
+=head2 $c->requires_capability( $capability, \%input? )
+
+Checks authorization via L<Coocook::Model::Authorization>.
+If not permitted might ask user to log in
+or detaches to C</error/forbidden>.
+
+This can be called in any controller code and is called automatically
+if L<Coocook::ActionRole::RequiresCapability> is applied to an action.
+
+=cut
+
+sub requires_capability {
+    my $c = shift;
+
+    $c->has_capability(@_)
+      and return 1;
+
+    # not logged in? try login and redirect here again
+    if ( $c->req->method eq 'GET' and not $c->user ) {    # TODO also for HEAD?
+        $c->redirect_detach( $c->redirect_uri_for_action('/session/login') );
+    }
+
+    $c->detach('/error/forbidden');
+}
+
 =head2 $c->messages
 
 Returns the L<Coocook::Model::Messages> object for the current session.
