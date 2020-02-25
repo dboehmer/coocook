@@ -55,6 +55,6 @@
 
 <ul>
 [% FOR membership IN group_memberships %]
-    <li><a href="[% membership.group.url %]">[% membership.group.name %]</a> [% membership.group.display_name | html %] ([% membership.role %])</li>
+    <li><a href="[% membership.group.url %]">👥[% membership.group.name %]</a> [% membership.group.display_name | html %] ([% membership.role %])</li>
 [% END %]
 </ul>

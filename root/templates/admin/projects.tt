@@ -17,7 +17,7 @@
         <td>[% '🔒' UNLESS proj.is_public %]</td>
         <td><a href="[% proj.url %]">[% proj.name | html %]</a></td>
         <td>[% proj.created %]</td>
-        <td><a href="[% proj.owner.url %]">[% proj.owner.display_name | html %] ([% proj.owner.name %])</a></td>
+        <td><a href="[% proj.owner.url %]">👤[% proj.owner.name | html %]</a> [% proj.owner.display_name | html %]</td>
     </tr>
 [% END %]
 </tbody>

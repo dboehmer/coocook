@@ -14,7 +14,7 @@
 <tbody>
 [% FOR u IN users %]
     <tr>
-        <td><a href="[% u.url %]">[% u.name %]</a></td>
+        <td><a href="[% u.url %]">👤[% u.name %]</a></td>
         <td>[% u.display_name | html %]</td>
         <td>[% u.admin_comment | html %]</td>
         <td style="text-align:center">[% u.projects_count %]</td>
