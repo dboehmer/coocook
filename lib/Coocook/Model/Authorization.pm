@@ -30,12 +30,37 @@ my @rules = (
         needs_input => [ 'group', 'user' ],
         rule        => sub {
             my ( $group, $user ) = @$_{ 'group', 'user' };
+            return (
+                     $user->has_role('site_owner')
+                  or $user->search_related( groups_users => { group => $group->id } )->exists
+            );
+        },
+        capabilities => [qw< view_group_members >],
+    },
+    {
+        needs_input => [ 'group', 'user' ],
+        rule        => sub {
+            my ( $group, $user ) = @$_{ 'group', 'user' };
             return ( $user->has_role('site_owner') or $user->has_any_group_rule( $group, 'owner', 'admin' ) );
         },
         capabilities => [qw< edit_group >],
     },
     {
-        needs_input => ['project'],    # optional: user
+        needs_input => [ 'user', 'group', 'membership' ],
+        rule        => sub {
+            my ( $group, $user, $membership ) = @$_{ 'group', 'user', 'membership' };
+            return (
+                $membership->role eq 'admin'    # can be transferred only to admin
+                  and (
+                    $user->has_group_role( $group, 'owner' )    # allow transfer by current owner
+                    or $user->has_role('site_owner')            # allow transfer by site admin
+                  )
+            );
+        },
+        capabilities => 'transfer_group_ownership',
+    },
+    {
+        needs_input => ['project'],                             # optional: user
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
@@ -147,10 +172,10 @@ my @rules = (
             # can be transferred only to admin
             $permission->role eq 'admin' or return;
 
-            # allow transfer from current owner
+            # allow transfer by current owner
             return 1 if $user->has_project_role( $project, 'owner' );
 
-            # allow transfer from site admin
+            # allow transfer by site admin
             return 1 if $user->has_role('site_owner');
 
             return;

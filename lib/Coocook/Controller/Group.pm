@@ -62,6 +62,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash(
         groups_users => \@groups_users,
         update_url   => $c->uri_for( $self->action_for('update'), [ $group->name ] ),
+        members_url  => $c->uri_for_action( '/group/member/index', [ $group->name ] ),
     );
 }
 

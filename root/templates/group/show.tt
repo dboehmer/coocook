@@ -12,7 +12,9 @@
     <p><input type="submit" value="Update"></p>
 </form>
 
-<h2>Users</h2>
+<h2>Members</h2>
+
+<a href="[% members_url %]">Manage memberships</a>
 
 <ul>
 [% FOR group_user IN groups_users %]
