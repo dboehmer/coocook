@@ -1,5 +1,8 @@
 package Coocook::Controller::Group;
 
+use utf8;
+use feature 'fc';    # Perl v5.16
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use PerlX::Maybe;
@@ -24,7 +27,32 @@ sub create : POST Chained('/base') PathPart('group/create') Args(0)
 
     my $name = $c->req->params->get('name');
 
-    # TODO check uniqueness among users and groups
+    {
+        my @errors;
+
+        if ( $name !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
+            push @errors, "The group’s name must not contain other characters than 0-9, a-z, A-Z or _.";
+        }
+        else {
+            my $name_fc = fc($name);
+
+            !$c->model('DB::Group')->exists( { name_fc => $name_fc } )
+              and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
+              and $c->model('DB::BlacklistUsername')->is_username_ok($name)
+              or push @errors, "name is not available";
+        }
+
+        if (@errors) {
+            $c->messages->error($_) for @errors;
+
+            $c->stash(
+                template   => 'settings/groups.tt',
+                last_input => { name => $name },
+            );
+
+            $c->go('/settings/groups');
+        }
+    }
 
     my $group = $c->model('Groups')->create(
         name  => $name,

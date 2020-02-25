@@ -7,7 +7,7 @@
     <tr class="username">
         <th><label for="username">Username</label></th>
         <td>
-            <input id="username" type="text" name="username" placeholder="username" value="[% last_input.username | html %]" [% 'autofocus' IF NOT last_input.username %]>
+            <input id="username" type="text" name="username" placeholder="username" pattern="[A-Za-z0-9_]+" value="[% last_input.username | html %]" [% 'autofocus' IF NOT last_input.username %]>
             [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
         </td>
     </tr>

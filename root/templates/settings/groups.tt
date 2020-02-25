@@ -6,7 +6,7 @@
     <p>You can pool users in groups and grant groups permissions on projects.
     You will be member and owner of the new group.</p>
 
-    <input type="text" name="name" placeholder="group name">
+    <input type="text" name="name" placeholder="group name" pattern="[A-Za-z0-9_]+" value="[% last_input.name %]">
 
     <input type="submit" value="Create group">
 </fieldset>
