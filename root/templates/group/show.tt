@@ -1,11 +1,13 @@
 [% escape_title( 'Group', group.display_name ) %]
 
-<p>Name: [% group.name %]</p>
+<p>Name: 👥[% group.name %]</p>
 
-<form method="post" action="[% update_url %]">
+<p>
+<form class="inline" method="post" action="[% update_url %]">
     <input type="text" name="display_name" value="[% group.display_name %]">
     <p><input type="submit" value="Update"></p>
 </form>
+</p>
 
 <form method="post" action="[% update_url %]">
     <textarea class="with-markdown-preview" name="description_md">[% group.description_md | html %]</textarea>
@@ -19,6 +21,14 @@
 <ul>
 [% FOR group_user IN groups_users %]
     <li><a href="[% group_user.user_url %]">👤[% group_user.user.name %]</a> ([% group_user.role %])</li>
+[% END %]
+</ul>
+
+<h2>Projects</h2>
+
+<ul>
+[% FOR group_project IN groups_projects %]
+    <li><a href="[% group_project.project_url %]">[% '🔒' UNLESS group_project.project.is_public; group_project.project.name | html %]</a> ([% group_project.role %])</li>
 [% END %]
 </ul>
 

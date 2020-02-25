@@ -59,13 +59,25 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $group_user->user->name ] );
     }
 
+    my @groups_projects =
+      $group->search_related( groups_projects => undef, { prefetch => 'project' } )->all;
+
+    for (@groups_projects) {
+        my $group_project = $_;
+
+        $_ = $group_project->as_hashref;
+
+        $_->{project_url} = $c->uri_for_action( '/project/show', [ $group_project->project->url_name ] );
+    }
+
     $c->has_capability('delete_group')
       and $c->stash( delete_url => $c->uri_for( $self->action_for('delete'), [ $group->name ] ) );
 
     $c->stash(
-        groups_users => \@groups_users,
-        update_url   => $c->uri_for( $self->action_for('update'), [ $group->name ] ),
-        members_url  => $c->uri_for_action( '/group/member/index', [ $group->name ] ),
+        groups_users    => \@groups_users,
+        groups_projects => \@groups_projects,
+        update_url      => $c->uri_for( $self->action_for('update'), [ $group->name ] ),
+        members_url     => $c->uri_for_action( '/group/member/index', [ $group->name ] ),
     );
 }
 
