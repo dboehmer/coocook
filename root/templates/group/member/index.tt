@@ -1,5 +1,7 @@
 [% escape_title( 'Group members of', group.display_name ) %]
 
+<p><a href="[% group_url %]">Back to group page</a></p>
+
 <table>
     <thead>
         <tr>
