@@ -135,6 +135,7 @@ sub statistics {
         recipes         => $self->resultset('Recipe')->count_distinct('name'),
         public_projects => $self->resultset('Project')->public->count,
         users           => $self->resultset('User')->count,
+        groups          => $self->resultset('Group')->count,
     };
 }
 

@@ -6,4 +6,5 @@
     <li>approx. [% numerus(statistics.recipes, 'recipe', 'different recipes', { nice_number => 1 } ) %]</li>
     <li>[% numerus(statistics.public_projects, 'project', 'projects', { infix => 'public' } ) %]</li>
     <li>[% numerus(statistics.users, 'user', 'users') %]</li>
+    <li>[% numerus(statistics.groups, 'group', 'groups') %]</li>
 </ul>
