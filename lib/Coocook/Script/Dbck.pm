@@ -154,6 +154,17 @@ sub check_values {
         }
     }
 
+    {
+        my $groups       = $schema->resultset('Group');
+        my $usernames_fc = $schema->resultset('User')->get_column('name_fc');
+
+        my $duplicates = $groups->search( { name_fc => { -in => $usernames_fc->as_query } } )->hri;
+
+        while ( my $duplicate = $duplicates->next ) {
+            warn sprintf "Duplicate group/user name '%s'\n", $duplicate->{name};
+        }
+    }
+
     my $groups = $schema->resultset('Group');
 
     while ( my $group = $groups->next ) {
