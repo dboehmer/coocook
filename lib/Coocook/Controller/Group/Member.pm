@@ -40,6 +40,13 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
               $c->uri_for( $self->action_for('make_owner'), [ $group->name, $group_user->user->name ] );
         }
 
+        if (
+            $c->has_capability( edit_group_membership => { membership => $group_user, role => 'member' } ) )
+        {
+            $_->{edit_url} =
+              $c->uri_for( $self->action_for('edit'), [ $group->name, $group_user->user->name ] );
+        }
+
         if ( $c->has_capability( remove_user_from_group => { membership => $group_user } ) ) {
             $_->{remove_url} =
               $c->uri_for( $self->action_for('remove'), [ $group->name, $group_user->user->name ] );
@@ -91,6 +98,19 @@ sub base : Chained('/group/base') PathPart('member') CaptureArgs(1) {
       $c->stash->{group}
       ->find_related( groups_users => { 'user.name' => $name }, { prefetch => 'user' } )
       || $c->detach('/error/bad_request');
+}
+
+sub edit : POST Chained('base') Args(0) Public    # custom requires_capability() call below
+{
+    my ( $self, $c ) = @_;
+
+    my $role = $c->req->params->get('role');
+
+    $c->requires_capability( edit_group_membership => { role => $role } );
+
+    $c->stash->{membership}->update( { role => $role } );
+
+    $c->detach('redirect');
 }
 
 sub make_owner : POST Chained('base') PathPart('make_owner') Args(0)

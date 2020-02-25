@@ -13,7 +13,20 @@
 [% FOR g_u IN groups_users %]
         <tr>
             <td><a href="[% g_u.user_url %]">👤[% g_u.user.name %]</a> [% g_u.user.display_name | html %]</td>
-            <td>[% g_u.role == 'owner' ? '<strong>owner</strong>' : g_u.role %]</td>
+            <td>
+    [% IF g_u.edit_url %]
+                <form method="post" action="[% g_u.edit_url %]" class="inline">
+                    <select name="role">
+        [% FOR role IN roles %]
+                        <option value="[% role %]" [% 'selected' IF g_u.role == role %]>[% role %]</option>
+        [% END %]
+                    </select>
+                    <input type="submit" value="Save">
+                </form>
+    [% ELSE %]
+                [% g_u.role %]
+    [% END %]
+            </td>
             <td>
                 [% IF g_u.remove_url %]
                     <form class="inline" method="post" action="[% g_u.remove_url %]">

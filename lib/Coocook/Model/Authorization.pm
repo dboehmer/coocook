@@ -65,7 +65,7 @@ my @rules = (
     {
         needs_input => [ 'user', 'group', 'membership' ],
         rule        => sub {
-            my ( $user, $group, $membership ) = @$_{ 'user', 'group', 'membership' };
+            my ( $capability, $user, $group, $membership ) = @$_{ 'capability', 'user', 'group', 'membership' };
 
             return if $membership->role eq 'owner';
             return if $membership->user->id == $user->id and not $user->has_any_role('site_owner');
@@ -74,14 +74,18 @@ my @rules = (
                 $user->has_any_role('site_owner')
                   or (
                     $user->has_group_role(
-                        $group, $membership->role eq 'viewer'
+                        $group,
+
+                        # removal of viewers is permitted for admins, too,
+                        # otherwise only owners
+                        $capability eq 'remove_user_from_group' && $membership->role eq 'viewer'
                         ? ( 'owner', 'admin' )
                         : ('owner')
                     )
                   )
             );
         },
-        capabilities => 'remove_user_from_group',
+        capabilities => [qw< edit_group_membership remove_user_from_group >],
     },
     {
         needs_input => [ 'user', 'group', 'membership' ],
