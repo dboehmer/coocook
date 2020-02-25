@@ -102,7 +102,15 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_group') {
     $c->stash->{group}->delete();
 
     $c->redirect_detach(
-        $c->has_capability('admin_view') ? $c->uri_for_action('/admin/groups') : $c->uri_for('/') );
+        $c->uri_for_action( $c->has_capability('admin_view') ? '/admin/groups' : '/settings/index' ) );
+}
+
+sub leave : POST Chained('base') Args(0) RequiresCapability('leave_group') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{group}->delete_related( groups_users => { user => $c->user->id } );
+
+    $c->redirect_detach( $c->uri_for_action('/settings/index') );
 }
 
 sub redirect : Private {

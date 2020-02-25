@@ -41,6 +41,15 @@ my @rules = (
         needs_input => [ 'group', 'user' ],
         rule        => sub {
             my ( $group, $user ) = @$_{ 'group', 'user' };
+            return if $group->get_column('owner') == $user->id;               # owner must not leave
+            return $user->groups_users->exists( { group => $group->id } );    # user is group member?
+        },
+        capabilities => [qw< leave_group >],
+    },
+    {
+        needs_input => [ 'group', 'user' ],
+        rule        => sub {
+            my ( $group, $user ) = @$_{ 'group', 'user' };
             return (
                      $user->has_any_role('site_owner')
                   or $user->has_any_group_rule( $group, 'owner', 'admin' )

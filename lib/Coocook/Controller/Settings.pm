@@ -10,11 +10,27 @@ sub base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
 sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user_settings') {
     my ( $self, $c ) = @_;
 
+    my @groups_users = $c->user->search_related( groups_users => undef, { prefetch => 'group' } )->all;
+
+    for (@groups_users) {
+        my $group_user = $_;
+        my $group      = $_->group;
+
+        $_ = $group_user->as_hashref;
+
+        $_->{group_url} = $c->uri_for_action( '/group/show', [ $group->name ] );
+
+        if ( $c->has_capability( leave_group => { group => $group } ) ) {
+            $_->{leave_url} = $c->uri_for_action( '/group/leave', [ $group->name ] );
+        }
+    }
+
     $c->stash(
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
         change_password_url     => $c->uri_for( $self->action_for('change_password') ),
         create_group_url        => $c->uri_for_action('/group/create'),
+        groups_users            => \@groups_users,
     );
 }
 
