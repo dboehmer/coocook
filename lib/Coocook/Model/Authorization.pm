@@ -46,6 +46,20 @@ my @rules = (
         capabilities => [qw< edit_group >],
     },
     {
+        needs_input => [ 'user', 'group', 'user_object', 'role' ],
+        rule        => sub {
+            my ( $user, $group, $user_object, $role ) = @$_{ 'user', 'group', 'user_object', 'role' };
+
+            return if $role eq 'owner';
+            return unless grep { $role eq $_ } group_roles();
+
+            return if $group->groups_users->exists( { user => $user_object->id } );    # is already group member
+
+            return ( $user->has_role('site_owner') or $user->has_group_role( $group, 'owner' ) );
+        },
+        capabilities => [qw< add_user_to_group >],
+    },
+    {
         needs_input => [ 'user', 'group', 'membership' ],
         rule        => sub {
             my ( $group, $user, $membership ) = @$_{ 'group', 'user', 'membership' };

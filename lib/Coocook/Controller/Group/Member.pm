@@ -41,7 +41,38 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
         }
     }
 
+    if ( my @other_users = $group->users_without_membership->sorted->hri->all ) {
+        $c->stash(
+            roles       => [ grep { $_ ne 'owner' } $c->model('Authorization')->group_roles ],
+            add_url     => $c->uri_for( $self->action_for('add'), [ $group->name ] ),
+            other_users => \@other_users,
+        );
+    }
+
     $c->stash( groups_users => \@groups_users );
+}
+
+sub add : POST Chained('/group/base') Args(0) Public    # custom requires_capability() call below
+{
+    my ( $self, $c ) = @_;
+
+    my $group = $c->stash->{group};
+
+    my $name = $c->req->params->get('name');
+    my $role = $c->req->params->get('role');
+
+    my $user = $c->model('DB::User')->find( { name => $name } ) || $c->detach('/error/bad_request');
+
+    $c->requires_capability( add_user_to_group => { role => $role, user_object => $user } );
+
+    $group->create_related(
+        groups_users => {
+            user => $user->id,
+            role => $role
+        }
+    );
+
+    $c->detach('redirect');
 }
 
 sub base : Chained('/group/base') PathPart('member') CaptureArgs(1) {

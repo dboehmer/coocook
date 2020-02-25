@@ -61,4 +61,22 @@ sub has_any_project_role {
     return $self->groups_projects->exists( { project => $project->id, role => { -in => $roles } } );
 }
 
+=head2 users_without_membership
+
+Returns a resultset with all C<Result::User>s without any related C<groups_users> record.
+
+=cut
+
+sub users_without_membership {
+    my $self = shift;
+
+    my $members = $self->groups_users->get_column('user');
+
+    return $self->result_source->schema->resultset('User')->search(
+        {
+            id => { -not_in => $members->as_query },
+        }
+    );
+}
+
 1;

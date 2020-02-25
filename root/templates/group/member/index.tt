@@ -23,3 +23,31 @@
 [% END %]
     </tbody>
 </table>
+
+<p>You need another member with role <em>admin</em> to transfer ownership to them.</p>
+
+<fieldset>
+    <legend>Add members</legend>
+
+[% IF other_users %]
+    <form method="post" action="[% add_url %]">
+        <select name="name">
+[% FOR other_user IN other_users %]
+            <option value="[% other_user.name %]">👤[% other_user.name | html %] ([% other_user.display_name | html %])</option>
+[% END %]
+        </select>
+
+        as
+
+        <select name="role">
+[% FOR role IN roles %]
+            <option value="[% role %]">[% role %]</option>
+[% END %]
+        </select>
+
+        <input type="submit" value="Add">
+    </form>
+[% ELSE %]
+    <p>No more users. You need to let users sign up before adding them to this group.</p>
+[% END %]
+</fieldset>
