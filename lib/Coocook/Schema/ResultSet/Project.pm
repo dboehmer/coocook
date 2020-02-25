@@ -29,7 +29,7 @@ sub public {
 
 =head2 stale
 
-Returns a new resultset with projects that are completetly in the past.
+Returns a new resultset with projects that are completely in the past.
 Indicates that these can be archived.
 
 =cut
