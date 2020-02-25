@@ -154,6 +154,13 @@ sub check_values {
         }
     }
 
+    my $groups = $schema->resultset('Group');
+
+    while ( my $group = $groups->next ) {
+        $group->name_fc eq fc( $group->name )
+          or warn sprintf "Incorrect name_fc for group '%s': '%s'\n", $group->name, $group->name_fc;
+    }
+
     my $users = $schema->resultset('User');
 
     while ( my $user = $users->next ) {
