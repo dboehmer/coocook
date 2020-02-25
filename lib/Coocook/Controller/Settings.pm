@@ -5,9 +5,25 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-sub base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
+sub base : Chained('/base') PathPart('settings') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
 
-sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user_settings') {
+    $c->stash(
+        submenu_items => [
+            { action => 'settings/account',  text => "Account" },
+            { action => 'settings/groups',   text => "Groups" },
+            { action => 'settings/projects', text => "Projects" },
+        ],
+    );
+}
+
+sub index : GET HEAD Chained('base') PathPart('') Args(0) Public {
+    my ( $self, $c ) = @_;
+
+    $c->redirect_detach( $c->uri_for( $self->action_for('account') ) );
+}
+
+sub account : GET HEAD Chained('base') Args(0) RequiresCapability('view_account_settings') {
     my ( $self, $c ) = @_;
 
     $c->stash(
@@ -75,7 +91,7 @@ sub groups : GET HEAD Chained('base') Args(0) RequiresCapability('view_user_grou
     );
 }
 
-sub projects : GET HEAD Chained('base') {
+sub projects : GET HEAD Chained('base') RequiresCapability('view_user_projects') {
     my ( $self, $c ) = @_;
 
     my @projects = $c->user->projects->sorted->hri->all;

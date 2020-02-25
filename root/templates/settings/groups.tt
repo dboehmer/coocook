@@ -1,4 +1,4 @@
-[% title = "Groups" %]
+[% title = "My groups" %]
 
 <form method="post" action="[% create_group_url %]">
 <fieldset>

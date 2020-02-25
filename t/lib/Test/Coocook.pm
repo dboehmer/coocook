@@ -241,7 +241,7 @@ sub is_logged_in {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_like( qr/Account [Ss]ettings/, $name || "client is logged in" )
+    $self->content_contains( 'Settings', $name || "client is logged in" )
       or note $self->content;
 }
 
@@ -322,7 +322,7 @@ sub change_password_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "change password", sub {
-        $self->follow_link_ok( { text => 'Account Settings' } );
+        $self->follow_link_ok( { text => 'Settings' } );
 
         $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
     };
@@ -334,7 +334,7 @@ sub change_display_name_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "change display name", sub {
-        $self->follow_link_ok( { text => 'Account Settings' } );
+        $self->follow_link_ok( { text => 'Settings' } );
 
         $self->submit_form_ok(
             {

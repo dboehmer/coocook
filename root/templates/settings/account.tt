@@ -1,4 +1,4 @@
-[% title = "Settings" %]
+[% title = "Account settings" %]
 
 <p><a href="[% profile_url %]">View your profile</a></p>
 

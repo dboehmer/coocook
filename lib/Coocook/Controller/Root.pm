@@ -256,7 +256,7 @@ sub end : ActionClass('RenderView') {
         }
 
         if ( $c->action ne $action ) {
-            if ( $action =~ m/ ^ admin /x ) {    # TODO how to distinguish this in a generic way?
+            if ( $action =~ m/ ^ (admin|settings) \/ /x ) {    # TODO how to distinguish this in a generic way?
                 $item->{url} = $c->uri_for_action($action);
             }
             else {

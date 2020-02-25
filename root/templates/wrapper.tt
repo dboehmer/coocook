@@ -62,7 +62,7 @@
 [% END %]
 
 [% IF settings_url %]
-    <li><a href="[% settings_url %]">Account Settings</a></li>
+    <li><a href="[% settings_url %]">Settings</a></li>
 [% END %]
 
 [% IF logout_url %]
