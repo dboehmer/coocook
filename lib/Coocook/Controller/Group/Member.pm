@@ -57,6 +57,7 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
     $c->stash(
         group_url    => $c->uri_for_action( '/group/show', [ $group->name ] ),
         groups_users => \@groups_users,
+        template     => 'group/members.tt',
     );
 }
 
