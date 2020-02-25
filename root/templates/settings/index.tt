@@ -20,39 +20,3 @@
     <input type="submit" value="Change password">
 </fieldset>
 </form>
-
-<form method="post" action="[% create_group_url %]">
-<fieldset>
-    <legend>Create a new user group</legend>
-    <p>You can pool users in groups and grant groups permissions on projects.
-    You will be member and owner of the new group.</p>
-
-    <input type="text" name="name" placeholder="group name">
-
-    <input type="submit" value="Create group">
-</fieldset>
-</form>
-
-<fieldset>
-    <legend>Your Groups</legend>
-
-[% IF groups_users.size > 0 %]
-    <p>Before you can leave a group you need to transfer group ownership to another group member.</p>
-
-    <ul>
-    [% FOR group_user IN groups_users;
-        group = group_user.group %]
-        <li>
-            <a href="[% group_user.group_url %]">👥[% group.name %]</a> [% group.display_name | html %] ([% group_user.role %])
-        [% IF group_user.leave_url %]
-            <form class="inline" method="post" action="[% group_user.leave_url %]">
-                <input type="submit" value="Leave group">
-            </form>
-        [% END %]
-        </li>
-    [% END %]
-    </ul>
-[% ELSE %]
-    <p>None.</p>
-[% END %]
-</fieldset>

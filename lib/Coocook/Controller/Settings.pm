@@ -10,27 +10,10 @@ sub base : Chained('/base') PathPart('settings') CaptureArgs(0) { }
 sub index : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user_settings') {
     my ( $self, $c ) = @_;
 
-    my @groups_users = $c->user->search_related( groups_users => undef, { prefetch => 'group' } )->all;
-
-    for (@groups_users) {
-        my $group_user = $_;
-        my $group      = $_->group;
-
-        $_ = $group_user->as_hashref;
-
-        $_->{group_url} = $c->uri_for_action( '/group/show', [ $group->name ] );
-
-        if ( $c->has_capability( leave_group => { group => $group } ) ) {
-            $_->{leave_url} = $c->uri_for_action( '/group/leave', [ $group->name ] );
-        }
-    }
-
     $c->stash(
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
         change_password_url     => $c->uri_for( $self->action_for('change_password') ),
-        create_group_url        => $c->uri_for_action('/group/create'),
-        groups_users            => \@groups_users,
     );
 }
 
@@ -66,6 +49,30 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     $c->visit( '/email/password_changed', [$user] );
 
     $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
+}
+
+sub groups : GET HEAD Chained('base') Args(0) RequiresCapability('view_user_groups') {
+    my ( $self, $c ) = @_;
+
+    my @groups_users = $c->user->search_related( groups_users => undef, { prefetch => 'group' } )->all;
+
+    for (@groups_users) {
+        my $group_user = $_;
+        my $group      = $_->group;
+
+        $_ = $group_user->as_hashref;
+
+        $_->{group_url} = $c->uri_for_action( '/group/show', [ $group->name ] );
+
+        if ( $c->has_capability( leave_group => { group => $group } ) ) {
+            $_->{leave_url} = $c->uri_for_action( '/group/leave', [ $group->name ] );
+        }
+    }
+
+    $c->stash(
+        create_group_url => $c->uri_for_action('/group/create'),
+        groups_users     => \@groups_users,
+    );
 }
 
 sub projects : GET HEAD Chained('base') {

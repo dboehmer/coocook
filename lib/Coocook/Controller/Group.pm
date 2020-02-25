@@ -110,7 +110,7 @@ sub leave : POST Chained('base') Args(0) RequiresCapability('leave_group') {
 
     $c->stash->{group}->delete_related( groups_users => { user => $c->user->id } );
 
-    $c->redirect_detach( $c->uri_for_action('/settings/index') );
+    $c->redirect_detach( $c->uri_for_action('/settings/groups') );
 }
 
 sub redirect : Private {
