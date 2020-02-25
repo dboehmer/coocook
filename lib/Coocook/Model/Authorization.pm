@@ -102,7 +102,15 @@ my @rules = (
         capabilities => 'transfer_group_ownership',
     },
     {
-        needs_input => ['project'],                             # optional: user
+        needs_input => [ 'user', 'group' ],
+        rule        => sub {
+            my ( $group, $user ) = @$_{ 'group', 'user' };
+            return ( $user->has_group_role( $group, 'owner' ) or $user->has_any_role('site_owner') );
+        },
+        capabilities => 'delete_group',
+    },
+    {
+        needs_input => ['project'],    # optional: user
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (

@@ -59,6 +59,9 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $group_user->user->name ] );
     }
 
+    $c->has_capability('delete_group')
+      and $c->stash( delete_url => $c->uri_for( $self->action_for('delete'), [ $group->name ] ) );
+
     $c->stash(
         groups_users => \@groups_users,
         update_url   => $c->uri_for( $self->action_for('update'), [ $group->name ] ),
@@ -79,6 +82,15 @@ sub update : POST Chained('base') PathPart('') Args(0) RequiresCapability('edit_
       and $c->stash->{group}->update( \%cols );
 
     $c->forward('redirect');
+}
+
+sub delete : POST Chained('base') Args(0) RequiresCapability('delete_group') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{group}->delete();
+
+    $c->redirect_detach(
+        $c->has_capability('admin_view') ? $c->uri_for_action('/admin/groups') : $c->uri_for('/') );
 }
 
 sub redirect : Private {

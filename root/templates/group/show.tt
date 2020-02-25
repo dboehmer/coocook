@@ -21,3 +21,13 @@
     <li><a href="[% group_user.user_url %]">👤[% group_user.user.name %]</a> ([% group_user.role %])</li>
 [% END %]
 </ul>
+
+[% IF delete_url %]
+<h2>Delete group</h2>
+
+<p>Deleting a group also removes all group memberships and the group’s permissions on projects.</p>
+
+<form method="post" action="[% delete_url %]">
+    <input type="submit" value="Delete group">
+</form>
+[% END %]
