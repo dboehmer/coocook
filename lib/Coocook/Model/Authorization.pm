@@ -123,16 +123,42 @@ my @rules = (
         },
         capabilities => [
             qw<
-              view_project_settings create_project_permission
+              view_project_settings
               update_project rename_project delete_project
               archive_project unarchive_project
               >
         ],
     },
     {
+        needs_input => [ 'project', 'user', 'role' ],
+        rule        => sub {
+            my ( $capability, $project, $user, $role ) = @$_{ 'capability', 'project', 'user', 'role' };
+
+            return if $role eq 'owner';
+            return unless grep { $role eq $_ } project_roles();
+
+            my $permissions =
+                $capability eq 'add_group_permission' ? $_->{group}->groups_projects
+              : $capability eq 'add_user_permission'  ? $_->{user_object}->projects_users
+              :                                         die "code broken";
+
+            return if $permissions->exists( { project => $project->id } );    # already has permission
+
+            return ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) );
+        },
+        capabilities => [qw< add_group_permission add_user_permission >],
+    },
+    {
         needs_input => [ 'project', 'permission', 'user' ],
         rule        => sub {
-            my ( $project, $permission, $user ) = @$_{ 'project', 'permission', 'user' };
+            my ( $capability, $project, $permission, $user ) = @$_{qw<capability project permission user>};
+
+            if ( $capability eq 'edit_project_permission' ) {
+                my $role = $_->{role} || croak "missing input key 'role'";
+                return if $role eq 'owner';
+                return unless grep { $role eq $_ } project_roles();
+            }
+
             return (
                 $permission->role ne 'owner'    # owner must never be removed/degraded (transfer ownership first)
                   and (

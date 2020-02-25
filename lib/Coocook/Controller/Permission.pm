@@ -21,7 +21,8 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
                 group     => $group_project->group,
                 group_url => $c->uri_for_action( '/group/show', [ $group_project->group->name ] ),
 
-                edit_url => $c->has_capability( 'edit_project_permission', { permission => $group_project } )
+                edit_url => $c->has_capability( 'edit_project_permission',
+                    { permission => $group_project, role => 'viewer' } )
                 ? $c->project_uri( $self->action_for('edit'), $group_project->group->name )
                 : undef,
 
@@ -42,7 +43,9 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
                 user     => $project_user->user,
                 user_url => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
 
-                edit_url => $c->has_capability( 'edit_project_permission', { permission => $project_user } )
+                edit_url => $c->has_capability(
+                    edit_project_permission => { permission => $project_user, role => 'viewer' }
+                  )
                 ? $c->project_uri( $self->action_for('edit'), $project_user->user->name )
                 : undef,
 
@@ -84,22 +87,29 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
 }
 
 sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
-  RequiresCapability('create_project_permission') {
+  Public    # custom requires_capability() calls below
+{
     my ( $self, $c ) = @_;
 
+    my $role = $c->req->params->get('role');
+
     if ( my $group = $c->model('DB::Group')->find( { name => $c->req->params->get('id') } ) ) {
+        $c->requires_capability( add_group_permission => { group => $group, role => $role } );
+
         $c->project->create_related(
             groups_projects => {
                 group => $group->id,
-                role  => $c->req->params->get('role'),
+                role  => $role,
             }
         );
     }
     elsif ( my $user = $c->model('DB::User')->find( { name => $c->req->params->get('id') } ) ) {
+        $c->requires_capability( add_user_permission => { role => $role, user_object => $user } );
+
         $c->project->create_related(
             projects_users => {
                 user => $user->id,
-                role => $c->req->params->get('role'),
+                role => $role,
             }
         );
     }
@@ -120,16 +130,13 @@ sub base : Chained('/project/base') PathPart('permissions') CaptureArgs(1) {
 }
 
 sub edit : POST Chained('base') PathPart('edit') Args(0)
-  RequiresCapability('edit_project_permission') {
+  Public    # custom requires_capability() call below
+{
     my ( $self, $c ) = @_;
-
-    my @applicable_roles = grep { $_ ne 'owner' } $c->model('Authorization')->project_roles;
 
     my $role = $c->req->params->get('role');
 
-    if ( not grep { $_ eq $role } @applicable_roles ) {
-        $c->detach('/error/bad_request');
-    }
+    $c->requires_capability( edit_project_permission => { role => $role } );
 
     $c->stash->{permission}->update( { role => $role } );
 
