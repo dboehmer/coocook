@@ -31,7 +31,7 @@ my @rules = (
         rule        => sub {
             my ( $group, $user ) = @$_{ 'group', 'user' };
             return (
-                     $user->has_role('site_owner')
+                     $user->has_any_role('site_owner')
                   or $user->search_related( groups_users => { group => $group->id } )->exists
             );
         },
@@ -41,7 +41,10 @@ my @rules = (
         needs_input => [ 'group', 'user' ],
         rule        => sub {
             my ( $group, $user ) = @$_{ 'group', 'user' };
-            return ( $user->has_role('site_owner') or $user->has_any_group_rule( $group, 'owner', 'admin' ) );
+            return (
+                     $user->has_any_role('site_owner')
+                  or $user->has_any_group_rule( $group, 'owner', 'admin' )
+            );
         },
         capabilities => [qw< edit_group >],
     },
@@ -55,7 +58,7 @@ my @rules = (
 
             return if $group->groups_users->exists( { user => $user_object->id } );    # is already group member
 
-            return ( $user->has_role('site_owner') or $user->has_group_role( $group, 'owner' ) );
+            return ( $user->has_any_role('site_owner') or $user->has_group_role( $group, 'owner' ) );
         },
         capabilities => [qw< add_user_to_group >],
     },
@@ -67,7 +70,7 @@ my @rules = (
                 $membership->role eq 'admin'    # can be transferred only to admin
                   and (
                     $user->has_group_role( $group, 'owner' )    # allow transfer by current owner
-                    or $user->has_role('site_owner')            # allow transfer by site admin
+                    or $user->has_any_role('site_owner')        # allow transfer by site admin
                   )
             );
         },
@@ -81,7 +84,7 @@ my @rules = (
                 $project->is_public
                   or (
                     $user
-                    and (  $user->has_role('site_owner')
+                    and (  $user->has_any_role('site_owner')
                         or $user->has_any_project_role( $project, qw< viewer editor admin owner > ) )
                   )
             );
@@ -96,7 +99,7 @@ my @rules = (
             my ( $source_project, $user ) = @$_{ 'source_project', 'user' };
             return (
                      $source_project->is_public
-                  or $user->has_role('site_owner')
+                  or $user->has_any_role('site_owner')
                   or $user->has_any_project_role( $source_project, qw< viewer editor admin owner > )
             );
         },
@@ -108,7 +111,7 @@ my @rules = (
             my ( $project, $user ) = @$_{ 'project', 'user' };
             $project->archived and return;
             return (
-                     $user->has_role('site_owner')
+                     $user->has_any_role('site_owner')
                   or $user->has_any_project_role( $project, qw< editor admin owner > )
             );
         },
@@ -119,7 +122,7 @@ my @rules = (
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
-                     $user->has_role('site_owner')
+                     $user->has_any_role('site_owner')
                   or $user->has_any_project_role( $project, qw< admin owner > )
             );
         },
@@ -133,7 +136,7 @@ my @rules = (
             return if $capability eq 'archive_project'   and $project->archived;
             return if $capability eq 'unarchive_project' and not $project->archived;
 
-            return ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) );
+            return ( $user->has_any_role('site_owner') or $user->has_any_project_role( $project, 'owner' ) );
         },
         capabilities => [
             qw<
@@ -158,7 +161,7 @@ my @rules = (
 
             return if $permissions->exists( { project => $project->id } );    # already has permission
 
-            return ( $user->has_role('site_owner') or $user->has_project_role( $project, 'owner' ) );
+            return ( $user->has_any_role('site_owner') or $user->has_any_project_role( $project, 'owner' ) );
         },
         capabilities => [qw< add_group_permission add_user_permission >],
     },
@@ -176,12 +179,12 @@ my @rules = (
             return (
                 $permission->role ne 'owner'    # owner must never be removed/degraded (transfer ownership first)
                   and (
-                    $user->has_role('site_owner')    # either user is site owner
-                    or (                             # or user is project owner and this is not owner
-                                                     # (yes, this checked twice: $permission must not be owner's
-                                                     #  and $user must be owner and must not be $permission->user)
+                    $user->has_any_role('site_owner')    # either user is site owner
+                    or (                                 # or user is project owner and this is not owner
+                                                         # (yes, this checked twice: $permission must not be owner's
+                                                         #  and $user must be owner and must not be $permission->user)
 
-                        $permission->user->id != $user->id and $user->has_project_role( $project, 'owner' )
+                        $permission->user->id != $user->id and $user->has_any_project_role( $project, 'owner' )
                     )
                   )
             );
@@ -198,8 +201,9 @@ my @rules = (
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
             return (
-                $user->has_role('site_owner')
-                  or ( $user->has_role('private_projects') and $user->has_project_role( $project, 'owner' ) )
+                $user->has_any_role('site_owner')
+                  or
+                  ( $user->has_any_role('private_projects') and $user->has_any_project_role( $project, 'owner' ) )
             );
         },
         capabilities => [qw< make_project_private edit_project_visibility >],
@@ -213,10 +217,10 @@ my @rules = (
             $permission->role eq 'admin' or return;
 
             # allow transfer by current owner
-            return 1 if $user->has_project_role( $project, 'owner' );
+            return 1 if $user->has_any_project_role( $project, 'owner' );
 
             # allow transfer by site admin
-            return 1 if $user->has_role('site_owner');
+            return 1 if $user->has_any_role('site_owner');
 
             return;
         },
@@ -232,7 +236,7 @@ my @rules = (
             return 1
               if $user and $user->has_any_project_role( $recipe->project, qw< viewer editor admin owner > );
 
-            return 1 if $user and $user->has_role('site_owner');
+            return 1 if $user and $user->has_any_role('site_owner');
 
             return;
         },
@@ -247,7 +251,7 @@ my @rules = (
             $recipe->get_column('project') != $project->id
               or return;
 
-            return 1 if $user->has_role('site_owner');
+            return 1 if $user->has_any_role('site_owner');
 
             return 1 if $user->has_any_project_role( $project, qw< viewer editor admin owner > );
 
@@ -257,15 +261,15 @@ my @rules = (
     },
     {
         needs_input  => ['user'],
-        rule         => sub { $_->{user}->has_role('site_owner') },
+        rule         => sub { $_->{user}->has_any_role('site_owner') },
         capabilities => [qw< admin_view manage_faqs manage_terms manage_users view_all_recipes >],
     },
     {
         needs_input => [ 'user', 'user_object' ],
         rule        => sub {
             my ( $user, $user_object ) = @$_{ 'user', 'user_object' };
-            $user->has_role('site_owner') or return;
-            $user->id != $user_object->id or return;
+            $user->has_any_role('site_owner') or return;
+            $user->id != $user_object->id     or return;
             return 1;
         },
         capabilities => ['toggle_site_owner'],
@@ -274,7 +278,7 @@ my @rules = (
         needs_input => [ 'user', 'user_object' ],
         rule        => sub {
             my ( $user, $user_object ) = @$_{ 'user', 'user_object' };
-            $user->has_role('site_owner')             or return;
+            $user->has_any_role('site_owner')         or return;
             $user_object->status_code eq 'unverified' or return;
             return 1;
         },

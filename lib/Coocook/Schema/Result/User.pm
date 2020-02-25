@@ -110,24 +110,12 @@ sub add_roles {
     }
 }
 
-sub has_role {
-    my ( $self, $role ) = @_;
-
-    return $self->roles_users->exists( { role => $role } );
-}
-
 sub has_any_role {
     my $self = shift;
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
     return $self->roles_users->exists( { role => { -in => $roles } } );
-}
-
-sub has_project_role {
-    my ( $self, $project, $role ) = @_;
-
-    return $self->projects_users->exists( { project => $project->id, role => $role } );
 }
 
 sub has_any_project_role {

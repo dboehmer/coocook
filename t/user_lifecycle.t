@@ -73,8 +73,8 @@ $t->get_ok('/');
 }
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
-    ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
-    ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
+    ok $user1->has_any_role('site_owner'),       "1st user created has 'site_owner' role";
+    ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
 subtest "verify e-mail address" => sub {
@@ -120,8 +120,8 @@ $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
-    ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
-    ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
+    ok !$user2->has_any_role('site_owner'), "2nd user created hasn't 'site_owner' role";
+    ok $user2->has_any_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 
 $t->register_fails_like(

@@ -46,12 +46,6 @@ around [ 'set_column', 'store_column' ] => sub {
 
 __PACKAGE__->meta->make_immutable;
 
-sub has_project_role {
-    my ( $self, $project, $role ) = @_;
-
-    return $self->groups_projects->exists( { project => $project->id, role => $role } );
-}
-
 sub has_any_project_role {
     my $self    = shift;
     my $project = shift;
