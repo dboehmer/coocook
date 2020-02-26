@@ -12,7 +12,7 @@ my $t = Test::Coocook->new();
 
 my $project = $t->schema->resultset('Project')->create(
     {
-        name        => 'Test Project',
+        name        => 'Statistics Project',
         description => "",
         owner       => 1,
         archived    => '2000-01-01 00:00:00',
@@ -86,19 +86,19 @@ $list->update( { date => $list->format_date( DateTime->today->add( years => 1 ) 
 message_contains('print');
 
 sub message_contains {
-    $t->get_ok('/project/test-project');
+    $t->get_ok('/project/Statistics-Project');
     $t->text_contains(@_)
       or note $t->text;
 }
 
 sub message_lacks {
-    $t->get_ok('/project/test-project');
+    $t->get_ok('/project/Statistics-Project');
     $t->text_lacks(@_)
       or note $t->text;
 }
 
 sub message_like {
-    $t->get_ok('/project/test-project');
+    $t->get_ok('/project/Statistics-Project');
     $t->text_like(@_)
       or note $t->text;
 }

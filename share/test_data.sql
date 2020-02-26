@@ -22,7 +22,7 @@ INSERT INTO 'groups_users'
 
 INSERT INTO 'projects'
 (id,            name,        url_name,     url_name_fc,      description, is_public, owner,           created, archived) VALUES
-( 1,          'Test',          'Test',          'test',  'Test Project.',         1,     1, CURRENT_TIMESTAMP,     NULL),
+( 1,  'Test Project',  'Test-Project',  'test-project',  'Test Project.',         1,     1, CURRENT_TIMESTAMP,     NULL),
 ( 2, 'Other Project', 'Other-project', 'other-project', 'Other Project.',         0,     1, CURRENT_TIMESTAMP,     NULL);
 
 INSERT INTO 'projects_users'
