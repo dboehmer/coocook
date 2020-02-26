@@ -5,7 +5,7 @@
         Article:
         <select name="article">
 [% FOR article IN articles;
-    IF article.units.size > 0 %]
+    IF article.units AND article.units.size > 0 %]
             <option value="[% article.id %]" data-units="[% article.unit_ids_joined %]">[% article.name | html %]</option>
     [% ELSE %]
             <option disabled>[% article.name | html %] (no units)</option>
