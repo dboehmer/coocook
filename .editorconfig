@@ -1,6 +1,12 @@
+# EditorConfig is awesome:
+# https://EditorConfig.org
+
 ############################################################################
 # ATTENTION: If you edit this file, please change .perltidyrc accordingly! #
 ############################################################################
 
---variable-maximum-line-length
---maximum-line-length=100
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
