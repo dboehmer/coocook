@@ -85,6 +85,13 @@ sub has_capability {
         $input->{$key} //= $c->stash->{$key};
     }
 
+    # TODO workaround for https://rt.cpan.org/Public/Bug/Display.html?id=97640
+    # this wrapper around Result::User shall not silence exceptions
+    for ( $input->{user} ) {
+        ref eq 'Catalyst::Authentication::Store::DBIx::Class::User'
+          and $_ = $_->get_object;
+    }
+
     return $authz->has_capability( $capability, $input );
 }
 

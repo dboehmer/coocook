@@ -58,7 +58,7 @@ my @rules = (
             my ( $group, $user ) = @$_{ 'group', 'user' };
             return (
                      $user->has_any_role('site_owner')
-                  or $user->has_any_group_rule( $group, 'owner', 'admin' )
+                  or $user->has_any_group_role( $group, 'owner', 'admin' )
             );
         },
         capabilities => [qw< edit_group >],
@@ -73,7 +73,7 @@ my @rules = (
 
             return if $group->groups_users->exists( { user => $user_object->id } );    # is already group member
 
-            return ( $user->has_any_role('site_owner') or $user->has_group_role( $group, 'owner' ) );
+            return ( $user->has_any_role('site_owner') or $user->has_any_group_role( $group, 'owner' ) );
         },
         capabilities => [qw< add_user_to_group >],
     },
@@ -88,7 +88,7 @@ my @rules = (
             return (
                 $user->has_any_role('site_owner')
                   or (
-                    $user->has_group_role(
+                    $user->has_any_group_role(
                         $group,
 
                         # removal of viewers is permitted for admins, too,
@@ -109,8 +109,8 @@ my @rules = (
             return (
                 $membership->role eq 'admin'    # can be transferred only to admin
                   and (
-                    $user->has_group_role( $group, 'owner' )    # allow transfer by current owner
-                    or $user->has_any_role('site_owner')        # allow transfer by site admin
+                    $user->has_any_group_role( $group, 'owner' )    # allow transfer by current owner
+                    or $user->has_any_role('site_owner')            # allow transfer by site admin
                   )
             );
         },
@@ -120,7 +120,7 @@ my @rules = (
         needs_input => [ 'user', 'group' ],
         rule        => sub {
             my ( $group, $user ) = @$_{ 'group', 'user' };
-            return ( $user->has_group_role( $group, 'owner' ) or $user->has_any_role('site_owner') );
+            return ( $user->has_any_group_role( $group, 'owner' ) or $user->has_any_role('site_owner') );
         },
         capabilities => 'delete_group',
     },
@@ -218,24 +218,25 @@ my @rules = (
         rule        => sub {
             my ( $capability, $project, $permission, $user ) = @$_{qw<capability project permission user>};
 
-            if ( $capability eq 'edit_project_permission' ) {
+            if ( $capability eq 'edit_project_permission' ) {  # for editing permissions: new role must be valid
                 my $role = $_->{role} || croak "missing input key 'role'";
                 return if $role eq 'owner';
                 return unless grep { $role eq $_ } project_roles();
             }
 
-            return (
-                $permission->role ne 'owner'    # owner must never be removed/degraded (transfer ownership first)
-                  and (
-                    $user->has_any_role('site_owner')    # either user is site owner
-                    or (                                 # or user is project owner and this is not owner
-                                                         # (yes, this checked twice: $permission must not be owner's
-                                                         #  and $user must be owner and must not be $permission->user)
+            # owner must never be removed/degraded (transfer ownership first!)
+            return if $permission->role eq 'owner';
 
-                        $permission->user->id != $user->id and $user->has_any_project_role( $project, 'owner' )
-                    )
-                  )
-            );
+            # site owners have full control
+            return 1 if $user->has_any_role('site_owner');
+
+            # for user permissions: users must not edit their own permission
+            return
+              if $permission->result_source->source_name eq 'ProjectUser'
+              and $permission->user->id == $user->id;
+
+            # user is project owner?
+            return $user->has_any_project_role( $project, 'owner' );
         },
         capabilities => [qw< edit_project_permission revoke_project_permission >],
     },

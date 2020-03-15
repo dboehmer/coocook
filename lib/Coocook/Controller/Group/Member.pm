@@ -55,7 +55,6 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
 
     if ( my @other_users = $group->users_without_membership->sorted->hri->all ) {
         $c->stash(
-            roles       => [ grep { $_ ne 'owner' } $c->model('Authorization')->group_roles ],
             add_url     => $c->uri_for( $self->action_for('add'), [ $group->name ] ),
             other_users => \@other_users,
         );
@@ -64,6 +63,7 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
     $c->stash(
         group_url    => $c->uri_for_action( '/group/show', [ $group->name ] ),
         groups_users => \@groups_users,
+        roles        => [ grep { $_ ne 'owner' } $c->model('Authorization')->group_roles ],
         template     => 'group/members.tt',
     );
 }

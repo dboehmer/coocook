@@ -127,6 +127,16 @@ sub has_any_project_role {
     return $self->projects_users->exists( { project => $project->id, role => { -in => $roles } } );
 }
 
+sub has_any_group_role {
+    my $self  = shift;
+    my $group = shift;
+
+    my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
+
+    return $self->groups_users->exists(
+        { group => $group->id, role => { -in => $roles } } );
+}
+
 sub roles {
     my $self = shift;
 
