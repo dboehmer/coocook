@@ -73,7 +73,10 @@ my @rules = (
 
             return if $group->groups_users->exists( { user => $user_object->id } );    # is already group member
 
-            return ( $user->has_any_role('site_owner') or $user->has_any_group_role( $group, 'owner' ) );
+            return (
+                     $user->has_any_group_role( $group, qw< admin owner > )
+                  or $user->has_any_role('site_owner')
+            );
         },
         capabilities => [qw< add_user_to_group >],
     },
@@ -86,18 +89,8 @@ my @rules = (
             return if $membership->user->id == $user->id and not $user->has_any_role('site_owner');
 
             return (
-                $user->has_any_role('site_owner')
-                  or (
-                    $user->has_any_group_role(
-                        $group,
-
-                        # removal of viewers is permitted for admins, too,
-                        # otherwise only owners
-                        $capability eq 'remove_user_from_group' && $membership->role eq 'viewer'
-                        ? ( 'owner', 'admin' )
-                        : ('owner')
-                    )
-                  )
+                     $user->has_any_group_role( $group, qw< admin owner > )
+                  or $user->has_any_role('site_owner')
             );
         },
         capabilities => [qw< edit_group_membership remove_user_from_group >],
