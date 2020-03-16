@@ -53,6 +53,7 @@
     </tbody>
 </table>
 
+[% IF add_permission_url %]
 <p>You need another user with role <em>admin</em> to transfer ownership to them.</p>
 
 <fieldset>
@@ -80,3 +81,4 @@
     <p>No more users/groups. You need to let users sign up or create groups before giving them permission.</p>
 [% END %]
 </fieldset>
+[% END %]

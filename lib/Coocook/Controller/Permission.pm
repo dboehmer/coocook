@@ -62,7 +62,7 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
 
     @permissions = sort { $a->{sort_key} cmp $b->{sort_key} } @permissions;
 
-    {
+    if ( $c->has_capability('edit_project_permissions') ) {
         my $other_users  = $c->project->users_without_permission;
         my $other_groups = $c->project->groups_without_permission;
 
@@ -70,12 +70,10 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
           sort { $a->{name_fc} cmp $b->{name_fc} }
           ( $other_users->hri->all, map { $_->{is_group} = 1; $_ } $other_groups->hri->all );
 
-        if ( @other_identities > 0 ) {
-            $c->stash(
-                add_permission_url => $c->project_uri( $self->action_for('add') ),
-                other_identities   => \@other_identities,
-            );
-        }
+        @other_identities > 0
+          and $c->stash( other_identities => \@other_identities );
+
+        $c->stash( add_permission_url => $c->project_uri( $self->action_for('add') ) );
     }
 
     $c->stash(

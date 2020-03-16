@@ -178,7 +178,7 @@ my @rules = (
         capabilities => [
             qw<
               view_project_settings
-              view_project_permissions
+              view_project_permissions edit_project_permissions
               update_project rename_project delete_project
               archive_project unarchive_project
               >
