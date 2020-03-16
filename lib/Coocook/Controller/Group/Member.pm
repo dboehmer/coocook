@@ -35,7 +35,7 @@ sub index : GET HEAD Chained('/group/base') PathPart('members') Args(0)
 
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $group_user->user->name ] );
 
-        if ( $group_user->role eq 'admin' ) {
+        if ( $c->has_capability( transfer_group_ownership => { membership => $group_user } ) ) {
             $_->{transfer_ownership_url} =
               $c->uri_for( $self->action_for('make_owner'), [ $group->name, $group_user->user->name ] );
         }
