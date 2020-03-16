@@ -208,7 +208,10 @@ my @rules = (
         rule        => sub {
             my ( $capability, $project, $permission, $user ) = @$_{qw<capability project permission user>};
 
-            if ( $capability eq 'edit_project_permission' ) {  # for editing permissions: new role must be valid
+            if (   $capability eq 'edit_project_permission'
+                or $capability eq 'edit_group_permission'
+                or $capability eq 'edit_user_permission' )
+            {    # for editing permissions: new role must be valid
                 my $role = $_->{role} || croak "missing input key 'role'";
                 return if $role eq 'owner';
                 return unless grep { $role eq $_ } project_roles();
@@ -228,7 +231,13 @@ my @rules = (
             # user is project owner?
             return $user->has_any_project_role( $project, 'owner' );
         },
-        capabilities => [qw< edit_project_permission revoke_project_permission >],
+        capabilities => [
+            'edit_project_permission', 'revoke_project_permission',    # generic aliases
+            qw<
+              edit_group_permission revoke_group_permission
+              edit_user_permission  revoke_user_permission
+              >
+        ],
     },
     {
         needs_input  => 'user',
@@ -337,7 +346,8 @@ for my $rule (@rules) {
     }
 
     for my $capability ( @{ $rule->{capabilities} } ) {
-        $capabilities{$capability} and die "capability can be granted by only 1 rule";
+        $capabilities{$capability}
+          and die "capabilities can be granted by only 1 rule: '$capability'";
 
         $capabilities{$capability} = $rule;
     }

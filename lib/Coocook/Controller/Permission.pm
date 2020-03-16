@@ -21,8 +21,8 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
                 group     => $group_project->group,
                 group_url => $c->uri_for_action( '/group/show', [ $group_project->group->name ] ),
 
-                edit_url => $c->has_capability( 'edit_project_permission',
-                    { permission => $group_project, role => 'viewer' } )
+                edit_url =>
+                  $c->has_capability( edit_group_permission => { permission => $group_project, role => 'viewer' } )
                 ? $c->project_uri( $self->action_for('edit'), $group_project->group->name )
                 : undef,
 
@@ -43,9 +43,8 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
                 user     => $project_user->user,
                 user_url => $c->uri_for_action( '/user/show', [ $project_user->user->name ] ),
 
-                edit_url => $c->has_capability(
-                    edit_project_permission => { permission => $project_user, role => 'viewer' }
-                  )
+                edit_url =>
+                  $c->has_capability( edit_user_permission => { permission => $project_user, role => 'viewer' } )
                 ? $c->project_uri( $self->action_for('edit'), $project_user->user->name )
                 : undef,
 
