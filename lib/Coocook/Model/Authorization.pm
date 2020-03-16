@@ -157,6 +157,17 @@ my @rules = (
         needs_input => [ 'project', 'user' ],
         rule        => sub {
             my ( $project, $user ) = @$_{ 'project', 'user' };
+            return (
+                     $user->has_any_project_role( $project, qw< viewer editor admin owner > )
+                  or $user->has_any_role('site_owner')
+            );
+        },
+        capabilities => [qw< view_project_permissions >],
+    },
+    {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+            my ( $project, $user ) = @$_{ 'project', 'user' };
             $project->archived and return;
             return (
                      $user->has_any_role('site_owner')
@@ -164,6 +175,17 @@ my @rules = (
             );
         },
         capabilities => [qw< edit_project import_into_project >],
+    },
+    {
+        needs_input => [ 'project', 'user' ],
+        rule        => sub {
+            my ( $project, $user ) = @$_{ 'project', 'user' };
+            return (
+                     $user->has_any_project_role( $project, qw< admin owner > )
+                  or $user->has_any_role('site_owner')
+            );
+        },
+        capabilities => 'edit_project_permissions'    # generic rule only for accessing editor form
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -178,7 +200,6 @@ my @rules = (
         capabilities => [
             qw<
               view_project_settings
-              view_project_permissions edit_project_permissions
               update_project rename_project delete_project
               archive_project unarchive_project
               >
@@ -199,7 +220,10 @@ my @rules = (
 
             return if $permissions->exists( { project => $project->id } );    # already has permission
 
-            return ( $user->has_any_role('site_owner') or $user->has_any_project_role( $project, 'owner' ) );
+            return (
+                     $user->has_any_role('site_owner')
+                  or $user->has_any_project_role( $project, qw< admin owner > )
+            );
         },
         capabilities => [qw< add_group_permission add_user_permission >],
     },
@@ -229,7 +253,7 @@ my @rules = (
               and $permission->user->id == $user->id;
 
             # user is project owner?
-            return $user->has_any_project_role( $project, 'owner' );
+            return $user->has_any_project_role( $project, qw< admin owner > );
         },
         capabilities => [
             'edit_project_permission', 'revoke_project_permission',    # generic aliases
