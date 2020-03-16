@@ -168,17 +168,6 @@ my @rules = (
     {
         needs_input => [ 'project', 'user' ],
         rule        => sub {
-            my ( $project, $user ) = @$_{ 'project', 'user' };
-            return (
-                     $user->has_any_role('site_owner')
-                  or $user->has_any_project_role( $project, qw< admin owner > )
-            );
-        },
-        capabilities => 'view_project_permissions',
-    },
-    {
-        needs_input => [ 'project', 'user' ],
-        rule        => sub {
             my ( $project, $user, $capability ) = @$_{ 'project', 'user', 'capability' };
 
             return if $capability eq 'archive_project'   and $project->archived;
@@ -189,6 +178,7 @@ my @rules = (
         capabilities => [
             qw<
               view_project_settings
+              view_project_permissions
               update_project rename_project delete_project
               archive_project unarchive_project
               >
