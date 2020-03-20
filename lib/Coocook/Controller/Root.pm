@@ -147,11 +147,11 @@ sub auto : Private {
         $c->stash(
             admin_url  => $c->uri_for_action('/admin/index'),
             admin_urls => {                                     # TODO list duplicates code in Controller::Admin
-                faq      => $c->uri_for_action('/admin/faq/index'),
-                groups   => $c->uri_for_action('/admin/groups'),
-                projects => $c->uri_for_action('/admin/projects'),
-                terms    => $c->uri_for_action('/admin/terms/index'),
-                users    => $c->uri_for_action('/admin/user/index'),
+                faq           => $c->uri_for_action('/admin/faq/index'),
+                organizations => $c->uri_for_action('/admin/organizations'),
+                projects      => $c->uri_for_action('/admin/projects'),
+                terms         => $c->uri_for_action('/admin/terms/index'),
+                users         => $c->uri_for_action('/admin/user/index'),
             },
         );
     }
@@ -192,7 +192,8 @@ sub dashboard : Private {
     my ( $self, $c ) = @_;
 
     my $my_projects = $c->user->projects->union(
-        $c->user->groups->search_related('groups_projects')->search_related('project') )->not_archived;
+        $c->user->organizations->search_related('organizations_projects')->search_related('project') )
+      ->not_archived;
 
     my @my_projects = $my_projects->sorted->hri->all;
 

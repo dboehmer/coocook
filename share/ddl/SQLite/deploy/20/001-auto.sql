@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sat Feb  8 17:29:57 2020
+-- Created on Fri Mar 20 05:54:04 2020
 -- 
 
 ;
@@ -78,9 +78,9 @@ CREATE UNIQUE INDEX "users_name_fc" ON "users" ("name_fc");
 CREATE UNIQUE INDEX "users_password_hash" ON "users" ("password_hash");
 CREATE UNIQUE INDEX "users_token_hash" ON "users" ("token_hash");
 --
--- Table: "groups"
+-- Table: "organizations"
 --
-CREATE TABLE "groups" (
+CREATE TABLE "organizations" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" text NOT NULL,
   "name_fc" text NOT NULL,
@@ -91,9 +91,9 @@ CREATE TABLE "groups" (
   "created" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY ("owner") REFERENCES "users"("id")
 );
-CREATE INDEX "groups_idx_owner" ON "groups" ("owner");
-CREATE UNIQUE INDEX "groups_name" ON "groups" ("name");
-CREATE UNIQUE INDEX "groups_name_fc" ON "groups" ("name_fc");
+CREATE INDEX "organizations_idx_owner" ON "organizations" ("owner");
+CREATE UNIQUE INDEX "organizations_name" ON "organizations" ("name");
+CREATE UNIQUE INDEX "organizations_name_fc" ON "organizations" ("name_fc");
 --
 -- Table: "projects"
 --
@@ -124,19 +124,6 @@ CREATE TABLE "roles_users" (
 );
 CREATE INDEX "roles_users_idx_user" ON "roles_users" ("user");
 --
--- Table: "groups_users"
---
-CREATE TABLE "groups_users" (
-  "group" int NOT NULL,
-  "user" int NOT NULL,
-  "role" text NOT NULL,
-  PRIMARY KEY ("group", "user"),
-  FOREIGN KEY ("group") REFERENCES "groups"("id") ON DELETE CASCADE,
-  FOREIGN KEY ("user") REFERENCES "users"("id") ON DELETE CASCADE
-);
-CREATE INDEX "groups_users_idx_group" ON "groups_users" ("group");
-CREATE INDEX "groups_users_idx_user" ON "groups_users" ("user");
---
 -- Table: "meals"
 --
 CREATE TABLE "meals" (
@@ -149,6 +136,19 @@ CREATE TABLE "meals" (
 );
 CREATE INDEX "meals_idx_project" ON "meals" ("project");
 CREATE UNIQUE INDEX "meals_project_date_name" ON "meals" ("project", "date", "name");
+--
+-- Table: "organizations_users"
+--
+CREATE TABLE "organizations_users" (
+  "organization" int NOT NULL,
+  "user" int NOT NULL,
+  "role" text NOT NULL,
+  PRIMARY KEY ("organization", "user"),
+  FOREIGN KEY ("organization") REFERENCES "organizations"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("user") REFERENCES "users"("id") ON DELETE CASCADE
+);
+CREATE INDEX "organizations_users_idx_organization" ON "organizations_users" ("organization");
+CREATE INDEX "organizations_users_idx_user" ON "organizations_users" ("user");
 --
 -- Table: "projects_users"
 --
@@ -244,18 +244,18 @@ CREATE INDEX "articles_idx_project" ON "articles" ("project");
 CREATE INDEX "articles_idx_shop_section" ON "articles" ("shop_section");
 CREATE UNIQUE INDEX "articles_project_name" ON "articles" ("project", "name");
 --
--- Table: "groups_projects"
+-- Table: "organizations_projects"
 --
-CREATE TABLE "groups_projects" (
-  "group" int NOT NULL,
+CREATE TABLE "organizations_projects" (
+  "organization" int NOT NULL,
   "project" int NOT NULL,
   "role" text NOT NULL,
-  PRIMARY KEY ("group", "project"),
-  FOREIGN KEY ("group") REFERENCES "groups"("id") ON DELETE CASCADE,
+  PRIMARY KEY ("organization", "project"),
+  FOREIGN KEY ("organization") REFERENCES "organizations"("id") ON DELETE CASCADE,
   FOREIGN KEY ("project") REFERENCES "projects"("id") ON DELETE CASCADE
 );
-CREATE INDEX "groups_projects_idx_group" ON "groups_projects" ("group");
-CREATE INDEX "groups_projects_idx_project" ON "groups_projects" ("project");
+CREATE INDEX "organizations_projects_idx_organization" ON "organizations_projects" ("organization");
+CREATE INDEX "organizations_projects_idx_project" ON "organizations_projects" ("project");
 --
 -- Table: "quantities"
 --

@@ -994,321 +994,6 @@ schema:
       name: faqs
       options: []
       order: 3
-    groups:
-      constraints:
-        - deferrable: 1
-          expression: ''
-          fields:
-            - id
-          match_type: ''
-          name: ''
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: PRIMARY KEY
-        - deferrable: 1
-          expression: ''
-          fields:
-            - name
-          match_type: ''
-          name: groups_name
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: UNIQUE
-        - deferrable: 1
-          expression: ''
-          fields:
-            - name_fc
-          match_type: ''
-          name: groups_name_fc
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: UNIQUE
-        - deferrable: 1
-          expression: ''
-          fields:
-            - owner
-          match_type: ''
-          name: groups_fk_owner
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields:
-            - id
-          reference_table: users
-          type: FOREIGN KEY
-      fields:
-        admin_comment:
-          data_type: text
-          default_value: ''
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: admin_comment
-          order: 7
-          size:
-            - 0
-        created:
-          data_type: datetime
-          default_value: !!perl/ref
-            =: CURRENT_TIMESTAMP
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: created
-          order: 8
-          size:
-            - 0
-        description_md:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: description_md
-          order: 5
-          size:
-            - 0
-        display_name:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: display_name
-          order: 6
-          size:
-            - 0
-        id:
-          data_type: int
-          default_value: ~
-          is_auto_increment: 1
-          is_nullable: 0
-          is_primary_key: 1
-          is_unique: 0
-          name: id
-          order: 1
-          size:
-            - 0
-        name:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 1
-          name: name
-          order: 2
-          size:
-            - 0
-        name_fc:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 1
-          name: name_fc
-          order: 3
-          size:
-            - 0
-        owner:
-          data_type: int
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: owner
-          order: 4
-          size:
-            - 0
-      indices:
-        - fields:
-            - owner
-          name: groups_idx_owner
-          options: []
-          type: NORMAL
-      name: groups
-      options: []
-      order: 7
-    groups_projects:
-      constraints:
-        - deferrable: 1
-          expression: ''
-          fields:
-            - group
-            - project
-          match_type: ''
-          name: ''
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: PRIMARY KEY
-        - deferrable: 1
-          expression: ''
-          fields:
-            - group
-          match_type: ''
-          name: groups_projects_fk_group
-          on_delete: CASCADE
-          on_update: ''
-          options: []
-          reference_fields:
-            - id
-          reference_table: groups
-          type: FOREIGN KEY
-        - deferrable: 1
-          expression: ''
-          fields:
-            - project
-          match_type: ''
-          name: groups_projects_fk_project
-          on_delete: CASCADE
-          on_update: ''
-          options: []
-          reference_fields:
-            - id
-          reference_table: projects
-          type: FOREIGN KEY
-      fields:
-        group:
-          data_type: int
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 1
-          is_unique: 0
-          name: group
-          order: 1
-          size:
-            - 0
-        project:
-          data_type: int
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 1
-          is_unique: 0
-          name: project
-          order: 2
-          size:
-            - 0
-        role:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: role
-          order: 3
-          size:
-            - 0
-      indices:
-        - fields:
-            - group
-          name: groups_projects_idx_group
-          options: []
-          type: NORMAL
-        - fields:
-            - project
-          name: groups_projects_idx_project
-          options: []
-          type: NORMAL
-      name: groups_projects
-      options: []
-      order: 19
-    groups_users:
-      constraints:
-        - deferrable: 1
-          expression: ''
-          fields:
-            - group
-            - user
-          match_type: ''
-          name: ''
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: PRIMARY KEY
-        - deferrable: 1
-          expression: ''
-          fields:
-            - group
-          match_type: ''
-          name: groups_users_fk_group
-          on_delete: CASCADE
-          on_update: ''
-          options: []
-          reference_fields:
-            - id
-          reference_table: groups
-          type: FOREIGN KEY
-        - deferrable: 1
-          expression: ''
-          fields:
-            - user
-          match_type: ''
-          name: groups_users_fk_user
-          on_delete: CASCADE
-          on_update: ''
-          options: []
-          reference_fields:
-            - id
-          reference_table: users
-          type: FOREIGN KEY
-      fields:
-        group:
-          data_type: int
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 1
-          is_unique: 0
-          name: group
-          order: 1
-          size:
-            - 0
-        role:
-          data_type: text
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: role
-          order: 3
-          size:
-            - 0
-        user:
-          data_type: int
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 1
-          is_unique: 0
-          name: user
-          order: 2
-          size:
-            - 0
-      indices:
-        - fields:
-            - group
-          name: groups_users_idx_group
-          options: []
-          type: NORMAL
-        - fields:
-            - user
-          name: groups_users_idx_user
-          options: []
-          type: NORMAL
-      name: groups_users
-      options: []
-      order: 10
     items:
       constraints:
         - deferrable: 1
@@ -1598,6 +1283,321 @@ schema:
           options: []
           type: NORMAL
       name: meals
+      options: []
+      order: 10
+    organizations:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+          match_type: ''
+          name: organizations_name
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_fc
+          match_type: ''
+          name: organizations_name_fc
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - owner
+          match_type: ''
+          name: organizations_fk_owner
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: users
+          type: FOREIGN KEY
+      fields:
+        admin_comment:
+          data_type: text
+          default_value: ''
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: admin_comment
+          order: 7
+          size:
+            - 0
+        created:
+          data_type: datetime
+          default_value: !!perl/ref
+            =: CURRENT_TIMESTAMP
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: created
+          order: 8
+          size:
+            - 0
+        description_md:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: description_md
+          order: 5
+          size:
+            - 0
+        display_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: display_name
+          order: 6
+          size:
+            - 0
+        id:
+          data_type: int
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 2
+          size:
+            - 0
+        name_fc:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name_fc
+          order: 3
+          size:
+            - 0
+        owner:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: owner
+          order: 4
+          size:
+            - 0
+      indices:
+        - fields:
+            - owner
+          name: organizations_idx_owner
+          options: []
+          type: NORMAL
+      name: organizations
+      options: []
+      order: 7
+    organizations_projects:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - organization
+            - project
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - organization
+          match_type: ''
+          name: organizations_projects_fk_organization
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: organizations
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - project
+          match_type: ''
+          name: organizations_projects_fk_project
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: projects
+          type: FOREIGN KEY
+      fields:
+        organization:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: organization
+          order: 1
+          size:
+            - 0
+        project:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: project
+          order: 2
+          size:
+            - 0
+        role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role
+          order: 3
+          size:
+            - 0
+      indices:
+        - fields:
+            - organization
+          name: organizations_projects_idx_organization
+          options: []
+          type: NORMAL
+        - fields:
+            - project
+          name: organizations_projects_idx_project
+          options: []
+          type: NORMAL
+      name: organizations_projects
+      options: []
+      order: 19
+    organizations_users:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - organization
+            - user
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - organization
+          match_type: ''
+          name: organizations_users_fk_organization
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: organizations
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user
+          match_type: ''
+          name: organizations_users_fk_user
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: users
+          type: FOREIGN KEY
+      fields:
+        organization:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: organization
+          order: 1
+          size:
+            - 0
+        role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role
+          order: 3
+          size:
+            - 0
+        user:
+          data_type: int
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - organization
+          name: organizations_users_idx_organization
+          options: []
+          type: NORMAL
+        - fields:
+            - user
+          name: organizations_users_idx_user
+          options: []
+          type: NORMAL
+      name: organizations_users
       options: []
       order: 11
     projects:
@@ -3306,11 +3306,11 @@ translator:
       - DishIngredient
       - DishTag
       - FAQ
-      - Group
-      - GroupProject
-      - GroupUser
       - Item
       - Meal
+      - Organization
+      - OrganizationProject
+      - OrganizationUser
       - Project
       - ProjectUser
       - PurchaseList

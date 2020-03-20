@@ -1,4 +1,4 @@
-package Coocook::Schema::Result::Group;
+package Coocook::Schema::Result::Organization;
 
 use Coocook::Model::Token;
 use DateTime;
@@ -9,7 +9,7 @@ use feature 'fc';    # Perl v5.16
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->table('groups');
+__PACKAGE__->table('organizations');
 
 __PACKAGE__->add_columns(
     id             => { data_type => 'int', is_auto_increment => 1 },
@@ -28,11 +28,11 @@ __PACKAGE__->add_unique_constraints( ['name'], ['name_fc'] );
 
 __PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
 
-__PACKAGE__->has_many( groups_projects => 'Coocook::Schema::Result::GroupProject' );
-__PACKAGE__->many_to_many( projects => groups_projects => 'project' );
+__PACKAGE__->has_many( organizations_projects => 'Coocook::Schema::Result::OrganizationProject' );
+__PACKAGE__->many_to_many( projects => organizations_projects => 'project' );
 
-__PACKAGE__->has_many( groups_users => 'Coocook::Schema::Result::GroupUser' );
-__PACKAGE__->many_to_many( users => groups_users => 'user' );
+__PACKAGE__->has_many( organizations_users => 'Coocook::Schema::Result::OrganizationUser' );
+__PACKAGE__->many_to_many( users => organizations_users => 'user' );
 
 around [ 'set_column', 'store_column' ] => sub {
     my ( $orig, $self, $column => $value ) = @_;
@@ -52,19 +52,20 @@ sub has_any_project_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->groups_projects->exists( { project => $project->id, role => { -in => $roles } } );
+    return $self->organizations_projects->exists(
+        { project => $project->id, role => { -in => $roles } } );
 }
 
 =head2 users_without_membership
 
-Returns a resultset with all C<Result::User>s without any related C<groups_users> record.
+Returns a resultset with all C<Result::User>s without any related C<organizations_users> record.
 
 =cut
 
 sub users_without_membership {
     my $self = shift;
 
-    my $members = $self->groups_users->get_column('user');
+    my $members = $self->organizations_users->get_column('user');
 
     return $self->result_source->schema->resultset('User')->search(
         {

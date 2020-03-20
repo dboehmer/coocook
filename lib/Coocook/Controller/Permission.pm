@@ -12,22 +12,26 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
     my @permissions;
 
     {
-        my $groups_projects = $c->project->groups_projects->search( undef, { prefetch => 'group' } );
+        my $organizations_projects =
+          $c->project->organizations_projects->search( undef, { prefetch => 'organization' } );
 
-        while ( my $group_project = $groups_projects->next ) {
+        while ( my $organization_project = $organizations_projects->next ) {
             push @permissions, {
-                role      => $group_project->role,
-                sort_key  => $group_project->group->name_fc,
-                group     => $group_project->group,
-                group_url => $c->uri_for_action( '/group/show', [ $group_project->group->name ] ),
+                role         => $organization_project->role,
+                sort_key     => $organization_project->organization->name_fc,
+                organization => $organization_project->organization,
+                organization_url =>
+                  $c->uri_for_action( '/organization/show', [ $organization_project->organization->name ] ),
 
-                edit_url =>
-                  $c->has_capability( edit_group_permission => { permission => $group_project, role => 'viewer' } )
-                ? $c->project_uri( $self->action_for('edit'), $group_project->group->name )
+                edit_url => $c->has_capability(
+                    edit_organization_permission => { permission => $organization_project, role => 'viewer' }
+                  )
+                ? $c->project_uri( $self->action_for('edit'), $organization_project->organization->name )
                 : undef,
 
-                revoke_url => $c->has_capability( 'revoke_project_permission', { permission => $group_project } )
-                ? $c->project_uri( $self->action_for('revoke'), $group_project->group->name )
+                revoke_url =>
+                  $c->has_capability( 'revoke_project_permission', { permission => $organization_project } )
+                ? $c->project_uri( $self->action_for('revoke'), $organization_project->organization->name )
                 : undef,
             };
         }
@@ -63,12 +67,12 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
     @permissions = sort { $a->{sort_key} cmp $b->{sort_key} } @permissions;
 
     if ( $c->has_capability('edit_project_permissions') ) {
-        my $other_users  = $c->project->users_without_permission;
-        my $other_groups = $c->project->groups_without_permission;
+        my $other_users         = $c->project->users_without_permission;
+        my $other_organizations = $c->project->organizations_without_permission;
 
         my @other_identities =
           sort { $a->{name_fc} cmp $b->{name_fc} }
-          ( $other_users->hri->all, map { $_->{is_group} = 1; $_ } $other_groups->hri->all );
+          ( $other_users->hri->all, map { $_->{is_organization} = 1; $_ } $other_organizations->hri->all );
 
         @other_identities > 0
           and $c->stash( other_identities => \@other_identities );
@@ -88,19 +92,21 @@ sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
 {
     my ( $self, $c ) = @_;
 
+    my $id   = $c->req->params->get('id');
     my $role = $c->req->params->get('role');
 
-    if ( my $group = $c->model('DB::Group')->find( { name => $c->req->params->get('id') } ) ) {
-        $c->requires_capability( add_group_permission => { group => $group, role => $role } );
+    if ( my $organization = $c->model('DB::Organization')->find( { name => $id } ) ) {
+        $c->requires_capability(
+            add_organization_permission => { organization => $organization, role => $role } );
 
         $c->project->create_related(
-            groups_projects => {
-                group => $group->id,
-                role  => $role,
+            organizations_projects => {
+                organization => $organization->id,
+                role         => $role,
             }
         );
     }
-    elsif ( my $user = $c->model('DB::User')->find( { name => $c->req->params->get('id') } ) ) {
+    elsif ( my $user = $c->model('DB::User')->find( { name => $id } ) ) {
         $c->requires_capability( add_user_permission => { role => $role, user_object => $user } );
 
         $c->project->create_related(
@@ -121,8 +127,9 @@ sub base : Chained('/project/base') PathPart('permissions') CaptureArgs(1) {
     my $project = $c->project;
 
     $c->stash->{permission} =
-         $project->projects_users->search( { 'user.name' => $id }, { prefetch => 'user' } )->single
-      || $project->groups_projects->search( { 'group.name' => $id }, { prefetch => 'group' } )->single
+      $project->projects_users->search( { 'user.name' => $id }, { prefetch => 'user' } )->single
+      || $project->organizations_projects->search( { 'organization.name' => $id },
+        { prefetch => 'organization' } )->single
       || $c->detach('/error/bad_request');
 }
 

@@ -1,6 +1,6 @@
-[% escape_title( 'Group members of', group.display_name ) %]
+[% escape_title( 'Organization members of', organization.display_name ) %]
 
-<p><a href="[% group_url %]">Back to group page</a></p>
+<p><a href="[% organization_url %]">Back to organization page</a></p>
 
 <table>
     <thead>
@@ -10,7 +10,7 @@
             <th>Actions</th>
     </thead>
     <tbody>
-[% FOR g_u IN groups_users %]
+[% FOR g_u IN organizations_users %]
         <tr>
             <td><a href="[% g_u.user_url %]">👤[% g_u.user.name %]</a> [% g_u.user.display_name | html %]</td>
             <td>
@@ -68,6 +68,6 @@
         <input type="submit" value="Add">
     </form>
 [% ELSE %]
-    <p>No more users. You need to let users sign up before adding them to this group.</p>
+    <p>No more users. You need to let users sign up before adding them to this organization.</p>
 [% END %]
 </fieldset>

@@ -63,12 +63,12 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     }
 
     $c->stash(
-        status             => $status_description,
-        group_memberships  => \my @group_memberships,
-        permissions        => \my @permissions,
-        public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
-        update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
-        roles              => { map { $_ => 1 } $user->roles },
+        status                   => $status_description,
+        organization_memberships => \my @organization_memberships,
+        permissions              => \my @permissions,
+        public_profile_url       => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        update_url               => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
+        roles                    => { map { $_ => 1 } $user->roles },
     );
 
     my $permissions = $user->projects_users->search(
@@ -102,24 +102,24 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
     }
 
     my $memberships = $user->search_related(
-        groups_users => undef,
+        organizations_users => undef,
         {
-            prefetch => 'group',
-            order_by => 'group.name',
+            prefetch => 'organization',
+            order_by => 'organization.name',
         }
     );
 
     while ( my $membership = $memberships->next ) {
-        my $group = $membership->group;
-        $group->owner( $c->user->get_object );    # TODO see above
-        $group = $group->as_hashref;
+        my $organization = $membership->organization;
+        $organization->owner( $c->user->get_object );    # TODO see above
+        $organization = $organization->as_hashref;
 
-        $group->{url} = $c->uri_for_action( '/group/show', [ $group->{name} ] );
+        $organization->{url} = $c->uri_for_action( '/organization/show', [ $organization->{name} ] );
 
-        push @group_memberships,
+        push @organization_memberships,
           {
-            role  => $membership->role,
-            group => $group,
+            role         => $membership->role,
+            organization => $organization,
           };
     }
 }

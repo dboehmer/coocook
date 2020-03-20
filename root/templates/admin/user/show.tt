@@ -51,10 +51,10 @@
 [% END %]
 </ul>
 
-<p>Group memberships:</p>
+<p>Organization memberships:</p>
 
 <ul>
-[% FOR membership IN group_memberships %]
-    <li><a href="[% membership.group.url %]">👥[% membership.group.name %]</a> [% membership.group.display_name | html %] ([% membership.role %])</li>
+[% FOR membership IN organization_memberships %]
+    <li><a href="[% membership.organization.url %]">👥[% membership.organization.name %]</a> [% membership.organization.display_name | html %] ([% membership.role %])</li>
 [% END %]
 </ul>

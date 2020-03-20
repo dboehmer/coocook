@@ -155,21 +155,22 @@ sub check_values {
     }
 
     {
-        my $groups       = $schema->resultset('Group');
-        my $usernames_fc = $schema->resultset('User')->get_column('name_fc');
+        my $organizations = $schema->resultset('Organization');
+        my $usernames_fc  = $schema->resultset('User')->get_column('name_fc');
 
-        my $duplicates = $groups->search( { name_fc => { -in => $usernames_fc->as_query } } )->hri;
+        my $duplicates = $organizations->search( { name_fc => { -in => $usernames_fc->as_query } } )->hri;
 
         while ( my $duplicate = $duplicates->next ) {
-            warn sprintf "Duplicate group/user name '%s'\n", $duplicate->{name};
+            warn sprintf "Duplicate organization/user name '%s'\n", $duplicate->{name};
         }
     }
 
-    my $groups = $schema->resultset('Group');
+    my $organizations = $schema->resultset('Organization');
 
-    while ( my $group = $groups->next ) {
-        $group->name_fc eq fc( $group->name )
-          or warn sprintf "Incorrect name_fc for group '%s': '%s'\n", $group->name, $group->name_fc;
+    while ( my $organization = $organizations->next ) {
+        $organization->name_fc eq fc( $organization->name )
+          or warn sprintf( "Incorrect name_fc for organization '%s': '%s'\n",
+            $organization->name, $organization->name_fc );
     }
 
     my $users = $schema->resultset('User');

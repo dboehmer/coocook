@@ -1,4 +1,4 @@
-package Coocook::Model::Groups;
+package Coocook::Model::Organizations;
 
 use feature 'fc';    # Perl v5.16
 
@@ -30,21 +30,21 @@ sub create {
     $args{display_name}   //= $args{name};
     $args{description_md} //= '';
 
-    my $groups = $self->schema->resultset('Group');
-    my $users  = $self->schema->resultset('User');
+    my $organizations = $self->schema->resultset('Organization');
+    my $users         = $self->schema->resultset('User');
 
     return $self->schema->txn_do(
         sub {
-            for my $rs ( $groups, $users ) {
+            for my $rs ( $organizations, $users ) {
                 $rs->exists( { name_fc => $name_fc } )
                   and croak "Name is not available";
             }
 
-            my $group = $groups->create( \%args );
+            my $organization = $organizations->create( \%args );
 
-            $group->add_to_groups_users( { role => 'owner', user => $args{owner} } );
+            $organization->add_to_organizations_users( { role => 'owner', user => $args{owner} } );
 
-            return $group;
+            return $organization;
         }
     );
 }
@@ -52,7 +52,7 @@ sub create {
 sub find_by_name {
     my ( $self, $name ) = @_;
 
-    return $self->schema->resultset('Group')->find( { name_fc => fc $name } );
+    return $self->schema->resultset('Organization')->find( { name_fc => fc $name } );
 }
 
 1;

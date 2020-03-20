@@ -3,7 +3,7 @@
 <table>
     <thead>
         <tr>
-            <th>User/Group</th>
+            <th>User/Organization</th>
             <th>Role</th>
             <th colspan="2">Actions</th>
         </tr>
@@ -12,12 +12,12 @@
 [% FOR permission IN permissions %]
         <tr>
             <td>
-    [% IF permission.group %]
-        <a href="[% permission.group_url %]">👥[% permission.group.name %]</a> [% permission.group.display_name | html %]
+    [% IF permission.organization %]
+        <a href="[% permission.organization_url %]">👥[% permission.organization.name %]</a> [% permission.organization.display_name | html %]
     [% ELSIF permission.user %]
         <a href="[% permission.user_url %]">👤[% permission.user.name %]</a> [% permission.user.display_name | html %]
     [% ELSE;
-        THROW undef "permissions neither group nor user";
+        THROW undef "permissions neither organization nor user";
     END %]
             </td>
             <td>
@@ -63,7 +63,7 @@
     <form method="post" action="[% add_permission_url %]">
         <select name="id">
 [% FOR other_identity IN other_identities %]
-            <option value="[% other_identity.name %]">[% other_identity.is_group ? '👥' : '👤'; other_identity.name | html %] ([% other_identity.display_name | html %])</option>
+            <option value="[% other_identity.name %]">[% other_identity.is_organization ? '👥' : '👤'; other_identity.name | html %] ([% other_identity.display_name | html %])</option>
 [% END %]
         </select>
 
@@ -78,7 +78,7 @@
         <input type="submit" value="Add">
     </form>
 [% ELSE %]
-    <p>No more users/groups. You need to let users sign up or create groups before giving them permission.</p>
+    <p>No more users/organizations. You need to let users sign up or create organizations before giving them permission.</p>
 [% END %]
 </fieldset>
 [% END %]

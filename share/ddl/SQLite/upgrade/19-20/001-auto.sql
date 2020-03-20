@@ -4,7 +4,7 @@
 BEGIN;
 
 ;
-CREATE TABLE "groups" (
+CREATE TABLE "organizations" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" text NOT NULL,
   "name_fc" text NOT NULL,
@@ -17,45 +17,45 @@ CREATE TABLE "groups" (
 );
 
 ;
-CREATE INDEX "groups_idx_owner" ON "groups" ("owner");
+CREATE INDEX "organizations_idx_owner" ON "organizations" ("owner");
 
 ;
-CREATE UNIQUE INDEX "groups_name" ON "groups" ("name");
+CREATE UNIQUE INDEX "organizations_name" ON "organizations" ("name");
 
 ;
-CREATE UNIQUE INDEX "groups_name_fc" ON "groups" ("name_fc");
+CREATE UNIQUE INDEX "organizations_name_fc" ON "organizations" ("name_fc");
 
 ;
-CREATE TABLE "groups_projects" (
-  "group" int NOT NULL,
+CREATE TABLE "organizations_projects" (
+  "organization" int NOT NULL,
   "project" int NOT NULL,
   "role" text NOT NULL,
-  PRIMARY KEY ("group", "project"),
-  FOREIGN KEY ("group") REFERENCES "groups"("id") ON DELETE CASCADE,
+  PRIMARY KEY ("organization", "project"),
+  FOREIGN KEY ("organization") REFERENCES "organizations"("id") ON DELETE CASCADE,
   FOREIGN KEY ("project") REFERENCES "projects"("id") ON DELETE CASCADE
 );
 
 ;
-CREATE INDEX "groups_projects_idx_group" ON "groups_projects" ("group");
+CREATE INDEX "organizations_projects_idx_organization" ON "organizations_projects" ("organization");
 
 ;
-CREATE INDEX "groups_projects_idx_project" ON "groups_projects" ("project");
+CREATE INDEX "organizations_projects_idx_project" ON "organizations_projects" ("project");
 
 ;
-CREATE TABLE "groups_users" (
-  "group" int NOT NULL,
+CREATE TABLE "organizations_users" (
+  "organization" int NOT NULL,
   "user" int NOT NULL,
   "role" text NOT NULL,
-  PRIMARY KEY ("group", "user"),
-  FOREIGN KEY ("group") REFERENCES "groups"("id") ON DELETE CASCADE,
+  PRIMARY KEY ("organization", "user"),
+  FOREIGN KEY ("organization") REFERENCES "organizations"("id") ON DELETE CASCADE,
   FOREIGN KEY ("user") REFERENCES "users"("id") ON DELETE CASCADE
 );
 
 ;
-CREATE INDEX "groups_users_idx_group" ON "groups_users" ("group");
+CREATE INDEX "organizations_users_idx_organization" ON "organizations_users" ("organization");
 
 ;
-CREATE INDEX "groups_users_idx_user" ON "groups_users" ("user");
+CREATE INDEX "organizations_users_idx_user" ON "organizations_users" ("user");
 
 ;
 

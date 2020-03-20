@@ -1,4 +1,4 @@
-package Coocook::Schema::ResultSet::Group;
+package Coocook::Schema::ResultSet::Organization;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

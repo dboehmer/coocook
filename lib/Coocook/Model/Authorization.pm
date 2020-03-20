@@ -16,106 +16,114 @@ use Carp;
 my @rules = (
     {
         needs_input  => [],
-        rule         => sub { 1 },                      # currently no actual check required
-        capabilities => [qw< view_group view_user >],
+        rule         => sub { 1 },                             # currently no actual check required
+        capabilities => [qw< view_organization view_user >],
     },
     {
         needs_input  => ['user'],
-        rule         => sub { !!$_->{user} },           # simply: is anyone logged in?
+        rule         => sub { !!$_->{user} },                  # simply: is anyone logged in?
         capabilities => [
             qw<
               view_dashboard create_project
               view_account_settings change_display_name change_password
-              view_user_groups create_group
+              view_user_organizations create_organization
               view_user_projects
               logout
               >
         ],
     },
     {
-        needs_input => [ 'group', 'user' ],
+        needs_input => [ 'organization', 'user' ],
         rule        => sub {
-            my ( $group, $user ) = @$_{ 'group', 'user' };
+            my ( $organization, $user ) = @$_{ 'organization', 'user' };
             return (
                      $user->has_any_role('site_owner')
-                  or $user->search_related( groups_users => { group => $group->id } )->exists
+                  or $user->search_related( organizations_users => { organization => $organization->id } )->exists
             );
         },
-        capabilities => [qw< view_group_members >],
+        capabilities => [qw< view_organization_members >],
     },
     {
-        needs_input => [ 'group', 'user' ],
+        needs_input => [ 'organization', 'user' ],
         rule        => sub {
-            my ( $group, $user ) = @$_{ 'group', 'user' };
-            return if $group->get_column('owner') == $user->id;               # owner must not leave
-            return $user->groups_users->exists( { group => $group->id } );    # user is group member?
+            my ( $organization, $user ) = @$_{ 'organization', 'user' };
+            return if $organization->get_column('owner') == $user->id;    # owner must not leave
+            return $user->organizations_users->exists( { organization => $organization->id } )
+              ;                                                           # user is organization member?
         },
-        capabilities => [qw< leave_group >],
+        capabilities => [qw< leave_organization >],
     },
     {
-        needs_input => [ 'group', 'user' ],
+        needs_input => [ 'organization', 'user' ],
         rule        => sub {
-            my ( $group, $user ) = @$_{ 'group', 'user' };
+            my ( $organization, $user ) = @$_{ 'organization', 'user' };
             return (
                      $user->has_any_role('site_owner')
-                  or $user->has_any_group_role( $group, 'owner', 'admin' )
+                  or $user->has_any_organization_role( $organization, 'owner', 'admin' )
             );
         },
-        capabilities => [qw< edit_group >],
+        capabilities => [qw< edit_organization >],
     },
     {
-        needs_input => [ 'user', 'group', 'user_object', 'role' ],
+        needs_input => [ 'user', 'organization', 'user_object', 'role' ],
         rule        => sub {
-            my ( $user, $group, $user_object, $role ) = @$_{ 'user', 'group', 'user_object', 'role' };
+            my ( $user, $organization, $user_object, $role ) =
+              @$_{ 'user', 'organization', 'user_object', 'role' };
 
             return if $role eq 'owner';
-            return unless grep { $role eq $_ } group_roles();
+            return unless grep { $role eq $_ } organization_roles();
 
-            return if $group->groups_users->exists( { user => $user_object->id } );    # is already group member
+            # is already organization member
+            return
+              if $organization->organizations_users->exists( { user => $user_object->id } );
 
             return (
-                     $user->has_any_group_role( $group, qw< admin owner > )
+                     $user->has_any_organization_role( $organization, qw< admin owner > )
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => [qw< add_user_to_group >],
+        capabilities => [qw< add_user_to_organization >],
     },
     {
-        needs_input => [ 'user', 'group', 'membership' ],
+        needs_input => [ 'user', 'organization', 'membership' ],
         rule        => sub {
-            my ( $capability, $user, $group, $membership ) = @$_{ 'capability', 'user', 'group', 'membership' };
+            my ( $capability, $user, $organization, $membership ) =
+              @$_{ 'capability', 'user', 'organization', 'membership' };
 
             return if $membership->role eq 'owner';
             return if $membership->user->id == $user->id and not $user->has_any_role('site_owner');
 
             return (
-                     $user->has_any_group_role( $group, qw< admin owner > )
+                     $user->has_any_organization_role( $organization, qw< admin owner > )
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => [qw< edit_group_membership remove_user_from_group >],
+        capabilities => [qw< edit_organization_membership remove_user_from_organization >],
     },
     {
-        needs_input => [ 'user', 'group', 'membership' ],
+        needs_input => [ 'user', 'organization', 'membership' ],
         rule        => sub {
-            my ( $group, $user, $membership ) = @$_{ 'group', 'user', 'membership' };
+            my ( $organization, $user, $membership ) = @$_{ 'organization', 'user', 'membership' };
             return (
                 $membership->role eq 'admin'    # can be transferred only to admin
                   and (
-                    $user->has_any_group_role( $group, 'owner' )    # allow transfer by current owner
-                    or $user->has_any_role('site_owner')            # allow transfer by site admin
+                    $user->has_any_organization_role( $organization, 'owner' )    # allow transfer by current owner
+                    or $user->has_any_role('site_owner')                          # allow transfer by site admin
                   )
             );
         },
-        capabilities => 'transfer_group_ownership',
+        capabilities => 'transfer_organization_ownership',
     },
     {
-        needs_input => [ 'user', 'group' ],
+        needs_input => [ 'user', 'organization' ],
         rule        => sub {
-            my ( $group, $user ) = @$_{ 'group', 'user' };
-            return ( $user->has_any_group_role( $group, 'owner' ) or $user->has_any_role('site_owner') );
+            my ( $organization, $user ) = @$_{ 'organization', 'user' };
+            return (
+                     $user->has_any_organization_role( $organization, 'owner' )
+                  or $user->has_any_role('site_owner')
+            );
         },
-        capabilities => 'delete_group',
+        capabilities => 'delete_organization',
     },
     {
         needs_input => ['project'],    # optional: user
@@ -207,9 +215,9 @@ my @rules = (
             return unless grep { $role eq $_ } project_roles();
 
             my $permissions =
-                $capability eq 'add_group_permission' ? $_->{group}->groups_projects
-              : $capability eq 'add_user_permission'  ? $_->{user_object}->projects_users
-              :                                         die "code broken";
+                $capability eq 'add_organization_permission' ? $_->{organization}->organizations_projects
+              : $capability eq 'add_user_permission'         ? $_->{user_object}->projects_users
+              :                                                die "code broken";
 
             return if $permissions->exists( { project => $project->id } );    # already has permission
 
@@ -218,7 +226,7 @@ my @rules = (
                   or $user->has_any_project_role( $project, qw< admin owner > )
             );
         },
-        capabilities => [qw< add_group_permission add_user_permission >],
+        capabilities => [qw< add_organization_permission add_user_permission >],
     },
     {
         needs_input => [ 'project', 'permission', 'user' ],
@@ -226,7 +234,7 @@ my @rules = (
             my ( $capability, $project, $permission, $user ) = @$_{qw<capability project permission user>};
 
             if (   $capability eq 'edit_project_permission'
-                or $capability eq 'edit_group_permission'
+                or $capability eq 'edit_organization_permission'
                 or $capability eq 'edit_user_permission' )
             {    # for editing permissions: new role must be valid
                 my $role = $_->{role} || croak "missing input key 'role'";
@@ -251,7 +259,7 @@ my @rules = (
         capabilities => [
             'edit_project_permission', 'revoke_project_permission',    # generic aliases
             qw<
-              edit_group_permission revoke_group_permission
+              edit_organization_permission revoke_organization_permission
               edit_user_permission  revoke_user_permission
               >
         ],
@@ -425,7 +433,7 @@ sub has_capability {
     return $rule->{rule}->() ? 1 : ();
 }
 
-sub group_roles { qw< member admin owner > }
+sub organization_roles { qw< member admin owner > }
 
 sub project_roles { qw< viewer editor admin owner > }
 

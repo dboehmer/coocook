@@ -1,4 +1,4 @@
-package Coocook::Schema::ResultSet::GroupUser;
+package Coocook::Schema::ResultSet::OrganizationUser;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

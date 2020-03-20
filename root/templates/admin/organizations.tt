@@ -1,0 +1,7 @@
+[% title = "Organizations" %]
+
+<ul>
+[% FOR organization IN organizations %]
+    <li><a href="[% organization.url %]">👥[% organization.name %]</a> [% organization.display_name | html %]</li>
+[% END %]
+</ul>

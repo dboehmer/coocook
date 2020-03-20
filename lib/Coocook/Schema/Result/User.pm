@@ -43,8 +43,8 @@ __PACKAGE__->has_many(
     }
 );
 
-__PACKAGE__->has_many( groups_users => 'Coocook::Schema::Result::GroupUser' );
-__PACKAGE__->many_to_many( groups => groups_users => 'group' );
+__PACKAGE__->has_many( organizations_users => 'Coocook::Schema::Result::OrganizationUser' );
+__PACKAGE__->many_to_many( organizations => organizations_users => 'organization' );
 
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
@@ -127,14 +127,14 @@ sub has_any_project_role {
     return $self->projects_users->exists( { project => $project->id, role => { -in => $roles } } );
 }
 
-sub has_any_group_role {
-    my $self  = shift;
-    my $group = shift;
+sub has_any_organization_role {
+    my $self         = shift;
+    my $organization = shift;
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->groups_users->exists(
-        { group => $group->id, role => { -in => $roles } } );
+    return $self->organizations_users->exists(
+        { organization => $organization->id, role => { -in => $roles } } );
 }
 
 sub roles {

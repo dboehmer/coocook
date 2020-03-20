@@ -22,10 +22,10 @@
 [% END %]
 </ul>
 
-<p>Member of the following groups:</p>
+<p>Member of the following organizations:</p>
 
 <ul>
-[% FOR group IN groups %]
-    <li><a href="[% group.url %]">👥[% group.name %]</a> [% group.display_name | html %]</li>
+[% FOR organization IN organizations %]
+    <li><a href="[% organization.url %]">👥[% organization.name %]</a> [% organization.display_name | html %]</li>
 [% END %]
 </ul>

@@ -18,10 +18,10 @@ $schema->resultset('BlacklistEmail')
 $schema->resultset('BlacklistUsername')
   ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
 
-my $group = $schema->resultset('Group')->create(
+my $organization = $schema->resultset('Organization')->create(
     {
-        name           => "TestGroup",
-        display_name   => "Test Group",
+        name           => "TestOrganization",
+        display_name   => "Test Organization",
         description_md => __FILE__,
         owner          => 9999
     }
@@ -58,15 +58,15 @@ $t->get_ok('/');
     );
 
     $t->register_fails_like(
-        { %userdata_ok, username => $group->name },
+        { %userdata_ok, username => $organization->name },
         qr/username is not available/,
-        "group name"
+        "organization name"
     );
 
     $t->register_fails_like(
-        { %userdata_ok, username => uc $group->name },
+        { %userdata_ok, username => uc $organization->name },
         qr/username is not available/,
-        "group name in uppercase"
+        "organization name in uppercase"
     );
 
     $t->register_ok( \%userdata_ok );

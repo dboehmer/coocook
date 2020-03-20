@@ -12,13 +12,13 @@ INSERT INTO 'roles_users'
 (        role, user) VALUES
 ('site_owner',    1);
 
-INSERT INTO 'groups'
+INSERT INTO 'organizations'
 (id,       name,    name_fc, display_name, owner, description_md) VALUES
 ( 1, 'TestData', 'testdata',  'Test Data',     1, 'from test data');
 
-INSERT INTO 'groups_users'
-(`group`, user, role) VALUES
-(      1,    1, 'owner');
+INSERT INTO 'organizations_users'
+(`organization`, user, role) VALUES
+(             1,    1, 'owner');
 
 INSERT INTO 'projects'
 (id,            name,        url_name,     url_name_fc,      description, is_public, owner,           created, archived) VALUES

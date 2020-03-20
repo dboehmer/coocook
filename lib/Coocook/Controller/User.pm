@@ -40,10 +40,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     my $user = $c->stash->{user_object};
 
-    my @groups = $user->groups->sorted->hri->all;
+    my @organizations = $user->organizations->sorted->hri->all;
 
-    for my $group (@groups) {
-        $group->{url} = $c->uri_for_action( '/group/show', [ $group->{name} ] );
+    for my $organization (@organizations) {
+        $organization->{url} = $c->uri_for_action( '/organization/show', [ $organization->{name} ] );
     }
 
     my @projects = $user->owned_projects->public->hri->all;
@@ -61,8 +61,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     }
 
     $c->stash(
-        groups   => \@groups,
-        projects => \@projects,
+        organizations => \@organizations,
+        projects      => \@projects,
     );
 
     $c->stash->{robots}->archive(0);
@@ -120,7 +120,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     else {
         my $name_fc = fc($username);
 
-        !$c->model('DB::Group')->exists( { name_fc => $name_fc } )
+        !$c->model('DB::Organization')->exists( { name_fc => $name_fc } )
           and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
           and $c->model('DB::BlacklistUsername')->is_username_ok($username)
           or push @errors, "username is not available";

@@ -10,9 +10,9 @@ sub base : Chained('/base') PathPart('settings') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { action => 'settings/account',  text => "Account" },
-            { action => 'settings/groups',   text => "Groups" },
-            { action => 'settings/projects', text => "Projects" },
+            { action => 'settings/account',       text => "Account" },
+            { action => 'settings/organizations', text => "Organizations" },
+            { action => 'settings/projects',      text => "Projects" },
         ],
     );
 }
@@ -67,27 +67,28 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     $c->response->redirect( $c->uri_for( $self->action_for('index') ) );
 }
 
-sub groups : GET HEAD Chained('base') Args(0) RequiresCapability('view_user_groups') {
+sub organizations : GET HEAD Chained('base') Args(0) RequiresCapability('view_user_organizations') {
     my ( $self, $c ) = @_;
 
-    my @groups_users = $c->user->search_related( groups_users => undef, { prefetch => 'group' } )->all;
+    my @organizations_users =
+      $c->user->search_related( organizations_users => undef, { prefetch => 'organization' } )->all;
 
-    for (@groups_users) {
-        my $group_user = $_;
-        my $group      = $_->group;
+    for (@organizations_users) {
+        my $organization_user = $_;
+        my $organization      = $_->organization;
 
-        $_ = $group_user->as_hashref;
+        $_ = $organization_user->as_hashref;
 
-        $_->{group_url} = $c->uri_for_action( '/group/show', [ $group->name ] );
+        $_->{organization_url} = $c->uri_for_action( '/organization/show', [ $organization->name ] );
 
-        if ( $c->has_capability( leave_group => { group => $group } ) ) {
-            $_->{leave_url} = $c->uri_for_action( '/group/leave', [ $group->name ] );
+        if ( $c->has_capability( leave_organization => { organization => $organization } ) ) {
+            $_->{leave_url} = $c->uri_for_action( '/organization/leave', [ $organization->name ] );
         }
     }
 
     $c->stash(
-        create_group_url => $c->uri_for_action('/group/create'),
-        groups_users     => \@groups_users,
+        create_organization_url => $c->uri_for_action('/organization/create'),
+        organizations_users     => \@organizations_users,
     );
 }
 

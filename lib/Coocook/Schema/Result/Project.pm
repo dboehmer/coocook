@@ -29,8 +29,8 @@ __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
 __PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
 
-__PACKAGE__->has_many( groups_projects => 'Coocook::Schema::Result::GroupProject' );
-__PACKAGE__->many_to_many( groups => groups_projects => 'group' );
+__PACKAGE__->has_many( organizations_projects => 'Coocook::Schema::Result::OrganizationProject' );
+__PACKAGE__->many_to_many( organizations => organizations_projects => 'organization' );
 
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( users => projects_users => 'user' );
@@ -198,20 +198,20 @@ sub tags_from_names {
     return $self->tags->from_names($names);
 }
 
-=head2 groups_without_permission
+=head2 organizations_without_permission
 
-Returns a resultset with all C<Result::Group>s without any related C<groups_projects> record.
+Returns a resultset with all C<Result::Organization>s without any related C<organizations_projects> record.
 
 =cut
 
-sub groups_without_permission {
+sub organizations_without_permission {
     my $self = shift;
 
-    my $permitted_groups = $self->groups_projects->get_column('group');
+    my $permitted_organizations = $self->organizations_projects->get_column('organization');
 
-    return $self->result_source->schema->resultset('Group')->search(
+    return $self->result_source->schema->resultset('Organization')->search(
         {
-            id => { -not_in => $permitted_groups->as_query },
+            id => { -not_in => $permitted_organizations->as_query },
         }
     );
 }
