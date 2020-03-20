@@ -2,15 +2,15 @@
 
 <p>Name: 👥[% organization.name %]</p>
 
-<p>
 <form class="inline" method="post" action="[% update_url %]">
+<p>
     <input type="text" name="display_name" value="[% organization.display_name %]">
-    <p><input type="submit" value="Update"></p>
-</form>
+    <input type="submit" value="Update">
 </p>
+</form>
 
 <form method="post" action="[% update_url %]">
-    <textarea class="with-markdown-preview" name="description_md">[% organization.description_md | html %]</textarea>
+    <p><textarea class="with-markdown-preview" name="description_md">[% organization.description_md | html %]</textarea></p>
     <p><input type="submit" value="Update"></p>
 </form>
 
