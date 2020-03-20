@@ -48,7 +48,7 @@
 
 <p>Deleting an organization also removes all memberships and the organization’s permissions on projects.</p>
 
-<form method="post" action="[% delete_url %]">
+<form name="delete" method="post" action="[% delete_url %]">
     <input type="submit" value="Delete organization">
 </form>
 [% END %]

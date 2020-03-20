@@ -34,7 +34,7 @@
                     </form>
                 [% END %]
                 [% IF g_u.transfer_ownership_url %]
-                    <form class="inline" method="post" action="[% g_u.transfer_ownership_url %]">
+                    <form class="inline" name="transfer-ownership" method="post" action="[% g_u.transfer_ownership_url %]">
                         <input type="submit" value="Transfer ownership">
                     </form>
                 [% END %]
