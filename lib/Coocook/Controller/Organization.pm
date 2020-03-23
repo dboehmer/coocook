@@ -101,15 +101,17 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
           $c->uri_for_action( '/project/show', [ $organization_project->project->url_name ] );
     }
 
-    $c->has_capability('delete_organization')
-      and
-      $c->stash( delete_url => $c->uri_for( $self->action_for('delete'), [ $organization->name ] ) );
-
     $c->stash(
         organizations_users    => \@organizations_users,
         organizations_projects => \@organizations_projects,
-        update_url             => $c->uri_for( $self->action_for('update'), [ $organization->name ] ),
-        members_url => $c->uri_for_action( '/organization/member/index', [ $organization->name ] ),
+        maybe
+          update_url =>
+          $c->uri_for_action_if_permitted( $self->action_for('update'), [ $organization->name ] ),
+        maybe
+          members_url =>
+          $c->uri_for_action_if_permitted( '/organization/member/index', [ $organization->name ] ),
+        maybe delete_url =>
+          $c->uri_for_action_if_permitted( $self->action_for('delete'), [ $organization->name ] ),
     );
 }
 

@@ -5,6 +5,7 @@ package Coocook::Helpers;
 use Carp;
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;
+use Scalar::Util qw< blessed >;
 
 =head1 METHODS
 
@@ -59,6 +60,50 @@ around uri_for => sub {
     local @Coocook::Helpers::CARP_NOT = 'Class::MOP::Method::Wrapped';
     croak 'Catalyst->uri_for() returned undef';
 };
+
+=head2 uri_for_action_if_permitted( $action, @args? )
+
+Similar to C<< $c->uri_for >> but returns the URI only if the action
+is permitted, i.e. not prohibited by RequiresCapability attributes.
+
+    package Coocook::Controller::Foo;
+
+    sub bar : RequiresCapability('view_bar') { ... }
+
+    sub baz {
+        my ( $self, $c ) = @_;
+
+        # with path and query arguments
+        my $uri = $c->uri_for_action_if_permitted( '/foo/bar', { limit => 42 } );
+
+        use PerlX::Maybe;    # simplifies code
+        $c->stash(
+            # with action object and path parameter
+            maybe foo_bar_uri => $c->uri_for_action_if_permitted( $self->action_for('bar'), [ $id ] ),
+            ...
+        );
+    }
+
+=cut
+
+# TODO might become necessary to pass additional $input for has_capability()
+# idea: check if $_[2] is hashref -> use as $input
+sub uri_for_action_if_permitted {    # logic stolen from Catalyst->uri_for_action()
+    my ( $c, $path, @args ) = @_;
+
+    my $action = blessed($path) ? $path : $c->dispatcher->get_action_by_path($path);
+
+    $action // croak "Can't find action for path '$path'";
+
+    my $capabilities = $action->attributes->{RequiresCapability};
+
+    $capabilities and @$capabilities > 0
+      or croak "Action doesn't declare any required capabilities";
+
+    $c->has_capability( $_, $c->stash ) || return for @$capabilities;
+
+    return $c->uri_for( $action, @args );
+}
 
 =head2 $c->has_capability( $capability, \%input? )
 
