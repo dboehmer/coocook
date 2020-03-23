@@ -88,7 +88,7 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
 }
 
 sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
-  Public    # custom requires_capability() calls below
+  Public    # custom require_capability() calls below
 {
     my ( $self, $c ) = @_;
 
@@ -96,7 +96,7 @@ sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
     my $role = $c->req->params->get('role');
 
     if ( my $organization = $c->model('DB::Organization')->find( { name => $id } ) ) {
-        $c->requires_capability(
+        $c->require_capability(
             add_organization_permission => { organization => $organization, role => $role } );
 
         $c->project->create_related(
@@ -107,7 +107,7 @@ sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
         );
     }
     elsif ( my $user = $c->model('DB::User')->find( { name => $id } ) ) {
-        $c->requires_capability( add_user_permission => { role => $role, user_object => $user } );
+        $c->require_capability( add_user_permission => { role => $role, user_object => $user } );
 
         $c->project->create_related(
             projects_users => {
@@ -134,13 +134,13 @@ sub base : Chained('/project/base') PathPart('permissions') CaptureArgs(1) {
 }
 
 sub edit : POST Chained('base') PathPart('edit') Args(0)
-  Public    # custom requires_capability() call below
+  Public    # custom require_capability() call below
 {
     my ( $self, $c ) = @_;
 
     my $role = $c->req->params->get('role');
 
-    $c->requires_capability( edit_project_permission => { role => $role } );
+    $c->require_capability( edit_project_permission => { role => $role } );
 
     $c->stash->{permission}->update( { role => $role } );
 

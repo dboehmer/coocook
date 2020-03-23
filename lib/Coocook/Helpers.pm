@@ -95,7 +95,7 @@ sub has_capability {
     return $authz->has_capability( $capability, $input );
 }
 
-=head2 $c->requires_capability( $capability, \%input? )
+=head2 $c->require_capability( $capability, \%input? )
 
 Checks authorization via L<Coocook::Model::Authorization>.
 If not permitted might ask user to log in
@@ -106,7 +106,7 @@ if L<Coocook::ActionRole::RequiresCapability> is applied to an action.
 
 =cut
 
-sub requires_capability {
+sub require_capability {
     my $c = shift;
 
     $c->has_capability(@_)

@@ -28,7 +28,7 @@ around execute => sub {
     my ( $controller, $c ) = @_;
 
     if ( my $capabilities = $self->attributes->{RequiresCapability} ) {
-        $c->requires_capability( $_, $c->stash ) for @$capabilities;
+        $c->require_capability( $_, $c->stash ) for @$capabilities;
     }
 
     $self->$orig(@_);

@@ -72,8 +72,7 @@ sub index : GET HEAD Chained('/organization/base') PathPart('members') Args(0)
     );
 }
 
-sub add : POST Chained('/organization/base') Args(0)
-  Public    # custom requires_capability() call below
+sub add : POST Chained('/organization/base') Args(0) Public # custom require_capability() call below
 {
     my ( $self, $c ) = @_;
 
@@ -84,7 +83,7 @@ sub add : POST Chained('/organization/base') Args(0)
 
     my $user = $c->model('DB::User')->find( { name => $name } ) || $c->detach('/error/bad_request');
 
-    $c->requires_capability( add_user_to_organization => { role => $role, user_object => $user } );
+    $c->require_capability( add_user_to_organization => { role => $role, user_object => $user } );
 
     $organization->create_related(
         organizations_users => {
@@ -105,13 +104,13 @@ sub base : Chained('/organization/base') PathPart('member') CaptureArgs(1) {
       || $c->detach('/error/bad_request');
 }
 
-sub edit : POST Chained('base') Args(0) Public    # custom requires_capability() call below
+sub edit : POST Chained('base') Args(0) Public    # custom require_capability() call below
 {
     my ( $self, $c ) = @_;
 
     my $role = $c->req->params->get('role');
 
-    $c->requires_capability( edit_organization_membership => { role => $role } );
+    $c->require_capability( edit_organization_membership => { role => $role } );
 
     $c->stash->{membership}->update( { role => $role } );
 
