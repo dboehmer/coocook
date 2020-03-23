@@ -26,14 +26,7 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
     my $recipes = $c->model('DB::Recipe');
 
     if ( $c->req->params->get('show_all') ) {
-        if ( not $c->has_capability('view_all_recipes') ) {
-            if ( $c->user ) {
-                $c->detach('/error/forbidden');
-            }
-            else {
-                $c->redirect_detach( $c->stash->{login_url} );
-            }
-        }
+        $c->require_capability('view_all_recipes');
 
         $c->stash( show_less_url => $c->uri_for( $c->action ) );
     }
