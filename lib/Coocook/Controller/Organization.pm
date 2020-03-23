@@ -104,13 +104,11 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash(
         organizations_users    => \@organizations_users,
         organizations_projects => \@organizations_projects,
-        maybe
-          update_url =>
+        update_url =>
           $c->uri_for_action_if_permitted( $self->action_for('update'), [ $organization->name ] ),
-        maybe
-          members_url =>
+        members_url =>
           $c->uri_for_action_if_permitted( '/organization/member/index', [ $organization->name ] ),
-        maybe delete_url =>
+        delete_url =>
           $c->uri_for_action_if_permitted( $self->action_for('delete'), [ $organization->name ] ),
     );
 }

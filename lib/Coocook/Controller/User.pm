@@ -56,13 +56,10 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $c->stash( my_settings_url => $c->uri_for_action('/settings/index') );
     }
 
-    if ( $c->has_capability('manage_users') ) {
-        $c->stash( profile_admin_url => $c->uri_for_action( '/admin/user/show', [ $user->name_fc ] ) );
-    }
-
     $c->stash(
-        organizations => \@organizations,
-        projects      => \@projects,
+        organizations     => \@organizations,
+        projects          => \@projects,
+        profile_admin_url => $c->uri_for_action_if_permitted( '/admin/user/show', [ $user->name_fc ] ),
     );
 
     $c->stash->{robots}->archive(0);

@@ -58,10 +58,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
 
     my ( $status_code => $status_description ) = $user->status;
 
-    if ( $c->has_capability('discard_user') ) {
-        $c->stash( discard_url => $c->uri_for( $self->action_for('discard'), [ $user->name ] ) );
-    }
-
     $c->stash(
         status                   => $status_description,
         organization_memberships => \my @organization_memberships,
@@ -69,6 +65,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
         public_profile_url       => $c->uri_for_action( '/user/show', [ $user->name ] ),
         update_url               => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
         roles                    => { map { $_ => 1 } $user->roles },
+        discard_url => $c->uri_for_action_if_permitted( $self->action_for('discard'), [ $user->name ] ),
     );
 
     my $permissions = $user->projects_users->search(

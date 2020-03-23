@@ -159,7 +159,7 @@ END %]
 [% END %]
         </ul>
 
-[% IF admin_urls %]
+[% IF admin_url %]
         <ul>
             <h4><a href="[% admin_url %]">Admin</a></h4>
             <li><a href="[% admin_urls.faq %]">FAQ</a></li>

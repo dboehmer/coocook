@@ -35,26 +35,25 @@ sub index : GET HEAD Chained('/organization/base') PathPart('members') Args(0)
 
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $organization_user->user->name ] );
 
-        if ( $c->has_capability( transfer_organization_ownership => { membership => $organization_user } ) )
-        {
-            $_->{transfer_ownership_url} = $c->uri_for( $self->action_for('make_owner'),
-                [ $organization->name, $organization_user->user->name ] );
-        }
+        $_->{transfer_ownership_url} = $c->uri_for_action_if_permitted(
+            $self->action_for('make_owner'),
+            { membership => $organization_user },
+            [ $organization->name, $organization_user->user->name ]
+        );
 
-        if (
-            $c->has_capability(
-                edit_organization_membership => { membership => $organization_user, role => 'member' }
-            )
-          )
-        {
-            $_->{edit_url} =
-              $c->uri_for( $self->action_for('edit'), [ $organization->name, $organization_user->user->name ] );
-        }
+        $_->{remove_url} = $c->uri_for_action_if_permitted(
+            $self->action_for('remove'),
+            { membership => $organization_user },
+            [ $organization->name, $organization_user->user->name ]
+        );
 
-        if ( $c->has_capability( remove_user_from_organization => { membership => $organization_user } ) ) {
-            $_->{remove_url} = $c->uri_for( $self->action_for('remove'),
-                [ $organization->name, $organization_user->user->name ] );
-        }
+        # can't use uri_for_action_if_permitted() because action has non-declarative check
+        $c->has_capability(
+            edit_organization_membership => { membership => $organization_user, role => 'member' } )
+          or next;
+
+        $_->{edit_url} =
+          $c->uri_for( $self->action_for('edit'), [ $organization->name, $organization_user->user->name ] );
     }
 
     if ( my @other_users = $organization->users_without_membership->sorted->hri->all ) {

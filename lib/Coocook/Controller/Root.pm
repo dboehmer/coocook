@@ -143,18 +143,16 @@ sub auto : Private {
         );
     }
 
-    if ( $c->has_capability('admin_view') ) {
-        $c->stash(
-            admin_url  => $c->uri_for_action('/admin/index'),
-            admin_urls => {                                     # TODO list duplicates code in Controller::Admin
-                faq           => $c->uri_for_action('/admin/faq/index'),
-                organizations => $c->uri_for_action('/admin/organizations'),
-                projects      => $c->uri_for_action('/admin/projects'),
-                terms         => $c->uri_for_action('/admin/terms/index'),
-                users         => $c->uri_for_action('/admin/user/index'),
-            },
-        );
-    }
+    $c->stash(
+        admin_url => $c->uri_for_action_if_permitted('/admin/index'),
+        admin_urls => {    # TODO list duplicates code in Controller::Admin
+            faq           => $c->uri_for_action_if_permitted('/admin/faq/index'),
+            organizations => $c->uri_for_action_if_permitted('/admin/organizations'),
+            projects      => $c->uri_for_action_if_permitted('/admin/projects'),
+            terms         => $c->uri_for_action_if_permitted('/admin/terms/index'),
+            users         => $c->uri_for_action_if_permitted('/admin/user/index'),
+        },
+    );
 
     # has current terms or has any terms (valid in future then)
     if ( $c->model('DB::Terms')->exists ) {

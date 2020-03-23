@@ -157,12 +157,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         )->as_arrayref;
     }
 
-    # link to recipe in project if project is visible to public/user
-    if ( $c->has_capability( view_project => { project => $project } ) ) {
-        $c->stash(
-            project_url => $c->uri_for_action( '/recipe/edit', [ $project->url_name, $recipe->id ] ) );
-    }
-
     $c->user
       and $c->stash(
         import_url => $c->uri_for( $self->action_for('import'), [ $recipe->id, $recipe->url_name ] ) );
@@ -172,6 +166,11 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         servings                 => $servings,
         prepared_ingredients     => $ingredients{prepared},
         not_prepared_ingredients => $ingredients{not_prepared},
+        project_url              => $c->uri_for_action_if_permitted(
+            '/recipe/edit',
+            { project => $project },
+            [ $project->url_name, $recipe->id ]
+        ),
     );
 }
 

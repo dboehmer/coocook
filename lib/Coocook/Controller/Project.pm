@@ -173,8 +173,7 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
 
     my $target = $c->project;
 
-    $c->has_capability( export_from_project => { source_project => $source } )
-      or $c->detach('/error/forbidden');
+    $c->require_capability( export_from_project => { source_project => $source } );
 
     # extract properties selected in form
     my @properties =

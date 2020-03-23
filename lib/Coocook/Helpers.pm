@@ -61,10 +61,17 @@ around uri_for => sub {
     croak 'Catalyst->uri_for() returned undef';
 };
 
-=head2 uri_for_action_if_permitted( $action, @args? )
+=head2 uri_for_action_if_permitted( $action, \%input?, @args? )
+
+=head2 uri_for_action_if_permitted( $action, \%input, @args?, \%query_values )
 
 Similar to C<< $c->uri_for >> but returns the URI only if the action
 is permitted, i.e. not prohibited by RequiresCapability attributes.
+
+If the 1st argument to C<uri_for_action> was a hashref, then another
+hashref must be passed as C<$input> before. It might be empty C<{}>.
+
+Returns C<undef> if action is not permitted.
 
     package Coocook::Controller::Foo;
 
@@ -76,20 +83,19 @@ is permitted, i.e. not prohibited by RequiresCapability attributes.
         # with path and query arguments
         my $uri = $c->uri_for_action_if_permitted( '/foo/bar', { limit => 42 } );
 
-        use PerlX::Maybe;    # simplifies code
+        # with action object and path parameter
         $c->stash(
-            # with action object and path parameter
-            maybe foo_bar_uri => $c->uri_for_action_if_permitted( $self->action_for('bar'), [ $id ] ),
+            foo_bar_uri => $c->uri_for_action_if_permitted( $self->action_for('bar'), [ $id ] ),
             ...
         );
     }
 
 =cut
 
-# TODO might become necessary to pass additional $input for has_capability()
-# idea: check if $_[2] is hashref -> use as $input
 sub uri_for_action_if_permitted {    # logic stolen from Catalyst->uri_for_action()
-    my ( $c, $path, @args ) = @_;
+    my $c     = shift;
+    my $path  = shift;
+    my $input = @_ && ref $_[0] eq 'HASH' ? shift : undef;
 
     my $action = blessed($path) ? $path : $c->dispatcher->get_action_by_path($path);
 
@@ -100,9 +106,12 @@ sub uri_for_action_if_permitted {    # logic stolen from Catalyst->uri_for_actio
     $capabilities and @$capabilities > 0
       or croak "Action doesn't declare any required capabilities";
 
-    $c->has_capability( $_, $c->stash ) || return for @$capabilities;
+    for (@$capabilities) {
+        $c->has_capability( $_, $input )
+          or return (undef);    # needs 1 list element when used in $c->stash()
+    }
 
-    return $c->uri_for( $action, @args );
+    return $c->uri_for( $action, @_ );
 }
 
 =head2 $c->has_capability( $capability, \%input? )
