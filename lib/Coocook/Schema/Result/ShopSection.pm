@@ -36,7 +36,7 @@ sub deletable {
         return $self->get_column('article_count') == 0;
     }
     else {
-        return !$self->articles->exists;
+        return !$self->articles->results_exist;
     }
 }
 

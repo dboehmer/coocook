@@ -92,7 +92,7 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
     #   but the error condition is already checked by JavaScript.
     # This only prevents internal server errors from the SQL error
     #   when going back in browser history and sending the form again.
-    if ( $c->project->recipes->exists( { name => $c->req->params->get('name') } ) ) {
+    if ( $c->project->recipes->results_exist( { name => $c->req->params->get('name') } ) ) {
         $c->messages->error("A recipe with that name does already exist");
         $c->stash( template => 'recipe/import/preview.tt' );
         $c->detach('preview');

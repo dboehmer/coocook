@@ -174,7 +174,7 @@ sub update_or_insert : Private {
     if ( not $unit->in_storage ) {    # about to be created
         my $quantity = $c->req->params->get('quantity');
 
-        if ( $c->project->quantities->exists( { id => $quantity } ) ) {
+        if ( $c->project->quantities->results_exist( { id => $quantity } ) ) {
             $unit->set_column( quantity => $quantity );
         }
         else {
@@ -196,7 +196,7 @@ sub update_or_insert : Private {
       or push @errors, "Short name must be set!";
 
     if ( length $unit->long_name ) {
-        my $is_unique = not $c->project->units->exists(
+        my $is_unique = not $c->project->units->results_exist(
             { ( $unit->in_storage ? ( id => { '!=' => $unit->id } ) : () ), long_name => $unit->long_name } );
 
         $is_unique or push @errors, "Another unit with that long name already exists!";

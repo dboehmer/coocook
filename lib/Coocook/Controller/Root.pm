@@ -65,7 +65,7 @@ sub auto : Private {
     $c->stash( robots => my $robots = HTML::Meta::Robots->new() );
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
-        if ( !$c->user and !$c->model('DB::User')->exists ) {
+        if ( !$c->user and !$c->model('DB::User')->results_exist ) {
             $c->messages->info( "There are currently no users registered at this Coocook installation."
                   . " The first user you register will be site admin!" );
 
@@ -121,7 +121,7 @@ sub auto : Private {
         $c->stash( canonical_url => $uri );
     }
 
-    if ( $c->model('DB::FAQ')->exists ) {
+    if ( $c->model('DB::FAQ')->results_exist ) {
         $c->stash( faq_url => $c->uri_for_action('/faq/index') );
     }
 
@@ -155,7 +155,7 @@ sub auto : Private {
     );
 
     # has current terms or has any terms (valid in future then)
-    if ( $c->model('DB::Terms')->exists ) {
+    if ( $c->model('DB::Terms')->results_exist ) {
         $c->stash( terms_url => $c->uri_for_action('/terms/index') );
     }
 

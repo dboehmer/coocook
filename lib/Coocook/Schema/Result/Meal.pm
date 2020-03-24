@@ -43,7 +43,7 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    return !$self->dishes->exists;
+    return !$self->dishes->results_exist;
 }
 
 1;

@@ -166,7 +166,7 @@ sub import_data {    # import() is used by 'use'
                     {
                         my ($target_rs) = $import->($target);
 
-                        $target_rs->exists
+                        $target_rs->results_exist
                           and croak sprintf "target table '%s' not empty", $target_rs->result_source->name;
                     }
 

@@ -95,7 +95,7 @@ before delete => sub {
     my $self = shift;
 
     if ( $self->is_quantity_default ) {
-        $self->other_units_of_same_quantity->exists
+        $self->other_units_of_same_quantity->results_exist
           or $self->quantity->update( { default_unit_id => undef } );
     }
 };

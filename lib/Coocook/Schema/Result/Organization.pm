@@ -58,7 +58,7 @@ sub has_any_project_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->organizations_projects->exists(
+    return $self->organizations_projects->results_exist(
         { project_id => $project->id, role => { -in => $roles } } );
 }
 

@@ -117,8 +117,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     else {
         my $name_fc = fc($username);
 
-        !$c->model('DB::Organization')->exists( { name_fc => $name_fc } )
-          and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
+        !$c->model('DB::Organization')->results_exist( { name_fc => $name_fc } )
+          and !$c->model('DB::User')->results_exist( { name_fc => $name_fc } )
           and $c->model('DB::BlacklistUsername')->is_username_ok($username)
           or push @errors, "username is not available";
     }
@@ -133,7 +133,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     }
 
     is_email($email_fc)
-      and !$c->model('DB::User')->exists( { email_fc => $email_fc } )
+      and !$c->model('DB::User')->results_exist( { email_fc => $email_fc } )
       and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
       or push @errors, "e-mail address is invalid or already taken";
 
@@ -213,7 +213,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
         }
       );
 
-    my $site_owners_exist = $c->model('DB::RoleUser')->exists( { role => 'site_owner' } );
+    my $site_owners_exist = $c->model('DB::RoleUser')->results_exist( { role => 'site_owner' } );
 
     if ( $site_owners_exist and $c->config->{notify_site_owners_about_registrations} ) {
         for my $admin ( $c->model('DB::User')->site_owners->all ) {

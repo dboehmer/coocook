@@ -35,9 +35,9 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    $self->articles_tags->exists and return;
-    $self->dishes_tags->exists   and return;
-    $self->recipes_tags->exists  and return;
+    $self->articles_tags->results_exist and return;
+    $self->dishes_tags->results_exist   and return;
+    $self->recipes_tags->results_exist  and return;
 
     return 1;
 }

@@ -8,10 +8,10 @@ use Test::Most tests => 9;
 
 my $t = Test::Coocook->new;
 
-$t->schema->resultset('Project')->exists( { name => my $private_project = 'Other Project' } )
+$t->schema->resultset('Project')->results_exist( { name => my $private_project = 'Other Project' } )
   or die "test broken";
 
-$t->schema->resultset('Recipe')->exists( { name => my $private_recipe = 'rice pudding' } )
+$t->schema->resultset('Recipe')->results_exist( { name => my $private_recipe = 'rice pudding' } )
   or die "test broken";
 
 $t->get_ok('/');

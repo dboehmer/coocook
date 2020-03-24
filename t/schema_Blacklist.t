@@ -48,7 +48,7 @@ subtest BlacklistEmail => sub {
         ok $blacklist->add_email( $literal, comment => __FILE__ );
         ok !$blacklist->is_email_ok($literal);
         ok !$blacklist->is_email_ok( uc $literal ), "uppercase";
-        ok !$blacklist->exists( { email_fc => $literal } ),
+        ok !$blacklist->results_exist( { email_fc => $literal } ),
           "table doesn't contain e-mail address in cleartext";
     };
 };

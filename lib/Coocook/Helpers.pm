@@ -333,7 +333,7 @@ until the first user (site admin) is registered.
 sub user_registration_enabled {
     my $c = shift;
 
-    $c->model('DB::User')->exists
+    $c->model('DB::User')->results_exist
       or return 1;
 
     return !!$c->config->{enable_user_registration};

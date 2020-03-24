@@ -15,7 +15,7 @@ $rs->delete();    # delete test data
 is $rs->valid_on_date('2001-01-01') => undef, "valid_on_date() on empty database";
 is $rs->valid_today()               => undef, "valid_today() on empty database";
 
-ok !$rs->valid_today_rs->exists, "valid_today_rs()->exists returns false";
+ok !$rs->valid_today_rs->results_exist, "valid_today_rs()->results_exist returns false";
 
 ok $rs->populate(
     [
@@ -32,7 +32,7 @@ ok $rs->populate(
 throws_ok { $rs->create( { valid_from => '2001-01-01', content_md => "" } ) } qr/UNIQUE/,
   "INSERT with non-unique date fails";
 
-ok $rs->valid_today_rs->exists, "valid_today_rs()->exists returns true";
+ok $rs->valid_today_rs->results_exist, "valid_today_rs()->results_exist returns true";
 
 subtest "valid_on_date() with string" => sub {
     is $rs->valid_on_date('2000-01-01')             => undef, "undef for previous dates";

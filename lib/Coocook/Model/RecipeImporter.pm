@@ -155,7 +155,7 @@ sub import_data {    # import() used by 'use'
                 my $comment = $mapping->{comment} // $ingredient->{comment};
                 my $value   = $mapping->{value}   // $ingredient->{value};
 
-                $articles_units_rs->exists( { article_id => $article->{id}, unit_id => $unit->{id} } )
+                $articles_units_rs->results_exist( { article_id => $article->{id}, unit_id => $unit->{id} } )
                   or croak "invalid combination of article and unit";
 
                 $ingredients_rs->find($ingredient_id)->copy(

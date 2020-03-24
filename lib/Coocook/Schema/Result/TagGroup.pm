@@ -41,7 +41,7 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    return !$self->tags->exists;
+    return !$self->tags->results_exist;
 }
 
 1;

@@ -184,7 +184,7 @@ Indicates if this project can be archived.
 sub is_stale {
     my ( $self, $pivot_date ) = @_;
 
-    return $self->self_rs->stale($pivot_date)->exists();
+    return $self->self_rs->stale($pivot_date)->results_exist();
 }
 
 =head2 tags_from_names($names)

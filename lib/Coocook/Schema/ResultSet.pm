@@ -19,6 +19,7 @@ __PACKAGE__->load_components(
       Helper::ResultSet::Me
       Helper::ResultSet::OneRow
       Helper::ResultSet::SetOperations
+      Helper::ResultSet::Shortcut::ResultsExist
       Helper::ResultSet::Shortcut::HRI
       >
 );
@@ -42,19 +43,6 @@ sub count_distinct {
 
     return $self->search( undef, { columns => { count => { COUNT => { DISTINCT => $column } } } } )
       ->hri->one_row->{count};
-}
-
-sub exists {
-    my $self = shift;
-
-    return $self->exists_rs(@_)->single ? 1 : ();
-}
-
-sub exists_rs {
-    my ( $self, $search ) = @_;
-
-    # inspired from DBIx::Class::ResultSet::Void but that is low quality and obsolete
-    return $self->search( $search, { rows => 1, select => [ \1 ] } );
 }
 
 =head2 only_id_col($id_column_name?)

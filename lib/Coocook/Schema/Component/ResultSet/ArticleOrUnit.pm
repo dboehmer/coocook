@@ -24,7 +24,7 @@ sub in_use {
 
     return $self->search(
         [    # OR
-            map { $self->correlate($_)->exists_rs(@_)->as_query } @relationships
+            map { $self->correlate($_)->search(@_)->results_exist_as_query } @relationships
         ]
     );
 }

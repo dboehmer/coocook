@@ -104,7 +104,7 @@ sub remove_from_purchase_list {
 
             $self->update( { item_id => undef } );
 
-            if ( $item->ingredients->exists ) {
+            if ( $item->ingredients->results_exist ) {
                 $item->update_from_ingredients;
             }
 

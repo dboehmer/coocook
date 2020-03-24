@@ -38,8 +38,8 @@ my @rules = (
             my ( $organization, $user ) = @$_{ 'organization', 'user' };
             return (
                      $user->has_any_role('site_owner')
-                  or
-                  $user->search_related( organizations_users => { organization_id => $organization->id } )->exists
+                  or $user->search_related( organizations_users => { organization_id => $organization->id } )
+                  ->results_exist
             );
         },
         capabilities => [qw< view_organization_members >],
@@ -49,7 +49,7 @@ my @rules = (
         rule        => sub {
             my ( $organization, $user ) = @$_{ 'organization', 'user' };
             return if $organization->owner_id == $user->id;    # owner must not leave
-            return $user->organizations_users->exists(
+            return $user->organizations_users->results_exist(
                 { organization_id => $organization->id }       # user is organization member?
             );
         },
@@ -76,8 +76,7 @@ my @rules = (
             return unless grep { $role eq $_ } organization_roles();
 
             # is already organization member
-            return
-              if $organization->organizations_users->exists( { user => $user_object->id } );
+            return if $organization->organizations_users->results_exist( { user => $user_object->id } );
 
             return (
                      $user->has_any_organization_role( $organization, qw< admin owner > )
@@ -221,7 +220,7 @@ my @rules = (
               : $capability eq 'add_user_permission'         ? $_->{user_object}->projects_users
               :                                                die "code broken";
 
-            return if $permissions->exists( { project => $project->id } );    # already has permission
+            return if $permissions->results_exist( { project => $project->id } );    # already has permission
 
             return (
                      $user->has_any_role('site_owner')

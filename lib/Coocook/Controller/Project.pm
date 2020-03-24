@@ -261,7 +261,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
     );
 
     # TODO keep form input
-    if ( $projects->search( { url_name_fc => $project->url_name_fc } )->exists ) {
+    if ( $projects->search( { url_name_fc => $project->url_name_fc } )->results_exist ) {
         $c->messages->error("Project name is already in use");
         $c->redirect_detach( $c->uri_for('/') );
     }

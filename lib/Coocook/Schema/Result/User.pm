@@ -118,7 +118,7 @@ sub has_any_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->roles_users->exists( { role => { -in => $roles } } );
+    return $self->roles_users->results_exist( { role => { -in => $roles } } );
 }
 
 sub has_any_project_role {
@@ -127,7 +127,8 @@ sub has_any_project_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->projects_users->exists( { project_id => $project->id, role => { -in => $roles } } );
+    return $self->projects_users->results_exist(
+        { project_id => $project->id, role => { -in => $roles } } );
 }
 
 sub has_any_organization_role {
@@ -136,7 +137,7 @@ sub has_any_organization_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->organizations_users->exists(
+    return $self->organizations_users->results_exist(
         { organization_id => $organization->id, role => { -in => $roles } } );
 }
 

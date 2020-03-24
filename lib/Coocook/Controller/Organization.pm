@@ -36,8 +36,8 @@ sub create : POST Chained('/base') PathPart('organization/create') Args(0)
         else {
             my $name_fc = fc($name);
 
-            !$c->model('DB::Organization')->exists( { name_fc => $name_fc } )
-              and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
+            !$c->model('DB::Organization')->results_exist( { name_fc => $name_fc } )
+              and !$c->model('DB::User')->results_exist( { name_fc => $name_fc } )
               and $c->model('DB::BlacklistUsername')->is_username_ok($name)
               or push @errors, "name is not available";
         }

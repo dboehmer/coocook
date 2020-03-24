@@ -51,7 +51,7 @@ sub cmp_validity_today {
         my $next_until_today_rs =
           $self->neighbors(+1)->search( { valid_from => { '<=' => DateTime->today->ymd } } );
 
-        return $next_until_today_rs->exists ? $CMP_VALID_IN_PAST : $CMP_VALID_TODAY;
+        return $next_until_today_rs->results_exist ? $CMP_VALID_IN_PAST : $CMP_VALID_TODAY;
     }
     elsif ( $cmp == 0 ) { return $CMP_VALID_TODAY }
     else                { return $CMP_VALID_IN_FUTURE }
@@ -69,7 +69,7 @@ sub reasons_to_freeze {
     my $self = shift;
 
     if    ( $self->valid_from <= DateTime->today ) { return 'not_in_future' }
-    elsif ( $self->terms_users->exists )           { return 'has_users' }
+    elsif ( $self->terms_users->results_exist )    { return 'has_users' }
     else                                           { return () }
 }
 
@@ -85,18 +85,18 @@ sub reasons_to_keep {
     my $self = shift;
 
     return 'has_users'
-      if $self->terms_users->exists;
+      if $self->terms_users->results_exist;
 
     my $cmp = $self->cmp_validity_today;
 
     if ( $cmp == $CMP_VALID_IN_PAST ) {
-        return $self->neighbors(-1)->exists ? 'has_previous' : ();
+        return $self->neighbors(-1)->results_exist ? 'has_previous' : ();
     }
     elsif ( $cmp == $CMP_VALID_TODAY ) {
         return 'is_currently_valid';
     }
     elsif ( $cmp == $CMP_VALID_IN_FUTURE ) {
-        return $self->neighbors(+1)->exists ? 'has_next' : ();
+        return $self->neighbors(+1)->results_exist ? 'has_next' : ();
     }
     else { die "code broken" }
 }

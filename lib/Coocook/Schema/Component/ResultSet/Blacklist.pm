@@ -49,10 +49,10 @@ sub _is_value_ok {
     my $type_col  = $self->_blacklist_type_column;
     my $value_col = $self->_blacklist_value_column;
 
-    $self->exists( { $type_col => 'cleartext', $value_col => $value } )
+    $self->results_exist( { $type_col => 'cleartext', $value_col => $value } )
       and return '';
 
-    $self->exists( { $type_col => 'sha256_b64', $value_col => sha256_b64($value) } )
+    $self->results_exist( { $type_col => 'sha256_b64', $value_col => sha256_b64($value) } )
       and return '';
 
     {

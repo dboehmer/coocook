@@ -133,7 +133,7 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
 
     my $lists = $c->project->search_related('purchase_lists');
 
-    if ( $lists->search( { name => $name } )->exists ) {
+    if ( $lists->search( { name => $name } )->results_exist ) {
         push @{ $c->stash->{errors} }, "A purchase list with that name already exists!";
 
         $c->stash(

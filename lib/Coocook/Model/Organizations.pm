@@ -36,7 +36,7 @@ sub create {
     return $self->schema->txn_do(
         sub {
             for my $rs ( $organizations, $users ) {
-                $rs->exists( { name_fc => $name_fc } )
+                $rs->results_exist( { name_fc => $name_fc } )
                   and croak "Name is not available";
             }
 
