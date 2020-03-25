@@ -31,8 +31,7 @@ sub create : POST Chained('/base') PathPart('organization/create') Args(0)
         my @errors;
 
         if ( $name !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
-            push @errors,
-              "The organization’s name must not contain other characters than 0-9, a-z, A-Z or _.";
+            push @errors, "The organization’s name must not contain other characters than 0-9, a-z, A-Z or _.";
         }
         else {
             my $name_fc = fc($name);

@@ -1,6 +1,7 @@
-############################################################################
-# ATTENTION: If you edit this file, please change .perltidyrc accordingly! #
-############################################################################
+##############################################################################
+# ATTENTION: If you edit this file, please change .editorconfig accordingly! #
+##############################################################################
 
+--character-encoding=utf8
 --variable-maximum-line-length
 --maximum-line-length=100
