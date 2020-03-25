@@ -23,13 +23,13 @@ C<Result::Project> object in the stash.
 
 =cut
 
-sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
-    my ( $self, $c, $url_name ) = @_;
+sub base : Chained('/base') PathPart('project') CaptureArgs(2) {
+    my ( $self, $c, $id, $url_name ) = @_;
 
-    my $project = $c->model('DB::Project')->find_by_url_name($url_name)
+    my $project = $c->model('DB::Project')->find( { id => $id } )
       or $c->detach('/error/not_found');
 
-    $c->redirect_canonical_case( 0 => $project->url_name );
+    $c->redirect_canonical_case( 1 => $project->url_name );
 
     $project->is_public
       or $c->stash->{robots}->index(0);
@@ -294,7 +294,8 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
 sub redirect : Private {
     my ( $self, $c, $project ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('show'), [ $project->url_name ] ) );
+    $c->response->redirect(
+        $c->uri_for_action( $self->action_for('show'), [ $project->id, $project->url_name ] ) );
 }
 
 __PACKAGE__->meta->make_immutable;

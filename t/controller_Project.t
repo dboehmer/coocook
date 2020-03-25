@@ -6,9 +6,54 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 35;
+use Test::Most tests => 37;
 
 my $t = Test::Coocook->new();
+
+subtest "project not found" => sub {
+    ok $t->get('https://localhost/project/999/foobar');
+    $t->status_is(404);
+};
+
+subtest "redirect to fix URLs" => sub {
+    $t->redirect_is(
+        "https://localhost/project/1/tEST-pROJECT/recipes" =>
+          "https://localhost/project/1/Test-Project/recipes",
+        301    # permanent
+    );
+
+    $t->redirect_is(
+        "https://localhost/project/1/completely-different-string/recipes" =>
+          "https://localhost/project/1/Test-Project/recipes",
+        301    # permanent
+    );
+
+    # with path arguments
+    $t->redirect_is(
+        "https://localhost/project/1/tEST-pROJECT/recipe/1" =>
+          "https://localhost/project/1/Test-Project/recipe/1",
+        301    # permanent
+    );
+
+    $t->redirect_is(
+        "https://localhost/project/1/completely-different-string/recipe/1" =>
+          "https://localhost/project/1/Test-Project/recipe/1",
+        301    # permanent
+    );
+
+    # with query string
+    $t->redirect_is(
+        "https://localhost/project/1/tEST-pROJECT/recipes?keyword" =>
+          "https://localhost/project/1/Test-Project/recipes?keyword",
+        301    # permanent
+    );
+
+    $t->redirect_is(
+        "https://localhost/project/1/tEST-pROJECT/recipes?key=val" =>
+          "https://localhost/project/1/Test-Project/recipes?key=val",
+        301    # permanent
+    );
+};
 
 my $project = $t->schema->resultset('Project')->create(
     {
@@ -18,6 +63,8 @@ my $project = $t->schema->resultset('Project')->create(
         archived    => '2000-01-01 00:00:00',
     }
 );
+
+my $id = $project->id;
 
 message_contains('archived');
 $t->content_lacks('Un-archive this project');
@@ -86,19 +133,19 @@ $list->update( { date => $list->format_date( DateTime->today->add( years => 1 ) 
 message_contains('print');
 
 sub message_contains {
-    $t->get_ok('/project/Statistics-Project');
+    $t->get_ok("/project/$id/Statistics-Project");
     $t->text_contains(@_)
       or note $t->text;
 }
 
 sub message_lacks {
-    $t->get_ok('/project/Statistics-Project');
+    $t->get_ok("/project/$id/Statistics-Project");
     $t->text_lacks(@_)
       or note $t->text;
 }
 
 sub message_like {
-    $t->get_ok('/project/Statistics-Project');
+    $t->get_ok("/project/$id/Statistics-Project");
     $t->text_like(@_)
       or note $t->text;
 }

@@ -99,7 +99,7 @@ sub projects : GET HEAD Chained('base') RequiresCapability('view_user_projects')
     my @projects = $c->user->projects->sorted->hri->all;
 
     for my $project (@projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash( projects => \@projects );

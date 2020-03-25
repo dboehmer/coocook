@@ -187,7 +187,7 @@ sub messages { return shift->stash->{messages} }
 
 =head2 $c->project_uri($action, @arguments, \%query_params?)
 
-Return URI for project-specific Catalyst action with the current project's C<url_name>
+Return URI for project-specific Catalyst action with the current project's C<id> and C<url_name>
 plus any number of C<@arguments> and possibly C<\%query_params>.
 
     my $uri = $c->project_uri( '/article/edit', $article->id, { key => 'value' } );
@@ -208,7 +208,7 @@ sub project_uri {
     # if last argument is hashref that's the \%query_values argument
     my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();
 
-    return $c->uri_for_action( $action, [ $project->url_name, @_ ], @query );
+    return $c->uri_for_action( $action, [ $project->id, $project->url_name, @_ ], @query );
 }
 
 sub project {

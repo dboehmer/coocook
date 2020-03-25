@@ -34,7 +34,7 @@ sub index : GET HEAD Chained('/base') PathPart('projects') Args(0) Public {
     my @projects = $projects->sorted->hri->all;
 
     for my $project (@projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash( projects => \@projects );

@@ -78,8 +78,9 @@ sub preview : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('
         ingredients                => $importer->ingredients,
         units                      => $importer->target_units,
         articles                   => $importer->target_articles,
-        source_project_url         => $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] ),
-        import_url                 => $c->project_uri( $self->action_for('post'), $recipe->id ),
+        source_project_url =>
+          $c->uri_for_action( '/project/show', [ $recipe->project->id, $recipe->project->url_name ] ),
+        import_url => $c->project_uri( $self->action_for('post'), $recipe->id ),
         recipe_url => $c->uri_for_action( '/browse/recipe/show', [ $recipe->id, $recipe->url_name ] ),
     );
 }

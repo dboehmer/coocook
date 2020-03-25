@@ -49,7 +49,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     my @projects = $user->owned_projects->public->hri->all;
 
     for my $project (@projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     if ( $c->user and $c->user->id == $user->id ) {

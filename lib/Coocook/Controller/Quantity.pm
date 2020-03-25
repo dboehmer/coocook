@@ -70,7 +70,7 @@ sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
 
         $c->stash( last_input => { name => $name } );
 
-        $c->go( 'index', [ $c->project->url_name ], [] );
+        $c->go( 'index', [ $c->project->id, $c->project->url_name ], [] );
     }
 
     $c->project->create_related( quantities => { name => $name } );

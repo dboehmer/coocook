@@ -174,7 +174,7 @@ sub homepage : Private {
     my @public_projects = $c->model('DB::Project')->public->sorted->hri->all;
 
     for my $project (@public_projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash(
@@ -205,7 +205,7 @@ sub dashboard : Private {
     my @other_projects = $other_projects->sorted->hri->all;
 
     for my $project ( @my_projects, @other_projects ) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash(

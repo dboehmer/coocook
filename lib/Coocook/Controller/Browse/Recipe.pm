@@ -60,7 +60,7 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
             $project->{owner} = $users{ $project->{owner} }
               or die "User for owner ID not found";
 
-            $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+            $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
         }
 
         for my $recipe (@recipes) {
@@ -104,7 +104,9 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
 
     $recipe->{url} =
       $c->uri_for( $self->action_for('show'), [ $recipe->id, $recipe->url_name ] );
-    $recipe->project->{url} = $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
+
+    $recipe->project->{url} =
+      $c->uri_for_action( '/project/show', [ $recipe->project->id, $recipe->project->url_name ] );
 
     # TODO should site admins see a list of all projects??
     my $projects = $c->user->projects_users->search(
@@ -122,9 +124,10 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
 
     for my $project (@projects) {
         $project->{import_url} =
-          $c->uri_for_action( '/recipe/import/preview', [ $project->{url_name}, $recipe->id ] );
+          $c->uri_for_action( '/recipe/import/preview',
+            [ $project->{id}, $project->{url_name}, $recipe->id ] );
 
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash( projects => \@projects );
@@ -169,7 +172,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         project_url              => $c->uri_for_action_if_permitted(
             '/recipe/edit',
             { project => $project },
-            [ $project->url_name, $recipe->id ]
+            [ $project->id, $project->url_name, $recipe->id ]
         ),
     );
 }

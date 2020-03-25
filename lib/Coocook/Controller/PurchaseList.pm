@@ -144,7 +144,7 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
             }
         );
 
-        $c->go( 'index', [ $c->project->url_name ], [] );
+        $c->go( 'index', [ $c->project->id, $c->project->url_name ], [] );
     }
 
     $c->project->create_related(

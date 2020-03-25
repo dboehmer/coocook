@@ -54,7 +54,7 @@ sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args
 
         $c->stash( last_input => { name => $name } );
 
-        $c->go( 'index', [ $c->project->url_name ], [] );
+        $c->go( 'index', [ $c->project->id, $c->project->url_name ], [] );
     }
 
     $sections->create(

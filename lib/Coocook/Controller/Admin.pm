@@ -44,7 +44,7 @@ sub projects : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view')
 
     for my $project (@projects) {
         $project->{owner} = $users{ $project->{owner} } || die;
-        $project->{url}   = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url}   = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     for my $user ( values %users ) {
