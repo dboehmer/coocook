@@ -442,8 +442,19 @@ sub status_is {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    is $self->response->code => $expected,
-      $name || "Response has status code $expected";
+    my $ok = is $self->response->code => $expected,
+      $name || sprintf(
+        "Response code %i for %s %s",
+        $expected,
+        $self->response->request->method,
+        $self->response->request->uri
+      );
+
+    if ( not $ok and $self->response->code =~ m/301|302|303|307|308/ ) {
+        diag "Location: " . $self->response->header('Location');
+    }
+
+    return $ok;
 }
 
 sub status_like {
