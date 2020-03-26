@@ -11,6 +11,15 @@ use Test::Most tests => 11;
 
 my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 
+my @POSSIBLE_AUTHZ_ATTRS = (
+    'RequiresCapability',    # = see ActionRole::RequiresCapability
+    'Public',                # = no permission required
+    'CustomAuthz',           # = action is not public but does authorization in code
+                             #   TODO this could be tested:
+                             #   store flag, make require_capability() remove flag,
+                             #   run action, check that flag has been removed
+);
+
 subtest "attributes of controller actions" => sub {
     my $app = $t->catalyst_app;
 
@@ -51,13 +60,17 @@ subtest "attributes of controller actions" => sub {
                 next;
             }
 
-            ok( ( $attrs{Public} xor $attrs{RequiresCapability} ),
-                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute" );
-
             ok(
                 ( $methods eq 'any' or $methods eq 'GET+HEAD' or $methods eq 'POST' ),
                 "$action_pkg_name has 'AnyMethod' or is GET & HEAD or POST"
             ) or note "HTTP methods: " . $methods;
+
+            my @used_authz_attrs = grep { $attrs{$_} } @POSSIBLE_AUTHZ_ATTRS;
+
+            is
+              @used_authz_attrs => 1,
+              "$action_pkg_name has 1 authorization attribute out of: @POSSIBLE_AUTHZ_ATTRS"
+              or diag "       found: @used_authz_attrs";
         }
     }
 };

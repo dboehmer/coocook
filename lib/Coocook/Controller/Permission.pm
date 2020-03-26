@@ -87,9 +87,7 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
     );
 }
 
-sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0)
-  Public    # custom require_capability() calls below
-{
+sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0) CustomAuthz {
     my ( $self, $c ) = @_;
 
     my $id   = $c->req->params->get('id');
@@ -133,9 +131,7 @@ sub base : Chained('/project/base') PathPart('permissions') CaptureArgs(1) {
       || $c->detach('/error/bad_request');
 }
 
-sub edit : POST Chained('base') PathPart('edit') Args(0)
-  Public    # custom require_capability() call below
-{
+sub edit : POST Chained('base') PathPart('edit') Args(0) CustomAuthz {
     my ( $self, $c ) = @_;
 
     my $role = $c->req->params->get('role');

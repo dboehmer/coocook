@@ -49,7 +49,7 @@ URL shortcut that catches C</project/42> without a 2nd path argument.
 
 =cut
 
-sub id_only : GET HEAD Chained('/base') PathPart('project') Args(1) Public {
+sub id_only : GET HEAD Chained('/base') PathPart('project') Args(1) CustomAuthz {
     my ( $self, $c, $id ) = @_;
 
     $c->go( show => [ $id, '' ], [] );    # permission checks happen there
