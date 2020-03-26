@@ -1,0 +1,22 @@
+[% title = "My Projects" %]
+
+<table>
+    <thead>
+        <tr>
+            <th>📁</th>
+            <th>🔒</th>
+            <th>Name</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+[% FOR proj IN projects %]
+        <tr>
+            <td>[% '📁' IF proj.archived %]</td>
+            <td>[% '🔒' UNLESS proj.is_public %]</td>
+            <td><a href="[% proj.url %]">[% proj.name | html %]</a></td>
+            <td>[% proj.created %]</td>
+        </tr>
+[% END %]
+    </tbody>
+</table>

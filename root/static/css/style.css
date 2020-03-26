@@ -385,7 +385,7 @@ footer {
     margin: 0 auto;
     display: inline-block;
     line-height: 1.5;
-    height: 10em; /*adjust if there are additional links in the footer*/
+    height: 12em; /*adjust if there are additional links in the footer*/
 }
 
 footer nav ul {

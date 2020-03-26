@@ -16,12 +16,16 @@ sub bad_request : Private {
 }
 
 sub forbidden : Private {
-    my ( $self, $c ) = @_;
+    my ( $self, $c, $error ) = @_;
+
+    $error
+      and $c->messages->error($error);
 
     $c->response->status(403);
 
     $c->stash(
-        template => 'error/forbidden.tt',      # set explicitly to allow $c->detach('/error/forbidden')
+        template => 'error/forbidden.tt',    # set explicitly to allow $c->detach('/error/forbidden')
+        method   => $c->req->method,
     );
 }
 

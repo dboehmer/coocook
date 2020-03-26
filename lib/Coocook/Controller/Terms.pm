@@ -28,10 +28,7 @@ sub show : GET HEAD Chained('/base') PathPart('terms') Args(1) Public {
         $c->stash( next_url => $c->uri_for( $self->action_for('show'), $next->id ) );
     }
 
-    $c->stash(
-        title => "Terms",
-        terms => $terms,
-    );
+    $c->stash( terms => $terms );
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -1,0 +1,54 @@
+[% escape_title( 'Organization', organization.display_name ) %]
+
+<p>Name: 👥[% organization.name %]</p>
+
+[% IF update_url %]
+<form class="inline" method="post" action="[% update_url %]">
+<p>
+    Display name:
+    <input type="text" name="display_name" value="[% organization.display_name | html %]">
+    <input type="submit" value="Update">
+</p>
+</form>
+
+<h3>Description</h3>
+<form method="post" action="[% update_url %]">
+    <p><textarea class="with-markdown-preview" name="description_md">[% organization.description_md | html %]</textarea></p>
+    <p><input type="submit" value="Update"></p>
+</form>
+[% ELSE %]
+    <p>Display name: [% organization.display_name | html %]</p>
+
+    <h3>Description</h3>
+    [% USE Markdown; organization.description_md | markdown %]
+[% END %]
+
+<h3>Members</h3>
+
+[% IF members_url %]
+<a href="[% members_url %]">Manage memberships</a>
+[% END %]
+
+<ul>
+[% FOR organization_user IN organizations_users %]
+    <li><a href="[% organization_user.user_url %]">👤[% organization_user.user.name %]</a> ([% organization_user.role %])</li>
+[% END %]
+</ul>
+
+<h3>Projects</h3>
+
+<ul>
+[% FOR organization_project IN organizations_projects %]
+    <li><a href="[% organization_project.project_url %]">[% '🔒' UNLESS organization_project.project.is_public; organization_project.project.name | html %]</a> ([% organization_project.role %])</li>
+[% END %]
+</ul>
+
+[% IF delete_url %]
+<h3>Delete organization</h3>
+
+<p>Deleting an organization also removes all memberships and the organization’s permissions on projects.</p>
+
+<form name="delete" method="post" action="[% delete_url %]">
+    <input type="submit" value="Delete organization">
+</form>
+[% END %]

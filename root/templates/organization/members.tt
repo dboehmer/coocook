@@ -1,0 +1,73 @@
+[% escape_title( 'Organization members of', organization.display_name ) %]
+
+<p><a href="[% organization_url %]">Back to organization page</a></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Actions</th>
+    </thead>
+    <tbody>
+[% FOR g_u IN organizations_users %]
+        <tr>
+            <td><a href="[% g_u.user_url %]">👤[% g_u.user.name %]</a> [% g_u.user.display_name | html %]</td>
+            <td>
+    [% IF g_u.edit_url %]
+                <form method="post" action="[% g_u.edit_url %]" class="inline">
+                    <select name="role">
+        [% FOR role IN roles %]
+                        <option value="[% role %]" [% 'selected' IF g_u.role == role %]>[% role %]</option>
+        [% END %]
+                    </select>
+                    <input type="submit" value="Save">
+                </form>
+    [% ELSE %]
+                [% g_u.role %]
+    [% END %]
+            </td>
+            <td>
+                [% IF g_u.remove_url %]
+                    <form class="inline" method="post" action="[% g_u.remove_url %]">
+                        <input type="submit" value="Remove">
+                    </form>
+                [% END %]
+                [% IF g_u.transfer_ownership_url %]
+                    <form class="inline" name="transfer-ownership" method="post" action="[% g_u.transfer_ownership_url %]">
+                        <input type="submit" value="Transfer ownership">
+                    </form>
+                [% END %]
+            </td>
+        </tr>
+[% END %]
+    </tbody>
+</table>
+
+<p>You need another member with role <em>admin</em> to transfer ownership to them.</p>
+
+<fieldset>
+    <legend>Add members</legend>
+
+[% IF other_users %]
+    <form method="post" action="[% add_url %]">
+        <select name="name">
+[% FOR other_user IN other_users %]
+            <option value="[% other_user.name %]">👤[% other_user.name | html %] ([% other_user.display_name | html %])</option>
+[% END %]
+        </select>
+
+        as
+
+        <select name="role">
+[% FOR role IN roles %]
+            <option value="[% role %]">[% role %]</option>
+[% END %]
+        </select>
+
+        <input type="submit" value="Add">
+    </form>
+[% ELSE %]
+    <p>No more users. You need to let users sign up before adding them to this organization.</p>
+[% END %]
+</fieldset>

@@ -92,6 +92,8 @@ subtest delete => sub {
       BlacklistEmail
       BlacklistUsername
       FAQ
+      Organization
+      OrganizationUser
       RoleUser
       Terms
       User

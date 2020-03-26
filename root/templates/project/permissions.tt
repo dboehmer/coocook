@@ -3,7 +3,7 @@
 <table>
     <thead>
         <tr>
-            <th>User</th>
+            <th>User/Organization</th>
             <th>Role</th>
             <th colspan="2">Actions</th>
         </tr>
@@ -11,7 +11,15 @@
     <tbody>
 [% FOR permission IN permissions %]
         <tr>
-            <td><a href="[% permission.user_url %]">[% permission.user.display_name | html %]</a></td>
+            <td>
+    [% IF permission.organization %]
+        <a href="[% permission.organization_url %]">👥[% permission.organization.name %]</a> [% permission.organization.display_name | html %]
+    [% ELSIF permission.user %]
+        <a href="[% permission.user_url %]">👤[% permission.user.name %]</a> [% permission.user.display_name | html %]
+    [% ELSE;
+        THROW undef "permissions neither organization nor user";
+    END %]
+            </td>
             <td>
     [% IF permission.edit_url %]
                 <form method="post" action="[% permission.edit_url %]" class="inline">
@@ -45,16 +53,17 @@
     </tbody>
 </table>
 
+[% IF add_permission_url %]
 <p>You need another user with role <em>admin</em> to transfer ownership to them.</p>
 
 <fieldset>
     <legend>Add permission</legend>
 
-[% IF other_users %]
+[% IF other_identities %]
     <form method="post" action="[% add_permission_url %]">
-        <select name="user">
-[% FOR other_user IN other_users %]
-            <option value="[% other_user.name %]">[% other_user.name | html %] ([% other_user.display_name | html %])</option>
+        <select name="id">
+[% FOR other_identity IN other_identities %]
+            <option value="[% other_identity.name %]">[% other_identity.is_organization ? '👥' : '👤'; other_identity.name | html %] ([% other_identity.display_name | html %])</option>
 [% END %]
         </select>
 
@@ -69,6 +78,7 @@
         <input type="submit" value="Add">
     </form>
 [% ELSE %]
-    <p>No more users. You need to let users sign up before giving them permission.</p>
+    <p>No more users/organizations. You need to let users sign up or create organizations before giving them permission.</p>
 [% END %]
 </fieldset>
+[% END %]

@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 70;
+use Test::Most tests => 72;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -17,6 +17,15 @@ $schema->resultset('BlacklistEmail')
 
 $schema->resultset('BlacklistUsername')
   ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
+
+my $organization = $schema->resultset('Organization')->create(
+    {
+        name           => "TestOrganization",
+        display_name   => "Test Organization",
+        description_md => __FILE__,
+        owner          => 9999
+    }
+);
 
 $t->get_ok('/');
 
@@ -48,12 +57,24 @@ $t->get_ok('/');
         "blacklisted username in uppercase"
     );
 
+    $t->register_fails_like(
+        { %userdata_ok, username => $organization->name },
+        qr/username is not available/,
+        "organization name"
+    );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => uc $organization->name },
+        qr/username is not available/,
+        "organization name in uppercase"
+    );
+
     $t->register_ok( \%userdata_ok );
 }
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
-    ok $user1->has_role('site_owner'),       "1st user created has 'site_owner' role";
-    ok $user1->has_role('private_projects'), "1st user created has 'private_projects' role";
+    ok $user1->has_any_role('site_owner'),       "1st user created has 'site_owner' role";
+    ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
 subtest "verify e-mail address" => sub {
@@ -99,8 +120,8 @@ $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
-    ok !$user2->has_role('site_owner'), "2nd user created hasn't 'site_owner' role";
-    ok $user2->has_role('private_projects'), "2nd user created has 'private_projects' role";
+    ok !$user2->has_any_role('site_owner'), "2nd user created hasn't 'site_owner' role";
+    ok $user2->has_any_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 
 $t->register_fails_like(

@@ -143,17 +143,16 @@ sub auto : Private {
         );
     }
 
-    if ( $c->has_capability('admin_view') ) {
-        $c->stash(
-            admin_url  => $c->uri_for_action('/admin/index'),
-            admin_urls => {
-                faq      => $c->uri_for_action('/admin/faq/index'),
-                projects => $c->uri_for_action('/admin/projects'),
-                terms    => $c->uri_for_action('/admin/terms/index'),
-                users    => $c->uri_for_action('/admin/user/index'),
-            },
-        );
-    }
+    $c->stash(
+        admin_url => $c->uri_for_action_if_permitted('/admin/index'),
+        admin_urls => {    # TODO list duplicates code in Controller::Admin
+            faq           => $c->uri_for_action_if_permitted('/admin/faq/index'),
+            organizations => $c->uri_for_action_if_permitted('/admin/organizations'),
+            projects      => $c->uri_for_action_if_permitted('/admin/projects'),
+            terms         => $c->uri_for_action_if_permitted('/admin/terms/index'),
+            users         => $c->uri_for_action_if_permitted('/admin/user/index'),
+        },
+    );
 
     # has current terms or has any terms (valid in future then)
     if ( $c->model('DB::Terms')->exists ) {
@@ -166,7 +165,7 @@ sub auto : Private {
 sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
-    $c->detach( $c->has_capability('dashboard') ? 'dashboard' : 'homepage' );
+    $c->detach( $c->has_capability('view_dashboard') ? 'dashboard' : 'homepage' );
 }
 
 sub homepage : Private {
@@ -190,15 +189,20 @@ sub homepage : Private {
 sub dashboard : Private {
     my ( $self, $c ) = @_;
 
-    my $my_projects = $c->user->projects;
+    my $my_projects = $c->user->projects->union(
+        $c->user->organizations->search_related('organizations_projects')->search_related('project') )
+      ->not_archived;
 
     my @my_projects = $my_projects->sorted->hri->all;
 
-    my @other_projects = $c->model('DB::Project')->public->search(
-        {
-            id => { -not_in => $my_projects->get_column('id')->as_query },
-        }
-    )->sorted->hri->all;
+    my $other_projects = $c->model('DB::Project')->not_archived->public;
+
+    if ( @my_projects > 0 ) {
+        $other_projects =  # TODO for users with extremely many projects the SQL statement will be too large
+          $other_projects->search( { id => { -not_in => [ map { $_->{id} } @my_projects ] } } );
+    }
+
+    my @other_projects = $other_projects->sorted->hri->all;
 
     for my $project ( @my_projects, @other_projects ) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
@@ -207,6 +211,7 @@ sub dashboard : Private {
     $c->stash(
         my_projects                => \@my_projects,
         other_projects             => \@other_projects,
+        all_my_projects_url        => $c->uri_for_action('/settings/projects'),
         project_create_url         => $c->uri_for_action('/project/create'),
         can_create_private_project => !!$c->has_capability('create_private_project'),
         template                   => 'dashboard.tt',
@@ -250,7 +255,7 @@ sub end : ActionClass('RenderView') {
         }
 
         if ( $c->action ne $action ) {
-            if ( $action =~ m/ ^ admin /x ) {    # TODO how to distinguish this in a generic way?
+            if ( $action =~ m/ ^ (admin|settings) \/ /x ) {    # TODO how to distinguish this in a generic way?
                 $item->{url} = $c->uri_for_action($action);
             }
             else {

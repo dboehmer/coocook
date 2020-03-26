@@ -43,20 +43,22 @@ __PACKAGE__->has_many(
     }
 );
 
+__PACKAGE__->has_many( organizations_users => 'Coocook::Schema::Result::OrganizationUser' );
+__PACKAGE__->many_to_many( organizations => organizations_users => 'organization' );
+
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
 
 __PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
 __PACKAGE__->many_to_many( terms => terms_users => 'terms' );
 
-# support virtual 'password' column
 around [ 'set_column', 'store_column' ] => sub {
     my ( $orig, $self, $column => $value ) = @_;
 
-    if ( $column eq 'name' ) {
+    if ( $column eq 'name' ) {    # automatically set 'name_fc' from 'name'
         $self->$orig( name_fc => fc($value) );
     }
-    elsif ( $column eq 'password' ) {
+    elsif ( $column eq 'password' ) {    # support virtual 'password' column
         my $password = Coocook::Model::Token->from_string($value);
 
         ( $column => $value ) = ( password_hash => $password->to_salted_hash );
@@ -108,24 +110,12 @@ sub add_roles {
     }
 }
 
-sub has_role {
-    my ( $self, $role ) = @_;
-
-    return $self->roles_users->exists( { role => $role } );
-}
-
 sub has_any_role {
     my $self = shift;
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
     return $self->roles_users->exists( { role => { -in => $roles } } );
-}
-
-sub has_project_role {
-    my ( $self, $project, $role ) = @_;
-
-    return $self->projects_users->exists( { project => $project->id, role => $role } );
 }
 
 sub has_any_project_role {
@@ -135,6 +125,16 @@ sub has_any_project_role {
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
     return $self->projects_users->exists( { project => $project->id, role => { -in => $roles } } );
+}
+
+sub has_any_organization_role {
+    my $self         = shift;
+    my $organization = shift;
+
+    my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
+
+    return $self->organizations_users->exists(
+        { organization => $organization->id, role => { -in => $roles } } );
 }
 
 sub roles {

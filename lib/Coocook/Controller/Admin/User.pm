@@ -58,9 +58,15 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
 
     my ( $status_code => $status_description ) = $user->status;
 
-    if ( $c->has_capability('discard_user') ) {
-        $c->stash( discard_url => $c->uri_for( $self->action_for('discard'), [ $user->name ] ) );
-    }
+    $c->stash(
+        status                   => $status_description,
+        organization_memberships => \my @organization_memberships,
+        permissions              => \my @permissions,
+        public_profile_url       => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        update_url               => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
+        roles                    => { map { $_ => 1 } $user->roles },
+        discard_url => $c->uri_for_action_if_permitted( $self->action_for('discard'), [ $user->name ] ),
+    );
 
     my $permissions = $user->projects_users->search(
         undef,
@@ -68,14 +74,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
             prefetch => 'project',
             order_by => 'project.url_name_fc',
         }
-    );
-
-    $c->stash(
-        status             => $status_description,
-        permissions        => \my @permissions,
-        public_profile_url => $c->uri_for_action( '/user/show', [ $user->name ] ),
-        update_url         => $c->uri_for( $self->action_for('update'), [ $user->name ] ),
-        roles              => { map { $_ => 1 } $user->roles },
     );
 
     while ( my $permission = $permissions->next ) {
@@ -88,7 +86,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
         # THIS MUST NOT BE STORED TO THE DATABASE.
         $project->owner( $c->user->get_object );
 
-        $project = $project->as_hashref;
+        $project = $project->as_hashref;    # TODO make as_hashref() not inflate relationships
+                                            # (at least on request) to avoid hack above
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
 
@@ -96,6 +95,28 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
           {
             role    => $permission->role,
             project => $project,
+          };
+    }
+
+    my $memberships = $user->search_related(
+        organizations_users => undef,
+        {
+            prefetch => 'organization',
+            order_by => 'organization.name',
+        }
+    );
+
+    while ( my $membership = $memberships->next ) {
+        my $organization = $membership->organization;
+        $organization->owner( $c->user->get_object );    # TODO see above
+        $organization = $organization->as_hashref;
+
+        $organization->{url} = $c->uri_for_action( '/organization/show', [ $organization->{name} ] );
+
+        push @organization_memberships,
+          {
+            role         => $membership->role,
+            organization => $organization,
           };
     }
 }

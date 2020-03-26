@@ -5,6 +5,7 @@ package Coocook::Helpers;
 use Carp;
 use Moose::Role;
 use MooseX::MarkAsMethods autoclean => 1;
+use Scalar::Util qw< blessed >;
 
 =head1 METHODS
 
@@ -41,6 +42,78 @@ sub uri_for_local_part {
     return $c->req->base . $local_part;
 }
 
+=head2 $c->uri_for(...)
+
+Overrides L<< $c->uri_for()|Catalyst/"$c->uri_for( $path?, @args?, \%query_values?, \$fragment? )" >>
+to raise an exception if the URI can't be generated.
+
+=cut
+
+around uri_for => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $uri = $self->$orig(@_);
+
+    return $uri if $uri;
+
+    local @Coocook::Helpers::CARP_NOT = 'Class::MOP::Method::Wrapped';
+    croak 'Catalyst->uri_for() returned undef';
+};
+
+=head2 uri_for_action_if_permitted( $action, \%input?, @args? )
+
+=head2 uri_for_action_if_permitted( $action, \%input, @args?, \%query_values )
+
+Similar to C<< $c->uri_for >> but returns the URI only if the action
+is permitted, i.e. not prohibited by RequiresCapability attributes.
+
+If the 1st argument to C<uri_for_action> was a hashref, then another
+hashref must be passed as C<$input> before. It might be empty C<{}>.
+
+Returns C<undef> if action is not permitted.
+
+    package Coocook::Controller::Foo;
+
+    sub bar : RequiresCapability('view_bar') { ... }
+
+    sub baz {
+        my ( $self, $c ) = @_;
+
+        # with path and query arguments
+        my $uri = $c->uri_for_action_if_permitted( '/foo/bar', { limit => 42 } );
+
+        # with action object and path parameter
+        $c->stash(
+            foo_bar_uri => $c->uri_for_action_if_permitted( $self->action_for('bar'), [ $id ] ),
+            ...
+        );
+    }
+
+=cut
+
+sub uri_for_action_if_permitted {    # logic stolen from Catalyst->uri_for_action()
+    my $c     = shift;
+    my $path  = shift;
+    my $input = @_ && ref $_[0] eq 'HASH' ? shift : undef;
+
+    my $action = blessed($path) ? $path : $c->dispatcher->get_action_by_path($path);
+
+    $action // croak "Can't find action for path '$path'";
+
+    my $capabilities = $action->attributes->{RequiresCapability};
+
+    $capabilities and @$capabilities > 0
+      or croak "Action doesn't declare any required capabilities";
+
+    for (@$capabilities) {
+        $c->has_capability( $_, $input )
+          or return (undef);    # needs 1 list element when used in $c->stash()
+    }
+
+    return $c->uri_for( $action, @_ );
+}
+
 =head2 $c->has_capability( $capability, \%input? )
 
 Returns boolish value from L<Coocook::Model::Authorization> whether current
@@ -66,7 +139,39 @@ sub has_capability {
         $input->{$key} //= $c->stash->{$key};
     }
 
+    # TODO workaround for https://rt.cpan.org/Public/Bug/Display.html?id=97640
+    # this wrapper around Result::User shall not silence exceptions
+    for ( $input->{user} ) {
+        ref eq 'Catalyst::Authentication::Store::DBIx::Class::User'
+          and $_ = $_->get_object;
+    }
+
     return $authz->has_capability( $capability, $input );
+}
+
+=head2 $c->require_capability( $capability, \%input? )
+
+Checks authorization via L<Coocook::Model::Authorization>.
+If not permitted might ask user to log in
+or detaches to C</error/forbidden>.
+
+This can be called in any controller code and is called automatically
+if L<Coocook::ActionRole::RequiresCapability> is applied to an action.
+
+=cut
+
+sub require_capability {
+    my $c = shift;
+
+    $c->has_capability(@_)
+      and return 1;
+
+    # not logged in? try login and redirect here again
+    if ( $c->req->method eq 'GET' and not $c->user ) {    # TODO also for HEAD?
+        $c->redirect_detach( $c->redirect_uri_for_action('/session/login') );
+    }
+
+    $c->detach('/error/forbidden');
 }
 
 =head2 $c->messages
@@ -110,6 +215,43 @@ sub project {
     my $c = shift;
 
     $c->stash->{project};
+}
+
+=head2 $c->redirect_canonical_case( $args_index, $value )
+
+Check the value of C<< $c->req->args >> at index C<$args_index>. If the value has
+different case than C<$value> redirects to the same URL with the correct value
+at index C<$args_index>.
+
+Effective only for GET and HEAD requests. Does nothing for any other request.
+
+    # given an object identified by 'Name':
+
+    POST /my_action/nAmE  # ignored because POST
+    GET  /my_action/nAmE  # redirects to:
+    GET  /my_action/Name
+
+=cut
+
+sub redirect_canonical_case {
+    my ( $c, $args_index, $value ) = @_;
+
+    $c->req->method eq 'GET'
+      or $c->req->method eq 'HEAD'
+      or return;
+
+    my $url_value = $c->req->args->[$args_index];
+
+    $url_value eq $value
+      and return 1;
+
+    my @args = @{ $c->req->captures };    # $c->req->args contains only args for current chain element
+    $args[$args_index] = $value;
+
+    my $uri = $c->uri_for( $c->action, \@args );
+    $uri->query( $c->req->uri->query );
+
+    $c->redirect_detach( $uri, 301 );
 }
 
 =head2 $c->redirect_detach(@redirect_args)

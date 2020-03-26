@@ -29,6 +29,9 @@ __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
 __PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
 
+__PACKAGE__->has_many( organizations_projects => 'Coocook::Schema::Result::OrganizationProject' );
+__PACKAGE__->many_to_many( organizations => organizations_projects => 'organization' );
+
 __PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
 __PACKAGE__->many_to_many( users => projects_users => 'user' );
 
@@ -195,6 +198,24 @@ sub tags_from_names {
     return $self->tags->from_names($names);
 }
 
+=head2 organizations_without_permission
+
+Returns a resultset with all C<Result::Organization>s without any related C<organizations_projects> record.
+
+=cut
+
+sub organizations_without_permission {
+    my $self = shift;
+
+    my $permitted_organizations = $self->organizations_projects->get_column('organization');
+
+    return $self->result_source->schema->resultset('Organization')->search(
+        {
+            id => { -not_in => $permitted_organizations->as_query },
+        }
+    );
+}
+
 =head2 other_projects
 
 Returns a resultset to all projects except itself.
@@ -207,7 +228,7 @@ sub other_projects {
     return $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
 }
 
-=head2 other_users
+=head2 users_without_permission
 
 Returns a resultset with all C<Result::User>s without any related C<projects_users> record.
 

@@ -24,19 +24,27 @@ Catalyst Controller.
 sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     my ( $self, $c, $name ) = @_;
 
+    my $user = $c->model('DB::User')->find( { name_fc => fc($name) } )
+      || $c->detach('/error/not_found');
+
+    $c->redirect_canonical_case( 0 => $user->name );
+
     # this variable MUST NOT be named 'user' because it collides with $c->user
     # TODO maybe store $c->user as $c->stash->{logged_in_user} or similar
     #      and use $c->stash->{user} here?
-    $c->stash( user_object => $c->model('DB::User')->find( { name_fc => fc($name) } )
-          || $c->detach('/error/not_found') );
-
-    # TODO redirect if case of $name doesn't match $user->name
+    $c->stash( user_object => $user );
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user_object};
+
+    my @organizations = $user->organizations->sorted->hri->all;
+
+    for my $organization (@organizations) {
+        $organization->{url} = $c->uri_for_action( '/organization/show', [ $organization->{name} ] );
+    }
 
     my @projects = $user->owned_projects->public->hri->all;
 
@@ -48,11 +56,11 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $c->stash( my_settings_url => $c->uri_for_action('/settings/index') );
     }
 
-    if ( $c->has_capability('manage_users') ) {
-        $c->stash( profile_admin_url => $c->uri_for_action( '/admin/user/show', [ $user->name_fc ] ) );
-    }
-
-    $c->stash( projects => \@projects );
+    $c->stash(
+        organizations     => \@organizations,
+        projects          => \@projects,
+        profile_admin_url => $c->uri_for_action_if_permitted( '/admin/user/show', [ $user->name_fc ] ),
+    );
 
     $c->stash->{robots}->archive(0);
 }
@@ -104,10 +112,13 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
         push @errors, "username must not be empty";
     }
     elsif ( $username !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
-        push @errors, "username must not contain other characters than 0-9, a-z and A-Z.";
+        push @errors, "username must not contain other characters than 0-9, a-z, A-Z or _.";
     }
     else {
-        !$c->model('DB::User')->exists( { name_fc => fc($username) } )
+        my $name_fc = fc($username);
+
+        !$c->model('DB::Organization')->exists( { name_fc => $name_fc } )
+          and !$c->model('DB::User')->exists( { name_fc => $name_fc } )
           and $c->model('DB::BlacklistUsername')->is_username_ok($username)
           or push @errors, "username is not available";
     }

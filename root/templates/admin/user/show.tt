@@ -50,3 +50,11 @@
     </li>
 [% END %]
 </ul>
+
+<p>Organization memberships:</p>
+
+<ul>
+[% FOR membership IN organization_memberships %]
+    <li><a href="[% membership.organization.url %]">👥[% membership.organization.name %]</a> [% membership.organization.display_name | html %] ([% membership.role %])</li>
+[% END %]
+</ul>

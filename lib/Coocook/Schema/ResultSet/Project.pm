@@ -21,6 +21,8 @@ sub find_by_url_name {
     return $self->find( { url_name_fc => fc $url_name} );
 }
 
+sub not_archived { shift->search( { archived => undef } ) }
+
 sub public {
     my $self = shift;
 
@@ -29,7 +31,7 @@ sub public {
 
 =head2 stale
 
-Returns a new resultset with projects that are completetly in the past.
+Returns a new resultset with projects that are completely in the past.
 Indicates that these can be archived.
 
 =cut

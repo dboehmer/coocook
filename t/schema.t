@@ -10,7 +10,7 @@ use_ok 'Coocook::Schema';
 
 ok my $db = TestDB->new;
 
-is $db->count()                   => 73, "count()";
+is $db->count()                   => 75, "count()";
 is $db->count(qw< Article Unit >) => 11, "count(Article Unit)";
 
 subtest "one_row() in favor of first()" => sub {
@@ -29,6 +29,7 @@ subtest statistics => sub {
     cmp_deeply $stats => superhashof {
         public_projects => 1,
         users           => 2,
+        organizations   => 1,
         recipes         => 1,
         dishes_served   => 4 + 2 + 4,
         dishes_planned  => 0,

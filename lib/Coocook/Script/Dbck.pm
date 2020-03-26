@@ -154,6 +154,25 @@ sub check_values {
         }
     }
 
+    {
+        my $organizations = $schema->resultset('Organization');
+        my $usernames_fc  = $schema->resultset('User')->get_column('name_fc');
+
+        my $duplicates = $organizations->search( { name_fc => { -in => $usernames_fc->as_query } } )->hri;
+
+        while ( my $duplicate = $duplicates->next ) {
+            warn sprintf "Duplicate organization/user name '%s'\n", $duplicate->{name};
+        }
+    }
+
+    my $organizations = $schema->resultset('Organization');
+
+    while ( my $organization = $organizations->next ) {
+        $organization->name_fc eq fc( $organization->name )
+          or warn sprintf( "Incorrect name_fc for organization '%s': '%s'\n",
+            $organization->name, $organization->name_fc );
+    }
+
     my $users = $schema->resultset('User');
 
     while ( my $user = $users->next ) {

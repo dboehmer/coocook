@@ -26,14 +26,7 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
     my $recipes = $c->model('DB::Recipe');
 
     if ( $c->req->params->get('show_all') ) {
-        if ( not $c->has_capability('view_all_recipes') ) {
-            if ( $c->user ) {
-                $c->detach('/error/forbidden');
-            }
-            else {
-                $c->redirect_detach( $c->stash->{login_url} );
-            }
-        }
+        $c->require_capability('view_all_recipes');
 
         $c->stash( show_less_url => $c->uri_for( $c->action ) );
     }
@@ -95,17 +88,7 @@ sub base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     my $recipe = $c->model('DB::Recipe')->search( undef, { prefetch => 'project' } )->find($id)
       or $c->detach('/error/not_found');
 
-    if ( $c->req->method eq 'GET' or $c->req->method eq 'HEAD' ) {
-        if ( $url_name ne $recipe->url_name ) {
-            my $args = $c->req->args;
-            $args->[1] = $recipe->url_name;
-
-            my $uri = $c->uri_for( $c->action, $args );
-            $uri->query( $c->req->uri->query );
-
-            $c->redirect_detach( $uri, 301 );
-        }
-    }
+    $c->redirect_canonical_case( 1 => $recipe->url_name );
 
     $c->stash(
         recipe         => $recipe,
@@ -174,12 +157,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         )->as_arrayref;
     }
 
-    # link to recipe in project if project is visible to public/user
-    if ( $c->has_capability( view_project => { project => $project } ) ) {
-        $c->stash(
-            project_url => $c->uri_for_action( '/recipe/edit', [ $project->url_name, $recipe->id ] ) );
-    }
-
     $c->user
       and $c->stash(
         import_url => $c->uri_for( $self->action_for('import'), [ $recipe->id, $recipe->url_name ] ) );
@@ -189,6 +166,11 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         servings                 => $servings,
         prepared_ingredients     => $ingredients{prepared},
         not_prepared_ingredients => $ingredients{not_prepared},
+        project_url              => $c->uri_for_action_if_permitted(
+            '/recipe/edit',
+            { project => $project },
+            [ $project->url_name, $recipe->id ]
+        ),
     );
 }
 

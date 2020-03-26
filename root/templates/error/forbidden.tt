@@ -1,3 +1,7 @@
 [% title = "Forbidden" %]
 
-The request you sent is forbidden. You are not allowed to view this page.
+[% IF method == 'GET' %]
+    <p>You are not allowed to view this page.</p>
+[% ELSE %]
+    <p>The request you sent is not allowed.</p>
+[% END %]

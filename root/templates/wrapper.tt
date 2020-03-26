@@ -46,7 +46,7 @@
 
 [% IF logout_url %]
 [% IF project %]
-	<p>You're currently working on <a href="[% project_urls.project %]">project [% project.name | html%]</a></p>
+	<p>You’re currently working on <a href="[% project_urls.project %]">project [% project.name | html%]</a></p>
 [% ELSE %]
 	<p>Please create or choose a project now.</p>
 [% END %]
@@ -62,7 +62,7 @@
 [% END %]
 
 [% IF settings_url %]
-    <li><a href="[% settings_url %]">Account Settings</a></li>
+    <li><a href="[% settings_url %]">Settings</a></li>
 [% END %]
 
 [% IF logout_url %]
@@ -103,7 +103,7 @@
 [% FOR item IN submenu_items;
     IF item.url %]
         <a href="[% item.url %]">[% item.text %]</a>
-    [% ELSE; # TODO setting href="" doesn't work if page is response to POST request and URL isn't available via GET %]
+    [% ELSE; # TODO setting href="" doesn’t work if page is response to POST request and URL isn’t available via GET %]
         <a href="" class="current">[% item.text %]</a>
     [% END;
 END %]
@@ -159,10 +159,11 @@ END %]
 [% END %]
         </ul>
 
-[% IF admin_urls %]
+[% IF admin_url %]
         <ul>
             <h4><a href="[% admin_url %]">Admin</a></h4>
             <li><a href="[% admin_urls.faq %]">FAQ</a></li>
+            <li><a href="[% admin_urls.organizations %]">Organizations</a></li>
             <li><a href="[% admin_urls.projects %]">Projects</a></li>
             <li><a href="[% admin_urls.terms %]">Terms</a></li>
             <li><a href="[% admin_urls.users %]">Users</a></li>

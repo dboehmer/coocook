@@ -65,7 +65,7 @@
     </form>
 [% ELSE %]
     <p>
-        Once you've finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
+        Once you’ve finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
     </p>
 [% END %]
 </div>

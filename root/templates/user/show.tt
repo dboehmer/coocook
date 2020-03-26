@@ -21,3 +21,11 @@
     </li>
 [% END %]
 </ul>
+
+<p>Member of the following organizations:</p>
+
+<ul>
+[% FOR organization IN organizations %]
+    <li><a href="[% organization.url %]">👥[% organization.name %]</a> [% organization.display_name | html %]</li>
+[% END %]
+</ul>

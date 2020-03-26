@@ -29,11 +29,7 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
     my $project = $c->model('DB::Project')->find_by_url_name($url_name)
       or $c->detach('/error/not_found');
 
-    if ( $c->req->method eq 'GET' and $url_name ne $project->url_name ) {
-
-        # TODO redirect to same URL with $url_name in exact case
-        # e.g. /project/fOO => /project/Foo (for url_name 'Foo' in database)
-    }
+    $c->redirect_canonical_case( 0 => $project->url_name );
 
     $project->is_public
       or $c->stash->{robots}->index(0);
@@ -177,8 +173,7 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
 
     my $target = $c->project;
 
-    $c->has_capability( export_from_project => { source_project => $source } )
-      or $c->detach('/error/forbidden');
+    $c->require_capability( export_from_project => { source_project => $source } );
 
     # extract properties selected in form
     my @properties =
@@ -196,14 +191,15 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
     my $name = $c->req->params->get('name');
 
     length $name > 0
-      or
-      $c->redirect_detach( $c->uri_for( '/', { error => "Cannot create project with empty name!" } ) );
+      or $c->detach( '/error/forbidden', ["Cannot create project with empty name!"] );
 
     my $is_public = !!$c->req->params->get('is_public');
 
-    ( $is_public or $c->has_capability('create_private_project') )
-      or $c->redirect_detach(
-        $c->uri_for( '/', { error => "You're not allowed to create private projects" } ) );
+    # TODO keep form input
+    if ( not( $is_public or $c->has_capability('create_private_project') ) ) {
+        $c->messages->error("You're not allowed to create private projects");
+        $c->detach('/error/forbidden');
+    }
 
     my $projects = $c->model('DB::Project');
 
@@ -222,8 +218,11 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
         }
     );
 
-    $projects->search( { url_name_fc => $project->url_name_fc } )->exists
-      and $c->redirect_detach( $c->uri_for( '/', { error => "Project name is already in use" } ) );
+    # TODO keep form input
+    if ( $projects->search( { url_name_fc => $project->url_name_fc } )->exists ) {
+        $c->messages->error("Project name is already in use");
+        $c->redirect_detach( $c->uri_for('/') );
+    }
 
     $project->insert();
 

@@ -13,7 +13,7 @@ sub index : GET HEAD Chained('/base') PathPart('faq') Args(0) Public {
     @faqs > 0
       or $c->detach('/error/not_found');
 
-    if ( $c->has_capability('admin_view') ) {
+    if ( $c->has_capability('manage_faqs') ) {
         $c->stash( admin_faq_url => $c->uri_for_action('/admin/faq/index') );
 
         for my $faq (@faqs) {
