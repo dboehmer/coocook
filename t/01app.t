@@ -18,43 +18,41 @@ subtest "attributes of controller actions" => sub {
         my $controller = $app->controller($_);
 
         for my $action ( $controller->get_action_methods ) {
-            my @attrs = @{ $action->attributes };
-            s/ \( .+ $ //x for @attrs;
-
-            my %attrs = map { $_ => 1 } @attrs;
-
-            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
-
             my $action_pkg_name = $action->package_name . "::" . $action->name . "()";
             $action_pkg_name =~ s/^Coocook:://;    # shorten pkg name in output
-
-            if ( exists $attrs{CaptureArgs} )
-            {    # actions with CaptureArgs are chain elements and automatically private
-                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
-                next;
-            }
-
-            if ( exists $attrs{Private} ) {
-                $action->name =~ m/^_/    # no output for Catalyst's internal methods
-                  or note "Skipping $action_pkg_name: has 'Private' attribute";
-
-                next;
-            }
 
             if ( $action->name eq 'end' ) {
                 note "Skipping $action_pkg_name: is 'end' action";
                 next;
             }
 
-            ok(
-                ( exists $attrs{Public} xor exists $attrs{RequiresCapability} ),
-                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute"
-            );
+            my %attrs = do {
+                my @attrs = @{ $action->attributes };
+                s/ \( .+ $ //x for @attrs;         # remove arguments in parenthesis, e.g. RequiresCapability(foo)
+                map { $_ => 1 } @attrs;
+            };
 
-            if ( exists $attrs{AnyMethod} ) {    # special keyword indicating any method will be ok
+            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
+
+            if ( $attrs{AnyMethod} ) {             # special keyword indicating any method will be ok
                 $methods .= '+' if length $methods;
                 $methods .= 'any';
             }
+
+            if ( $attrs{CaptureArgs} ) { # actions with CaptureArgs are chain elements and automatically private
+                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
+                next;
+            }
+
+            if ( $attrs{Private} ) {
+                $action->name =~ m/^_/    # no output for Catalyst's internal methods
+                  or note "Skipping $action_pkg_name: has 'Private' attribute";
+
+                next;
+            }
+
+            ok( ( $attrs{Public} xor $attrs{RequiresCapability} ),
+                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute" );
 
             ok(
                 ( $methods eq 'any' or $methods eq 'GET+HEAD' or $methods eq 'POST' ),
