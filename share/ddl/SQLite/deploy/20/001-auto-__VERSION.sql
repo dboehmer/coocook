@@ -1,18 +1,18 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Mar 20 05:54:04 2020
+-- Created on Thu Mar 26 11:07:08 2020
 -- 
 
 ;
 BEGIN TRANSACTION;
 --
--- Table: "dbix_class_deploymenthandler_versions"
+-- Table: dbix_class_deploymenthandler_versions
 --
-CREATE TABLE "dbix_class_deploymenthandler_versions" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "version" varchar(50) NOT NULL,
-  "ddl" text,
-  "upgrade_sql" text
+CREATE TABLE dbix_class_deploymenthandler_versions (
+  id INTEGER PRIMARY KEY NOT NULL,
+  version varchar(50) NOT NULL,
+  ddl text,
+  upgrade_sql text
 );
-CREATE UNIQUE INDEX "dbix_class_deploymenthandler_versions_version" ON "dbix_class_deploymenthandler_versions" ("version");
+CREATE UNIQUE INDEX dbix_class_deploymenthandler_versions_version ON dbix_class_deploymenthandler_versions (version);
 COMMIT;

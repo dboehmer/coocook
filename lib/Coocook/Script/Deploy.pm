@@ -31,17 +31,6 @@ sub BUILD {
     }
 }
 
-around _build__dh => sub {
-    my $orig = shift;
-    my $self = shift;
-
-    my $dh = $self->$orig(@_);
-
-    $dh->sql_translator_args->{quote_identifiers} = 1;
-
-    return $dh;
-};
-
 around _build__schema => sub {
     my $orig = shift;
     my $self = shift;
