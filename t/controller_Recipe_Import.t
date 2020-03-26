@@ -42,7 +42,7 @@ $t->content_contains( 'Spätzle über Bratklößchen', "Unicode characters encod
 $t->form_id('import') || die;
 $t->submit_form_ok( { button => 'import' } );
 
-$t->base_is('https://localhost/project/2/Other-Project/recipe/3');
+$t->base_like(qr{ ^https://localhost/project/2/Other-Project/recipe/ \d+ $ }x);
 
 $t->get_ok('/project/2/Other-Project/recipes/import/1');    # again
 
