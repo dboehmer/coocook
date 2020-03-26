@@ -35,41 +35,61 @@ subtest "deprecated: fallback redirects from old URL scheme" => sub {
 
 subtest "redirect to fix URLs" => sub {
     $t->redirect_is(
+        "https://localhost/project/1" => "https://localhost/project/1/Test-Project",
+        301    # permanent
+    );
+
+    # this endpoint doesn't check any permissions but $c->go()s to another action
+    # this might be dangerous if check don't happen there
+    $t->redirect_is(
+        "https://localhost/project/2" => "https://localhost/login?redirect=%2Fproject%2F2",
+        302,    # temporary
+        "/project/2 shortcut doesn't allow access to private projects, doesn't reveal their name"
+    );
+
+    $t->redirect_is(
         "https://localhost/project/1/tEST-pROJECT/recipes" =>
           "https://localhost/project/1/Test-Project/recipes",
-        301    # permanent
+        301     # permanent
+    );
+
+    $t->redirect_is(
+        "https://localhost/project/2/I-cant-know-this-projects-name/recipes" =>
+          "https://localhost/login?redirect=%2Fproject%2F2%2FI-cant-know-this-projects-name%2Frecipes",
+        302,    # temporary
+        "/project/2/foobar doesn't reveal the real name of project 2",
     );
 
     $t->redirect_is(
         "https://localhost/project/1/completely-different-string/recipes" =>
           "https://localhost/project/1/Test-Project/recipes",
-        301    # permanent
+        301     # permanent
     );
 
     # with path arguments
     $t->redirect_is(
         "https://localhost/project/1/tEST-pROJECT/recipe/1" =>
           "https://localhost/project/1/Test-Project/recipe/1",
-        301    # permanent
+        301     # permanent
     );
 
     $t->redirect_is(
         "https://localhost/project/1/completely-different-string/recipe/1" =>
           "https://localhost/project/1/Test-Project/recipe/1",
-        301    # permanent
+        301     # permanent
     );
 
     # with query string
     $t->redirect_is(
         "https://localhost/project/1/tEST-pROJECT/recipes?keyword" =>
           "https://localhost/project/1/Test-Project/recipes?keyword",
-        301    # permanent
+        301     # permanent
     );
 
     $t->redirect_is(
         "https://localhost/project/1/tEST-pROJECT/recipes?key=val" =>
           "https://localhost/project/1/Test-Project/recipes?key=val",
-        301    # permanent
+        301     # permanent
     );
 };
 

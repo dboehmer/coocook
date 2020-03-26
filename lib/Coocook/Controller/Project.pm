@@ -43,6 +43,18 @@ sub fallback_old_url_scheme : Chained('/base') PathPart('project')
     $c->detach('/error/not_found');
 }
 
+=head2 id_only
+
+URL shortcut that catches C</project/42> without a 2nd path argument.
+
+=cut
+
+sub id_only : GET HEAD Chained('/base') PathPart('project') Args(1) Public {
+    my ( $self, $c, $id ) = @_;
+
+    $c->go( show => [ $id, '' ], [] );    # permission checks happen there
+}
+
 =head2 base
 
 Chain action that captures the project ID and stores the
