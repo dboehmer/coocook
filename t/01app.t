@@ -26,6 +26,7 @@ subtest "attributes of controller actions" => sub {
             my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
 
             my $action_pkg_name = $action->package_name . "::" . $action->name . "()";
+            $action_pkg_name =~ s/^Coocook:://;    # shorten pkg name in output
 
             if ( exists $attrs{CaptureArgs} )
             {    # actions with CaptureArgs are chain elements and automatically private
@@ -34,7 +35,9 @@ subtest "attributes of controller actions" => sub {
             }
 
             if ( exists $attrs{Private} ) {
-                note "Skipping $action_pkg_name: has 'Private' attribute";
+                $action->name =~ m/^_/    # no output for Catalyst's internal methods
+                  or note "Skipping $action_pkg_name: has 'Private' attribute";
+
                 next;
             }
 
