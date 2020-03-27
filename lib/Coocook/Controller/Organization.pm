@@ -68,9 +68,9 @@ sub base : Chained('/base') PathPart('organization') CaptureArgs(1) {
     my $organization =
       $c->model('Organizations')->find_by_name($name) || $c->detach('/error/not_found');
 
-    $c->redirect_canonical_case( 0 => $organization->name );
-
     $c->stash( organization => $organization );
+
+    $c->redirect_canonical_case( 0 => $organization->name );
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_organization') {
@@ -98,7 +98,8 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         $_ = $organization_project->as_hashref;
 
         $_->{project_url} =
-          $c->uri_for_action( '/project/show', [ $organization_project->project->url_name ] );
+          $c->uri_for_action( '/project/show',
+            [ $organization_project->project->id, $organization_project->project->url_name ] );
     }
 
     $c->stash(

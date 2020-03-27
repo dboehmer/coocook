@@ -187,7 +187,7 @@ sub messages { return shift->stash->{messages} }
 
 =head2 $c->project_uri($action, @arguments, \%query_params?)
 
-Return URI for project-specific Catalyst action with the current project's C<url_name>
+Return URI for project-specific Catalyst action with the current project's C<id> and C<url_name>
 plus any number of C<@arguments> and possibly C<\%query_params>.
 
     my $uri = $c->project_uri( '/article/edit', $article->id, { key => 'value' } );
@@ -208,7 +208,7 @@ sub project_uri {
     # if last argument is hashref that's the \%query_values argument
     my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();
 
-    return $c->uri_for_action( $action, [ $project->url_name, @_ ], @query );
+    return $c->uri_for_action( $action, [ $project->id, $project->url_name, @_ ], @query );
 }
 
 sub project {
@@ -217,11 +217,11 @@ sub project {
     $c->stash->{project};
 }
 
-=head2 $c->redirect_canonical_case( $args_index, $value )
+=head2 $c->redirect_canonical_case( $args_index, $canonical_value )
 
-Check the value of C<< $c->req->args >> at index C<$args_index>. If the value has
-different case than C<$value> redirects to the same URL with the correct value
-at index C<$args_index>.
+Check the value of path arguments at index C<$args_index>.
+If the value has different case than C<$canonical_value>,
+redirects to the same URL with the canonical value at index C<$args_index>.
 
 Effective only for GET and HEAD requests. Does nothing for any other request.
 
@@ -231,10 +231,13 @@ Effective only for GET and HEAD requests. Does nothing for any other request.
     GET  /my_action/nAmE  # redirects to:
     GET  /my_action/Name
 
+For the redirect to be effective the current action needs to be public
+or the capabilities required by the action must be given.
+
 =cut
 
 sub redirect_canonical_case {
-    my ( $c, $args_index, $value ) = @_;
+    my ( $c, $args_index, $canonical_value ) = @_;
 
     $c->req->method eq 'GET'
       or $c->req->method eq 'HEAD'
@@ -242,11 +245,23 @@ sub redirect_canonical_case {
 
     my $url_value = $c->req->args->[$args_index];
 
-    $url_value eq $value
+    $url_value eq $canonical_value
       and return 1;
 
+    # must not redirect to canonical value unless permitted,
+    # e.g. /project/42 must not reveal name of private projects
+    my $attrs = $c->action->attributes;
+
+    if ( exists $attrs->{Public} ) { }                             # always ok
+    elsif ( my $capabilities = $attrs->{RequiresCapability} ) {    # check
+        $c->has_capability( $_, $c->stash ) || return for @$capabilities;
+    }
+    else {                                                         # action can't be checked here
+        return;
+    }
+
     my @args = @{ $c->req->captures };    # $c->req->args contains only args for current chain element
-    $args[$args_index] = $value;
+    $args[$args_index] = $canonical_value;
 
     my $uri = $c->uri_for( $c->action, \@args );
     $uri->query( $c->req->uri->query );

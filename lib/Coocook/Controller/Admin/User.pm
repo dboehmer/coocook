@@ -89,7 +89,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('man
         $project = $project->as_hashref;    # TODO make as_hashref() not inflate relationships
                                             # (at least on request) to avoid hack above
 
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
 
         push @permissions,
           {

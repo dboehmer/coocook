@@ -16,6 +16,45 @@ Catalyst Controller.
 
 =head1 METHODS
 
+=cut
+
+sub fallback_old_url_scheme : Chained('/base') PathPart('project')
+  Args GET HEAD Public {    # TODO deprecated
+    my ( $self, $c ) = @_;
+
+    if ( $c->req->method eq 'GET' or $c->req->method eq 'POST' ) {
+        my $args = $c->req->args;
+
+        if ( @$args >= 1 ) {
+            my ($url_name) = @$args;
+
+            if ( my $project = $c->model('DB::Project')->find_by_url_name($url_name) ) {
+                $args->[0] = $project->url_name;    # might change lower/upper case
+                unshift @$args, $project->id;
+
+                my $uri = $c->uri_for( '/project', @$args );
+                $uri->query( $c->req->uri->query );
+
+                $c->redirect_detach( $uri, 301 );
+            }
+        }
+    }
+
+    $c->detach('/error/not_found');
+}
+
+=head2 id_only
+
+URL shortcut that catches C</project/42> without a 2nd path argument.
+
+=cut
+
+sub id_only : GET HEAD Chained('/base') PathPart('project') Args(1) CustomAuthz {
+    my ( $self, $c, $id ) = @_;
+
+    $c->go( show => [ $id, '' ], [] );    # permission checks happen there
+}
+
 =head2 base
 
 Chain action that captures the project ID and stores the
@@ -23,18 +62,21 @@ C<Result::Project> object in the stash.
 
 =cut
 
-sub base : Chained('/base') PathPart('project') CaptureArgs(1) {
-    my ( $self, $c, $url_name ) = @_;
+sub base : Chained('/base') PathPart('project') CaptureArgs(2) {
+    my ( $self, $c, $id, $url_name ) = @_;
 
-    my $project = $c->model('DB::Project')->find_by_url_name($url_name)
+    $id =~ m/[^0-9]/
+      and $c->detach('fallback_old_url_scheme');    # TODO deprecated
+
+    my $project = $c->model('DB::Project')->find( { id => $id } )
       or $c->detach('/error/not_found');
 
-    $c->redirect_canonical_case( 0 => $project->url_name );
+    $c->stash( project => $project );
+
+    $c->redirect_canonical_case( 1 => $project->url_name );
 
     $project->is_public
       or $c->stash->{robots}->index(0);
-
-    $c->stash( project => $project );
 
     $c->stash(
         project_urls => {
@@ -294,7 +336,8 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
 sub redirect : Private {
     my ( $self, $c, $project ) = @_;
 
-    $c->response->redirect( $c->uri_for_action( $self->action_for('show'), [ $project->url_name ] ) );
+    $c->response->redirect(
+        $c->uri_for_action( $self->action_for('show'), [ $project->id, $project->url_name ] ) );
 }
 
 __PACKAGE__->meta->make_immutable;

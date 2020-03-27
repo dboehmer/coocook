@@ -265,7 +265,8 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
     for my $recipe (@recipes) {
         $recipe->{url} = $c->uri_for_action( '/browse/recipe/show', [ $recipe->id, $recipe->url_name ] );
 
-        $recipe->project->{url} ||= $c->uri_for_action( '/project/show', [ $recipe->project->url_name ] );
+        $recipe->project->{url} ||=
+          $c->uri_for_action( '/project/show', [ $recipe->project->id, $recipe->project->url_name ] );
 
         $recipe->project->owner->{url} ||=
           $c->uri_for_action( '/user/show', [ $recipe->project->owner->name ] );

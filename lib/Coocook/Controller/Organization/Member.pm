@@ -71,8 +71,7 @@ sub index : GET HEAD Chained('/organization/base') PathPart('members') Args(0)
     );
 }
 
-sub add : POST Chained('/organization/base') Args(0) Public # custom require_capability() call below
-{
+sub add : POST Chained('/organization/base') Args(0) CustomAuthz {
     my ( $self, $c ) = @_;
 
     my $organization = $c->stash->{organization};
@@ -103,8 +102,7 @@ sub base : Chained('/organization/base') PathPart('member') CaptureArgs(1) {
       || $c->detach('/error/bad_request');
 }
 
-sub edit : POST Chained('base') Args(0) Public    # custom require_capability() call below
-{
+sub edit : POST Chained('base') Args(0) CustomAuthz {
     my ( $self, $c ) = @_;
 
     my $role = $c->req->params->get('role');

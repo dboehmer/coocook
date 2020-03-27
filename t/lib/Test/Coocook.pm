@@ -420,13 +420,41 @@ sub create_project_ok {
     };
 }
 
+sub redirect_is {
+    my ( $self, $url, $expected, $status, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    subtest $name || "GET $url redirects $status $expected" => sub {
+        my $original_max_redirect = $self->max_redirect();
+        $self->max_redirect(0);
+
+        ok $self->get($url), "GET $url";
+        $self->status_is($status);
+        $self->header_is( Location => $expected );
+
+        $self->max_redirect($original_max_redirect);
+    };
+}
+
 sub status_is {
     my ( $self, $expected, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    is $self->response->code => $expected,
-      $name || "Response has status code $expected";
+    my $ok = is $self->response->code => $expected,
+      $name || sprintf(
+        "Response code %i for %s %s",
+        $expected,
+        $self->response->request->method,
+        $self->response->request->uri
+      );
+
+    if ( not $ok and $self->response->code =~ m/301|302|303|307|308/ ) {
+        diag "Location: " . $self->response->header('Location');
+    }
+
+    return $ok;
 }
 
 sub status_like {

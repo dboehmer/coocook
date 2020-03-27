@@ -23,7 +23,7 @@ INSERT INTO 'organizations_users'
 INSERT INTO 'projects'
 (id,            name,        url_name,     url_name_fc,      description, is_public, owner,           created, archived) VALUES
 ( 1,  'Test Project',  'Test-Project',  'test-project',  'Test Project.',         1,     1, CURRENT_TIMESTAMP,     NULL),
-( 2, 'Other Project', 'Other-project', 'other-project', 'Other Project.',         0,     1, CURRENT_TIMESTAMP,     NULL);
+( 2, 'Other Project', 'Other-Project', 'other-project', 'Other Project.',         0,     1, CURRENT_TIMESTAMP,     NULL);
 
 INSERT INTO 'projects_users'
 (project, user,     role) VALUES
@@ -79,8 +79,9 @@ INSERT INTO 'articles_units'
 (      4,    2);
 
 INSERT INTO 'recipes'
-(id, project,     name, preparation, description, servings) VALUES
-( 1,       1,  'pizza',          '',          '',        4);
+(id, project,           name, preparation, description, servings) VALUES
+( 1,       1,        'pizza',          '',          '',        4),
+( 2,       2, 'rice pudding',          '',          '',       42);
 
 INSERT INTO 'recipe_ingredients'
 (id, position, recipe, prepare, article, unit, value,             comment) VALUES

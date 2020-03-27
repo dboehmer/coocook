@@ -27,12 +27,12 @@ sub base : Chained('/base') PathPart('user') CaptureArgs(1) {
     my $user = $c->model('DB::User')->find( { name_fc => fc($name) } )
       || $c->detach('/error/not_found');
 
-    $c->redirect_canonical_case( 0 => $user->name );
-
     # this variable MUST NOT be named 'user' because it collides with $c->user
     # TODO maybe store $c->user as $c->stash->{logged_in_user} or similar
     #      and use $c->stash->{user} here?
     $c->stash( user_object => $user );
+
+    $c->redirect_canonical_case( 0 => $user->name );
 }
 
 sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_user') {
@@ -49,7 +49,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     my @projects = $user->owned_projects->public->hri->all;
 
     for my $project (@projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{url_name} ] );
+        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     if ( $c->user and $c->user->id == $user->id ) {

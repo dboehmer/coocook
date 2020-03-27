@@ -7,9 +7,18 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 10;
+use Test::Most tests => 11;
 
 my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
+
+my @POSSIBLE_AUTHZ_ATTRS = (
+    'RequiresCapability',    # = see ActionRole::RequiresCapability
+    'Public',                # = no permission required
+    'CustomAuthz',           # = action is not public but does authorization in code
+                             #   TODO this could be tested:
+                             #   store flag, make require_capability() remove flag,
+                             #   run action, check that flag has been removed
+);
 
 subtest "attributes of controller actions" => sub {
     my $app = $t->catalyst_app;
@@ -18,57 +27,64 @@ subtest "attributes of controller actions" => sub {
         my $controller = $app->controller($_);
 
         for my $action ( $controller->get_action_methods ) {
-            my @attrs = @{ $action->attributes };
-            s/ \( .+ $ //x for @attrs;
-
-            my %attrs = map { $_ => 1 } @attrs;
-
-            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
-
             my $action_pkg_name = $action->package_name . "::" . $action->name . "()";
-
-            if ( exists $attrs{CaptureArgs} )
-            {    # actions with CaptureArgs are chain elements and automatically private
-                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
-                next;
-            }
-
-            if ( exists $attrs{Private} ) {
-                note "Skipping $action_pkg_name: has 'Private' attribute";
-                next;
-            }
+            $action_pkg_name =~ s/^Coocook:://;    # shorten pkg name in output
 
             if ( $action->name eq 'end' ) {
                 note "Skipping $action_pkg_name: is 'end' action";
                 next;
             }
 
-            ok(
-                ( exists $attrs{Public} xor exists $attrs{RequiresCapability} ),
-                "$action_pkg_name has either 'Public' or 'RequiresCapability' attribute"
-            );
+            my %attrs = do {
+                my @attrs = @{ $action->attributes };
+                s/ \( .+ $ //x for @attrs;         # remove arguments in parenthesis, e.g. RequiresCapability(foo)
+                map { $_ => 1 } @attrs;
+            };
 
-            if ( exists $attrs{AnyMethod} ) {    # special keyword indicating any method will be ok
+            my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
+
+            if ( $attrs{AnyMethod} ) {             # special keyword indicating any method will be ok
                 $methods .= '+' if length $methods;
                 $methods .= 'any';
+            }
+
+            if ( $attrs{CaptureArgs} ) { # actions with CaptureArgs are chain elements and automatically private
+                is $methods => '', "$action_pkg_name: action with 'CaptureArgs' has no methods";
+                next;
+            }
+
+            if ( $attrs{Private} ) {
+                $action->name =~ m/^_/    # no output for Catalyst's internal methods
+                  or note "Skipping $action_pkg_name: has 'Private' attribute";
+
+                next;
             }
 
             ok(
                 ( $methods eq 'any' or $methods eq 'GET+HEAD' or $methods eq 'POST' ),
                 "$action_pkg_name has 'AnyMethod' or is GET & HEAD or POST"
             ) or note "HTTP methods: " . $methods;
+
+            my @used_authz_attrs = grep { $attrs{$_} } @POSSIBLE_AUTHZ_ATTRS;
+
+            is
+              @used_authz_attrs => 1,
+              "$action_pkg_name has 1 authorization attribute out of: @POSSIBLE_AUTHZ_ATTRS"
+              or diag "       found: @used_authz_attrs";
         }
     }
 };
 
 subtest "GET http://... redirects to HTTPS" => sub {
-    $t->get('http://localhost/');
-    $t->status_is(301);    # moved permanently
-    $t->header_is( Location => 'https://localhost/' );
+    $t->redirect_is(
+        'http://localhost/' => 'https://localhost/',
+        301    # moved permanently
+    );
 
-    $t->get('http://localhost/path_doesnt_exist');
-    $t->status_is(301);    # moved permanently
-    $t->header_is( Location => 'https://localhost/path_doesnt_exist' );
+    $t->redirect_is(
+        'http://localhost/path_doesnt_exist' => 'https://localhost/path_doesnt_exist',
+        301    # moved permanently
+    );
 };
 
 subtest "POST http://... is catched as well" => sub {    # TODO define exact behavior
@@ -136,7 +152,7 @@ subtest "robots meta tag" => sub {
     $t->content_lacks('noindex');
 
     subtest "under simulation of fatal mistake in permission" => sub {
-        $t->get('/project/Other-project');
+        $t->get('/project/2/Other-Project');
         $t->status_is(302);    # actually the login page
 
         note "manipulating Model::Authorization ...";
@@ -219,4 +235,72 @@ subtest "canonical URLs" => sub {
 
     ok $t->get($_), "GET $_", for '/doesnt-exist';
     $t->content_lacks('canonical');
+};
+
+$t->max_redirect(0);
+
+subtest "simply check GET for all endpoints" => sub {    # TODO could we autogenerate the URL list?
+    $t->get_ok('/');
+    $t->get_ok('/about');
+    $t->get_ok('/admin');
+    $t->get_ok('/admin/faq');
+    $t->get_ok('/admin/faq/1');
+    $t->get_ok('/admin/faq/new');
+    $t->get_ok('/admin/organizations');
+    $t->get_ok('/admin/projects');
+    $t->get_ok('/admin/terms');
+    $t->get_ok('/admin/terms/2');
+    $t->get_ok('/admin/terms/new');
+    $t->get_ok('/admin/user/other');
+    $t->get_ok('/admin/users');
+    $t->get_ok('/badge/dishes_served.svg');
+    $t->get_ok('/faq');
+    $t->get_ok('/internal_server_error');
+    $t->get_ok('/organization/TestData');
+    $t->get_ok('/organization/TestData/members');
+    $t->get_ok('/projects');
+    $t->get_ok('/project/1/Test-Project');
+    $t->get_ok('/project/1/Test-Project/article/1');
+    $t->get_ok('/project/1/Test-Project/articles');
+    $t->get_ok('/project/1/Test-Project/articles/new');
+    $t->get_ok('/project/1/Test-Project/dish/1');
+    $t->get_ok('/project/1/Test-Project/edit');
+    $t->get_ok('/project/1/Test-Project/import');
+    $t->get_ok('/project/1/Test-Project/items/unassigned');
+    $t->get_ok('/project/1/Test-Project/permissions');
+    $t->get_ok('/project/1/Test-Project/print');
+    $t->get_ok('/project/1/Test-Project/print/day/2000/1/1');
+    $t->get_ok('/project/1/Test-Project/print/project');
+    $t->get_ok('/project/1/Test-Project/print/purchase_list/1');
+    $t->get_ok('/project/1/Test-Project/purchase_list/1');
+    $t->get_ok('/project/1/Test-Project/purchase_lists');
+    $t->get_ok('/project/1/Test-Project/quantities');
+    $t->get_ok('/project/1/Test-Project/recipe/1');
+    $t->get_ok('/project/1/Test-Project/recipes');
+    $t->get_ok('/project/1/Test-Project/recipes/import');
+    $t->get_ok('/project/1/Test-Project/recipes/import/2');
+    $t->get_ok('/project/1/Test-Project/recipes/new');
+    $t->get_ok('/project/1/Test-Project/settings');
+    $t->get_ok('/project/1/Test-Project/shop_sections');
+    $t->get_ok('/project/1/Test-Project/tag/1');
+    $t->get_ok('/project/1/Test-Project/tag_group/1');
+    $t->get_ok('/project/1/Test-Project/tag_groups');
+    $t->get_ok('/project/1/Test-Project/tag_groups/new');
+    $t->get_ok('/project/1/Test-Project/tags');
+    $t->get_ok('/project/1/Test-Project/tags/new');
+    $t->get_ok('/project/1/Test-Project/unit/1');
+    $t->get_ok('/project/1/Test-Project/units');
+    $t->get_ok('/project/1/Test-Project/units/new');
+    $t->get_ok('/recipe/1/pizza');
+    $t->get_ok('/recipe/1/pizza/import');
+    $t->get_ok('/recipes');
+    $t->get_ok('/recover');
+    $t->redirect_is( '/settings' => 'https://localhost/settings/account', 302 );
+    $t->get_ok('/settings/account');
+    $t->get_ok('/settings/organizations');
+    $t->get_ok('/settings/projects');
+    $t->get_ok('/statistics');
+    $t->redirect_is( '/terms' => 'https://localhost/terms/1', 302 );
+    $t->get_ok('/terms/1');
+    $t->get_ok('/user/john_doe');
 };
