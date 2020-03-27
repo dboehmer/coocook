@@ -71,12 +71,12 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(2) {
     my $project = $c->model('DB::Project')->find( { id => $id } )
       or $c->detach('/error/not_found');
 
+    $c->stash( project => $project );
+
     $c->redirect_canonical_case( 1 => $project->url_name );
 
     $project->is_public
       or $c->stash->{robots}->index(0);
-
-    $c->stash( project => $project );
 
     $c->stash(
         project_urls => {

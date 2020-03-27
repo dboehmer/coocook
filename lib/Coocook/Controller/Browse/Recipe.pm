@@ -88,12 +88,12 @@ sub base : Chained('/base') PathPart('recipe') CaptureArgs(2) {
     my $recipe = $c->model('DB::Recipe')->search( undef, { prefetch => 'project' } )->find($id)
       or $c->detach('/error/not_found');
 
-    $c->redirect_canonical_case( 1 => $recipe->url_name );
-
     $c->stash(
         recipe         => $recipe,
         source_project => $recipe->project,
     );
+
+    $c->redirect_canonical_case( 1 => $recipe->url_name );
 }
 
 sub import : GET HEAD Chained('base') PathPart('import') Args(0)
