@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DBICx::TestDatabase;
 use Test::Coocook;
-use Test::Most tests => 72;
+use Test::Most tests => 75;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( deploy => 0 );
@@ -172,6 +172,8 @@ $t->logout_ok();
 
 $t->get_ok('/login');
 
+$t->robots_flags_ok( { index => 1, archive => 1 }, "plain /login may be indexed" );
+
 $t->content_unlike( qr/ name="username" .+ value="test" /x,
     "... username is deleted from session cookie by logout" );
 
@@ -179,6 +181,8 @@ $t->content_unlike( qr/ name="store_username" .+ checked /x,
     '... checkbox "store username" is NOT checked' );
 
 $t->get_ok('/login?username=from_query');
+
+$t->robots_flags_ok( { index => 0, archive => 0 }, "/login with query string may NOT be indexed" );
 
 $t->content_like( qr/ name="username" .+ value="from_query" /x,
     "... username is prefilled from URL query" );
@@ -211,6 +215,9 @@ is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
 $t->content_like( qr/ name="username" .+ value="test" /x,
     "username is prefilled from persistent cookie" )
   or diag $t->content;
+
+$t->robots_flags_ok( { index => 0, archive => 0 },
+    "/login with username from cookie may NOT be indexed" );
 
 $t->content_like( qr/ name="store_username" .+ checked /x, 'checkbox "store username" is checked' );
 
@@ -268,6 +275,7 @@ subtest "redirects after login/logout" => sub {
     # pass link around between login/register
     $t->follow_link_ok( { text => 'Sign up' } );
 
+    # keep link with failed login attempts
     $t->login_fails( 'test', 'invalid' );
 
     note "uri: " . $t->uri;

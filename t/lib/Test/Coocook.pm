@@ -11,6 +11,7 @@ use Carp;
 use DBICx::TestDatabase;
 use Email::Sender::Simple;
 use FindBin;
+use HTML::Meta::Robots;
 use Scope::Guard qw< guard >;
 use TestDB;
 use Test::Most;
@@ -421,6 +422,42 @@ sub redirect_is {
 
         $self->max_redirect($original_max_redirect);
     };
+}
+
+sub robots_flags_ok {
+    my ( $self, $flags, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    $name ||= "Response contains 'robots' meta tag with specified flags";
+
+    my $fail = sub {
+        local $Test::Builder::Level = $Test::Builder::Level + 1;
+        fail $name;
+        diag $_ for @_;
+    };
+
+    my @matches = ( $self->content =~ m/ <meta \s+ name="robots" \s+ content="([^"<>]*)"> /gx );
+
+    if    ( @matches == 0 ) { return $fail->("Can't find 'robots' meta tag") }
+    elsif ( @matches > 1 )  { return $fail->("Found more than 1 'robots' meta tag") }
+
+    my $string = $matches[0];
+    my $robots = HTML::Meta::Robots->new->parse($string);
+
+    for ( sort keys %$flags ) {
+        my ( $flag => $expected ) = ( $_ => $flags->{$_} );
+
+        if ( $robots->$flag xor $expected ) {
+            return $fail->(
+                "Wrong value for flag '$flag'",
+                "Found:    '$string'",
+                "Expected: " . ( $expected ? "'$flag'" : "'no$flag'" )
+            );
+        }
+    }
+
+    pass $name;
 }
 
 sub status_is {
