@@ -1,0 +1,13 @@
+[% IF recipes_of_the_day.size == 1 %]
+<h2>Recipe of the Day</h2>
+
+<a href="[% recipes_of_the_day.0.url %]">[% recipes_of_the_day.0.recipe.name | html %]</a>
+[% ELSIF recipes_of_the_day.size > 1 %]
+<h2>Recipes of the Day</h2>
+
+<ul>
+[% FOR rotd IN recipes_of_the_day %]
+    <li><a href="[% rotd.url %]">[% rotd.recipe.name | html %]</a></li>
+[% END %]
+</ul>
+[% END %]

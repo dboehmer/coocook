@@ -50,6 +50,11 @@ __PACKAGE__->has_many(
     }
 );
 
+__PACKAGE__->has_many(
+    recipe_of_the_day => 'Coocook::Schema::Result::RecipeOfTheDay',
+    'recipe_id'
+);
+
 __PACKAGE__->has_many( recipes_tags => 'Coocook::Schema::Result::RecipeTag', 'recipe_id' );
 __PACKAGE__->many_to_many( tags => recipes_tags => 'tag' );
 

@@ -1,5 +1,7 @@
 [% INCLUDE 'homepage_intro.tt' %]
 
+[% INCLUDE 'includes/recipes_of_the_day.tt' %]
+
 <h2>Recent public recipes</h2>
 
 <ul>

@@ -171,6 +171,21 @@ sub auto : Private {
 sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
     my ( $self, $c ) = @_;
 
+    # always read--recipes might be defined in DB although pick=0
+    my @recipes_of_the_day =
+      $c->model('DB::RecipeOfTheDay')->today( pick => $c->config->{pick_recipes_of_the_day} );
+
+    for (@recipes_of_the_day) {
+        my $recipe = $_->recipe;
+
+        $_ = $_->as_hashref(
+            recipe => $recipe,
+            url    => $c->uri_for_action( '/browse/recipe/show', [ $recipe->id, $recipe->url_name ] ),
+        );
+    }
+
+    $c->stash( recipes_of_the_day => \@recipes_of_the_day );
+
     $c->detach( $c->has_capability('view_dashboard') ? 'dashboard' : 'homepage' );
 }
 

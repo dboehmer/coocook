@@ -69,6 +69,7 @@ schema_diff_like(
                   purchase_lists
                   quantities
                   recipe_ingredients
+                  recipes_of_the_day
                   recipes
                   shop_sections
                   tag_groups

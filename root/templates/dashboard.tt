@@ -27,6 +27,8 @@
 </div>
 </form>
 
+[% INCLUDE 'includes/recipes_of_the_day.tt' %]
+
 <h2>Other public projects</h2>
 
 [% IF other_projects.size == 0 %]
