@@ -171,18 +171,35 @@ sub index : GET HEAD Chained('/base') PathPart('') Args(0) Public {
 sub homepage : Private {
     my ( $self, $c ) = @_;
 
-    my @public_projects = $c->model('DB::Project')->public->sorted->hri->all;
+    my $max_recipes = 10;
 
-    for my $project (@public_projects) {
+    my @public_recipes = $c->model('DB::Recipe')->public->search(
+        undef,
+        {
+            join     => 'project',
+            order_by => { -desc => 'project.created' },
+            rows     => $max_recipes,
+        }
+    )->all;
+
+    for (@public_recipes) {
+        $_ = $_->as_hashref( url => $c->uri_for_action( '/browse/recipe/show', [ $_->id, $_->url_name ] ) );
+    }
+
+    my @active_public_projects = $c->model('DB::Project')->not_archived->public->sorted->hri->all;
+
+    for my $project (@active_public_projects) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 
     $c->stash(
-        meta_description => $c->config->{homepage_meta_description},
-        meta_keywords    => $c->config->{homepage_meta_keywords},
-        homepage_text_md => $c->config->{homepage_text_md},
-        public_projects  => \@public_projects,
-        template         => 'homepage.tt',
+        meta_description       => $c->config->{homepage_meta_description},
+        meta_keywords          => $c->config->{homepage_meta_keywords},
+        homepage_text_md       => $c->config->{homepage_text_md},
+        max_recipes            => $max_recipes,
+        public_recipes         => \@public_recipes,
+        active_public_projects => \@active_public_projects,
+        template               => 'homepage.tt',
     );
 }
 

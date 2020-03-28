@@ -1,10 +1,22 @@
 [% USE Markdown;
 homepage_text_md | markdown %]
 
-<h2>Public Projects</h2>
+<h2>Recent public recipes</h2>
 
 <ul>
-[% FOR proj IN public_projects # don't overwrite $project! %]
+[% FOR recipe IN public_recipes %]
+    <li><a href="[% recipe.url %]">[% recipe.name | html %]</a></li>
+[% END %]
+</ul>
+
+[% IF public_recipes.size == max_recipes %]
+    <p>Browse <a href="[% recipes_url %]">all public recipes</a></p>
+[% END %]
+
+<h2>Active public Projects</h2>
+
+<ul>
+[% FOR proj IN active_public_projects # don't overwrite $project! %]
     <li>
         <a href="[% proj.url %]">[% proj.name | html %]</a>
     </li>
