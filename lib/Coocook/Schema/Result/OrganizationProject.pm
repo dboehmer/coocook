@@ -8,15 +8,19 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('organizations_projects');
 
 __PACKAGE__->add_columns(
-    organization => { data_type => 'int' },
-    project      => { data_type => 'int' },
-    role         => { data_type => 'text' },
+    organization_id => { data_type => 'int' },
+    project_id      => { data_type => 'int' },
+    role            => { data_type => 'text' },
 );
 
-__PACKAGE__->set_primary_key(qw< organization project >);
+__PACKAGE__->set_primary_key(qw< organization_id project_id >);
 
-__PACKAGE__->belongs_to( organization => 'Coocook::Schema::Result::Organization' );
-__PACKAGE__->belongs_to( project      => 'Coocook::Schema::Result::Project' );
+__PACKAGE__->belongs_to(
+    organization => 'Coocook::Schema::Result::Organization',
+    'organization_id'
+);
+
+__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project', 'project_id' );
 
 __PACKAGE__->has_many(
     other_projects_organizations => __PACKAGE__,
@@ -25,9 +29,9 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.project" => { -ident => "$args->{self_alias}.project" },
-            "$args->{foreign_alias}.organization" =>
-              { '!=' => { -ident => "$args->{self_alias}.organization" } },
+            "$args->{foreign_alias}.project_id" => { -ident => "$args->{self_alias}.project_id" },
+            "$args->{foreign_alias}.organization_id" =>
+              { '!=' => { -ident => "$args->{self_alias}.organization_id" } },
         };
     }
 );

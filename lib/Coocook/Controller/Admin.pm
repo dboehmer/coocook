@@ -43,7 +43,7 @@ sub projects : GET HEAD Chained('base') Args(0) RequiresCapability('admin_view')
     my %users = map { $_->{id} => $_ } $c->model('DB::User')->with_projects_count->hri->all;
 
     for my $project (@projects) {
-        $project->{owner} = $users{ $project->{owner} } || die;
+        $project->{owner} = $users{ $project->{owner_id} } || die;
         $project->{url}   = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
     }
 

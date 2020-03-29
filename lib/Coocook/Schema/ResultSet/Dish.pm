@@ -15,10 +15,10 @@ sub from_recipe {
         sub {
             my $dish = $self->create(
                 {
-                    from_recipe => $recipe->id,
-                    servings    => $recipe->servings,    # begin with original servings
+                    from_recipe_id => $recipe->id,
+                    servings       => $recipe->servings,    # begin with original servings
 
-                    meal    => $args{meal},
+                    meal_id => $args{meal},
                     comment => $args{comment},
 
                     name        => $args{name}        || $recipe->name,

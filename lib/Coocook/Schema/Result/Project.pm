@@ -9,7 +9,7 @@ use DateTime;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->table("projects");
+__PACKAGE__->table('projects');
 
 __PACKAGE__->add_columns(
     id          => { data_type => 'int', is_auto_increment => 1 },
@@ -18,32 +18,35 @@ __PACKAGE__->add_columns(
     url_name_fc => { data_type => 'text' },                          # fold cased
     description => { data_type => 'text' },
     is_public   => { data_type => 'bool', default_value => 1 },
-    owner       => { data_type => 'int' },
+    owner_id    => { data_type => 'int' },
     created  => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
     archived => { data_type => 'datetime', is_nullable => 1 },
 );
 
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['name'], ['url_name'], ['url_name_fc'] );
 
-__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
+__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User', 'owner_id' );
 
-__PACKAGE__->has_many( organizations_projects => 'Coocook::Schema::Result::OrganizationProject' );
+__PACKAGE__->has_many(
+    organizations_projects => 'Coocook::Schema::Result::OrganizationProject',
+    'project_id'
+);
 __PACKAGE__->many_to_many( organizations => organizations_projects => 'organization' );
 
-__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
+__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser', 'project_id' );
 __PACKAGE__->many_to_many( users => projects_users => 'user' );
 
-__PACKAGE__->has_many( articles => 'Coocook::Schema::Result::Article', 'project' );
-__PACKAGE__->has_many( meals    => 'Coocook::Schema::Result::Meal',    'project' );
-__PACKAGE__->has_many( purchase_lists => 'Coocook::Schema::Result::PurchaseList' );
-__PACKAGE__->has_many( quantities     => 'Coocook::Schema::Result::Quantity' );
-__PACKAGE__->has_many( recipes        => 'Coocook::Schema::Result::Recipe' );
-__PACKAGE__->has_many( shop_sections  => 'Coocook::Schema::Result::ShopSection' );
-__PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag' );
-__PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup' );
-__PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit' );
+__PACKAGE__->has_many( articles       => 'Coocook::Schema::Result::Article',      'project_id' );
+__PACKAGE__->has_many( meals          => 'Coocook::Schema::Result::Meal',         'project_id' );
+__PACKAGE__->has_many( purchase_lists => 'Coocook::Schema::Result::PurchaseList', 'project_id' );
+__PACKAGE__->has_many( quantities     => 'Coocook::Schema::Result::Quantity',     'project_id' );
+__PACKAGE__->has_many( recipes        => 'Coocook::Schema::Result::Recipe',       'project_id' );
+__PACKAGE__->has_many( shop_sections  => 'Coocook::Schema::Result::ShopSection',  'project_id' );
+__PACKAGE__->has_many( tags           => 'Coocook::Schema::Result::Tag',          'project_id' );
+__PACKAGE__->has_many( tag_groups     => 'Coocook::Schema::Result::TagGroup',     'project_id' );
+__PACKAGE__->has_many( units          => 'Coocook::Schema::Result::Unit',         'project_id' );
 
 # trigger for generating url_name[_fc]
 before store_column => sub {
@@ -80,7 +83,7 @@ sub dishes {
 
     return $self->result_source->schema->resultset('Dish')->search(
         {
-            'meal.project' => $self->id,
+            'meal.project_id' => $self->id,
         },
         {
             join => 'meal',
@@ -105,8 +108,8 @@ sub articles_cached_units {
         my $articles_units = $articles->search_related('articles_units');
 
         while ( my $a_u = $articles_units->next ) {
-            my $a = $a_u->get_column('article');
-            my $u = $a_u->get_column('unit');
+            my $a = $a_u->article_id;
+            my $u = $a_u->unit_id;
 
             $a_u->related_resultset('unit')->set_cache( [ $units{$u} ] );
 
@@ -207,7 +210,7 @@ Returns a resultset with all C<Result::Organization>s without any related C<orga
 sub organizations_without_permission {
     my $self = shift;
 
-    my $permitted_organizations = $self->organizations_projects->get_column('organization');
+    my $permitted_organizations = $self->organizations_projects->get_column('organization_id');
 
     return $self->result_source->schema->resultset('Organization')->search(
         {
@@ -237,7 +240,7 @@ Returns a resultset with all C<Result::User>s without any related C<projects_use
 sub users_without_permission {
     my $self = shift;
 
-    my $permitted_users = $self->projects_users->get_column('user');
+    my $permitted_users = $self->projects_users->get_column('user_id');
 
     return $self->result_source->schema->resultset('User')->search(
         {

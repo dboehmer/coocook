@@ -53,7 +53,7 @@ sub index : GET HEAD Chained('submenu') PathPart('units') Args(0)
         );
 
         for my $resultset (@resultsets) {
-            my $ids = $resultset->get_column( { distinct => 'unit' } );
+            my $ids = $resultset->get_column( { distinct => 'unit_id' } );
 
             @units_in_use{ $ids->all } = ();    # set all keys to undef
         }
@@ -68,7 +68,7 @@ sub index : GET HEAD Chained('submenu') PathPart('units') Args(0)
             { join => 'quantity', order_by => [ 'quantity.name', 'to_quantity_default', 'long_name' ] } );
 
         while ( my $unit = $units->next ) {
-            $unit->quantity( $quantities{ $unit->get_column('quantity') } );
+            $unit->quantity( $quantities{ $unit->quantity_id } );
 
             my %unit = (
                 url                   => $c->project_uri( $self->action_for('edit'), $unit->id ),

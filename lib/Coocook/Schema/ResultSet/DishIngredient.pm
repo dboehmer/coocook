@@ -20,7 +20,7 @@ sub prepared {
 sub unassigned {
     my $self = shift;
 
-    return $self->search( { item => undef } );
+    return $self->search( { item_id => undef } );
 }
 
 1;

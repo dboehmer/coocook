@@ -76,8 +76,8 @@ sub as_arrayref {
                 prepare => $ingredient->prepare,
                 value   => $ingredient->value * $self->factor,
                 comment => $ingredient->comment,
-                unit    => $units{ $ingredient->get_column('unit') },
-                article => $articles{ $ingredient->get_column('article') },
+                unit    => $units{ $ingredient->unit_id },
+                article => $articles{ $ingredient->article_id },
               };
         }
     }

@@ -52,7 +52,9 @@ sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
         my %articles_in_use = map { $_ => 1 } $articles->in_use->get_column('id')->all;
 
         while ( my $article = $articles->next ) {
-            $article->{shop_section} &&= $shop_sections{ $article->{shop_section} };
+            $article->{shop_section_id}
+              and $article->{shop_section} = $shop_sections{ $article->{shop_section_id} };
+
             $article->{units}      = [];
             $article->{edit_url}   = $c->project_uri( $edit_action, $article->{id} );
             $article->{delete_url} = $c->project_uri( $delete_action, $article->{id} )
@@ -69,7 +71,7 @@ sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
     my $articles_units = $c->project->articles->search_related('articles_units')->hri;
 
     while ( my $article_unit = $articles_units->next ) {
-        my ( $article => $unit ) = @$article_unit{ 'article', 'unit' };
+        my ( $article => $unit ) = @$article_unit{ 'article_id', 'unit_id' };
         push @{ $articles{$article}{units} }, $units{$unit};
     }
 
@@ -204,7 +206,7 @@ sub dishes_recipes : Private {
     my @dishes;
 
     while ( my $dish = $dishes->next ) {
-        my $recipe = $dish->from_recipe;
+        my $recipe = $dish->from_recipe_id;
 
         my $meal = $dish->meal;
         $dish         = $dish->as_hashref;

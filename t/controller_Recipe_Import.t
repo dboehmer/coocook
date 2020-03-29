@@ -10,7 +10,7 @@ use Test::Most tests => 10;
 
 my $t = Test::Coocook->new;
 
-$t->schema->resultset($_)->search( { project => 2 } )->delete() for 'Article', 'Quantity';
+$t->schema->resultset($_)->search( { project_id => 2 } )->delete() for 'Article', 'Quantity';
 Coocook::Model::ProjectImporter->new->import_data(
     $t->schema->resultset('Project')->find(1),
     $t->schema->resultset('Project')->find(2),
@@ -19,7 +19,7 @@ Coocook::Model::ProjectImporter->new->import_data(
 
 $t->schema->resultset('Recipe')->create(
     {
-        project     => 2,
+        project_id  => 2,
         name        => 'Spätzle über Bratklößchen',    # contains all German umlauts
         servings    => 42,
         preparation => __FILE__,

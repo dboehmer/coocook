@@ -121,8 +121,7 @@ sub remove_ingredient : POST Chained('/project/base') PathPart('purchase_list/re
 
     $ingredient->remove_from_purchase_list();
 
-    $c->response->redirect(
-        $c->project_uri( $self->action_for('edit'), $item->get_column('purchase_list') ) );
+    $c->response->redirect( $c->project_uri( $self->action_for('edit'), $item->purchase_list_id ) );
 }
 
 sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Args(0)

@@ -126,11 +126,11 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
     $recipe->create_related(
         ingredients => {
-            prepare => !!$c->req->params->get('prepare'),
-            article => $c->req->params->get('article'),
-            value   => $c->req->params->get('value') + 0,
-            unit    => $c->req->params->get('unit'),
-            comment => $c->req->params->get('comment'),
+            prepare    => !!$c->req->params->get('prepare'),
+            article_id => $c->req->params->get('article'),
+            value      => $c->req->params->get('value') + 0,
+            unit_id    => $c->req->params->get('unit'),
+            comment    => $c->req->params->get('comment'),
         }
     );
 
@@ -201,7 +201,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                         {
                             prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
                             value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
-                            unit    => $c->req->params->get( 'unit' . $ingredient->id ),
+                            unit_id => $c->req->params->get( 'unit' . $ingredient->id ),
                             comment => $c->req->params->get( 'comment' . $ingredient->id ),
                         }
                     );
@@ -235,7 +235,7 @@ sub reposition : POST Chained('/project/base') PathPart('recipe_ingredient/repos
         die "No valid movement";
     }
 
-    $c->detach( redirect => [ $ingredient->get_column('recipe'), '#ingredients' ] );
+    $c->detach( redirect => [ $ingredient->recipe_id, '#ingredients' ] );
 }
 
 sub redirect : Private {
@@ -257,8 +257,8 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
 
     my $recipes = $c->model('DB::Recipe')->public;    # public projects
 
-    $recipes = $recipes->union( $c->user->projects->search_related('recipes') )    # + user's projects
-      ->search( { $recipes->me('project') => { '!=' => $c->project->id } } );      # - this project
+    $recipes = $recipes->union( $c->user->projects->search_related('recipes') )     # + user's projects
+      ->search( { $recipes->me('project_id') => { '!=' => $c->project->id } } );    # - this project
 
     my @recipes = $recipes->search( undef, { prefetch => { project => 'owner' } } )->all;
 

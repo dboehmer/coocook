@@ -8,15 +8,18 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('organizations_users');
 
 __PACKAGE__->add_columns(
-    organization => { data_type => 'int' },
-    user         => { data_type => 'int' },
-    role         => { data_type => 'text' },
+    organization_id => { data_type => 'int' },
+    user_id         => { data_type => 'int' },
+    role            => { data_type => 'text' },
 );
 
-__PACKAGE__->set_primary_key(qw< organization user >);
+__PACKAGE__->set_primary_key(qw< organization_id user_id >);
 
-__PACKAGE__->belongs_to( organization => 'Coocook::Schema::Result::Organization' );
-__PACKAGE__->belongs_to( user         => 'Coocook::Schema::Result::User' );
+__PACKAGE__->belongs_to(
+    organization => 'Coocook::Schema::Result::Organization',
+    'organization_id'
+);
+__PACKAGE__->belongs_to( user => 'Coocook::Schema::Result::User', 'user_id' );
 
 __PACKAGE__->has_many(
     other_organizations_users => __PACKAGE__,
@@ -25,8 +28,8 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.organization" => { -ident => "$args->{self_alias}.organization" },
-            "$args->{foreign_alias}.user"         => { '!='   => { -ident => "$args->{self_alias}.user" } },
+            "$args->{foreign_alias}.organization_id" => { -ident => "$args->{self_alias}.organization_id" },
+            "$args->{foreign_alias}.user_id" => { '!=' => { -ident => "$args->{self_alias}.user_id" } },
         };
     }
 );
@@ -48,7 +51,7 @@ sub make_owner {
             $self->other_organizations_users->owners->update( { role => 'admin' } );
 
             # store new owner in project
-            $self->organization->update( { owner => $self->get_column('user') } );
+            $self->organization->update( { owner_id => $self->user_id } );
 
             # promote $self to owner
             $self->update( { role => 'owner' } );

@@ -15,7 +15,7 @@ __PACKAGE__->add_columns(
     id             => { data_type => 'int', is_auto_increment => 1 },
     name           => { data_type => 'text' },
     name_fc        => { data_type => 'text' },                          # fold cased
-    owner          => { data_type => 'int' },
+    owner_id       => { data_type => 'int' },
     description_md => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
@@ -26,12 +26,18 @@ __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->add_unique_constraints( ['name'], ['name_fc'] );
 
-__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User' );
+__PACKAGE__->belongs_to( owner => 'Coocook::Schema::Result::User', 'owner_id' );
 
-__PACKAGE__->has_many( organizations_projects => 'Coocook::Schema::Result::OrganizationProject' );
+__PACKAGE__->has_many(
+    organizations_projects => 'Coocook::Schema::Result::OrganizationProject',
+    'organization_id'
+);
 __PACKAGE__->many_to_many( projects => organizations_projects => 'project' );
 
-__PACKAGE__->has_many( organizations_users => 'Coocook::Schema::Result::OrganizationUser' );
+__PACKAGE__->has_many(
+    organizations_users => 'Coocook::Schema::Result::OrganizationUser',
+    'organization_id'
+);
 __PACKAGE__->many_to_many( users => organizations_users => 'user' );
 
 around [ 'set_column', 'store_column' ] => sub {
@@ -53,7 +59,7 @@ sub has_any_project_role {
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
     return $self->organizations_projects->exists(
-        { project => $project->id, role => { -in => $roles } } );
+        { project_id => $project->id, role => { -in => $roles } } );
 }
 
 =head2 users_without_membership
@@ -65,7 +71,7 @@ Returns a resultset with all C<Result::User>s without any related C<organization
 sub users_without_membership {
     my $self = shift;
 
-    my $members = $self->organizations_users->get_column('user');
+    my $members = $self->organizations_users->get_column('user_id');
 
     return $self->result_source->schema->resultset('User')->search(
         {

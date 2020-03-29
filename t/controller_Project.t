@@ -97,7 +97,7 @@ my $project = $t->schema->resultset('Project')->create(
     {
         name        => 'Statistics Project',
         description => "",
-        owner       => 1,
+        owner_id    => 1,
         archived    => '2000-01-01 00:00:00',
     }
 );
@@ -134,7 +134,7 @@ my $quantity = $project->create_related( quantities => { name => 'weight' } );
 message_like(qr/ lacks .+ units /x);
 
 my $unit = $quantity->create_related(
-    units => { project => $project->id, short_name => 'kg', long_name => 'kilograms', space => 0 } );
+    units => { project_id => $project->id, short_name => 'kg', long_name => 'kilograms', space => 0 } );
 message_like(qr/ lacks .+ articles /x);
 
 my $article = $project->create_related(
@@ -157,7 +157,7 @@ message_like(qr/ lacks .+ dishes (?! .+ ( meals | recipes ) ) /x);
 my $dish = $meal->create_related( dishes =>
       { name => 'apple pie', servings => 42, preparation => "", description => "", comment => "" } );
 my $ingredient = $dish->create_related( ingredients =>
-      { prepare => 0, value => 42, unit => $unit->id, article => $article->id, comment => "" } );
+      { prepare => 0, value => 42, unit_id => $unit->id, article_id => $article->id, comment => "" } );
 message_like(qr/ lacks .+ purchase\ lists /x);
 
 my $list =

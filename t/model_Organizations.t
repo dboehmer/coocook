@@ -12,7 +12,7 @@ use_ok 'Coocook::Model::Organizations';
 
 my $orgs = new_ok 'Coocook::Model::Organizations', [ schema => $schema ];
 
-ok my $org = $orgs->create( name => "FooBar", owner => 1 );
+ok my $org = $orgs->create( name => "FooBar", owner_id => 1 );
 
 isa_ok $org => 'Coocook::Schema::Result::Organization';
 

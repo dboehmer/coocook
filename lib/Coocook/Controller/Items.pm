@@ -43,7 +43,7 @@ sub unassigned : GET HEAD Chained('/purchase_list/submenu') PathPart('items/unas
                 order_by => [
                     qw<
                       meal.date
-                      article.shop_section
+                      article.shop_section_id
                       article.name
                       >
                 ],
@@ -51,9 +51,9 @@ sub unassigned : GET HEAD Chained('/purchase_list/submenu') PathPart('items/unas
         )->hri->all;
 
         for my $ingredient (@ingredients) {
-            $ingredient->{article} = $articles{ $ingredient->{article} };
-            $ingredient->{unit}    = $units{ $ingredient->{unit} };
-            $ingredient->{dish}    = $dishes{ $ingredient->{dish} };
+            $ingredient->{article} = $articles{ $ingredient->{article_id} };
+            $ingredient->{unit}    = $units{ $ingredient->{unit_id} };
+            $ingredient->{dish}    = $dishes{ $ingredient->{dish_id} };
         }
     }
 
@@ -100,8 +100,7 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1)
 
     $item->convert($unit);
 
-    $c->response->redirect(
-        $c->project_uri( '/purchase_list/edit', $item->get_column('purchase_list') ) );
+    $c->response->redirect( $c->project_uri( '/purchase_list/edit', $item->purchase_list_id ) );
 }
 
 __PACKAGE__->meta->make_immutable;

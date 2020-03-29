@@ -44,7 +44,7 @@ sub preview : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('
 
         my $articles_units = $project->articles->search_related(
             articles_units => undef,
-            { columns => [ 'article', 'unit' ] }
+            { columns => [ 'article_id', 'unit_id' ] }
         );
 
 # see https://metacpan.org/pod/distribution/DBIx-Class/lib/DBIx/Class/Manual/Cookbook.pod#Get-raw-data-for-blindingly-fast-results

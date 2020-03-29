@@ -42,7 +42,7 @@ sub create {
 
             my $organization = $organizations->create( \%args );
 
-            $organization->add_to_organizations_users( { role => 'owner', user => $args{owner} } );
+            $organization->add_to_organizations_users( { role => 'owner', user_id => $args{owner_id} } );
 
             return $organization;
         }

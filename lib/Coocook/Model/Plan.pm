@@ -43,8 +43,8 @@ sub day {
     {
         my $dishes = $schema->resultset('Dish')->search(
             [
-                meal            => { -in => [ keys %meals ] },
-                prepare_at_meal => { -in => [ keys %meals ] },
+                meal_id            => { -in => [ keys %meals ] },
+                prepare_at_meal_id => { -in => [ keys %meals ] },
             ],
             {
                 prefetch => 'prepare_at_meal',
@@ -64,20 +64,20 @@ sub day {
 
             $dishes{ $dish->id } = \%dish;
 
-            if ( exists $meals{ $dish->get_column('meal') } ) {    # is a dish on this day
+            if ( exists $meals{ $dish->meal_id } ) {    # is a dish on this day
                 if ( my $meal = $dish->prepare_at_meal ) {
-                    $dish{prepare_at_meal} = {
+                    $dish{prepare_at_meal_id} = {
                         date => $dish->prepare_at_meal->date,
                         name => $dish->prepare_at_meal->name,
                     };
                 }
 
-                push @{ $meals{ $dish->get_column('meal') }{dishes} }, \%dish;
+                push @{ $meals{ $dish->meal_id }{dishes} }, \%dish;
             }
 
-            if ( my $prepare_at_meal = $dish->get_column('prepare_at_meal') ) {
-                if ( exists $meals{$prepare_at_meal} ) {           # dish is prepared on this day
-                    $dish{meal} = {
+            if ( my $prepare_at_meal = $dish->prepare_at_meal_id ) {
+                if ( exists $meals{$prepare_at_meal} ) {    # dish is prepared on this day
+                    $dish{meal_id} = {
                         name => $dish->meal->name,
                         date => $dish->meal->date,
                     };
@@ -91,7 +91,7 @@ sub day {
     {
         my $ingredients = $schema->resultset('DishIngredient')->search(
             {
-                dish => { -in => [ keys %dishes ] },
+                dish_id => { -in => [ keys %dishes ] },
             },
             {
                 order_by => 'position',
@@ -100,7 +100,7 @@ sub day {
         );
 
         while ( my $ingredient = $ingredients->next ) {
-            push @{ $dishes{ $ingredient->get_column('dish') }{ingredients} },
+            push @{ $dishes{ $ingredient->dish_id }{ingredients} },
               {
                 prepare => $ingredient->prepare,
                 value   => $ingredient->value,
@@ -145,13 +145,13 @@ sub project {
     my $dishes = $meals->search_related('dishes')->hri;
 
     for my $dish ( $dishes->all ) {
-        $_ = $meals{$_} for $dish->{meal};
+        $dish->{meal} = $meals{ $dish->{meal_id} };
 
         weaken $dish->{meal};
 
         push @{ $dish->{meal}{dishes} }, $dish;
 
-        if ( my $prepare_meal_id = $dish->{prepare_at_meal} ) {
+        if ( my $prepare_meal_id = $dish->{prepare_at_meal_id} ) {
             push @{ $meals{$prepare_meal_id}{prepared_dishes} }, $dish;
         }
     }

@@ -11,9 +11,9 @@ sub add_or_create {
 
     my $item = $self->find_or_new(
         {
-            purchase_list => $args->{purchase_list},
-            article       => $args->{article},
-            unit          => $args->{unit},
+            purchase_list_id => $args->{purchase_list_id},
+            article_id       => $args->{article_id},
+            unit_id          => $args->{unit_id},
         }
     );
 

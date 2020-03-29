@@ -5,12 +5,12 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->table("articles");
+__PACKAGE__->table('articles');
 
 __PACKAGE__->add_columns(
     id                => { data_type => 'int', is_auto_increment => 1 },
-    project           => { data_type => 'int' },
-    shop_section      => { data_type => 'int', is_nullable => 1 },
+    project_id        => { data_type => 'int' },
+    shop_section_id   => { data_type => 'int', is_nullable => 1 },
     shelf_life_days   => { data_type => 'int', is_nullable => 1 },
     preorder_servings => { data_type => 'int', is_nullable => 1 },
     preorder_workdays => { data_type => 'int', is_nullable => 1 },
@@ -18,15 +18,15 @@ __PACKAGE__->add_columns(
     comment           => { data_type => 'text' },
 );
 
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraint( [ 'project', 'name' ] );
+__PACKAGE__->add_unique_constraint( [ 'project_id', 'name' ] );
 
-__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project' );
+__PACKAGE__->belongs_to( project => 'Coocook::Schema::Result::Project', 'project_id' );
 
 __PACKAGE__->belongs_to(
     shop_section => 'Coocook::Schema::Result::ShopSection',
-    undef,
+    'shop_section_id',
     {
         join_type => 'LEFT',
     }
@@ -34,21 +34,21 @@ __PACKAGE__->belongs_to(
 
 __PACKAGE__->has_many(
     items => 'Coocook::Schema::Result::Item',
-    undef,
+    'article_id',
     {
         cascade_delete => 0,    # articles with items may not be deleted
     }
 );
 
-__PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag' );
+__PACKAGE__->has_many( articles_tags => 'Coocook::Schema::Result::ArticleTag', 'article_id' );
 __PACKAGE__->many_to_many( tags => articles_tags => 'tag' );
 
-__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit' );
+__PACKAGE__->has_many( articles_units => 'Coocook::Schema::Result::ArticleUnit', 'article_id' );
 __PACKAGE__->many_to_many( units => articles_units => 'unit' );
 
 __PACKAGE__->has_many(
     dish_ingredients => 'Coocook::Schema::Result::DishIngredient',
-    undef,
+    'article_id',
     {
         cascade_delete => 0,    # articles with dish_ingredients may not be deleted
     }
@@ -57,7 +57,7 @@ __PACKAGE__->many_to_many( dishes => dish_ingredients => 'dish' );
 
 __PACKAGE__->has_many(
     recipe_ingredients => 'Coocook::Schema::Result::RecipeIngredient',
-    undef,
+    'article_id',
     {
         cascade_delete => 0,    # articles with recipe_ingredients may not be deleted
     }
@@ -76,7 +76,7 @@ sub unit_ids_joined { # TODO move to ResultSet::Unit or optimize for non-cached 
 sub units_in_use {
     my $self = shift;
 
-    return $self->units->in_use( { article => $self->id } );
+    return $self->units->in_use( { article_id => $self->id } );
 }
 
 sub tags_joined {

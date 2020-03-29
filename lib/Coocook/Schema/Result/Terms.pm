@@ -22,7 +22,7 @@ __PACKAGE__->add_unique_constraints( ['valid_from'] );
 
 __PACKAGE__->has_many(
     terms_users => 'Coocook::Schema::Result::TermsUser',
-    undef,
+    'terms_id',
     {
         cascade_delete => 0,    # terms who have users may not be deleted
     }

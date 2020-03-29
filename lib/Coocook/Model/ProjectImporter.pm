@@ -21,7 +21,7 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         key        => 'units',
         name       => "Units",
         depends_on => ['quantities'],
-        import     => sub { shift->units, { project => 'projects', quantity => 'quantities' } },
+        import     => sub { shift->units, { project_id => 'projects', quantity_id => 'quantities' } },
     },
     {
         key    => 'shop_sections',
@@ -32,14 +32,15 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         key             => 'articles',
         name            => "Articles",
         soft_depends_on => ['shop_sections'],
-        import => sub { shift->articles, { project => 'projects', shop_section => 'shop_sections?' } },
+        import =>
+          sub { shift->articles, { project_id => 'projects', shop_section_id => 'shop_sections?' } },
     },
     {
         key        => 'articles_units',
         auto       => 1,
         depends_on => [ 'articles', 'units' ],
         import     => sub {
-            shift->articles->search_related('articles_units'), { article => 'articles', unit => 'units' };
+            shift->articles->search_related('articles_units'), { article_id => 'articles', unit_id => 'units' };
         },
     },
     {
@@ -50,7 +51,12 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
             sub { shift->recipes },
             sub {
                 shift->recipes->search_related('ingredients'),
-                  { project => 'projects', article => 'articles', recipe => 'recipes', unit => 'units' };
+                  {
+                    project_id => 'projects',
+                    article_id => 'articles',
+                    recipe_id  => 'recipes',
+                    unit_id    => 'units',
+                  };
             },
         ],
     },
@@ -59,23 +65,24 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         name   => "Tags and Tag Groups",
         import => [
             sub { shift->tag_groups },
-            sub { shift->tags, { project => 'projects', tag_group => 'tag_groups' } },
+            sub { shift->tags, { project_id => 'projects', tag_group_id => 'tag_groups' } },
         ],
     },
     {
         key        => 'articles_tags',
         auto       => 1,
         depends_on => [ 'articles', 'tags' ],
-        import =>
-          sub { shift->articles->search_related('articles_tags'), { article => 'articles', tag => 'tags' } }
-        ,
+        import     => sub {
+            shift->articles->search_related('articles_tags'), { article_id => 'articles', tag_id => 'tags' };
+        },
     },
     {
         key        => 'recipes_tags',
         auto       => 1,
         depends_on => [ 'recipes', 'tags' ],
-        import =>
-          sub { shift->recipes->search_related('recipes_tags'), { recipe => 'recipes', tag => 'tags' } },
+        import     => sub {
+            shift->recipes->search_related('recipes_tags'), { recipe_id => 'recipes', tag_id => 'tags' };
+        },
     },
 );
 
@@ -164,9 +171,9 @@ sub import_data {    # import() is used by 'use'
                     }
 
                     my ( $rs, $translate ) = $import->($source);
-                    my %translate = $translate ? %$translate : ( project => 'projects' );
+                    my %translate = $translate ? %$translate : ( project_id => 'projects' );
 
-                    # eliminate optional translations, e.g. shop_section => 'shop_sections?'
+                    # eliminate optional translations, e.g. shop_section_id => 'shop_sections?'
                     # 'shop_sections'  => is kept
                     # 'shop_sections?' => 'shop_sections' (if     already translated)
                     # 'shop_sections?' => undef           (if not already translated)
@@ -204,7 +211,7 @@ sub import_data {    # import() is used by 'use'
 
                     # new ID might be necessary for
                     # - depending properties
-                    # - remaining @imports, e.g. first 'tag_groups' then 'tags' with 'tag_group' FK
+                    # - remaining @imports, e.g. first 'tag_groups' then 'tags' with 'tag_group_id' FK
                     if ( $is_dependency or ( @imports > 0 and $has_id ) ) {    # probably need to store new IDs
                         while ( my $row = $hash_rs->next ) {
                             my $old_id = delete $row->{id};
@@ -227,17 +234,16 @@ sub import_data {    # import() is used by 'use'
             }
 
             # quirk: now update 'default_unit' of new quantities
-            my $quantities = $target->quantities->search( { default_unit => { '!=' => undef } },
-                { columns => [ 'id', 'default_unit' ] } );
+            my $quantities = $target->quantities->search( { default_unit_id => { '!=' => undef } },
+                { columns => [ 'id', 'default_unit_id' ] } );
 
             if ( $requested_props{units} ) {
                 while ( my $quantity = $quantities->next ) {
-                    $quantity->update(
-                        { default_unit => $new_id{units}{ $quantity->get_column('default_unit') } || die } );
+                    $quantity->update( { default_unit_id => $new_id{units}{ $quantity->default_unit_id } || die } );
                 }
             }
             else {
-                $quantities->update( { default_unit => undef } );
+                $quantities->update( { default_unit_id => undef } );
             }
         }
     );

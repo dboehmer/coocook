@@ -99,8 +99,8 @@ sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0) Cust
 
         $c->project->create_related(
             organizations_projects => {
-                organization => $organization->id,
-                role         => $role,
+                organization_id => $organization->id,
+                role            => $role,
             }
         );
     }
@@ -109,8 +109,8 @@ sub add : POST Chained('/project/base') PathPart('permissions/add') Args(0) Cust
 
         $c->project->create_related(
             projects_users => {
-                user => $user->id,
-                role => $role,
+                user_id => $user->id,
+                role    => $role,
             }
         );
     }

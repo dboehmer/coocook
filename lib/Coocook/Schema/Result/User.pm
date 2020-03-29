@@ -33,23 +33,26 @@ __PACKAGE__->add_unique_constraints(
     ['token_hash'],
 );
 
-__PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser' );
+__PACKAGE__->has_many( roles_users => 'Coocook::Schema::Result::RoleUser', 'user_id' );
 
 __PACKAGE__->has_many(
     owned_projects => 'Coocook::Schema::Result::Project',
-    'owner',
+    'owner_id',
     {
         cascade_delete => 0,    # users who own projects may not be deleted
     }
 );
 
-__PACKAGE__->has_many( organizations_users => 'Coocook::Schema::Result::OrganizationUser' );
+__PACKAGE__->has_many(
+    organizations_users => 'Coocook::Schema::Result::OrganizationUser',
+    'user_id'
+);
 __PACKAGE__->many_to_many( organizations => organizations_users => 'organization' );
 
-__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser' );
+__PACKAGE__->has_many( projects_users => 'Coocook::Schema::Result::ProjectUser', 'user_id' );
 __PACKAGE__->many_to_many( projects => projects_users => 'project' );
 
-__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser' );
+__PACKAGE__->has_many( terms_users => 'Coocook::Schema::Result::TermsUser', 'user_id' );
 __PACKAGE__->many_to_many( terms => terms_users => 'terms' );
 
 around [ 'set_column', 'store_column' ] => sub {
@@ -124,7 +127,7 @@ sub has_any_project_role {
 
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
-    return $self->projects_users->exists( { project => $project->id, role => { -in => $roles } } );
+    return $self->projects_users->exists( { project_id => $project->id, role => { -in => $roles } } );
 }
 
 sub has_any_organization_role {
@@ -134,7 +137,7 @@ sub has_any_organization_role {
     my $roles = ( @_ == 1 and ref $_[0] eq 'ARRAY' ) ? $_[0] : \@_;
 
     return $self->organizations_users->exists(
-        { organization => $organization->id, role => { -in => $roles } } );
+        { organization_id => $organization->id, role => { -in => $roles } } );
 }
 
 sub roles {

@@ -22,7 +22,7 @@ $t->follow_link_ok( { text => '👥TestData' } );
     $t->status_is(404);
 }
 
-ok $t->schema->resultset('RoleUser')->search( { user => 1, role => $_ } )->delete,
+ok $t->schema->resultset('RoleUser')->search( { user_id => 1, role => $_ } )->delete,
   "revoke '$_' role for user"
   for 'site_owner';
 

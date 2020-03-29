@@ -25,8 +25,8 @@ subtest make_owner => sub {
     is $admin->role => 'owner',
       "... updated 'role' column of projects_users";
 
-    is $admin->project->get_column('owner') => $editor->get_column('user'),
-      "... updated column 'owner' of project";
+    is $admin->project->owner_id => $editor->user_id,
+      "... updated column 'owner_id' of project";
 
     my $owner = $admin;
 

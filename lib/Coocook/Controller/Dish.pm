@@ -65,7 +65,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
             : undef,
 
             # undef or hashref with only 'id' property for comparisons
-            prepare_at_meal => map( { $_ ? { id => $_ } : undef } $dish->get_column('prepare_at_meal') ),
+            prepare_at_meal => map( { $_ ? { id => $_ } : undef } $dish->prepare_at_meal_id ),
 
             recalculate_url => $c->project_uri( $self->action_for('recalculate'), $dish->id ),
             update_url      => $c->project_uri( $self->action_for('update'),      $dish->id ),
@@ -99,12 +99,12 @@ sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0)
 
     my $dish = $meal->create_related(
         dishes => {
-            servings        => $c->req->params->get('servings'),
-            name            => $c->req->params->get('name'),
-            description     => $c->req->params->get('description') // "",
-            comment         => $c->req->params->get('comment') // "",
-            preparation     => $c->req->params->get('preparation') // "",
-            prepare_at_meal => $c->req->params->get('prepare_at_meal') || undef,
+            servings           => $c->req->params->get('servings'),
+            name               => $c->req->params->get('name'),
+            description        => $c->req->params->get('description') // "",
+            comment            => $c->req->params->get('comment') // "",
+            preparation        => $c->req->params->get('preparation') // "",
+            prepare_at_meal_id => $c->req->params->get('prepare_at_meal') || undef,
         }
     );
 
@@ -147,11 +147,11 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 
     $dish->create_related(
         ingredients => {
-            article => $c->req->params->get('article'),
-            value   => $c->req->params->get('value') + 0,
-            unit    => $c->req->params->get('unit'),
-            comment => $c->req->params->get('comment'),
-            prepare => !!$c->req->params->get('prepare'),
+            article_id => $c->req->params->get('article'),
+            value      => $c->req->params->get('value') + 0,
+            unit_id    => $c->req->params->get('unit'),
+            comment    => $c->req->params->get('comment'),
+            prepare    => !!$c->req->params->get('prepare'),
         }
     );
 
@@ -167,12 +167,12 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
         sub {
             $dish->update(
                 {
-                    name            => $c->req->params->get('name'),
-                    comment         => $c->req->params->get('comment'),
-                    servings        => $c->req->params->get('servings'),
-                    preparation     => $c->req->params->get('preparation'),
-                    description     => $c->req->params->get('description'),
-                    prepare_at_meal => $c->req->params->get('prepare_at_meal') || undef,
+                    name               => $c->req->params->get('name'),
+                    comment            => $c->req->params->get('comment'),
+                    servings           => $c->req->params->get('servings'),
+                    preparation        => $c->req->params->get('preparation'),
+                    description        => $c->req->params->get('description'),
+                    prepare_at_meal_id => $c->req->params->get('prepare_at_meal') || undef,
 
                 }
             );
@@ -192,7 +192,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                         {
                             prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
                             value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
-                            unit    => $c->req->params->get( 'unit' . $ingredient->id ),
+                            unit_id => $c->req->params->get( 'unit' . $ingredient->id ),
                             comment => $c->req->params->get( 'comment' . $ingredient->id ),
                         }
                     );
@@ -225,7 +225,7 @@ sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposit
         die "No valid movement";
     }
 
-    $c->detach( redirect => [ $ingredient->get_column('dish'), '#ingredients' ] );
+    $c->detach( redirect => [ $ingredient->dish_id, '#ingredients' ] );
 }
 
 sub redirect : Private {

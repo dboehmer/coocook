@@ -86,20 +86,20 @@ my $expected = [
         date  => '2000-01-01T00:00:00',
         meals => [
             {
-                id      => 1,
-                project => 1,
-                date    => '2000-01-01T00:00:00',
-                name    => 'breakfast',
-                dishes  => [
+                id         => 1,
+                project_id => 1,
+                date       => '2000-01-01T00:00:00',
+                name       => 'breakfast',
+                dishes     => [
                     {
-                        id              => 1,
-                        prepare_at_meal => undef,
-                        from_recipe     => undef,
-                        name            => 'pancakes',
-                        preparation     => '',
-                        description     => 'Make them really sweet!',
-                        comment         => '',
-                        servings        => 4
+                        id                 => 1,
+                        prepare_at_meal_id => undef,
+                        from_recipe_id     => undef,
+                        name               => 'pancakes',
+                        preparation        => '',
+                        description        => 'Make them really sweet!',
+                        comment            => '',
+                        servings           => 4
                     }
                 ],
                 prepared_dishes => [],
@@ -111,20 +111,20 @@ my $expected = [
         date  => '2000-01-02T00:00:00',
         meals => [
             {
-                id      => 2,
-                project => 1,
-                date    => '2000-01-02T00:00:00',
-                name    => 'lunch',
-                dishes  => [
+                id         => 2,
+                project_id => 1,
+                date       => '2000-01-02T00:00:00',
+                name       => 'lunch',
+                dishes     => [
                     {
-                        id              => 2,
-                        prepare_at_meal => undef,
-                        from_recipe     => 1,
-                        name            => 'pizza',
-                        preparation     => '',
-                        description     => '',
-                        comment         => '',
-                        servings        => 2
+                        id                 => 2,
+                        prepare_at_meal_id => undef,
+                        from_recipe_id     => 1,
+                        name               => 'pizza',
+                        preparation        => '',
+                        description        => '',
+                        comment            => '',
+                        servings           => 2
                     }
                 ],
                 prepared_dishes => '!!! this should become an arrayref before is_deeply() !!!',
@@ -136,20 +136,20 @@ my $expected = [
         date  => '2000-01-03T00:00:00',
         meals => [
             {
-                id      => 3,
-                project => 1,
-                date    => '2000-01-03T00:00:00',
-                name    => 'dinner',
-                dishes  => [
+                id         => 3,
+                project_id => 1,
+                date       => '2000-01-03T00:00:00',
+                name       => 'dinner',
+                dishes     => [
                     {
-                        id              => 3,
-                        prepare_at_meal => 2,
-                        from_recipe     => undef,
-                        name            => 'bread',
-                        preparation     => 'Bake bread!',
-                        description     => '',
-                        comment         => '',
-                        servings        => 4
+                        id                 => 3,
+                        prepare_at_meal_id => 2,
+                        from_recipe_id     => undef,
+                        name               => 'bread',
+                        preparation        => 'Bake bread!',
+                        description        => '',
+                        comment            => '',
+                        servings           => 4
                     }
                 ],
                 prepared_dishes => [],
@@ -162,7 +162,10 @@ $expected->[1]{meals}[0]{prepared_dishes} = [ $expected->[2]{meals}[0]{dishes}[0
 
 for (@$expected) {
     for my $meal ( @{ $_->{meals} } ) {
-        $_->{meal} = $meal for @{ $meal->{dishes} };
+        for my $dish ( @{ $meal->{dishes} } ) {
+            $dish->{meal_id} = $meal->{id};
+            $dish->{meal}    = $meal;
+        }
     }
 }
 my $project_plan = $plan->project($project);

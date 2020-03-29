@@ -38,7 +38,8 @@ my @rules = (
             my ( $organization, $user ) = @$_{ 'organization', 'user' };
             return (
                      $user->has_any_role('site_owner')
-                  or $user->search_related( organizations_users => { organization => $organization->id } )->exists
+                  or
+                  $user->search_related( organizations_users => { organization_id => $organization->id } )->exists
             );
         },
         capabilities => [qw< view_organization_members >],
@@ -47,9 +48,10 @@ my @rules = (
         needs_input => [ 'organization', 'user' ],
         rule        => sub {
             my ( $organization, $user ) = @$_{ 'organization', 'user' };
-            return if $organization->get_column('owner') == $user->id;    # owner must not leave
-            return $user->organizations_users->exists( { organization => $organization->id } )
-              ;                                                           # user is organization member?
+            return if $organization->owner_id == $user->id;    # owner must not leave
+            return $user->organizations_users->exists(
+                { organization_id => $organization->id }       # user is organization member?
+            );
         },
         capabilities => [qw< leave_organization >],
     },
@@ -321,7 +323,7 @@ my @rules = (
             my ( $user, $project, $recipe ) = @$_{ 'user', 'project', 'recipe' };
 
             # recipe must not be in target project
-            $recipe->get_column('project') != $project->id
+            $recipe->project_id != $project->id
               or return;
 
             return 1 if $user->has_any_role('site_owner');

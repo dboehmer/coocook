@@ -249,12 +249,12 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
         {
             name           => $c->req->params->get('name'),
             description    => '',
-            owner          => $c->user->id,
+            owner_id       => $c->user->id,
             is_public      => $is_public,
             projects_users => [                               # relationship automatically triggers transaction
                 {
-                    user => $c->user->id,
-                    role => 'owner',
+                    user_id => $c->user->id,
+                    role    => 'owner',
                 }
             ],
         }

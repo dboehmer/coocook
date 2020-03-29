@@ -69,7 +69,7 @@ subtest fk_checks_off_do => sub {
 
     my $row =
       $db->resultset('ShopSection')
-      ->new_result( { project => 999, name => "shop section for bogus project" } );
+      ->new_result( { project_id => 999, name => "shop section for bogus project" } );
 
     lives_ok {
         $db->fk_checks_off_do(

@@ -40,11 +40,11 @@ sub BUILD {
     my %items_per_section;
 
     for my $item ( values %items ) {
-        $item->{article}     = $articles{ $item->{article} };
-        $item->{unit}        = $units{ $item->{unit} };
+        $item->{article}     = $articles{ $item->{article_id} };
+        $item->{unit}        = $units{ $item->{unit_id} };
         $item->{ingredients} = [];
 
-        push @{ $items_per_section{ $item->{article}{shop_section} } }, $item;
+        push @{ $items_per_section{ $item->{article}{shop_section_id} } }, $item;
     }
 
     {    # add ingredients to each item
@@ -53,13 +53,13 @@ sub BUILD {
         my $ingredients = $list->items->search_related('ingredients')->hri;
 
         while ( my $ingredient = $ingredients->next ) {
-            $ingredient->{article} = $articles{ $ingredient->{article} };
-            $ingredient->{unit}    = $units{ $ingredient->{unit} };
+            $ingredient->{article} = $articles{ $ingredient->{article_id} };
+            $ingredient->{unit}    = $units{ $ingredient->{unit_id} };
 
             push @$_, $ingredient
               for (
-                $items{ $ingredient->{item} }{ingredients},     # add $ingredient{} to %items
-                $ingredients_by_dish{ $ingredient->{dish} },    # collect $ingredient{} for dish
+                $items{ $ingredient->{item_id} }{ingredients},     # add $ingredient{} to %items
+                $ingredients_by_dish{ $ingredient->{dish_id} },    # collect $ingredient{} for dish
               );
         }
 
@@ -75,7 +75,7 @@ sub BUILD {
         }
 
         while ( my $dish = $dishes->next ) {
-            $dish->{meal} = $meals{ $dish->{meal} } || die;
+            $dish->{meal} = $meals{ $dish->{meal_id} } || die;
 
             for my $ingredient ( @{ $ingredients_by_dish{ $dish->{id} } } ) {
                 $ingredient->{dish} = $dish;
@@ -98,14 +98,14 @@ sub BUILD {
         my %convertible_units;        # units by article, quantity
 
         while ( my $article_unit = $articles_units->next ) {
-            my $article = $articles{ $article_unit->{article} } || die $article_unit->{article};
-            my $unit    = $units{ $article_unit->{unit} }       || die $article_unit->{unit};
+            my $article = $articles{ $article_unit->{article_id} } || die $article_unit->{article_id};
+            my $unit    = $units{ $article_unit->{unit_id} }       || die $article_unit->{unit_id};
 
-            push @{ $convertible_units{ $article->{id} }{ $unit->{quantity} } }, $unit;
+            push @{ $convertible_units{ $article->{id} }{ $unit->{quantity_id} } }, $unit;
         }
 
         for my $item ( values %items ) {
-            my $units = $convertible_units{ $item->{article}{id} }{ $item->{unit}{quantity} };
+            my $units = $convertible_units{ $item->{article}{id} }{ $item->{unit}{quantity_id} };
 
             if ( $units and @$units > 1 ) {
                 $item->{convertible_into} = [ grep { $_->{id} != $item->{unit}{id} } @$units ];

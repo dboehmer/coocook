@@ -23,7 +23,7 @@ my $organization = $schema->resultset('Organization')->create(
         name           => "TestOrganization",
         display_name   => "Test Organization",
         description_md => __FILE__,
-        owner          => 9999
+        owner_id       => 9999
     }
 );
 
@@ -324,7 +324,7 @@ $t->create_project_ok( { name => "Test Project 1" } );
 $t->base_unlike( qr/import/, "not redirected to importer for first project" );
 
 note "remove all roles from user";
-$schema->resultset('RoleUser')->search( { user => '1' } )->delete;
+$schema->resultset('RoleUser')->search( { user_id => '1' } )->delete;
 
 $t->create_project_ok( { name => "Test Project 2" } );
 

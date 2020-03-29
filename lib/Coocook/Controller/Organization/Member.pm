@@ -31,7 +31,7 @@ sub index : GET HEAD Chained('/organization/base') PathPart('members') Args(0)
     for (@organizations_users) {
         my $organization_user = $_;
 
-        $_ = $organization_user->as_hashref;
+        $_ = $organization_user->as_hashref( user => $organization_user->user );
 
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $organization_user->user->name ] );
 
@@ -85,8 +85,8 @@ sub add : POST Chained('/organization/base') Args(0) CustomAuthz {
 
     $organization->create_related(
         organizations_users => {
-            user => $user->id,
-            role => $role
+            user_id => $user->id,
+            role    => $role
         }
     );
 

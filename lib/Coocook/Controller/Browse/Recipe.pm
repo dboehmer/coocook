@@ -41,12 +41,12 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
         }
     }
 
-    my @recipes = $recipes->search( undef, { columns => [qw< id project name >] } )->hri->all;
+    my @recipes = $recipes->search( undef, { columns => [qw< id project_id name >] } )->hri->all;
 
     {
         my $projects =
           $recipes->search_related( 'project', undef,
-            { columns => [qw< id owner name url_name is_public >] } );
+            { columns => [qw< id owner_id name url_name is_public >] } );
 
         my %projects = map { $_->{id} => $_ } $projects->hri->all;
 
@@ -57,14 +57,14 @@ sub index : GET HEAD Chained('/base') PathPart('recipes') Args(0) Public {
         }
 
         for my $project ( values %projects ) {
-            $project->{owner} = $users{ $project->{owner} }
+            $project->{owner} = $users{ $project->{owner_id} }
               or die "User for owner ID not found";
 
             $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
         }
 
         for my $recipe (@recipes) {
-            my $project = $projects{ $recipe->{project} }
+            my $project = $projects{ $recipe->{project_id} }
               or die "Project for project ID not found";
 
             $recipe->{project}  = $project;
@@ -115,8 +115,8 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
         }
     )->search_related(
         project => {
-            archived => undef,                                         # projects are not yet archived
-            id       => { '!=' => $recipe->get_column('project') },    # not this recipe's source project
+            archived => undef,                              # projects are not yet archived
+            id       => { '!=' => $recipe->project_id },    # not this recipe's source project
         }
     );
 

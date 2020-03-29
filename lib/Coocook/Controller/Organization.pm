@@ -55,8 +55,8 @@ sub create : POST Chained('/base') PathPart('organization/create') Args(0)
     }
 
     my $organization = $c->model('Organizations')->create(
-        name  => $name,
-        owner => $c->user->id,
+        name     => $name,
+        owner_id => $c->user->id,
     );
 
     $c->forward( 'redirect', [$organization] );
@@ -84,7 +84,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for (@organizations_users) {
         my $organization_user = $_;
 
-        $_ = $organization_user->as_hashref;
+        $_ = $organization_user->as_hashref( user => $organization_user->user );
 
         $_->{user_url} = $c->uri_for_action( '/user/show', [ $organization_user->user->name ] );
     }
@@ -95,7 +95,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for (@organizations_projects) {
         my $organization_project = $_;
 
-        $_ = $organization_project->as_hashref;
+        $_ = $organization_project->as_hashref( project => $organization_project->project );
 
         $_->{project_url} =
           $c->uri_for_action( '/project/show',
@@ -142,7 +142,7 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_organizatio
 sub leave : POST Chained('base') Args(0) RequiresCapability('leave_organization') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{organization}->delete_related( organizations_users => { user => $c->user->id } );
+    $c->stash->{organization}->delete_related( organizations_users => { user_id => $c->user->id } );
 
     $c->redirect_detach( $c->uri_for_action('/settings/organizations') );
 }

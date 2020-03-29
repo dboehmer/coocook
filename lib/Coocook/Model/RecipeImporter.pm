@@ -72,8 +72,8 @@ sub BUILD {
     my %units    = map { $_->{id} => $_ } @{ $self->source_units };
 
     for my $ingredient ( @{ $self->ingredients } ) {
-        $_ = $articles{$_} for $ingredient->{article};
-        $_ = $units{$_}    for $ingredient->{unit};
+        $ingredient->{article} = $articles{ $ingredient->{article_id} };
+        $ingredient->{unit}    = $units{ $ingredient->{unit_id} };
     }
 }
 
@@ -133,7 +133,7 @@ sub import_data {    # import() used by 'use'
         sub {
             my $recipe = $self->project->recipes->create(    # $self->recipe->copy() would do CASCADE COPY
                 {
-                    project     => $self->project->id,
+                    project_id  => $self->project->id,
                     preparation => $self->recipe->preparation,
                     description => $self->recipe->description,
                     name        => $args{name} || $self->recipe->name,
@@ -155,16 +155,16 @@ sub import_data {    # import() used by 'use'
                 my $comment = $mapping->{comment} // $ingredient->{comment};
                 my $value   = $mapping->{value}   // $ingredient->{value};
 
-                $articles_units_rs->exists( { article => $article->{id}, unit => $unit->{id} } )
+                $articles_units_rs->exists( { article_id => $article->{id}, unit_id => $unit->{id} } )
                   or croak "invalid combination of article and unit";
 
                 $ingredients_rs->find($ingredient_id)->copy(
                     {
-                        recipe  => $recipe->id,
-                        article => $article->{id},
-                        unit    => $unit->{id},
-                        value   => $value,
-                        comment => $comment,
+                        recipe_id  => $recipe->id,
+                        article_id => $article->{id},
+                        unit_id    => $unit->{id},
+                        value      => $value,
+                        comment    => $comment,
                     }
                 );
             }
