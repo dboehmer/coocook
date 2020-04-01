@@ -1,7 +1,28 @@
 [% title = "Admin" %]
 
+<h3><a href="[% projects_url %]">Projects</a></h3>
+
 <ul>
-[% FOR item IN submenu_items %]
-    <li><a href="[% item.url %]">[% item.text | html %]</a></li>
+[% FOR proj IN projects %]
+    <li><a href="[% proj.url %]">[% proj.name | html %]</a></li>
 [% END %]
+    <li><a href="[% projects_url %]">…</a></li>
+</ul>
+
+<h3><a href="[% users_url %]">Users</a></h3>
+
+<ul>
+[% FOR u IN users %]
+    <li>[% u.name | html %] <a href="[% u.url %]">[% u.display_name | html %]</a></li>
+[% END %]
+    <li><a href="[% users_url %]">…</a></li>
+</ul>
+
+<h3><a href="[% organizations_url %]">Organizations</a></h3>
+
+<ul>
+[% FOR organization IN organizations %]
+    <li>[% organization.name | html %] <a href="[% organization.url %]">[% organization.display_name | html %]</a></li>
+[% END %]
+    <li><a href="[% organizations_url %]">…</a></li>
 </ul>
