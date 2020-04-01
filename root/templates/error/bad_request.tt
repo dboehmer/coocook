@@ -1,3 +1,7 @@
 [% title = "Bad Request" %]
 
-The link to the page you requested is malformed or otherwise invalid.
+[% IF method == 'GET' OR method == 'HEAD' %]
+    <p>The link to the page you requested is malformed or otherwise invalid.</p>
+[% ELSE %]
+    <p>The request you sent is not valid. Maybe refresh the form you submitted and try again.</p>
+[% END %]

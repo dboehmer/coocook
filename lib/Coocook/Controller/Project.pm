@@ -233,7 +233,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
     my $name = $c->req->params->get('name');
 
     length $name > 0
-      or $c->detach( '/error/forbidden', ["Cannot create project with empty name!"] );
+      or $c->detach( '/error/bad_request', ["Cannot create project with empty name!"] );
 
     my $is_public = !!$c->req->params->get('is_public');
 
@@ -277,9 +277,7 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
 sub update : POST Chained('base') Args(0) RequiresCapability('update_project') {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{project};
-
-    $project->update(
+    $c->project->update(
         { description => $c->req->params->get('description') // $c->detach('/error/bad_request') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
@@ -288,7 +286,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('update_project') {
 sub archive : POST Chained('base') Args(0) RequiresCapability('archive_project') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{project}->archive();
+    $c->project->archive();
 
     $c->response->redirect( $c->project_uri('/project/show') );
 }
@@ -296,7 +294,7 @@ sub archive : POST Chained('base') Args(0) RequiresCapability('archive_project')
 sub unarchive : POST Chained('base') Args(0) RequiresCapability('unarchive_project') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{project}->unarchive();
+    $c->project->unarchive();
 
     $c->response->redirect( $c->project_uri('/project/show') );
 }
@@ -304,9 +302,7 @@ sub unarchive : POST Chained('base') Args(0) RequiresCapability('unarchive_proje
 sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{project};
-
-    $project->update( { name => $c->req->params->get('name') // $c->detach('/error/bad_request') } );
+    $c->project->update( { name => $c->req->params->get('name') // $c->detach('/error/bad_request') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }
@@ -314,9 +310,7 @@ sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
 sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_visibility') {
     my ( $self, $c ) = @_;
 
-    my $project = $c->stash->{project};
-
-    $project->update( { is_public => !!$c->req->params->get('public') } );
+    $c->project->update( { is_public => !!$c->req->params->get('public') } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }

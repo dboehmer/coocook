@@ -31,13 +31,17 @@ sub base : Chained('/') PathPart('') CaptureArgs(0) {
             $c->log->warn("Not redirecting to HTTPS on development port localhost:3000");
         }
         else {
-            if ( $c->req->method eq 'POST' ) {
-                $c->detach('/error/bad_request');    # TODO is this the best to do?
-            }
-            else {
+            my $method = $c->req->method;
+
+            if ( $method eq 'GET' or $method eq 'HEAD' ) {
                 my $uri = $c->req->uri->clone;
                 $uri->scheme('https');
                 $c->redirect_detach( $uri, 301 );
+            }
+            else {
+                # TODO is this the best to do?
+                $c->detach( '/error/bad_request',
+                    ["Sending $method data through HTTP without encryption is not allowed."] );
             }
         }
     }

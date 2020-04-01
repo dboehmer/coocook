@@ -6,12 +6,16 @@ use MooseX::MarkAsMethods autoclean => 1;
 BEGIN { extends 'Coocook::Controller' }
 
 sub bad_request : Private {
-    my ( $self, $c ) = @_;
+    my ( $self, $c, $error ) = @_;
+
+    $error
+      and $c->messages->error($error);
 
     $c->response->status(400);
 
     $c->stash(
         template => 'error/bad_request.tt',    # set explicitly to allow $c->detach('/error/bad_request')
+        method   => $c->req->method,
     );
 }
 
