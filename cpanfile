@@ -71,6 +71,7 @@ on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
   requires "FindBin" => "0";
+  requires "Scope::Guard" => "0";
   requires "Test::Compile" => "v2.2.2";
   requires "Test::Deep" => "0";
   requires "Test::Memory::Cycle" => "0";
