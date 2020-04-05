@@ -1,5 +1,6 @@
 [% title = "My Organizations" %]
 
+<div class="container-fluid">
 <form method="post" action="[% create_organization_url %]">
 <fieldset>
     <legend>Create a new user organization</legend>
@@ -35,3 +36,5 @@
     <p>None.</p>
 [% END %]
 </fieldset>
+
+</div>
