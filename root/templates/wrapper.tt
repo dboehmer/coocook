@@ -112,7 +112,7 @@
 
 
 
-<nav id="submenu_nav" class="navbar navbar-expand-md navbar-light bg-kdark">
+<nav id="submenu_nav???" class="navbar navbar-expand-md navbar-light">
 	<div class="container-fluid">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerLevel2" aria-controls="navbarTogglerLevel2" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -124,7 +124,7 @@
     IF item.url %]
 				<li class="nav-item"><a class="nav-link" href="[% item.url %]">[% item.text %]</a></li>
     [% ELSE; # TODO setting href="" doesn’t work if page is response to POST request and URL isn’t available via GET %]
-				<li class="nav-item"><a class="nav-link" href="" class="current">[% item.text %]</a></li>
+				<li class="nav-item active"><a class="nav-link" href="" class="current">[% item.text %]</a></li>
     [% END;
 END %]
 			</ul>
@@ -138,7 +138,7 @@ END %]
 
 <main>
 	<div class="container-fluid">
-		<div class="row">
+		<div class="row py-3">
 			<div class="col-12">
 				<h1 id="print_h1" style="display: none">[% name | html; IF project %]: [% project.name | html; END %]</h1>
 

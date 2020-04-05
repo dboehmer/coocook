@@ -94,6 +94,7 @@ sub auto : Private {
         css => [
             '/css/style.css',
             '/lib/bootstrap-4.4.1-dist/css/bootstrap.min.css',
+            '/css/local_bootstrap_modifications.css',
         ],
         js => [
             '/lib/jquery-3.2.1' .  ( $c->debug ? '.js' : '.min.js' ),
