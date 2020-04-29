@@ -112,7 +112,8 @@
 
 
 
-<nav id="submenu_nav???" class="navbar navbar-expand-md navbar-light">
+
+<nav id="submenu_nav" class="navbar navbar-expand-md navbar-light bg-kdark">
 	<div class="container-fluid">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerLevel2" aria-controls="navbarTogglerLevel2" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -139,6 +140,7 @@ END %]
 <main>
 	<div class="container-fluid">
 		<div class="row py-3">
+
 			<div class="col-12">
 				<h1 id="print_h1" style="display: none">[% name | html; IF project %]: [% project.name | html; END %]</h1>
 
