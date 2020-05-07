@@ -1,45 +1,71 @@
-<table>
-    <thead>
-        <th colspan="2">Sort</th>
-        <th>Part of<br>preparation?</th>
-        <th>Article</th>
-        <th>Value</th>
-        <th>Unit</th>
-        <th>Comment</th>
-        <th>Delete?</th>
-    </thead>
-    <tbody>
-[% FOR ingredient IN ingredients %]
-    <tr>
-        <td>
-    [% IF loop.first;
-            '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
-    ELSE %]
-            <form method="post" action="[% ingredient.reposition_url %]" class="inline">
-                <input type="submit" name="up" value="↑">
-            </form>
-    [% END %]
-            </td>
-            <td>
-    [% UNLESS loop.last %]
-            <form method="post" action="[% ingredient.reposition_url %]" class="inline">
-                <input type="submit" name="down" value="↓">
-            </form>
-    [% END %]
-            </td>
-            <td><input type="checkbox" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
-            <td>[% ingredient.article.name | html; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
-            <td><input type="number" step="any" name="value[% ingredient.id %]" required value="[% ingredient.value %]"></td>
-            <td>
-                <select name="unit[% ingredient.id %]">
-    [% FOR unit IN ingredient.article.units %]
-                    <option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% display_unit(unit) %]</option>
-    [% END %]
-                </select>
-            </td>
-            <td><input type="text" name="comment[% ingredient.id %]" value="[% ingredient.comment | html %]"></td>
-            <td><input type="checkbox" name="delete[% ingredient.id %]"></td>
-        </tr>
-[% END %]
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-sm-12 py-3">
+        <div class="card">
+            <div class="card-header">
+                <h3><a name="ingredients">Ingredients</a></h3>
+            </div>
+            <div class="card-body">
+                
+                <div class="form-group row">
+                
+                    <div class="col-sm-12 py-3">
+                        <table class="table">
+                            <thead>
+                                <th colspan="2">Sort</th>
+                                <th>Part of<br>preparation?</th>
+                                <th>Article</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                                <th>Comment</th>
+                                <th>Delete?</th>
+                            </thead>
+                            <tbody>
+                        [% FOR ingredient IN ingredients %]
+                            <tr>
+                                <td>
+                            [% IF loop.first;
+                                    '<form></form>'; # this is because Firefox 45 on Debian Linux Jessie ignores the first nested form
+                            ELSE %]
+                                    <form method="post" action="[% ingredient.reposition_url %]" class="inline">
+                                        <input type="submit" name="up" value="↑">
+                                    </form>
+                            [% END %]
+                                    </td>
+                                    <td>
+                            [% UNLESS loop.last %]
+                                    <form method="post" action="[% ingredient.reposition_url %]" class="inline">
+                                        <input type="submit" name="down" value="↓">
+                                    </form>
+                            [% END %]
+                                    </td>
+                                    <td><input type="checkbox" class="form-check-input" name="prepare[% ingredient.id %]" [% 'checked' IF ingredient.prepare %]></td>
+                                    <td>[% ingredient.article.name | html; ': ' _ ingredient.article.comment IF ingredient.article.comment.length %]</td>
+                                    <td><input type="number" class="form-control" step="any" name="value[% ingredient.id %]" required value="[% ingredient.value %]"></td>
+                                    <td>
+                                        <select class="custom-select" name="unit[% ingredient.id %]">
+                            [% FOR unit IN ingredient.article.units %]
+                                            <option value="[% unit.id %]" [% 'selected' IF unit.id == ingredient.unit.id %]>[% display_unit(unit) %]</option>
+                            [% END %]
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="comment[% ingredient.id %]" value="[% ingredient.comment | html %]"></td>
+                                    <td><input type="checkbox" class="form-check-input" name="delete[% ingredient.id %]"></td>
+                                </tr>
+                        [% END %]
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                    
+                    <div class="offset-sm-2 col-sm-10 py-3 text-right">
+                        <button type="reset" class="btn btn-secondary mr-1" value="Reset">Reset</button>
+                        <button type="submit" class="btn btn-primary">Update Recipe</button>
+                    </div>
+                </div>
+                
+                
+            </div>[%# card-body %]
+        </div>
+    </div>
+ 
+</div>
