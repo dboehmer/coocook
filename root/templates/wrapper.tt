@@ -27,6 +27,7 @@
 [% FOREACH path IN css %]
     <link rel="stylesheet" href="[% path %]">
 [% END %]
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
@@ -78,9 +79,8 @@
 </nav>
 
 
-
 <nav id="project_nav" class="navbar navbar-expand-md navbar-dark bg-dark">
-	<div class="container-fluid">
+	<div class="container-fluid"> 
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerLevel1" aria-controls="navbarTogglerLevel1" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -137,8 +137,62 @@ END %]
 
 
 
+<!--
+<div class="container-fluid bg-info">
+    <a class="navbar-brand pl-1 py-3 px-4" href="#">
+        <h1 class="text-dark">CooCook </h1>
+    </a>
+</div>
+
+<div class="container-fluid p-0 m-0">
+    <div class="row p-0 m-0">
+        <div class="col-12 p-0 m-0 bg-dark">
+            <nav class="navbar p-0 m-0 navbar-expand-md navbar-dark">
+                <div class="navbar-toggler-right">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+
+
+                <div class="collapse navbar-collapse flex-column " id="navbar">
+
+                    <ul class="navbar-nav p-0 m-0 w-100 justify-content-left bg-dark py-1 px-2">
+                        <li class="nav-item active pl-4">
+                            <a class="nav-link" href="#">Mainnav <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="#">Navlink1 <span class="sr-only">(current)</span></a>
+                        </li>
+                  
+                  
+                    </ul>
+
+                    <ul class="navbar-nav justify-content-left w-100 bg-info py-1 px-2">
+                        <li class="nav-item pl-4">
+                            <a class="nav-link" href="#">Projectnav <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="#">Navlink4363 <span class="sr-only">(current)</span></a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </nav>
+        </div>
+    </div>
+
+</div>
+-->
+
+
+    
+
+
 <main>
-	<div class="container-fluid">
+	<div class="container-fluid pb-2"><!-- main container-fluid -->
 		<div class="row py-3">
 
 			<div class="col-12">
@@ -159,25 +213,25 @@ END %]
 [% END %]
 			</div>
 		</div>
-	</div>
 
 [% content %]
+	</div><!-- END main container-fluid -->
 </main>
 
 <footer class="bg-dark text-white">
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md">
-				<h4>Browse</h4>
-				<ul>
+				<h3><span class="tiny">Browse</span></h3>
+				<ul class="non-intended small">
 					<li><a href="[% recipes_url %]">Recipes</a></li>
 					<li><a href="[% projects_url %]">Projects</a></li>
 				</ul>
 			</div>
 [% IF project_urls %]
 			<div class="col-md">
-				<h4>Project Parameters</h4>
-				<ul> 
+				<h3><span class="tiny">Project Parameters</span></h3>
+				<ul class="list-unstyled small"> 
 					<li><a href="[% project_urls.units %]">Units & Quantities</a></li>
 					<li><a href="[% project_urls.tags %]">Tags</a></li>
 					<li><a href="[% project_urls.shop_sections %]">Shop Sections</a></li>
@@ -185,8 +239,8 @@ END %]
 			</div>
 [% END %]
 			<div class="col-md">
-				<h4>Get Help</h4>
-				<ul>
+				<h3><span class="tiny">Get Help</span></h3>
+				<ul class="list-unstyled small">
 [% IF faq_url %]
 					<li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
 [% END %]
@@ -199,8 +253,8 @@ END %]
 			
 [% IF admin_url %]
 			<div class="col-md">
-				<h4><a href="[% admin_url %]">Admin</a></h4>
-				<ul>   
+				<h3><span class="tiny"><a href="[% admin_url %]">Admin</a></span></h3>
+				<ul class="list-unstyled small">   
 					<li><a href="[% admin_urls.faq %]">FAQ</a></li>
 					<li><a href="[% admin_urls.organizations %]">Organizations</a></li>
 					<li><a href="[% admin_urls.projects %]">Projects</a></li>
@@ -212,8 +266,8 @@ END %]
 
 			
 			<div class="col-md">
-				<h4>About [% name | html %]</h4>
-				<ul>
+				<h3><span class="tiny">About [% name | html %]</span></h3>
+				<ul class="list-unstyled small">
 					<li><a href="[% statistics_url %]">Statistics</a></li>
 					<li><a href="[% about_url %]">[% about_title %]</a></li>
 [% IF terms_url %]
