@@ -13,3 +13,70 @@ highlight fontcolor to white in case of navbar-light
 .navbar-light .navbar-nav .show > .nav-link {
     color: rgba(220,220,220,1);
 }
+
+
+/*
+redefined list -> non-indended
+*/
+
+ul.non-intended {
+	margin-left:0px;
+	padding-left:17px;
+}
+
+
+/*
+reduce fon-size 
+*/
+
+h1, .h1 {
+  font-size: 2rem;
+}
+
+h2, .h2 {
+  font-size: 1.75rem;
+}
+
+h3, .h3 {
+  font-size: 1.5rem;
+}
+
+h4, .h4 {
+  font-size: 1.25rem;
+}
+
+h5, .h5 {
+  font-size: 1.15rem;
+}
+
+h6, .h6 {
+  font-size: 1rem;
+}
+
+/*
+smaller font-size of text similar class small
+*/
+.tiny {
+  font-size: 65%;
+}
+
+
+
+
+input[type="number"] {
+    text-align: left;
+}
+
+
+
+/*===========================================================================
+align material icons vertical: https://stackoverflow.com/questions/56171473/different-material-icons-styles-do-not-align
+===========================================================================*/
+i.material-icons, i.material-icons-outlined {
+  vertical-align: middle;
+  position: relative;
+/*
+  top: -1px;
+*/
+}
+.material-icons.md-36 { font-size: 36px; }
