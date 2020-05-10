@@ -1,17 +1,17 @@
 
 [% escape_title( 'Recipe', recipe.name ) %]
+
+[% IF import_url %]
 <div class="row">
     <div class="offset-sm-2 col-sm-5 text-left pb-5">
-[% IF import_url %]
         <form method="get" action="[% import_url %]" class="inline pl-3">
             <button type="submit" class="btn btn-secondary"  data-toggle="tooltip" title="Import this recipe into another one of your projects">
                 <i class="material-icons ">import_export</i> Import into another project
             </button>
         </form>
-[% END %]
     </div>
 </div>
-
+[% END %]
 
 <form method="post" action="[% update_url %]">
 
