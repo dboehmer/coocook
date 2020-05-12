@@ -38,8 +38,8 @@
 		<div class="container-fluid bg-header">
 			<div class="row">
 				<div class="col-6 d-flex align-items-center">
-					<a class="navbar-brand py-3 px-4" href="#">
-						<h1 class="text-dark">CooCook </h1>
+					<a class="navbar-brand py-3 px-4" href="[% homepage_url %]">
+						<h1 class="text-dark">[% name | html %]</h1>
 					</a>
 				</div>
 
