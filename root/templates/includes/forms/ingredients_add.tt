@@ -12,9 +12,7 @@
                             <label for="article" class="col-sm-2 col-form-label">Article</label>
                             <div class="col-sm-10">
                                 <select name="article" class="custom-select" id="article">
-<!--
                                     <option value="" disabled selected>Choose article</option>
--->
                     [% FOR article IN articles;
                         IF article.units AND article.units.size > 0 %]
                                     <option value="[% article.id %]" data-units="[% article.unit_ids_joined %]">[% article.name | html %]</option>
