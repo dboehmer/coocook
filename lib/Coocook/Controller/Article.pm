@@ -281,7 +281,7 @@ sub update_or_insert : Private {
                 {
                     name            => $name,
                     comment         => $c->req->params->get('comment'),
-                    shop_section    => $shop_section ? $shop_section->id : undef,
+                    shop_section_id => $shop_section ? $shop_section->id : undef,
                     shelf_life_days => $c->req->params->get('shelf_life')
                     ? $c->req->params->get('shelf_life_days')
                     : undef,

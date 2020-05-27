@@ -175,7 +175,7 @@ sub update_or_insert : Private {
         my $quantity = $c->req->params->get('quantity');
 
         if ( $c->project->quantities->results_exist( { id => $quantity } ) ) {
-            $unit->set_column( quantity => $quantity );
+            $unit->set_column( quantity_id => $quantity );
         }
         else {
             push @errors, "Invalid quantity selected!";
