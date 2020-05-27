@@ -90,4 +90,13 @@ subtest fk_checks_off_do => sub {
     qr/some error/, "throws error at end of fk_checks_off_do after insert";    # TODO error message
 };
 
+subtest assert_no_sth => sub {
+    $db = TestDB->new;
+    my $projects = $db->resultset('Project');
+
+    lives_ok { $projects->assert_no_sth } "Passes before next()";
+    ok $projects->next, "Call next()";
+    throws_ok { $projects->assert_no_sth } qr/Statement/, "Fails after next()";
+};
+
 done_testing;
