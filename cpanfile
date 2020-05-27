@@ -73,6 +73,7 @@ on 'test' => sub {
   requires "File::Spec" => "0";
   requires "FindBin" => "0";
   requires "Scope::Guard" => "0";
+  requires "Test2::Require::Module" => "0";
   requires "Test::Compile" => "v2.2.2";
   requires "Test::Deep" => "0";
   requires "Test::Memory::Cycle" => "0";
@@ -86,6 +87,7 @@ on 'test' => sub {
 
 on 'test' => sub {
   recommends "CPAN::Meta" => "2.120900";
+  recommends "Test::PostgreSQL" => "0";
 };
 
 on 'configure' => sub {
