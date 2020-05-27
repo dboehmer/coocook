@@ -83,13 +83,14 @@ memory_cycle_ok $day;
 
 my $expected = [
     {
-        date  => '2000-01-01T00:00:00',
+        date  => str('2000-01-01T00:00:00'),
         meals => [
             {
                 id         => 1,
                 project_id => 1,
-                date       => '2000-01-01T00:00:00',
+                date       => str('2000-01-01T00:00:00'),
                 name       => 'breakfast',
+                deletable  => bool(0),
                 dishes     => [
                     {
                         id                 => 1,
@@ -108,13 +109,14 @@ my $expected = [
         ]
     },
     {
-        date  => '2000-01-02T00:00:00',
+        date  => str('2000-01-02T00:00:00'),
         meals => [
             {
                 id         => 2,
                 project_id => 1,
-                date       => '2000-01-02T00:00:00',
+                date       => str('2000-01-02T00:00:00'),
                 name       => 'lunch',
+                deletable  => bool(0),
                 dishes     => [
                     {
                         id                 => 2,
@@ -127,19 +129,20 @@ my $expected = [
                         servings           => 2
                     }
                 ],
-                prepared_dishes => '!!! this should become an arrayref before is_deeply() !!!',
+                prepared_dishes => '!!! this should become an arrayref before calling is_deeply() !!!',
                 comment         => '',
             }
         ]
     },
     {
-        date  => '2000-01-03T00:00:00',
+        date  => str('2000-01-03T00:00:00'),
         meals => [
             {
                 id         => 3,
                 project_id => 1,
-                date       => '2000-01-03T00:00:00',
+                date       => str('2000-01-03T00:00:00'),
                 name       => 'dinner',
+                deletable  => bool(0),
                 dishes     => [
                     {
                         id                 => 3,
@@ -170,10 +173,18 @@ for (@$expected) {
 }
 my $project_plan = $plan->project($project);
 $_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
-is_deeply $project_plan => $expected,
+cmp_deeply $project_plan => $expected,
   "project()"
   or explain $project_plan;
 
 memory_cycle_ok $project_plan;
+
+subtest deletable => sub {
+    ok !$plan->project($project)->[1]{meals}[0]{deletable};
+    $db->resultset('Meal')->find(2)->delete_dishes();
+    ok !$plan->project($project)->[1]{meals}[0]{deletable};
+    $db->resultset('Dish')->find(3)->update( { prepare_at_meal_id => undef } );
+    ok $plan->project($project)->[1]{meals}[0]{deletable};
+};
 
 done_testing;

@@ -73,4 +73,18 @@ sub in_future {
     );
 }
 
+sub update_items_and_delete {
+    my $self = shift;
+
+    $self->txn_do(
+        sub {
+            $self->assert_no_sth;
+
+            while ( my $dish = $self->next ) {
+                $dish->update_items_and_delete;
+            }
+        }
+    );
+}
+
 1;

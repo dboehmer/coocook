@@ -17,6 +17,13 @@
             <form class="inline" method="post" action="[% meal.delete_url %]">
                 <input type="submit" value="Delete meal">
             </form>
+        [% ELSIF meal.delete_dishes_url %]
+            <form class="inline" methods="post" onsubmit="return confirm('Do you really want to delete all dishes in [% meal.name | html %]?')"
+            action="[% meal.delete_dishes_url %]">
+                <input type="submit" value="Delete dishes">
+            </form>
+        [% ELSIF meal.prepared_dishes_exist %]
+            <span>[% meal.name %] has pending dishes to prepare. Reorganize them before deleting!</span>
         [% END %]
         </th>
     </tr>

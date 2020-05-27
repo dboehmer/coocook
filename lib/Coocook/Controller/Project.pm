@@ -154,8 +154,16 @@ sub edit : GET HEAD Chained('submenu') PathPart('edit') Args(0) RequiresCapabili
 
             $meal->{update_url} = $c->project_uri( '/meal/update', $meal->{id} );
 
-            $meal->{delete_url} = $c->project_uri( '/meal/delete', $meal->{id} )
-              unless @$dishes > 0;
+            if ( $meal->{deletable} ) {
+                $meal->{delete_url} = $c->project_uri( '/meal/delete', $meal->{id} );
+            }
+            elsif ( @{ $meal->{dishes} } > 0 ) {
+                $meal->{delete_dishes_url} = $c->project_uri( '/meal/delete_dishes', $meal->{id} );
+            }
+            elsif ( @{ $meal->{prepared_dishes} } > 0 ) {
+                $meal->{prepared_dishes_exist} = 1;
+            }
+
         }
     }
 
