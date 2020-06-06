@@ -2,6 +2,7 @@ package Coocook::Schema;
 
 # ABSTRACT: DBIx::Class-based SQL database representation
 
+use Carp;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
@@ -108,7 +109,7 @@ sub sqlite_pragma {
     my ( $self, $pragma, $set_value ) = @_;
 
     $self->storage->sqlt_type eq 'SQLite'
-      or die "only implemented for SQLite";
+      or croak "sqlite_pragma() works only on SQLite";
 
     my $sql = "PRAGMA '$pragma'";
 
