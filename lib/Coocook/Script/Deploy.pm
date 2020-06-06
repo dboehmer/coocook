@@ -18,31 +18,6 @@ extends 'App::DH';
 
 has '+schema' => ( default => 'Coocook::Schema' );
 
-has '+_schema' => ( predicate => 'has__schema' );
-
-###
-# TODO solve workaround
-# t/db_upgrade.t fails with PRAGMA foreign_keys = ON:-(
-sub BUILD {
-    my $self = shift;
-
-    if ( $self->has__schema ) {
-        $self->_schema->disable_fk_checks();
-    }
-}
-
-around _build__schema => sub {
-    my $orig = shift;
-    my $self = shift;
-
-    my $schema = $self->$orig(@_);
-
-    $schema->disable_fk_checks();
-
-    return $schema;
-};
-###
-
 __PACKAGE__->meta->make_immutable;
 
 1;
