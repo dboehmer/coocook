@@ -19,9 +19,17 @@ MACRO display_unit(unit, opts) BLOCK;
     END;
 END;
 
-MACRO display_value_unit(value, unit, opts) BLOCK;
+MACRO display_value(value, opts) BLOCK;
+    IF opts.force_sign;
+        '±' IF value == 0;
+        '+' IF value > 0;
+    END;
     USE NiceNumber;
     value | $NiceNumber;
+END;
+
+MACRO display_value_unit(value, unit, opts) BLOCK;
+    display_value(value, opts);
     '&nbsp;' IF unit.space OR opts.print;
     display_unit(unit, opts);
 END;

@@ -363,6 +363,31 @@ ul {
                        * see https://stackoverflow.com/a/710264/498634 */
 }
 
+/* incognito text input fields that don't clutter the page until they are focused
+ * see https://webapphuddle.com/inline-edit-design/ */
+.editable-content {
+    text-align: right;
+}
+.editable-content:not(:focus) {
+    border: 1px solid grey;
+    border-radius: 0.25em;
+    background-color: inherit;
+    box-shadow: none;
+}
+
+input[type=number].editable-content:not(:focus)::-webkit-inner-spin-button,
+input[type=number].editable-content:not(:focus)::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type=number].editable-content:not(:focus) {
+    -moz-appearance: textfield;
+}
+
+.hidden {
+    display: none;
+}
+
 /******** footer part ********/
 
 footer {

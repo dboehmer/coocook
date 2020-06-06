@@ -20,8 +20,15 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            [% '~' IF item.offset;
-            display_value_unit( item.value + item.offset, item.unit, {html=>1} ) %]
+            <form class="inline" method="post" action="[% item.update_offset_url %]">
+                [% IF item.offset %]
+                <label for="item_value">ca.</label>
+                [% END %]
+                <input type="number" min="0" step="any" class="editable-content" id="total" name="total" value="[% item.value + item.offset %]">
+                <input type="submit" class="hidden" value="submit" title="Submit new value for item">
+            </form>
+            [% '&nbsp' IF item.unit.space;
+            display_unit( item.unit, {html=>1} ) %]
         </td>
         <td>[% item.article.name | html %]</td>
         <td class="small-font"><ul>
@@ -39,7 +46,12 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
             </li>
         [% END %]
         [% IF item.offset %]
-            <li>offset: [% display_value_unit( item.offset, ingredient.unit, {html=>1} ) %]</li>
+            <li>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em>
+            <form class="inline" method="post" action="[% item.update_offset_url %]">
+                <input type="hidden" name="offset" value="0">
+                <input type="submit" value="Remove">
+            </form>
+            </li>
         [% END %]
         </ul></td>
         <td>[% item.comment %]</td>
