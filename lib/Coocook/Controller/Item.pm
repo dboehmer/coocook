@@ -1,4 +1,4 @@
-package Coocook::Controller::Items;
+package Coocook::Controller::Item;
 
 use DateTime;
 use Moose;
