@@ -43,7 +43,19 @@ __PACKAGE__->meta->make_immutable;
 sub deletable {
     my $self = shift;
 
-    return !$self->dishes->results_exist;
+    return ( !$self->dishes->results_exist and !$self->prepared_dishes->results_exist );
+}
+
+=head2 delete_dishes
+
+Deletes all but prepared dishes
+
+=cut
+
+sub delete_dishes {
+    my $self = shift;
+
+    $self->dishes->update_items_and_delete;
 }
 
 1;

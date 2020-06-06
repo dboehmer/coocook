@@ -53,7 +53,22 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
 sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{meal}->delete();
+    if ( $c->stash->{meal}->deletable ) {
+        $c->stash->{meal}->delete;
+    }
+    else {
+        my $name = $c->stash->{meal}->name;
+        $c->stash->error("$name cannot be deleted, because it contains dishes!");
+    }
+
+    $c->detach('redirect');
+}
+
+sub delete_dishes : POST Chained('base') Args(0) RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{meal}->dishes->update_items_and_delete;
+
     $c->detach('redirect');
 }
 

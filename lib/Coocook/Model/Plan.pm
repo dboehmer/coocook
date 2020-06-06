@@ -124,22 +124,23 @@ sub project {
     my ( $self, $project ) = @_;
 
     my %days;
+    my %meals;
 
-    my $meals = $project->meals->hri;
-    my @meals = $meals->all;
-    my %meals = map { $_->{id} => $_ } @meals;
+    my $meals = $project->meals;
 
-    for my $meal (@meals) {
-        my $day = $days{ $meal->{date} } ||= {
-            date  => $meals->parse_date( $meal->{date} ),
+    while ( my $meal = $meals->next ) {
+        my $day = $days{ $meal->date } ||= {
+            date  => $meal->date,
             meals => [],
         };
 
-        push @{ $day->{meals} }, $meal;
-
-        $meal->{date}            = $day->{date};
-        $meal->{dishes}          = [];
-        $meal->{prepared_dishes} = [];
+        push @{ $day->{meals} },
+          $meals{ $meal->id } = $meal->as_hashref(
+            date            => $day->{date},
+            deletable       => !!$meal->deletable,
+            dishes          => [],
+            prepared_dishes => [],
+          );
     }
 
     my $dishes = $meals->search_related('dishes')->hri;

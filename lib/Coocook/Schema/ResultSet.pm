@@ -57,4 +57,11 @@ sub only_id_col {
     return $self->search( undef, { columns => [ $id_column_name || 'id' ] } );
 }
 
+sub assert_no_sth {
+    my $self = shift;
+
+    # Check if DBIx::Class::Storage::DBI::Cursor already has a statement handle
+    defined( $self->cursor->{sth} ) and croak "Statement already running";
+}
+
 1;
