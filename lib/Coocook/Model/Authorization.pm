@@ -15,14 +15,14 @@ use Carp;
 # - how to define lexical variables like $project before calling the anonymous sub?
 my @rules = (
     {
-        needs_input  => [],
-        rule         => sub { 1 },                             # currently no actual check required
-        capabilities => [qw< view_organization view_user >],
+        needs_input         => [],
+        rule                => sub { 1 },                             # currently no actual check required
+        grants_capabilities => [qw< view_organization view_user >],
     },
     {
-        needs_input  => ['user'],
-        rule         => sub { !!$_->{user} },                  # simply: is anyone logged in?
-        capabilities => [
+        needs_input         => ['user'],
+        rule                => sub { !!$_->{user} },                  # simply: is anyone logged in?
+        grants_capabilities => [
             qw<
               view_dashboard create_project
               view_account_settings change_display_name change_password
@@ -42,7 +42,7 @@ my @rules = (
                   ->results_exist
             );
         },
-        capabilities => [qw< view_organization_members >],
+        grants_capabilities => [qw< view_organization_members >],
     },
     {
         needs_input => [ 'organization', 'user' ],
@@ -53,7 +53,7 @@ my @rules = (
                 { organization_id => $organization->id }       # user is organization member?
             );
         },
-        capabilities => [qw< leave_organization >],
+        grants_capabilities => [qw< leave_organization >],
     },
     {
         needs_input => [ 'organization', 'user' ],
@@ -64,7 +64,7 @@ my @rules = (
                   or $user->has_any_organization_role( $organization, 'owner', 'admin' )
             );
         },
-        capabilities => [qw< edit_organization >],
+        grants_capabilities => [qw< edit_organization >],
     },
     {
         needs_input => [ 'user', 'organization', 'user_object', 'role' ],
@@ -83,7 +83,7 @@ my @rules = (
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => [qw< add_user_to_organization >],
+        grants_capabilities => [qw< add_user_to_organization >],
     },
     {
         needs_input => [ 'user', 'organization', 'membership' ],
@@ -99,7 +99,7 @@ my @rules = (
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => [qw< edit_organization_membership remove_user_from_organization >],
+        grants_capabilities => [qw< edit_organization_membership remove_user_from_organization >],
     },
     {
         needs_input => [ 'user', 'organization', 'membership' ],
@@ -113,7 +113,7 @@ my @rules = (
                   )
             );
         },
-        capabilities => 'transfer_organization_ownership',
+        grants_capabilities => 'transfer_organization_ownership',
     },
     {
         needs_input => [ 'user', 'organization' ],
@@ -124,7 +124,7 @@ my @rules = (
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => 'delete_organization',
+        grants_capabilities => 'delete_organization',
     },
     {
         needs_input => ['project'],    # optional: user
@@ -139,7 +139,7 @@ my @rules = (
                   )
             );
         },
-        capabilities => [qw< view_project >],
+        grants_capabilities => [qw< view_project >],
     },
     {
         needs_input => [
@@ -153,7 +153,7 @@ my @rules = (
                   or $user->has_any_project_role( $source_project, qw< viewer editor admin owner > )
             );
         },
-        capabilities => [qw< export_from_project >],
+        grants_capabilities => [qw< export_from_project >],
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -164,7 +164,7 @@ my @rules = (
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => [qw< view_project_permissions >],
+        grants_capabilities => [qw< view_project_permissions >],
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -176,7 +176,7 @@ my @rules = (
                   or $user->has_any_project_role( $project, qw< editor admin owner > )
             );
         },
-        capabilities => [qw< edit_project import_into_project >],
+        grants_capabilities => [qw< edit_project import_into_project >],
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -187,7 +187,7 @@ my @rules = (
                   or $user->has_any_role('site_owner')
             );
         },
-        capabilities => 'edit_project_permissions'    # generic rule only for accessing editor form
+        grants_capabilities => 'edit_project_permissions'    # generic rule only for accessing editor form
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -199,7 +199,7 @@ my @rules = (
 
             return ( $user->has_any_role('site_owner') or $user->has_any_project_role( $project, 'owner' ) );
         },
-        capabilities => [
+        grants_capabilities => [
             qw<
               view_project_settings
               update_project rename_project delete_project
@@ -227,7 +227,7 @@ my @rules = (
                   or $user->has_any_project_role( $project, qw< admin owner > )
             );
         },
-        capabilities => [qw< add_organization_permission add_user_permission >],
+        grants_capabilities => [qw< add_organization_permission add_user_permission >],
     },
     {
         needs_input => [ 'project', 'permission', 'user' ],
@@ -257,7 +257,7 @@ my @rules = (
             # user is project owner?
             return $user->has_any_project_role( $project, qw< admin owner > );
         },
-        capabilities => [
+        grants_capabilities => [
             'edit_project_permission', 'revoke_project_permission',    # generic aliases
             qw<
               edit_organization_permission revoke_organization_permission
@@ -266,9 +266,9 @@ my @rules = (
         ],
     },
     {
-        needs_input  => 'user',
-        rule         => sub { $_->{user}->has_any_role( 'site_owner', 'private_projects' ) },
-        capabilities => 'create_private_project',
+        needs_input         => 'user',
+        rule                => sub { $_->{user}->has_any_role( 'site_owner', 'private_projects' ) },
+        grants_capabilities => 'create_private_project',
     },
     {
         needs_input => [ 'project', 'user' ],
@@ -280,7 +280,7 @@ my @rules = (
                   ( $user->has_any_role('private_projects') and $user->has_any_project_role( $project, 'owner' ) )
             );
         },
-        capabilities => [qw< make_project_private edit_project_visibility >],
+        grants_capabilities => [qw< make_project_private edit_project_visibility >],
     },
     {
         needs_input => [ 'user', 'project', 'permission' ],
@@ -298,7 +298,7 @@ my @rules = (
 
             return;
         },
-        capabilities => 'transfer_project_ownership',
+        grants_capabilities => 'transfer_project_ownership',
     },
     {
         needs_input => ['recipe'],
@@ -314,7 +314,7 @@ my @rules = (
 
             return;
         },
-        capabilities => ['view_recipe'],
+        grants_capabilities => ['view_recipe'],
     },
     {
         needs_input => [ 'user', 'project', 'recipe' ],
@@ -331,12 +331,12 @@ my @rules = (
 
             return;
         },
-        capabilities => 'import_recipe',
+        grants_capabilities => 'import_recipe',
     },
     {
-        needs_input  => ['user'],
-        rule         => sub { $_->{user}->has_any_role('site_owner') },
-        capabilities => [qw< admin_view manage_faqs manage_terms manage_users view_all_recipes >],
+        needs_input         => ['user'],
+        rule                => sub { $_->{user}->has_any_role('site_owner') },
+        grants_capabilities => [qw< admin_view manage_faqs manage_terms manage_users view_all_recipes >],
     },
     {
         needs_input => [ 'user', 'user_object' ],
@@ -346,7 +346,7 @@ my @rules = (
             $user->id != $user_object->id     or return;
             return 1;
         },
-        capabilities => ['toggle_site_owner'],
+        grants_capabilities => ['toggle_site_owner'],
     },
     {
         needs_input => [ 'user', 'user_object' ],
@@ -356,7 +356,7 @@ my @rules = (
             $user_object->status_code eq 'unverified' or return;
             return 1;
         },
-        capabilities => ['discard_user'],
+        grants_capabilities => ['discard_user'],
     },
 );
 
@@ -364,14 +364,14 @@ my %capabilities;
 
 for my $rule (@rules) {
 
-    for my $key (qw< needs_input capabilities >) {
+    for my $key (qw< needs_input grants_capabilities >) {
         for ( $rule->{$key} ) {    # transform scalars into arrayrefs
             ref($_) eq 'ARRAY'
               or $_ = [$_];
         }
     }
 
-    for my $capability ( @{ $rule->{capabilities} } ) {
+    for my $capability ( @{ $rule->{grants_capabilities} } ) {
         $capabilities{$capability}
           and die "capabilities can be granted by only 1 rule: '$capability'";
 
