@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 3;
+use Test::Most tests => 4;
 
 my $t = Test::Coocook->new();
 
@@ -42,4 +42,78 @@ subtest "successfully assign items" => sub {
 
     $t->get_ok('/project/1/Test-Project/items/unassigned');
     $t->content_lacks( 'assign2', "item was assigned" );
+};
+
+subtest "change item total" => sub {
+    $t->get_ok('/project/1/Test-Project/purchase_list/1');
+
+    $t->content_contains('value="42.5"');
+
+    #print $t->content."\n";
+
+    $t->content_lacks('rounding difference');
+
+    $t->submit_form_ok(
+        {
+            form_name   => 'total',
+            form_number => 6,
+            with_fields => { total => 39 },
+        },
+        "Set total value to 39"
+    );
+
+    $t->get_ok('/project/1/Test-Project/purchase_list/1');
+
+    $t->content_lacks('value="42.5"');
+
+    $t->content_contains('value="39"');
+
+    $t->content_contains('-3.5');
+
+    $t->content_contains('rounding difference');
+
+    $t->submit_form_ok(
+        {
+            form_name   => 'remove-offset',
+            form_number => 10,
+        },
+        "Remove offset"
+    );
+
+    $t->get_ok('/project/1/Test-Project/purchase_list/1');
+
+    $t->content_lacks('rounding difference');
+
+    $t->content_contains('value="42.5"');
+
+    $t->content_contains('12.5');
+
+    $t->content_lacks('30');
+
+    $t->submit_form_ok(
+        {
+            form_number => 8,
+        },
+        "Remove ingredient"
+    );
+
+    $t->content_lacks('12.5');
+
+    $t->content_contains('30');
+
+    $t->content_contains('value="1000"');
+
+    $t->content_lacks('value="1"');
+
+    $t->submit_form_ok(
+        {
+            form_number => 5,
+        },
+        "Convert item to kg"
+    );
+
+    $t->content_lacks('value="1000"');
+
+    $t->content_contains('value="1"');
+
 };

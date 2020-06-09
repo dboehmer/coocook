@@ -20,7 +20,7 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            <form class="inline" method="post" action="[% item.update_offset_url %]">
+            <form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
                 [% IF item.offset %]
                 <label for="item_value">ca.</label>
                 [% END %]
@@ -47,7 +47,7 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
         [% END %]
         [% IF item.offset %]
             <li>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em>
-            <form class="inline" method="post" action="[% item.update_offset_url %]">
+            <form name="remove-offset" class="inline" method="post" action="[% item.update_offset_url %]">
                 <input type="hidden" name="offset" value="0">
                 <input type="submit" value="Remove">
             </form>
