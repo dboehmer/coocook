@@ -18,7 +18,7 @@
                 <input type="submit" value="Delete meal">
             </form>
         [% ELSIF meal.delete_dishes_url %]
-            <form class="inline" methods="post" onsubmit="return confirm('Do you really want to delete all dishes in [% meal.name | html %]?')"
+            <form class="inline" method="post" onsubmit="return confirm('Do you really want to delete all dishes in [% meal.name | html %]?')"
             action="[% meal.delete_dishes_url %]">
                 <input type="submit" value="Delete dishes">
             </form>
