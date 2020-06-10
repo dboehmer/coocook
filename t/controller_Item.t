@@ -49,8 +49,6 @@ subtest "change item total" => sub {
 
     $t->content_contains('value="42.5"');
 
-    #print $t->content."\n";
-
     $t->content_lacks('rounding difference');
 
     $t->submit_form_ok(
