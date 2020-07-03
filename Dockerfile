@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:latest AS devel
 MAINTAINER Mose Schmiedel <mose.schmiedel@web.de>
 
 RUN apk update && \
@@ -22,19 +22,19 @@ RUN apk update && \
       sqlite \
       perl-dbd-sqlite \
       perl-dbd-sqlite-dev \
-      git \
       && true
-
-WORKDIR /usr/src
-
-RUN git clone https://github.com/dboehmer/coocook.git
 
 WORKDIR /usr/src/coocook
 
+COPY cpanfile .
+
 RUN cpanm --notest --installdeps --with-recommends --with-suggests --with-develop .
+
+COPY script/coocook_docker.pl script/coocook_docker.pl
+
+ENTRYPOINT [ "script/coocook_docker.pl" ]
 
 EXPOSE 3000
 
-RUN ./script/coocook_deploy.pl install
-
-CMD ./script/coocook_server.pl --debug -r
+#FROM alpine:latest
+#RUN apk update && apk add \
