@@ -1,8 +1,7 @@
 FROM alpine:latest AS devel
-MAINTAINER Mose Schmiedel <mose.schmiedel@web.de>
+MAINTAINER Mose Schmiedel <mose@schmiednet.de>
 
-RUN apk update && \
-      apk add \
+RUN apk update && apk add \
       pkgconf \
       musl \
       make \
@@ -36,5 +35,4 @@ ENTRYPOINT [ "script/coocook_docker.pl" ]
 
 EXPOSE 3000
 
-#FROM alpine:latest
-#RUN apk update && apk add \
+CMD [ "help" ]
