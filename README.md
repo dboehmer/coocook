@@ -21,6 +21,7 @@ Web application for collecting recipes and making food plans
 
 ## Quick start
 
+### On UNIX-like Operating Systems
 Prerequisites:
 
 * [Perl5](https://www.perl.org/get.html)
@@ -56,6 +57,9 @@ Install database into a local SQLite file and start development server in debug 
 
 Hint: With the `--restart` option the development server restarts automatically when files in `lib/` are changed.
 This requires `Catalyst::Restarter`.
+
+### Using Docker
+Goto [https://hub.docker.com/r/coocook/coocook-dev](https://hub.docker.com/r/coocook/coocook-dev) and follow the instructions there to use the Dockerimage for Development.
 
 ## Mailing list
 
