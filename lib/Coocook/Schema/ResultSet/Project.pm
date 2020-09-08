@@ -18,7 +18,7 @@ sub sorted_by_columns { qw< url_name_fc name > }
 sub find_by_url_name {
     my ( $self, $url_name ) = @_;
 
-    return $self->find( { url_name_fc => fc $url_name} );
+    return $self->find( { url_name_fc => fc $url_name } );
 }
 
 sub not_archived { shift->search( { archived => undef } ) }

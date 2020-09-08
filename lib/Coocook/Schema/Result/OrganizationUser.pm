@@ -29,7 +29,7 @@ __PACKAGE__->has_many(
 
         return {
             "$args->{foreign_alias}.organization_id" => { -ident => "$args->{self_alias}.organization_id" },
-            "$args->{foreign_alias}.user_id" => { '!=' => { -ident => "$args->{self_alias}.user_id" } },
+            "$args->{foreign_alias}.user_id"         => { '!=' => { -ident => "$args->{self_alias}.user_id" } },
         };
     }
 );

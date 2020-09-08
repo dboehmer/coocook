@@ -28,7 +28,7 @@ cmp_deeply $sections => [
                     {
                         value       => 1000,
                         unit        => superhashof( { short_name => "g" } ),
-                        article     => superhashof( { name => "flour" } ),
+                        article     => superhashof( { name       => "flour" } ),
                         ingredients => [
                             superhashof(
                                 {
@@ -55,8 +55,8 @@ cmp_deeply $sections => [
                     {
                         value       => 37.5,
                         unit        => superhashof( { short_name => "g" } ),
-                        article     => superhashof( { name => "salt" } ),
-                        ingredients => [                                       #perltidy
+                        article     => superhashof( { name       => "salt" } ),
+                        ingredients => [    #perltidy
                             superhashof( { id => 6 } ),
                             superhashof( { id => 8 } ),
                         ],

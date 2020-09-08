@@ -23,7 +23,7 @@ sub current_uri_local_part {
 
     my $current_uri = $c->req->uri->rel( $c->req->base );
 
-    $current_uri =~ s! ^ \. / !/!x    #          ./     => /
+    $current_uri =~ s! ^ \. / !/!x             # ./     => /
       or $current_uri = '/' . $current_uri;    # foobar => /foobar
 
     return $current_uri;
@@ -252,7 +252,7 @@ sub redirect_canonical_case {
     # e.g. /project/42 must not reveal name of private projects
     my $attrs = $c->action->attributes;
 
-    if ( exists $attrs->{Public} ) { }                             # always ok
+    if    ( exists $attrs->{Public} ) { }                          # always ok
     elsif ( my $capabilities = $attrs->{RequiresCapability} ) {    # check
         $c->has_capability( $_, $c->stash ) || return for @$capabilities;
     }

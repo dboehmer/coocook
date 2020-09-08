@@ -56,7 +56,7 @@ sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
               and $article->{shop_section} = $shop_sections{ $article->{shop_section_id} };
 
             $article->{units}      = [];
-            $article->{edit_url}   = $c->project_uri( $edit_action, $article->{id} );
+            $article->{edit_url}   = $c->project_uri( $edit_action,   $article->{id} );
             $article->{delete_url} = $c->project_uri( $delete_action, $article->{id} )
               unless $articles_in_use{ $article->{id} };
 

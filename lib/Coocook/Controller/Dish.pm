@@ -74,7 +74,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         articles           => $ingredients->all_articles,
         units              => $ingredients->all_units,
         prepare_meals      => [ $prepare_meals->all ],
-        add_ingredient_url => $c->project_uri( '/dish/add', $dish->id ),
+        add_ingredient_url => $c->project_uri( '/dish/add',    $dish->id ),
         delete_url         => $c->project_uri( '/dish/delete', $dish->id ),
     );
 
@@ -102,7 +102,7 @@ sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0)
             servings           => $c->req->params->get('servings'),
             name               => $c->req->params->get('name'),
             description        => $c->req->params->get('description') // "",
-            comment            => $c->req->params->get('comment') // "",
+            comment            => $c->req->params->get('comment')     // "",
             preparation        => $c->req->params->get('preparation') // "",
             prepare_at_meal_id => $c->req->params->get('prepare_at_meal') || undef,
         }

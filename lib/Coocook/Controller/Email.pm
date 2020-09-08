@@ -52,7 +52,7 @@ sub notify_admin_about_registration : Private {
         admin            => $admin,
         email_anonymized => $email_anonymized,
         user             => $user,
-        user_url         => $c->uri_for_action( '/user/show', [ $user->name ] ),
+        user_url         => $c->uri_for_action( '/user/show',       [ $user->name ] ),
         user_admin_url   => $c->uri_for_action( '/admin/user/show', [ $user->name ] ),
     );
 }

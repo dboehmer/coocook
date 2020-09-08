@@ -140,7 +140,7 @@ sub BUILD {
         @$items = sort {    # sort by
             $a->{article}{name} cmp $b->{article}{name}                                 # 1. article name
               or $a->{unit}{to_quantity_default} <=> $b->{unit}{to_quantity_default}    # 2. conversion factor
-              or $a->{unit}{id} <=> $b->{unit}{id}                                      # 3. unit ID
+              or $a->{unit}{id}                  <=> $b->{unit}{id}                     # 3. unit ID
         } @$items;
     }
 

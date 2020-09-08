@@ -9,7 +9,7 @@ __PACKAGE__->table('sessions');
 
 __PACKAGE__->add_columns(
     id           => { data_type => 'text' },
-    expires      => { data_type => 'int', is_nullable => 1 },
+    expires      => { data_type => 'int',  is_nullable => 1 },
     session_data => { data_type => 'text', is_nullable => 1 },
 );
 

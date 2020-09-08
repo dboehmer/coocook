@@ -96,7 +96,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         units              => $ingredients->all_units,
         dishes             => \@dishes,
         update_url         => $c->project_uri( $self->action_for('update'), $recipe->id ),
-        add_ingredient_url => $c->project_uri( $self->action_for('add'), $recipe->id ),
+        add_ingredient_url => $c->project_uri( $self->action_for('add'),    $recipe->id ),
     );
 
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {

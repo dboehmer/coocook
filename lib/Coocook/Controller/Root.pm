@@ -148,7 +148,7 @@ sub auto : Private {
     }
 
     $c->stash(
-        admin_url => $c->uri_for_action_if_permitted('/admin/index'),
+        admin_url  => $c->uri_for_action_if_permitted('/admin/index'),
         admin_urls => {    # TODO list duplicates code in Controller::Admin
             faq           => $c->uri_for_action_if_permitted('/admin/faq/index'),
             organizations => $c->uri_for_action_if_permitted('/admin/organizations'),

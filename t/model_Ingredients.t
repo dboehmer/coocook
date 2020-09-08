@@ -28,7 +28,7 @@ cmp_deeply $ingredients->as_arrayref => [
         {
             value   => 10,
             unit    => methods( short_name => 'g' ),
-            article => methods( name => 'salt' ),
+            article => methods( name       => 'salt' ),
             comment => 'if you like salty'
         }
     ),

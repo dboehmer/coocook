@@ -46,8 +46,7 @@ sub _build_ingredients { return [ shift->recipe->ingredients_sorted->hri->all ] 
 
 sub _build_source_articles {
     return [
-        shift->recipe->ingredients->search_related( 'article', undef, { distinct => 1 } )->hri->all
-    ];
+        shift->recipe->ingredients->search_related( 'article', undef, { distinct => 1 } )->hri->all ];
 }
 
 sub _build_source_units {
@@ -60,8 +59,7 @@ sub _build_target_articles {
 
 sub _build_target_units {
     return [
-        shift->project->units->search( undef, { order_by => [ 'long_name', 'short_name' ] } )->hri->all
-    ];
+        shift->project->units->search( undef, { order_by => [ 'long_name', 'short_name' ] } )->hri->all ];
 }
 
 sub BUILD {
@@ -136,7 +134,7 @@ sub import_data {    # import() used by 'use'
                     project_id  => $self->project->id,
                     preparation => $self->recipe->preparation,
                     description => $self->recipe->description,
-                    name        => $args{name} || $self->recipe->name,
+                    name        => $args{name}     || $self->recipe->name,
                     servings    => $args{servings} || $self->recipe->servings,
                 }
             );

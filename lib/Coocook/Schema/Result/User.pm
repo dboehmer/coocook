@@ -20,7 +20,7 @@ __PACKAGE__->add_columns(
     admin_comment  => { data_type => 'text', default_value => '' },
     email_fc       => { data_type => 'text' },
     email_verified => { data_type => 'datetime', is_nullable => 1 },
-    token_hash     => { data_type => 'text', is_nullable => 1 },
+    token_hash     => { data_type => 'text',     is_nullable => 1 },
     token_expires  => { data_type => 'datetime', is_nullable => 1 },
     created => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
 );

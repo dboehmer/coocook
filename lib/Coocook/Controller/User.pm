@@ -190,11 +190,11 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
 
     my $user = $c->model('DB::User')->create(
         {
-            name         => $username,
-            password     => $password,
-            display_name => $username,
-            email_fc     => $email_fc,
-            token_hash   => $token->to_salted_hash,
+            name          => $username,
+            password      => $password,
+            display_name  => $username,
+            email_fc      => $email_fc,
+            token_hash    => $token->to_salted_hash,
             token_expires => undef,    # never: token only for verification, doesn't allow password reset
         }
     );

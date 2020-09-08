@@ -68,7 +68,7 @@ subtest next => sub {
 };
 
 subtest previous => sub {
-    is $c->previous()->content_md => "B", "C->previous()";
+    is $c->previous()->content_md   => "B",   "C->previous()";
     is $c->previous($_)->content_md => "A",   "C->previous($_)" for -2,  2;
     is $c->previous($_)             => undef, "C->previous($_)" for -99, 99;
 };

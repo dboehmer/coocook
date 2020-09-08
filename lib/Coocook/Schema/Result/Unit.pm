@@ -10,7 +10,7 @@ __PACKAGE__->table('units');
 __PACKAGE__->add_columns(
     id                  => { data_type => 'int', is_auto_increment => 1 },
     project_id          => { data_type => 'int' },
-    quantity_id         => { data_type => 'int', is_nullable => 0 },
+    quantity_id         => { data_type => 'int',  is_nullable => 0 },
     to_quantity_default => { data_type => 'real', is_nullable => 1 },
     space               => { data_type => 'bool' },
     short_name          => { data_type => 'text' },
