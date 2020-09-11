@@ -79,7 +79,8 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 sub base : Chained('submenu') PathPart('purchase_list') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
-    $c->stash( list => $c->project->purchase_lists->find($id) || $c->detach('/error/not_found') );
+    $c->stash( lists => my $lists = $c->project->purchase_lists );
+    $c->stash( list  => $lists->find($id) || $c->detach('/error/not_found') );
 }
 
 sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('view_project') {
@@ -126,42 +127,42 @@ sub create : POST Chained('/project/base') PathPart('purchase_lists/create') Arg
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    my $date = $c->req->params->get('date');
-    my $name = $c->req->params->get('name');
+    my $date = $c->req->params->get('date')
+      or $c->detach('/error/bad_request');
 
-    my $lists = $c->project->search_related('purchase_lists');
+    # TODO parse and verify date
 
-    if ( $lists->search( { name => $name } )->results_exist ) {
-        $c->messages->error("A purchase list with that name already exists!");
+    $c->stash( lists => my $lists = $c->project->purchase_lists );
+    $c->stash( list  => $lists->new_result( { date => $date } ) );
 
-        $c->stash(
-            last_input => {
-                date => $date,
-                name => $name,
-            }
-        );
-
-        $c->go( 'index', [ $c->project->id, $c->project->url_name ], [] );
-    }
-
-    $c->project->create_related(
-        purchase_lists => {
-            date => $date,
-            name => $name,
-        }
-    );
-
-    $c->detach('redirect');
+    $c->detach('update');
 }
 
 sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
-    $c->stash->{list}->update(
-        {
-            name => $c->req->params->get('name'),
-        }
-    );
+    my $name = $c->req->params->get('name') // $c->detach('/error/bad_request');
+
+    if ( $name !~ m/\w/ ) {
+        $c->messages->error("The name of a purchase list must not be empty!");
+        $c->detach('redirect');
+    }
+
+    my $list  = $c->stash->{list};
+    my $lists = $c->stash->{lists};
+
+    # exclude this very list from duplicate search
+    if ( my $id = $list->id ) {
+        $lists = $lists->search( { id => { '!=' => $id } } );
+    }
+
+    if ( $lists->search( { name => $name } )->results_exist ) {
+        $c->messages->error("A purchase list with that name already exists!");
+        $c->detach('redirect');
+    }
+
+    $list->name($name);
+    $list->update_or_insert();
 
     $c->detach('redirect');
 }
