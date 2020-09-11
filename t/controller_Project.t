@@ -112,7 +112,7 @@ subtest import => sub {
     $t->get_ok('/project/1/Test-Project/import');
     $t->content_contains('disabled');
 
-    # bug: properties are stored in a package variable and
+    # former bug: properties are stored in a package variable and were
     # modified through a reference given by Model::ProjectImporter
     $t->get_ok("/project/$id/Statistics-Project/import");
     $t->content_lacks('disabled');

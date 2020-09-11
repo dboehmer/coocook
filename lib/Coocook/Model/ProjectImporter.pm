@@ -6,6 +6,7 @@ use Carp;
 use JSON::MaybeXS;    # also a dependency of Catalyst
 use Moose;
 use MooseX::NonMoose;
+use Storable qw(dclone);
 
 extends 'Catalyst::Model';
 
@@ -124,7 +125,7 @@ for my $property (@public_properties) {
 }
 
 sub properties {
-    return \@public_properties;
+    return dclone \@public_properties;
 }
 
 my $json;
