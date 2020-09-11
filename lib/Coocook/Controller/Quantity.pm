@@ -66,7 +66,7 @@ sub create : POST Chained('/project/base') PathPart('quantities/create') Args(0)
     my $quantities = $c->project->search_related('quantities');
 
     if ( $quantities->search( { name => $name } )->results_exist ) {
-        push @{ $c->stash->{errors} }, "Quantity already exists";
+        $c->messages->error("A quantity with that name already exists");
 
         $c->stash( last_input => { name => $name } );
 

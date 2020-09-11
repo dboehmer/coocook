@@ -50,7 +50,7 @@ sub create : POST Chained('/project/base') PathPart('shop_sections/create') Args
     my $sections = $c->project->search_related('shop_sections');
 
     if ( $sections->search( { name => $name } )->results_exist ) {
-        push @{ $c->stash->{errors} }, "Shop section already exists!";
+        $c->messages->error("A shop section with that name already exists!");
 
         $c->stash( last_input => { name => $name } );
 
