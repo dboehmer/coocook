@@ -76,10 +76,31 @@ is_deeply $day => [
         ],
     }
   ],
-  "day()"
+  "day(2000-01-01)"
   or explain $day;
 
 memory_cycle_ok $day;
+
+my $day2 = $plan->day( $project, DateTime->new( year => 2000, month => 1, day => 2 ) );
+cmp_deeply $day2 => [
+    superhashof {
+        name            => 'lunch',
+        dishes          => [ superhashof { name => 'pizza' } ],
+        prepared_dishes => [
+            superhashof {
+                name => 'bread',
+                meal => superhashof {
+                    id   => 3,
+                    name => 'dinner',
+                },
+            },
+        ],
+    },
+  ],
+  "day(2000-01-02) with prepared dish"
+  or explain $day2;
+
+memory_cycle_ok $day2;
 
 my $expected = [
     {

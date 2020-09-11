@@ -42,7 +42,7 @@ sub day {
 
     {
         my $dishes = $schema->resultset('Dish')->search(
-            [
+            [    # OR
                 meal_id            => { -in => [ keys %meals ] },
                 prepare_at_meal_id => { -in => [ keys %meals ] },
             ],
@@ -77,7 +77,8 @@ sub day {
 
             if ( my $prepare_at_meal = $dish->prepare_at_meal_id ) {
                 if ( exists $meals{$prepare_at_meal} ) {    # dish is prepared on this day
-                    $dish{meal_id} = {
+                    $dish{meal} = {
+                        id   => $dish->meal->id,
                         name => $dish->meal->name,
                         date => $dish->meal->date,
                     };
