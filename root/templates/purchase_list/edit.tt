@@ -1,4 +1,8 @@
-[% escape_title( 'Purchase list', list.name ) %]
+[% escape_title( 'Purchase list', list.name );
+
+title      =      title _ ' on ' _ display_date(list.date, {short=>1});
+html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
+%]
 
 [% FOREACH section IN sections %]
 <h3>[% section.name | html %]</h3>
