@@ -43,19 +43,17 @@ sub index : GET HEAD Chained('submenu') PathPart('purchase_lists') Args(0)
 
     my $lists = $c->project->purchase_lists;
 
-    my $min_date = DateTime->today;
+    my $today    = DateTime->today;
+    my $min_date = $today;
 
     my $default_date = do {    # one day after today or last list's date
-        my $date = $min_date;
-
         my $last_list =
           $lists->search( undef, { columns => 'date', order_by => { -desc => 'date' } } )->one_row;
 
-        if ($last_list) {
-            if ( $date < $last_list->date ) {
-                $date = $last_list->date;
-            }
-        }
+        my $date =
+          ( $last_list and $today < $last_list->date )
+          ? $last_list->date
+          : $today->clone;
 
         $date->add( days => 1 );
     };
