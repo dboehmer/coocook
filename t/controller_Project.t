@@ -6,7 +6,7 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 38;
+use Test::Most tests => 39;
 
 my $t = Test::Coocook->new();
 
@@ -91,6 +91,33 @@ subtest "redirect to fix URLs" => sub {
           "https://localhost/project/1/Test-Project/recipes?key=val",
         301     # permanent
     );
+};
+
+subtest import => sub {
+    $t->get_ok('/');
+    $t->login_ok( john_doe => 'P@ssw0rd' );
+
+    my $project = $t->schema->resultset('Project')->create(
+        {
+            name        => 'empty project',
+            description => "",
+            owner_id    => 1,
+        }
+    );
+    my $id = $project->id;
+
+    $t->get_ok("/project/$id/Statistics-Project/import");
+    $t->content_lacks('disabled');
+
+    $t->get_ok('/project/1/Test-Project/import');
+    $t->content_contains('disabled');
+
+    # bug: properties are stored in a package variable and
+    # modified through a reference given by Model::ProjectImporter
+    $t->get_ok("/project/$id/Statistics-Project/import");
+    $t->content_lacks('disabled');
+
+    $t->logout_ok();
 };
 
 my $project = $t->schema->resultset('Project')->create(

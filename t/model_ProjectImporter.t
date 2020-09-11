@@ -3,6 +3,7 @@ use warnings;
 
 use FindBin '$Bin';
 use lib "$Bin/lib";
+use Scalar::Util qw(refaddr);
 use TestDB;
 use Test::Most tests => 15;
 
@@ -11,6 +12,43 @@ my $db = TestDB->new;
 use_ok 'Coocook::Model::ProjectImporter';
 
 my $importer = new_ok 'Coocook::Model::ProjectImporter';
+
+# TODO this is probably implemented better somewhere on CPAN
+#      but I couldn't find it, even asked #perl-help on IRC
+sub _no_shared_references {
+    my ( $a, $b, $name ) = @_;
+
+    my ( %a, %b );
+
+    # collect reference addresses
+    for ( [ $a => \%a ], [ $b => \%b ] ) {
+        my ( $root, $hash ) = @$_;
+
+        my @stack = ($root);
+
+        while (@stack) {
+            my $value = pop @stack;
+            my $addr  = refaddr($value) || next;
+
+            # already seen
+            exists $hash->{$addr} and next;
+
+            $hash->{$addr} = undef;    # undef is most efficient value
+
+            my $type = ref $value;
+
+            if    ( $type eq 'ARRAY' ) { push @stack, @$value }
+            elsif ( $type eq 'HASH' )  { push @stack, values %$value }
+            else                       { die "Unsupported reference type '$type'" }
+        }
+    }
+
+    # find duplicates
+    my @duplicates = grep { exists $a{$_} } keys %b;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    cmp_ok @duplicates, '==', 0, $name || "data structures share not references";
+}
 
 subtest properties => sub {
     isa_ok my $properties = $importer->properties => 'ARRAY';
@@ -33,6 +71,10 @@ subtest properties => sub {
 
     is_deeply $properties{units}{conflicts} => ['units'],
       "properties.units.conflicts = [ units ] per default";
+
+    # properties data structure should be safe to modify
+    ok my $properties2 = $importer->properties;
+    _no_shared_references $properties, $properties2;
 };
 
 is substr( $importer->properties_json, 0, 3 ) => '[{"',
