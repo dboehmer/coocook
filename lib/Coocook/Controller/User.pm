@@ -59,7 +59,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash(
         organizations     => \@organizations,
         projects          => \@projects,
-        profile_admin_url => $c->uri_for_action_if_permitted( '/admin/user/show', [ $user->name_fc ] ),
+        profile_admin_url => $c->uri_for_action_if_permitted( '/admin/user/show', [ $user->name ] ),
     );
 
     $c->stash->{robots}->archive(0);
