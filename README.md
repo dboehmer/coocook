@@ -21,7 +21,7 @@ Web application for collecting recipes and making food plans
 
 ## Quick start
 
-### On UNIX-like Operating Systems
+### Run with native Perl (works best on Unix-like Operating Systems)
 Prerequisites:
 
 * [Perl5](https://www.perl.org/get.html)

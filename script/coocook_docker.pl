@@ -1,4 +1,7 @@
 #!/usr/bin/env perl
+
+# ABSTRACT: helper script to control the coocook instance inside a Dockerimage from the host OS
+
 use v5.30.0;
 use strict;
 use warnings;
@@ -21,7 +24,7 @@ my $restart = '';
 GetOptions(
     'install' => \$install,
     'upgrade' => \$upgrade,
-    'debug'   => sub { $debug = '--debug' },
+    'debug'   => sub { $debug   = '--debug' },
     'restart' => sub { $restart = '--restart' },
 ) or exit(1);
 
