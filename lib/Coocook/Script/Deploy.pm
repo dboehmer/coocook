@@ -18,6 +18,8 @@ extends 'App::DH';
 
 has '+schema' => ( default => 'Coocook::Schema' );
 
+sub _build_database { [qw< SQLite PostgreSQL >] }
+
 __PACKAGE__->meta->make_immutable;
 
 1;
