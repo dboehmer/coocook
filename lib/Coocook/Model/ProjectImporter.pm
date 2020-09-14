@@ -184,6 +184,49 @@ sub _importable_properties {
     return grep { !$unimportable{ $_->{key} } eq $shall_be_importable } @to_report;
 }
 
+=head2 can_import_properties( $project, \@properties, \@errors?)
+
+Checks that C<@$properties> contains a valid set of properties to import.
+Stores relevant error messages in C<@$errors> if given.
+
+=over 4
+
+=item * C<@$properties> must not be empty
+
+=item * each property must be a valid property name
+
+=item * all properties must be importable (see C<importable_properties()>)
+
+=back
+
+=cut
+
+sub can_import_properties {
+    my ( $self, $project, $properties, $errors ) = @_;
+
+    $errors ||= [];
+
+    if ( @$properties == 0 ) {
+        push @$errors, "No property selected";
+        return '';
+    }
+
+    my %importable_properties = map { $_->{key} => 1 } $self->importable_properties($project);
+
+    for my $property (@$properties) {
+        if ( not exists $public_properties{$property} ) {
+            push @$errors, "Not a valid property: '$property'";
+            next;
+        }
+
+        if ( not $importable_properties{$property} ) {
+            push @$errors, "Property can't be imported into project: $property";
+        }
+    }
+
+    return ( @$errors == 0 );
+}
+
 sub import_data {    # import() is used by 'use'
     my ( $self, $source => $target, $properties ) = @_;
 

@@ -5,7 +5,7 @@ use FindBin '$Bin';
 use lib "$Bin/lib";
 use Scalar::Util qw(refaddr);
 use TestDB;
-use Test::Most tests => 15;
+use Test::Most tests => 16;
 
 my $db = TestDB->new;
 
@@ -88,6 +88,25 @@ my $target = $db->resultset('Project')->create(
         owner_id    => 1,
     }
 );
+
+subtest can_import_properties => sub {
+    my $errors = [];
+    ok !$importer->can_import_properties( $target, [], $errors );
+    cmp_deeply $errors => [ re(qr/no property/i) ];
+
+    $errors = [];
+    ok !$importer->can_import_properties( $target, ['foobar'], $errors );
+    cmp_deeply $errors => [ re(qr/( not .+ valid | invalid ) .+ property .+ foobar/ix) ];
+
+    $errors = [];
+    ok !$importer->can_import_properties( $source, ['units'], $errors );
+    cmp_deeply $errors => [ re(qr/ property .+ ( can't .+ import | unimportable ) .+ units/ix) ];
+
+    $errors = [];
+    ok $importer->can_import_properties( $target, [ 'quantities', 'units' ], $errors );
+    cmp_deeply $errors => []
+      or note explain $errors;
+};
 
 subtest "[un]importable_properties" => sub {
     my @source_importable = map { $_->{key} } $importer->importable_properties($source);

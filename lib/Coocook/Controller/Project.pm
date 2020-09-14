@@ -237,8 +237,11 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
     my @properties =
       grep { my $key = $_->{key}; $c->req->params->get("property_$key") } @{ $importer->properties };
 
-    if ( @properties == 0 ) {
-        $c->messages->error("No property selected");
+    my $ok =
+      $importer->can_import_properties( $target, [ map { $_->{key} } @properties ], \my @errors );
+
+    if ( not $ok ) {
+        $c->messages->error($_) for @errors;
         $c->redirect_detach( $c->project_uri( $c->action ) );
     }
 
