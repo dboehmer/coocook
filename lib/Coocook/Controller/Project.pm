@@ -197,15 +197,23 @@ sub exportable_projects : Private {
           $c->project->other_projects->all ];
 }
 
-sub get_import : GET HEAD Chained('base') PathPart('import') Args(0)
+sub get_import : GET HEAD Chained('base') PathPart('import') Args(0) Does('~HasCSS') Does('~HasJS')
   RequiresCapability('import_into_project') {    # import() already used by 'use'
     my ( $self, $c ) = @_;
 
     my $importer = $c->model('ProjectImporter');
 
+    my $inventory  = $c->project->inventory;
+    my $properties = $importer->properties;
+    my %properties = map { $_->{key} => $_ } @$properties;
+
+    for my $property ( $importer->unimportable_properties( $c->project ) ) {
+        $properties{ $property->{key} }->{disabled} = 1;
+    }
+
     $c->stash(
         projects        => $c->forward('exportable_projects'),
-        properties      => $importer->properties,
+        properties      => $properties,
         properties_json => $importer->properties_json,
         import_url      => $c->project_uri('/project/post_import'),
         template        => 'project/import.tt',
@@ -227,9 +235,19 @@ sub post_import : POST Chained('base') PathPart('import') Args(0)
 
     # extract properties selected in form
     my @properties =
-      grep { $c->req->params->get("property_$_") } map { $_->{key} } @{ $importer->properties };
+      grep { my $key = $_->{key}; $c->req->params->get("property_$key") } @{ $importer->properties };
 
-    $importer->import_data( $source => $target, \@properties );
+    my $ok =
+      $importer->can_import_properties( $target, [ map { $_->{key} } @properties ], \my @errors );
+
+    if ( not $ok ) {
+        $c->messages->error($_) for @errors;
+        $c->redirect_detach( $c->project_uri( $c->action ) );
+    }
+
+    $importer->import_data( $source => $target, [ map { $_->{key} } @properties ] );
+
+    $c->messages->info( "Successfully imported " . join ", ", map { $_->{name} } @properties );
 
     $c->detach( redirect => [$target] );
 }

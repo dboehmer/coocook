@@ -46,6 +46,7 @@ requires "Net::SSLeay" => "0";
 requires "PerlX::Maybe" => "0";
 requires "SVG" => "0";
 requires "Scalar::Util" => "0";
+requires "Storable" => "0";
 requires "Template" => "2.29";
 requires "Template::Plugin::Filter" => "0";
 requires "Template::Plugin::Markdown" => "0";

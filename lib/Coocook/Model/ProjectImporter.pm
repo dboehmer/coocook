@@ -6,6 +6,7 @@ use Carp;
 use JSON::MaybeXS;    # also a dependency of Catalyst
 use Moose;
 use MooseX::NonMoose;
+use Storable qw(dclone);
 
 extends 'Catalyst::Model';
 
@@ -61,9 +62,10 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         ],
     },
     {
-        key    => 'tags',
-        name   => "Tags and Tag Groups",
-        import => [
+        key       => 'tags',
+        name      => "Tags and Tag Groups",
+        conflicts => [ 'tags', 'tag_groups' ],
+        import    => [
             sub { shift->tag_groups },
             sub { shift->tags, { project_id => 'projects', tag_group_id => 'tag_groups' } },
         ],
@@ -91,6 +93,9 @@ my %internal_properties = map { $_->{key} => $_ } @internal_properties;
 for my $property (@internal_properties) {
     $property->{name} xor $property->{auto}
       or die "Property $property->{name} can have only 'name' xor 'auto'";
+
+    $property->{auto}
+      or $property->{conflicts} ||= [ $property->{key} ];
 
     $property->{$_} ||= [] for qw< depends_on dependency_of soft_depends_on soft_dependency_of >;
 
@@ -120,7 +125,7 @@ for my $property (@public_properties) {
 }
 
 sub properties {
-    return \@public_properties;
+    return dclone \@public_properties;
 }
 
 my $json;
@@ -129,10 +134,115 @@ sub properties_json {
     return $json ||= encode_json( \@public_properties );
 }
 
+=head2 importable_properties($project, \@properties?)
+
+=head2 unimportable_properties($project, \@properties?)
+
+Returns a list of property hashrefs of all properties that may [not] be imported
+into $project because it has no conflicting data.
+
+Properties depending on properties that already have data are also not
+importable.
+
+=cut
+
+sub importable_properties   { shift->_importable_properties( 1,  @_ ) }
+sub unimportable_properties { shift->_importable_properties( '', @_ ) }
+
+sub _importable_properties {
+    my ( $self, $shall_be_importable, $project, $properties ) = @_;
+
+    my $inventory = $project->inventory;    # TODO use cached and/or provide for caching
+
+    my %unimportable;
+
+    # begin with all properties with existing data
+  PROPERTY: for my $property ( values %public_properties ) {
+        for my $conflict ( @{ $property->{conflicts} } ) {
+            if ( $inventory->{$conflict} > 0 ) {
+                $unimportable{ $property->{key} } = 1;
+
+                next PROPERTY;
+            }
+        }
+    }
+
+    my @stack = @public_properties{ keys %unimportable };
+
+    # walk dependency tree and mark all depending properties as unimportable
+    while ( my $property = shift @stack ) {
+        $unimportable{ $property->{key} } = 1;    # TODO done twice for initial @stack
+
+        my $depending = $property->{dependency_of};
+
+        # push those to stack which are not yet indexed
+        push @stack, map { $public_properties{$_} || die } grep { not $unimportable{$_} } @$depending;
+    }
+
+    my @to_report = $properties ? @public_properties{@$properties} : values %public_properties;
+
+    return grep { !$unimportable{ $_->{key} } eq $shall_be_importable } @to_report;
+}
+
+=head2 can_import_properties( $project, \@properties, \@errors?)
+
+Checks that C<@$properties> contains a valid set of properties to import.
+Stores relevant error messages in C<@$errors> if given.
+
+=over 4
+
+=item * C<@$properties> must not be empty
+
+=item * each property must be a valid property name
+
+=item * all properties must be importable (see C<importable_properties()>)
+
+=back
+
+=cut
+
+sub can_import_properties {
+    my ( $self, $project, $properties, $errors ) = @_;
+
+    $errors ||= [];
+
+    if ( @$properties == 0 ) {
+        push @$errors, "No property selected";
+        return '';
+    }
+
+    my %importable_properties = map { $_->{key} => 1 } $self->importable_properties($project);
+
+    for my $property (@$properties) {
+        if ( not exists $public_properties{$property} ) {
+            push @$errors, "Not a valid property: '$property'";
+            next;
+        }
+
+        if ( not $importable_properties{$property} ) {
+            push @$errors, "Property can't be imported into project: $property";
+        }
+    }
+
+    return ( @$errors == 0 );
+}
+
 sub import_data {    # import() is used by 'use'
     my ( $self, $source => $target, $properties ) = @_;
 
+    @_ == 4 or croak "import_data() needs 4 arguments";
+
+    $source->id != $target->id
+      or croak "source and target project can't be the same";
+
     $self->_validate_properties($properties);
+
+    {
+        my @unimportable = map { $_->{key} } $self->unimportable_properties( $target, $properties );
+
+        @unimportable == 0
+          or croak "Cannot import properties because data already exists: " . join ",", @unimportable;
+    }
 
     # simple set
     my %requested_props = map { $_ => 1 } @$properties;

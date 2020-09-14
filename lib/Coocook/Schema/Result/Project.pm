@@ -165,6 +165,7 @@ sub inventory {
                 recipes        => $self_rs->search_related('recipes')->count_rs->as_query,
                 shop_sections  => $self_rs->search_related('shop_sections')->count_rs->as_query,
                 tags           => $self_rs->search_related('tags')->count_rs->as_query,
+                tag_groups     => $self_rs->search_related('tag_groups')->count_rs->as_query,
                 units          => $self_rs->search_related('units')->count_rs->as_query,
                 unassigned_items =>
                   $self_rs->search_related('meals')->search_related('dishes')->search_related('ingredients')
