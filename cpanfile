@@ -69,6 +69,7 @@ on 'test' => sub {
   requires "DBICx::TestDatabase" => "0";
   requires "DBIx::Class::Schema" => "0";
   requires "DBIx::Class::Schema::Loader" => "0";
+  requires "DBIx::Diff::Schema" => "0";
   requires "DateTime::Format::SQLite" => "0";
   requires "Email::Sender::Simple" => "0";
   requires "ExtUtils::MakeMaker" => "0";
