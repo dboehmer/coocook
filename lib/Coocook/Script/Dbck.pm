@@ -48,6 +48,11 @@ sub check_schema {
           $live_schema->storage->dbh->table_info( undef, undef, $table_name, $table_type )
           ->fetchrow_hashref;
 
+        if ( not $live_table ) {
+            warn "Table missing: '$table_name'\n";
+            next;
+        }
+
         my $code_sql = $table->{sqlite_sql};
         my $live_sql = $live_table->{sqlite_sql};
 
