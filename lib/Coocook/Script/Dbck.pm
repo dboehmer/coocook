@@ -111,8 +111,8 @@ sub check_rows {
             undef,
             {
                 columns => {
-                    ( map { $_              => $_ } @pk_cols ),                # e.g. id             => id
-                    ( map { $_ . '_project' => $_ . '.project' } @tables ),    # e.g. recipe_project => recipe.project
+                    ( map { $_              => $_ } @pk_cols ),                   # id             => id
+                    ( map { $_ . '_project' => $_ . '.project_id' } @tables ),    # recipe_project => recipe.project_id
                 },
                 join => [ grep { $_ ne 'me' } @$joins ],
             }
