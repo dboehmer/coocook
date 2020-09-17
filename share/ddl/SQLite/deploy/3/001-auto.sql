@@ -190,7 +190,7 @@ CREATE INDEX dishes_tags_idx_tag ON dishes_tags (tag);
 --
 CREATE TABLE recipe_ingredients (
   id INTEGER PRIMARY KEY NOT NULL,
-  order int NOT NULL DEFAULT 1,
+  "order" int NOT NULL DEFAULT 1,
   recipe int NOT NULL,
   prepare bool NOT NULL,
   article int NOT NULL,
@@ -233,7 +233,7 @@ CREATE UNIQUE INDEX items_purchase_list_article_unit ON items (purchase_list, ar
 --
 CREATE TABLE dish_ingredients (
   id INTEGER PRIMARY KEY NOT NULL,
-  order int NOT NULL DEFAULT 1,
+  "order" int NOT NULL DEFAULT 1,
   dish int NOT NULL,
   prepare bool NOT NULL,
   article int NOT NULL,

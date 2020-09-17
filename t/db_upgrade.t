@@ -20,30 +20,24 @@ use TestDB;
 # will be fixed with upgrade to version 13. Luckily
 # we are pretty sure there are no installations
 # older than version 13.
-my $FIRST_TESTED_VERSION = 13;
+my %SCHEMA_VERSIONS_WITH_DIFFERENCES = map { $_ => 1 } ( 3 .. 5, 7 .. 12 );
 
-plan tests => ( $Coocook::Schema::VERSION - $FIRST_TESTED_VERSION + 1 ) * 4 + 2;
+plan tests => 1 + 3 * ( $Coocook::Schema::VERSION - 1 ) + 2;
 
 my $schema_from_code = TestDB->new();
 my $schema_from_deploy;
-my $schema_from_upgrades;
+my $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
 
-for my $version ( $FIRST_TESTED_VERSION .. $Coocook::Schema::VERSION ) {
-    $schema_from_deploy   = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
-    $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+install_ok( $schema_from_upgrades, 1 );
 
-    {
-        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_deploy );
+for my $version ( 2 .. $Coocook::Schema::VERSION ) {
+    $schema_from_deploy = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+    install_ok( $schema_from_deploy, $version );
 
-        install_ok( $app->_dh, $version );
-    }
+    upgrade_ok( $schema_from_upgrades, $version );
 
-    {
-        my $app = Coocook::Script::Deploy->new( _schema => $schema_from_upgrades );
-
-        install_ok( $app->_dh, 1 );
-        upgrade_ok( $app->_dh, $version );
-    }
+    $SCHEMA_VERSIONS_WITH_DIFFERENCES{$version}
+      and local $TODO = "Upgrade SQL files are known to be broken";
 
     schema_eq(
         $schema_from_upgrades => $schema_from_deploy,
@@ -62,7 +56,9 @@ schema_eq(
 );
 
 sub install_ok {
-    my ( $dh, $version, $name ) = @_;
+    my ( $schema, $version, $name ) = @_;
+
+    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -73,7 +69,9 @@ sub install_ok {
 }
 
 sub upgrade_ok {
-    my ( $dh, $version, $name ) = @_;
+    my ( $schema, $version, $name ) = @_;
+
+    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
