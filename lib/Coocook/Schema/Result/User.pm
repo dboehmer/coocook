@@ -12,17 +12,21 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('users');
 
 __PACKAGE__->add_columns(
-    id             => { data_type => 'int', is_auto_increment => 1 },
+    id             => { data_type => 'integer', is_auto_increment => 1 },
     name           => { data_type => 'text' },
-    name_fc        => { data_type => 'text' },                          # fold cased
+    name_fc        => { data_type => 'text' },                              # fold cased
     password_hash  => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
     email_fc       => { data_type => 'text' },
-    email_verified => { data_type => 'datetime', is_nullable => 1 },
-    token_hash     => { data_type => 'text',     is_nullable => 1 },
-    token_expires  => { data_type => 'datetime', is_nullable => 1 },
-    created => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
+    email_verified => { data_type => 'timestamp without time zone', is_nullable => 1 },
+    token_hash     => { data_type => 'text',                        is_nullable => 1 },
+    token_expires  => { data_type => 'timestamp without time zone', is_nullable => 1 },
+    created        => {
+        data_type     => 'timestamp without time zone',
+        default_value => \'CURRENT_TIMESTAMP',
+        set_on_create => 1,
+    },
 );
 
 __PACKAGE__->set_primary_key('id');

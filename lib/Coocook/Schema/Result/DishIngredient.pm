@@ -10,15 +10,15 @@ __PACKAGE__->load_components(qw< +Coocook::Schema::Component::Result::Convertibl
 __PACKAGE__->table('dish_ingredients');
 
 __PACKAGE__->add_columns(
-    id         => { data_type => 'int', is_auto_increment => 1 },
-    position   => { data_type => 'int', default_value     => 1 },
-    dish_id    => { data_type => 'int' },
-    prepare    => { data_type => 'bool' },
-    article_id => { data_type => 'int' },
-    unit_id    => { data_type => 'int' },
+    id         => { data_type => 'integer', is_auto_increment => 1 },
+    position   => { data_type => 'integer', default_value     => 1 },
+    dish_id    => { data_type => 'integer' },
+    prepare    => { data_type => 'boolean' },
+    article_id => { data_type => 'integer' },
+    unit_id    => { data_type => 'integer' },
     value      => { data_type => 'real' },
     comment    => { data_type => 'text' },
-    item_id    => { data_type => 'int', is_nullable => 1 },    # from purchase list
+    item_id    => { data_type => 'integer', is_nullable => 1 },    # from purchase list
 );
 
 __PACKAGE__->set_primary_key('id');

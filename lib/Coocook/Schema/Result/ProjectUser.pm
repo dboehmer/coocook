@@ -8,8 +8,8 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table("projects_users");
 
 __PACKAGE__->add_columns(
-    project_id => { data_type => 'int' },
-    user_id    => { data_type => 'int' },
+    project_id => { data_type => 'integer' },
+    user_id    => { data_type => 'integer' },
     role       => { data_type => 'text' },
 );
 

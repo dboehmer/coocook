@@ -12,14 +12,18 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('organizations');
 
 __PACKAGE__->add_columns(
-    id             => { data_type => 'int', is_auto_increment => 1 },
+    id             => { data_type => 'integer', is_auto_increment => 1 },
     name           => { data_type => 'text' },
-    name_fc        => { data_type => 'text' },                          # fold cased
-    owner_id       => { data_type => 'int' },
+    name_fc        => { data_type => 'text' },                              # fold cased
+    owner_id       => { data_type => 'integer' },
     description_md => { data_type => 'text' },
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
-    created => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
+    created        => {
+        data_type     => 'timestamp without time zone',
+        default_value => \'CURRENT_TIMESTAMP',
+        set_on_create => 1,
+    },
 );
 
 __PACKAGE__->set_primary_key('id');
