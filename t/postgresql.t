@@ -49,36 +49,29 @@ ok $dh_app->_dh->install(), "deploy with DeploymentHandler->install()";
             'main.dbix_class_deploymenthandler_versions',    # not created by DBIC
         ],
         modified_tables => {
-            map ( { 'main.' . $_ => { modified_columns => superhashof {} } }
-                qw<
+            map ( {
+                    (    # SQLite PKs are deployed with uppercase 'id INTEGER PRIMARY KEY'
+                        'main.' . $_ => { modified_columns => { id => { old_type => 'integer', new_type => 'INTEGER' } } }
+                    )
+                } qw<
                   articles
-                  articles_tags
-                  articles_units
                   blacklist_emails
                   blacklist_usernames
                   dishes
-                  dishes_tags
                   dish_ingredients
                   faqs
                   items
                   meals
                   organizations
-                  organizations_projects
-                  organizations_users
                   projects
-                  projects_users
                   purchase_lists
                   quantities
                   recipe_ingredients
                   recipes
-                  recipes_tags
-                  roles_users
-                  sessions
                   shop_sections
                   tag_groups
                   tags
                   terms
-                  terms_users
                   units
                   users
                   > ),
