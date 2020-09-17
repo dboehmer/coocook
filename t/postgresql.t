@@ -10,41 +10,43 @@ use Test::Deep;
 use Test::Most;
 
 use lib 't/lib';
-use TestDB;
+use TestDB qw(install_ok upgrade_ok);
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-my $dbic_pg = Test::PostgreSQL->new();
-ok my $dbic_schema = Coocook::Schema->connect( $dbic_pg->dsn );
-lives_ok { $dbic_schema->deploy() } "deploy with DBIx::Class";
+plan tests => 5 + 4 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 1;
 
-my $dh_pg = Test::PostgreSQL->new();
-ok my $dh_schema = Coocook::Schema->connect( $dh_pg->dsn );
-my $dh_app = Coocook::Script::Deploy->new( _schema => $dh_schema );
-ok $dh_app->_dh->install(), "deploy with DeploymentHandler->install()";
+my $pg_dbic = Test::PostgreSQL->new();
+ok my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
+lives_ok { $schema_from_dbic->deploy() } "deploy with DBIx::Class";
 
-{    # TODO doesn't detect constraint changes, e.g. missing UNIQUEs
-    my $diff = diff_db_schema( map { $_->storage->dbh } $dbic_schema, $dh_schema );
-    is_deeply $diff => {
-        added_tables => [
-            'public.dbix_class_deploymenthandler_versions',    # not created by DBIC
-        ],
-      },
-      "database schemas equal"
-      or diag explain $diff;
+my $pg_deploy = Test::PostgreSQL->new();
+ok my $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
+
+my $pg_upgrades = Test::PostgreSQL->new();
+ok my $schema_from_upgrades = Coocook::Schema->connect( $pg_upgrades->dsn );
+install_ok( $schema_from_upgrades, $FIRST_PGSQL_SCHEMA_VERSION );
+
+for my $version ( $FIRST_PGSQL_SCHEMA_VERSION + 1 .. $Coocook::Schema::VERSION ) {
+    $pg_deploy = Test::PostgreSQL->new();
+    ok $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
+    install_ok( $schema_from_deploy, $version );
+
+    upgrade_ok( $schema_from_upgrades, $version );
+
+    schema_diff_like( $schema_from_upgrades, $schema_from_deploy, {},
+        "schema version $version from upgrade SQLs and schema from deploy SQL are equal" );
 }
 
-# TODO test upgrades
+my $sqlite_schema = TestDB->new();
 
-{
-    my $sqlite_schema = TestDB->new();
+# rename Pgsql schema to match SQLite schema name 'main'
+$schema_from_deploy->storage->dbh_do( sub { $_[1]->do('ALTER SCHEMA public RENAME TO main') } );
 
-    # rename Pgsql schema to match SQLite schema name 'main'
-    $dh_schema->storage->dbh_do( sub { $_[1]->do('ALTER SCHEMA public RENAME TO main') } );
-
-    # TODO doesn't detect constraint changes, e.g. missing UNIQUEs
-    my $diff = diff_db_schema( map { $_->storage->dbh } $dh_schema, $sqlite_schema );
-    cmp_deeply $diff => {
+schema_diff_like(
+    $schema_from_deploy,
+    $sqlite_schema,
+    {
         deleted_tables => [
             'main.dbix_class_deploymenthandler_versions',    # not created by DBIC
         ],
@@ -83,9 +85,16 @@ ok $dh_app->_dh->install(), "deploy with DeploymentHandler->install()";
               recipe_ingredients
               >
         },
-      },
-      "database schemas equal"
+    }
+);
+
+sub schema_diff_like {
+    my ( $schema1, $schema2, $expected_diff, $name ) = @_;
+
+    # TODO doesn't detect constraint changes, e.g. missing UNIQUEs
+    my $diff = diff_db_schema( map { $_->storage->dbh } $schema1, $schema2 );
+
+    cmp_deeply $diff => $expected_diff,
+      $name // "database schemas equal"
       or diag explain $diff;
 }
-
-done_testing;
