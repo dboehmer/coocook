@@ -11,17 +11,17 @@ use Test::Most;
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-my $pg_dbic = Test::PostgreSQL->new();
-ok my $schema_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
-lives_ok { $schema_dbic->deploy() } "deploy with DBIC";
+my $dbic_pg = Test::PostgreSQL->new();
+ok my $dbic_schema = Coocook::Schema->connect( $dbic_pg->dsn );
+lives_ok { $dbic_schema->deploy() } "deploy with DBIx::Class";
 
-my $pg_deploy = Test::PostgreSQL->new();
-ok my $schema_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
-my $app_deploy = Coocook::Script::Deploy->new( _schema => $schema_deploy );
-ok $app_deploy->_dh->install(), "deploy with DeploymentHandler->install()";
+my $dh_pg = Test::PostgreSQL->new();
+ok my $dh_schema = Coocook::Schema->connect( $dh_pg->dsn );
+my $dh_app = Coocook::Script::Deploy->new( _schema => $dh_schema );
+ok $dh_app->_dh->install(), "deploy with DeploymentHandler->install()";
 
 # TODO doesn't detect constraint changes, e.g. missing UNIQUEs
-my $diff = diff_db_schema( map { $_->storage->dbh } $schema_dbic, $schema_deploy );
+my $diff = diff_db_schema( map { $_->storage->dbh } $dbic_schema, $dh_schema );
 is_deeply $diff => {
     'added_tables' => [
         'public.dbix_class_deploymenthandler_versions',    # not created by DBIC
