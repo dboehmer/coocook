@@ -5,6 +5,18 @@ use warnings;
 
 use parent 'DBICx::TestDatabase';
 
+use Coocook::Script::Deploy;
+use Sub::Exporter -setup => { exports => [qw(install_ok upgrade_ok)] };
+use Test::Most;
+
+=head2 CLASS METHODS
+
+=head1 new(...)
+
+Like L<DBICx::TestDatabase> but initializes database with C<share/test_data.sql>.
+
+=cut
+
 sub new {
     my $class = shift;
 
@@ -48,6 +60,42 @@ sub new {
     close $fh;
 
     return $schema;
+}
+
+=head1 PACKAGE FUNCTIONS
+
+=head2 install_ok( $schema, $version?, $name? )
+
+=cut
+
+sub install_ok {
+    my ( $schema, $version, $name ) = @_;
+
+    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    $version
+      and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
+
+    ok $dh->install(), $name || "install version " . $dh->to_version;
+}
+
+=head2 upgrade_ok( $schema, $version?, $name? )
+
+=cut
+
+sub upgrade_ok {
+    my ( $schema, $version, $name ) = @_;
+
+    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    $version
+      and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
+
+    ok $dh->upgrade(), $name || "upgrade to version " . $dh->to_version;
 }
 
 1;
