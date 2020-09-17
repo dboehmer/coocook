@@ -28,7 +28,7 @@ CREATE TABLE blacklist_emails (
 );
 
 ;
-CREATE UNIQUE INDEX blacklist_emails_email_fc02 ON blacklist_emails (email_fc);
+CREATE UNIQUE INDEX blacklist_emails_email_fc ON blacklist_emails (email_fc);
 
 ;
 INSERT INTO blacklist_emails SELECT id, email_fc, email_type, comment, created FROM blacklist_emails_temp_alter;
@@ -61,7 +61,7 @@ CREATE TABLE blacklist_usernames (
 );
 
 ;
-CREATE UNIQUE INDEX blacklist_usernames_usernam00 ON blacklist_usernames (username_fc);
+CREATE UNIQUE INDEX blacklist_usernames_username_fc ON blacklist_usernames (username_fc);
 
 ;
 INSERT INTO blacklist_usernames SELECT id, username_fc, username_type, comment, created FROM blacklist_usernames_temp_alter;
@@ -112,19 +112,19 @@ CREATE TABLE dish_ingredients (
 );
 
 ;
-CREATE INDEX dish_ingredients_idx_articl00 ON dish_ingredients (article_id);
+CREATE INDEX dish_ingredients_idx_article_id ON dish_ingredients (article_id);
 
 ;
-CREATE INDEX dish_ingredients_idx_articl00 ON dish_ingredients (article_id, unit_id);
+CREATE INDEX dish_ingredients_idx_article_id_unit_id ON dish_ingredients (article_id, unit_id);
 
 ;
-CREATE INDEX dish_ingredients_idx_dish_id02 ON dish_ingredients (dish_id);
+CREATE INDEX dish_ingredients_idx_dish_id ON dish_ingredients (dish_id);
 
 ;
-CREATE INDEX dish_ingredients_idx_item_id02 ON dish_ingredients (item_id);
+CREATE INDEX dish_ingredients_idx_item_id ON dish_ingredients (item_id);
 
 ;
-CREATE INDEX dish_ingredients_idx_unit_id02 ON dish_ingredients (unit_id);
+CREATE INDEX dish_ingredients_idx_unit_id ON dish_ingredients (unit_id);
 
 ;
 INSERT INTO dish_ingredients SELECT id, position, dish_id, prepare, article_id, unit_id, value, comment, item_id FROM dish_ingredients_temp_alter;
@@ -171,19 +171,19 @@ CREATE TABLE items (
 );
 
 ;
-CREATE INDEX items_idx_article_id02 ON items (article_id);
+CREATE INDEX items_idx_article_id ON items (article_id);
 
 ;
-CREATE INDEX items_idx_article_id_unit_id02 ON items (article_id, unit_id);
+CREATE INDEX items_idx_article_id_unit_id ON items (article_id, unit_id);
 
 ;
-CREATE INDEX items_idx_purchase_list_id02 ON items (purchase_list_id);
+CREATE INDEX items_idx_purchase_list_id ON items (purchase_list_id);
 
 ;
-CREATE INDEX items_idx_unit_id02 ON items (unit_id);
+CREATE INDEX items_idx_unit_id ON items (unit_id);
 
 ;
-CREATE UNIQUE INDEX items_purchase_list_id_arti00 ON items (purchase_list_id, article_id, unit_id);
+CREATE UNIQUE INDEX items_purchase_list_id_article_id_unit_id ON items (purchase_list_id, article_id, unit_id);
 
 ;
 INSERT INTO items SELECT id, purchase_list_id, value, offset, unit_id, article_id, purchased, comment FROM items_temp_alter;
@@ -224,13 +224,13 @@ CREATE TABLE organizations (
 );
 
 ;
-CREATE INDEX organizations_idx_owner_id02 ON organizations (owner_id);
+CREATE INDEX organizations_idx_owner_id ON organizations (owner_id);
 
 ;
-CREATE UNIQUE INDEX organizations_name02 ON organizations (name);
+CREATE UNIQUE INDEX organizations_name ON organizations (name);
 
 ;
-CREATE UNIQUE INDEX organizations_name_fc02 ON organizations (name_fc);
+CREATE UNIQUE INDEX organizations_name_fc ON organizations (name_fc);
 
 ;
 INSERT INTO organizations SELECT id, name, name_fc, owner_id, description_md, display_name, admin_comment, created FROM organizations_temp_alter;
@@ -273,16 +273,16 @@ CREATE TABLE projects (
 );
 
 ;
-CREATE INDEX projects_idx_owner_id02 ON projects (owner_id);
+CREATE INDEX projects_idx_owner_id ON projects (owner_id);
 
 ;
-CREATE UNIQUE INDEX projects_name02 ON projects (name);
+CREATE UNIQUE INDEX projects_name ON projects (name);
 
 ;
-CREATE UNIQUE INDEX projects_url_name02 ON projects (url_name);
+CREATE UNIQUE INDEX projects_url_name ON projects (url_name);
 
 ;
-CREATE UNIQUE INDEX projects_url_name_fc02 ON projects (url_name_fc);
+CREATE UNIQUE INDEX projects_url_name_fc ON projects (url_name_fc);
 
 ;
 INSERT INTO projects SELECT id, name, url_name, url_name_fc, description, is_public, owner_id, created, archived FROM projects_temp_alter;
@@ -329,16 +329,16 @@ CREATE TABLE recipe_ingredients (
 );
 
 ;
-CREATE INDEX recipe_ingredients_idx_arti00 ON recipe_ingredients (article_id);
+CREATE INDEX recipe_ingredients_idx_article_id ON recipe_ingredients (article_id);
 
 ;
-CREATE INDEX recipe_ingredients_idx_arti00 ON recipe_ingredients (article_id, unit_id);
+CREATE INDEX recipe_ingredients_idx_article_id_unit_id ON recipe_ingredients (article_id, unit_id);
 
 ;
-CREATE INDEX recipe_ingredients_idx_reci00 ON recipe_ingredients (recipe_id);
+CREATE INDEX recipe_ingredients_idx_recipe_id ON recipe_ingredients (recipe_id);
 
 ;
-CREATE INDEX recipe_ingredients_idx_unit00 ON recipe_ingredients (unit_id);
+CREATE INDEX recipe_ingredients_idx_unit_id ON recipe_ingredients (unit_id);
 
 ;
 INSERT INTO recipe_ingredients SELECT id, position, recipe_id, prepare, article_id, unit_id, value, comment FROM recipe_ingredients_temp_alter;
@@ -373,10 +373,10 @@ CREATE TABLE terms_users (
 );
 
 ;
-CREATE INDEX terms_users_idx_terms_id02 ON terms_users (terms_id);
+CREATE INDEX terms_users_idx_terms_id ON terms_users (terms_id);
 
 ;
-CREATE INDEX terms_users_idx_user_id02 ON terms_users (user_id);
+CREATE INDEX terms_users_idx_user_id ON terms_users (user_id);
 
 ;
 INSERT INTO terms_users SELECT terms_id, user_id, approved FROM terms_users_temp_alter;
@@ -417,13 +417,13 @@ CREATE TABLE units (
 );
 
 ;
-CREATE INDEX units_idx_project_id02 ON units (project_id);
+CREATE INDEX units_idx_project_id ON units (project_id);
 
 ;
-CREATE INDEX units_idx_quantity_id02 ON units (quantity_id);
+CREATE INDEX units_idx_quantity_id ON units (quantity_id);
 
 ;
-CREATE UNIQUE INDEX units_project_id_long_name02 ON units (project_id, long_name);
+CREATE UNIQUE INDEX units_project_id_long_name ON units (project_id, long_name);
 
 ;
 INSERT INTO units SELECT id, project_id, quantity_id, to_quantity_default, space, short_name, long_name FROM units_temp_alter;
@@ -468,19 +468,19 @@ CREATE TABLE users (
 );
 
 ;
-CREATE UNIQUE INDEX users_email_fc02 ON users (email_fc);
+CREATE UNIQUE INDEX users_email_fc ON users (email_fc);
 
 ;
-CREATE UNIQUE INDEX users_name02 ON users (name);
+CREATE UNIQUE INDEX users_name ON users (name);
 
 ;
-CREATE UNIQUE INDEX users_name_fc02 ON users (name_fc);
+CREATE UNIQUE INDEX users_name_fc ON users (name_fc);
 
 ;
-CREATE UNIQUE INDEX users_password_hash02 ON users (password_hash);
+CREATE UNIQUE INDEX users_password_hash ON users (password_hash);
 
 ;
-CREATE UNIQUE INDEX users_token_hash02 ON users (token_hash);
+CREATE UNIQUE INDEX users_token_hash ON users (token_hash);
 
 ;
 INSERT INTO users SELECT id, name, name_fc, password_hash, display_name, admin_comment, email_fc, email_verified, token_hash, token_expires, created FROM users_temp_alter;
