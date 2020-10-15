@@ -17,9 +17,9 @@ sub index : GET HEAD Chained('/project/submenu') PathPart('permissions') Args(0)
 
         while ( my $organization_project = $organizations_projects->next ) {
             push @permissions, {
-                role         => $organization_project->role,
-                sort_key     => $organization_project->organization->name_fc,
-                organization => $organization_project->organization,
+                role             => $organization_project->role,
+                sort_key         => $organization_project->organization->name_fc,
+                organization     => $organization_project->organization,
                 organization_url =>
                   $c->uri_for_action( '/organization/show', [ $organization_project->organization->name ] ),
 

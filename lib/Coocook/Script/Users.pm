@@ -34,8 +34,8 @@ has discard => (
 );
 
 has email_verified => (
-    is  => 'rw',
-    isa => 'Str',
+    is            => 'rw',
+    isa           => 'Str',
     documentation =>
       "select users with e-mail address verified (1) or not verified (0), default any ('')",
 );

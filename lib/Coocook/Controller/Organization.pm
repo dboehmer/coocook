@@ -105,7 +105,7 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     $c->stash(
         organizations_users    => \@organizations_users,
         organizations_projects => \@organizations_projects,
-        update_url =>
+        update_url             =>
           $c->uri_for_action_if_permitted( $self->action_for('update'), [ $organization->name ] ),
         members_url =>
           $c->uri_for_action_if_permitted( '/organization/member/index', [ $organization->name ] ),

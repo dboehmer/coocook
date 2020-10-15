@@ -33,7 +33,7 @@ my @internal_properties = (    # array of hashrefs with key 'key' instead of has
         key             => 'articles',
         name            => "Articles",
         soft_depends_on => ['shop_sections'],
-        import =>
+        import          =>
           sub { shift->articles, { project_id => 'projects', shop_section_id => 'shop_sections?' } },
     },
     {

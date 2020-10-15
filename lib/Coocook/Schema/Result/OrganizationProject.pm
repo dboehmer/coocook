@@ -29,7 +29,7 @@ __PACKAGE__->has_many(
         my $args = shift;
 
         return {
-            "$args->{foreign_alias}.project_id" => { -ident => "$args->{self_alias}.project_id" },
+            "$args->{foreign_alias}.project_id"      => { -ident => "$args->{self_alias}.project_id" },
             "$args->{foreign_alias}.organization_id" =>
               { '!=' => { -ident => "$args->{self_alias}.organization_id" } },
         };
