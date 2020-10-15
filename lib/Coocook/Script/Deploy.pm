@@ -14,6 +14,18 @@ use MooseX::MarkAsMethods autoclean => 1;
 # at .../site_perl/5.26.0/Context/Preserve.pm line 43.
 use lib '.';
 
+{    # workaround to let Producer::SQLite NOT mangle index names
+    use SQL::Translator::Producer::SQLite;
+    no warnings 'redefine';
+    my $orig = \&SQL::Translator::Producer::SQLite::mk_name;
+    *SQL::Translator::Producer::SQLite::mk_name = sub {
+        my ($name) = @_;
+        my $ret = $orig->(@_);
+        $ret eq $name or $ret eq qq("$name") or warn "mk_name(@_) => $ret";
+        return $name;
+    };
+}
+
 extends 'App::DH';
 
 has '+schema' => ( default => 'Coocook::Schema' );

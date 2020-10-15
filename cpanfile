@@ -44,6 +44,7 @@ requires "MooseX::MarkAsMethods" => "0";
 requires "MooseX::NonMoose" => "0";
 requires "Net::SSLeay" => "0";
 requires "PerlX::Maybe" => "0";
+requires "SQL::Translator::Producer::SQLite" => "0";
 requires "SVG" => "0";
 requires "Scalar::Util" => "0";
 requires "Storable" => "0";
