@@ -72,7 +72,7 @@
 
 [% IF logout_url %]
 						<form class="inline pl-2" method="post" action="[% logout_url %]">
-							<button><i class="material-icons">exit_to_app</i> Sign out</button>
+							<button name="logout"><i class="material-icons">exit_to_app</i> Sign out</button>
 						</form>
 [% END %]
 
@@ -96,7 +96,7 @@
 						<div class="collapse navbar-collapse flex-column " id="navbar">
 							<ul class="navbar-nav justify-content-left p-0 m-0 w-100 bg-dark py-1 px-2" id="project_nav">
 								<span class="pl-4"></span>
-								<li class="nav-item"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
+								<li class="nav-item group-end"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
 
 [% IF project_urls %] 
 								<li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Project</a></li>

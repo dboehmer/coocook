@@ -246,7 +246,7 @@ sub login {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->follow_link_ok( { text => 'Sign in' } );
+    $self->follow_link_ok( { text => 'person Sign in' } );
 
     $self->submit_form_ok(
         {
@@ -309,7 +309,7 @@ sub change_password_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "change password", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'settings Settings' } );
 
         $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
     };
@@ -321,7 +321,7 @@ sub change_display_name_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "change display name", sub {
-        $self->follow_link_ok( { text => 'Settings' } );
+        $self->follow_link_ok( { text => 'settings Settings' } );
 
         $self->submit_form_ok(
             {
@@ -340,7 +340,7 @@ sub request_recovery_link_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "request recovery link for $email", sub {
-        $self->follow_link_ok( { text => 'Sign in' } );
+        $self->follow_link_ok( { text => 'person Sign in' } );
 
         $self->follow_link_ok( { text => 'Lost your password?' } );
 
