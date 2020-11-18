@@ -1,4 +1,4 @@
-FROM alpine:latest AS devel
+FROM alpine:latest AS dev
 MAINTAINER Mose Schmiedel <mose@schmiednet.de>
 
 RUN apk update && apk add \
