@@ -94,13 +94,9 @@
 
 
 						<div class="collapse navbar-collapse flex-column " id="navbar">
-							<ul class="navbar-nav justify-content-left p-0 m-0 w-100 bg-dark py-1 px-2">
+							<ul class="navbar-nav justify-content-left p-0 m-0 w-100 bg-dark py-1 px-2" id="project_nav">
 								<span class="pl-4"></span>
-[% IF dashboard_url %]
-								<li class="nav-item"><a class="nav-link [% font_color %]" href="[% dashboard_url %]">Start</a></li>
-[% ELSIF homepage_url %]
-								<li class="nav-item"><a class="nav-link [% font_color %]" href="[% homepage_url %]">Start</a></li>
-[% END %]
+								<li class="nav-item"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
 
 [% IF project_urls %] 
 								<li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Project</a></li>
@@ -113,7 +109,7 @@
 [% END %]					     
 							</ul>
 
-							<ul class="navbar-nav justify-content-left w-100 bg-header py-1 px-2">
+							<ul class="navbar-nav justify-content-left w-100 bg-header py-1 px-2" id="submenu_nav">
 								<span class="pl-4"></span>
 [% FOR item IN submenu_items;
 	IF item.url %]

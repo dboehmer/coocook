@@ -155,3 +155,7 @@ login logout header color
 .bg-header {
 background-color: #4CAF50;
 }
+
+/* re-add fieldset boxes, revert _reboot.css */
+fieldset { padding: revert; }
+legend   { width: revert; }
