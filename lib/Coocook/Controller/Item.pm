@@ -1,4 +1,4 @@
-package Coocook::Controller::Items;
+package Coocook::Controller::Item;
 
 use DateTime;
 use Moose;
@@ -99,6 +99,30 @@ sub convert : POST Chained('/project/base') PathPart('items/convert') Args(1)
       || $c->detach('/error/not_found');
 
     $item->convert($unit);
+
+    $c->response->redirect( $c->project_uri( '/purchase_list/edit', $item->purchase_list_id ) );
+}
+
+sub update_offset : POST Chained('/project/base') PathPart('items/update_offset') Args(1)
+  RequiresCapability('edit_project') {
+    my ( $self, $c, $item_id ) = @_;
+
+    my $item = $c->project->purchase_lists->search_related('items')->find($item_id)
+      || $c->detach('/error/not_found');
+
+    my $total  = $c->req->params->get('total');
+    my $offset = $c->req->params->get('offset');
+
+    ( defined $total xor defined $offset )
+      or $c->detach( '/error/bad_request', [] );
+
+    if ( defined $total ) {
+        $item->update( { offset => $total - $item->value } );
+    }
+    elsif ( defined $offset ) {
+        $item->update( { offset => $offset } );
+    }
+    else { die 'Code broken' }
 
     $c->response->redirect( $c->project_uri( '/purchase_list/edit', $item->purchase_list_id ) );
 }
