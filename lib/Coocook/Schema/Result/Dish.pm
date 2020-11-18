@@ -61,6 +61,10 @@ sub recalculate {
                 $ingredient->update( { value => $value2 } );
             }
 
+            for my $item ( $self->ingredients->search_related('item')->all ) {
+                $item->update_from_ingredients();
+            }
+
             $self->update( { servings => $servings2 } );
         }
     );
