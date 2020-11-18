@@ -20,10 +20,13 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
     [% FOREACH item IN section.items %]
     <tr>
         <td>
-            [% 'ca. ' IF item.offset;
-            display_value_unit(item.value + item.offset, item.unit, {print=>1}) %]
+            [% display_value_unit(item.value + item.offset, item.unit, {print=>1}) %]
         </td>
-        <td>[% item.article.name | html %]</td>
+        <td>[% item.article.name | html %]
+            [% IF    item.offset < 0; '&CircleMinus;';
+               ELSIF item.offset > 0; '&CirclePlus;';
+               END %]
+        </td>
         <td class="small-font"><ul>
         [% FOREACH ingredient IN item.ingredients %]
             <li>
@@ -34,6 +37,9 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
                 [% ingredient.dish.name | html %]
                 [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
             </li>
+        [% END %]
+        [% IF item.offset %]
+            <li>[% display_value_unit( item.offset, ingredient.unit, {print=>1, force_sign=>1} ) %] – <em>rounding difference</em>
         [% END %]
         </ul></td>
         <td>[% item.comment | html %]</td>
