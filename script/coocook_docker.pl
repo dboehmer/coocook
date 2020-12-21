@@ -6,6 +6,7 @@ use v5.30.0;
 use strict;
 use warnings;
 use utf8;
+use sigtrap qw/die normal-signals/;
 
 use Term::ANSIColor;
 use File::Basename;
@@ -94,13 +95,13 @@ else {
 sub deploy {
     my $flags = shift;
 
-    exec "$dir/coocook_deploy.pl " . $flags;
+    system "$dir/coocook_deploy.pl " . $flags;
 }
 
 sub server {
     my $flags = shift || '';
 
-    exec "$dir/coocook_server.pl " . $flags;
+    system "$dir/coocook_server.pl " . $flags;
 }
 
 sub error {
