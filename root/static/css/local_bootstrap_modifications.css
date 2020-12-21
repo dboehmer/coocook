@@ -7,10 +7,10 @@ BOOSTRAP LOCAL CUSTOMIZATION
 /*
 highlight fontcolor to white in case of navbar-light
 */
-.navbar-light .navbar-nav .active > .nav-link, 
-.navbar-light .navbar-nav .nav-link.active, 
-.navbar-light .navbar-nav .nav-link.show, 
-.navbar-light .navbar-nav .show > .nav-link {
+.navbar-light .navbar-nav .active > .nav-link,
+.navbar-light .navbar-nav           .nav-link.active,
+.navbar-light .navbar-nav           .nav-link.show,
+.navbar-light .navbar-nav .show   > .nav-link {
     color: rgba(220,220,220,1);
 }
 
@@ -20,13 +20,13 @@ redefined list -> non-indended
 */
 
 ul.non-intended {
-	margin-left:0px;
-	padding-left:17px;
+    margin-left:0px;
+    padding-left:17px;
 }
 
 
 /*
-reduce fon-size 
+reduce font-size
 */
 
 h1, .h1 {
@@ -73,11 +73,8 @@ input[type="number"] {
 align material icons vertical: https://stackoverflow.com/questions/56171473/different-material-icons-styles-do-not-align
 ===========================================================================*/
 i.material-icons, i.material-icons-outlined {
-  vertical-align: middle;
-  position: relative;
-/*
-  top: -1px;
-*/
+    vertical-align: middle;
+    position: relative;
 }
 .material-icons.md-36 { font-size: 36px; }
 
@@ -116,7 +113,7 @@ overwrite behavior of navbar-dark nav-links
   color: rgba(255, 255, 255, 0.99);
 }
 
-.navbar-dark .navbar-nav .nav-link:hover, 
+.navbar-dark .navbar-nav .nav-link:hover,
 .navbar-dark .navbar-nav .nav-link:focus {
   color: rgba(255, 255, 255, 0.75);
 }
@@ -125,14 +122,14 @@ overwrite behavior of navbar-dark nav-links
 /*===========================================================================
 login logout header color
 ===========================================================================*/
-.login_logout input[name="logout"], 
+.login_logout input[name="logout"],
 .login_logout button,
 .login_logout a {
-	background-color: rgba(255,255,255,0.0);
-	color: #333333;
-	border: 0px;
-	
-	-webkit-box-shadow: 0px 0px 0px rgba(255,255,255,0.0) !important;
+    background-color: rgba(255,255,255,0.0);
+    color: #333333;
+    border: 0px;
+
+    -webkit-box-shadow: 0px 0px 0px rgba(255,255,255,0.0) !important;
     -moz-box-shadow:    0px 0px 0px rgba(255,255,255,0.0) !important;
     box-shadow:         0px 0px 0px rgba(255,255,255,0.0) !important;
 }
@@ -153,5 +150,5 @@ login logout header color
 }
 
 .bg-header {
-background-color: #4CAF50;
+    background-color: #4CAF50;
 }
