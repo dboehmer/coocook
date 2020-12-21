@@ -56,8 +56,10 @@
 [% IF add_permission_url %]
 <p>You need another user with role <em>admin</em> to transfer ownership to them.</p>
 
-<fieldset>
-    <legend>Add permission</legend>
+<div class="card">
+    <div class="card-header"><h3>Add permission</h3></div>
+
+<div class="card-body">
 
 [% IF other_identities %]
     <form method="post" action="[% add_permission_url %]">
@@ -80,5 +82,5 @@
 [% ELSE %]
     <p>No more users/organizations. You need to let users sign up or create organizations before giving them permission.</p>
 [% END %]
-</fieldset>
+</div>
 [% END %]

@@ -1,38 +1,74 @@
-<form action="[% add_ingredient_url %]" method="post">
-<fieldset>
-    <legend>Add ingredient</legend>
-    <p>
-        Article:
-        <select name="article">
-[% FOR article IN articles;
-    IF article.units AND article.units.size > 0 %]
-            <option value="[% article.id %]" data-units="[% article.unit_ids_joined %]">[% article.name | html %]</option>
-    [% ELSE %]
-            <option disabled>[% article.name | html %] (no units)</option>
-    [% END;
-END %]
-        </select>
-    </p>
-    <p>
-        <input type="checkbox" name="prepare" id="prepare">
-        <label for="prepare">prepare</label>
-    </p>
-    <p>
-        Value:
-        <input type="number" step="any" name="value" value="1">
-    </p>
-    <p>
-        Unit:
-        <select name="unit">
-[% FOR unit IN units %]
-            <option value="[% unit.id %]">[% display_unit(unit) %]</option>
-[% END %]
-        </select>
-    </p>
-    <p>
-        Comment:
-        <input type="text" name="comment" placeholder="comment">
-    </p>
-    <p><input type="submit" value="Add ingredient"></p>
-</fieldset>
-</form>
+<div class="row">
+    <div class="col-sm-12 py-3">
+        <div class="card">
+            <div class="card-header">
+                <h3><a name="add ingredients">Add Ingredients</a></h3>
+            </div>
+
+            <div class="card-body">
+                
+                <form action="[% add_ingredient_url %]" method="post">
+                        <div class="form-group row">
+                            <label for="article" class="col-sm-2 col-form-label">Article</label>
+                            <div class="col-sm-10">
+                                <select name="article" class="custom-select" id="article">
+                                    <option value="" disabled selected>Choose article</option>
+                    [% FOR article IN articles;
+                        IF article.units AND article.units.size > 0 %]
+                                    <option value="[% article.id %]" data-units="[% article.unit_ids_joined %]">[% article.name | html %]</option>
+                        [% ELSE %]
+                                    <option disabled>[% article.name | html %] (no units)</option>
+                        [% END;
+                    END %]
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="prepare" class="col-sm-2 col-form-label">Prepare?</label>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="prepare" id="prepare">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="value" class="col-sm-2 col-form-label">Value</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" step="any" name="value" value="1" id="value">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label for="unit" class="col-sm-2 col-form-label">Unit</label>
+                            <div class="col-sm-10">
+                                <select name="unit" class="custom-select" id="unit">
+                                    <option value="" disabled selected>Choose unit</option>
+                    [% FOR unit IN units %]
+                                    <option value="[% unit.id %]">[% display_unit(unit) %]</option>
+                    [% END %]
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label for="comment" class="col-sm-2 col-form-label">Comment</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="comment" id="comment">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row py-3">
+                            <label class="col-sm-2 col-form-label"></label>
+                            <div class="col-sm-10 text-right">
+                                <button type="submit" class="btn btn-primary">Add ingredient</button>
+                            </div>
+                        </div>
+
+                </form>
+            
+            </div>
+        </div>
+    </div>
+</div>

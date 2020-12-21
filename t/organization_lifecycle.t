@@ -11,7 +11,7 @@ my $t = Test::Coocook->new();
 $t->get_ok('/');
 $t->login_ok( 'john_doe', 'P@ssw0rd' );
 
-$t->follow_link_ok( { text => 'Settings' } );
+$t->follow_link_ok( { text => 'settings Settings' } );
 $t->follow_link_ok( { text => 'Organizations' } );
 $t->follow_link_ok( { text => '👥TestData' } );
 
@@ -26,7 +26,7 @@ ok $t->schema->resultset('RoleUser')->search( { user_id => 1, role => $_ } )->de
   "revoke '$_' role for user"
   for 'site_owner';
 
-$t->follow_link_ok( { text => 'Settings' } );
+$t->follow_link_ok( { text => 'settings Settings' } );
 $t->follow_link_ok( { text => 'Organizations' } );
 $t->submit_form_ok(
     {

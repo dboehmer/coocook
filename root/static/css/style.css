@@ -14,9 +14,7 @@ html {
 }
 
 body {
-    background-color: #f5f5ef;
     margin: 0;
-    font-family: Georgia, 'Times New Roman', serif;
     position: relative;
     height: 100%;
     color: #333333;
@@ -61,42 +59,42 @@ header nav input[name="logout"] {
 header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
 
 header h1 {
-	font-size: 2.5em;
+    font-size: 2.5em;
 }
 
 header p {
-	margin: 0;
-	padding: 0 0.5em 0 0.5em;
-	color: #f5f5ef;
+    margin: 0;
+    padding: 0 0.5em 0 0.5em;
+    color: #f5f5ef;
 }
 
 header p a[href] {
-	color: #f5f5ef;
+    color: #f5f5ef;
 }
 
 /*** user nav ***/
 header #user_nav {
-	height: 7em;
-	padding: 0 1.5em 0 1.5em;
-	display: flex;
-	justify-content: space-between;
+    height: 7em;
+    padding: 0 1.5em 0 1.5em;
+    display: flex;
+    justify-content: space-between;
 }
 
 header #h1-div {
-	align-self: center;
+    align-self: center;
 }
 
 header #user_nav li {
-	padding-left: 1em;
+    padding-left: 1em;
 }
 
 header #user_nav a {
-	padding: 0;
+    padding: 0;
 }
 
 header #user_nav h4 a:hover,
 header #user_nav h4 a:active {
-	color: #333333;
+    color: #333333;
 }
 
 header #user_nav a:hover,
@@ -105,32 +103,32 @@ header #user_nav a:active {
 }
 
 header #user_nav ul {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 header #user_nav ul p + div {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 header #user_nav ul div:only-child {
-	margin-top: 3em;
+    margin-top: 3em;
 }
 
 header #user_nav h4 {
-	margin: 0;
-	padding: 0 0.5em 0 0.5em;
-	color: #f5f5ef;
+    margin: 0;
+    padding: 0 0.5em 0 0.5em;
+    color: #f5f5ef;
 }
 
 header #user_nav h4 a {
-	color: #f5f5ef;
+    color: #f5f5ef;
 }
 
 header nav input[name="logout"] {
-	background-color: #4CAF50;
-	color: #333333;
+    background-color: #4CAF50;
+    color: #333333;
 }
 
 header nav input[name="logout"]:active,
@@ -141,48 +139,16 @@ header nav input[name="logout"]:hover {
 }
 
 /*** project nav ***/
-header #project_nav {
-    background: #333333;
-    color: #f5f5ef;
-	width: 100%;
-	height: 2em;
-	padding: 0 1em 0 1em; 
-}
-
-header #project_nav ul {
-	margin: 0;
-}
-
-header #project_nav a,
-header #submenu_nav a {
-    display: inline-block;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    min-width: 3em;
-    line-height: 2em;
-
-    background-color: inherit;
-    color:            inherit;
-    text-align: center;
-    text-decoration:none;
-}
 
 header #project_nav a:hover {
     background-color:#f5f5ef;
     color: #333333;
-
-    box-shadow:         0px 2px 3px grey;
 }
 
 /*** submenu nav ***/
-header #submenu_nav {
-	width: 100%;
-	padding: 0 1em 0 1em; 
-}
-
 header #submenu_nav a:hover,
 header #submenu_nav a.current {
-	color: #f5f5ef;
+    color: #f5f5ef !important;
 }
 
 /******** content part ********/
@@ -249,21 +215,8 @@ code {
     display: inline;
 }
 
-input:hover, input:focus {
-    box-shadow:         2px 2px 3px grey;
-}
-
 input[type="number"] {
     text-align: right;
-}
-
-input[type="submit"] {
-    background-color: #f5f5ef;
-    border: 1px solid #333333;
-}
-
-input[type="submit"]:hover, input[type="submit"]:active{
-    background-color: #4CAF50;
 }
 
 /* <li>s with checkbox inside should not have any bullet point */
@@ -271,27 +224,10 @@ li.checkbox {
     list-style-type: none;
 }
 
-.markdown-preview {
-    width: 50%;
-    float: right;
-    overflow: auto;
-    background-color: white;
-}
 
-.markdown-preview + input[type="text"],
-.markdown-preview + textarea {
-    display: block;
-    width: 45%;
-    width: calc( 50% - 2em );
-}
-
-.markdown-preview + input[type="text"] + *,
-.markdown-preview + textarea           + * {
-    clear: both;
-}
 
 form th {
-	text-align: left;
+    text-align: left;
 }
 
 table td input[type="checkbox"]:first-child:last-child {
@@ -409,7 +345,7 @@ footer nav ul {
 }
 
 footer nav ul:first-child {
-	padding-left: 10px;
+    padding-left: 10px;
 }
 
 footer nav h4 {

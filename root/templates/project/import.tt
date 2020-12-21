@@ -1,17 +1,22 @@
 [% title = "Import" %]
 
 <form method="post" action="[% import_url %]" class="import">
-    <fieldset>
-        <legend>Source Project</legend>
+    <div class="card">
+        <div class="card-header"><h3>Source Project</h3></div>
+
+    <div class="card-body">
         <select name="source_project">
 [% FOR proj IN projects # don't overwrite $project %]
             <option value="[% proj.id %]">[% proj.name | html %]</option>
 [% END %]
         </select>
-    </fieldset>
+    </div>
+    </div>
 
-    <fieldset>
-        <legend>Properties to import</legend>
+    <div class="card">
+        <div class="card-header"><h3>Properties to import</h3></div>
+
+    <div class="card-body">
 
         <p id="jsWarning">Properties depend on each other. Enable JavaScript to resolve dependencies automatically.</p>
 
@@ -23,7 +28,8 @@
             </li>
 [% END %]
         </ul>
-    </fieldset>
+    </div>
+    </div>
 
     <p><input type="submit" value="Import"></p>
 </form>

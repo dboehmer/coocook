@@ -1,20 +1,25 @@
 [% title = "My Organizations" %]
 
+<div class="container-fluid">
 <form method="post" action="[% create_organization_url %]">
-<fieldset>
-    <legend>Create a new user organization</legend>
+<div class="card">
+    <div class="card-header"><h3>Create a new user organization</h3></div>
+
+<div class="card-body">
     <p>You can pool users in organizations and grant organizations permissions on projects.
     You will be member and owner of the new organization.</p>
 
     <input type="text" name="name" placeholder="organization name" pattern="[A-Za-z0-9_]+" value="[% last_input.name %]">
 
     <input type="submit" name="create" value="Create organization">
-</fieldset>
+</div>
+</div>
 </form>
 
-<fieldset>
-    <legend>Your Organizations</legend>
+<div class="card">
+    <div class="card-header"><h3>Your Organizations</h3></div>
 
+<div class="card-body">
 [% IF organizations_users.size > 0 %]
     <p>Before you can leave an organization you need to transfer organization ownership to another organization member.</p>
 
@@ -34,4 +39,7 @@
 [% ELSE %]
     <p>None.</p>
 [% END %]
-</fieldset>
+</div>
+</div>
+
+</div>

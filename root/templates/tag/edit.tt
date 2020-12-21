@@ -7,8 +7,10 @@
 [% END %]
 
 <form method="post" action="[% update_url %]">
-    <fieldset>
-        <legend>Edit Tag</legend>
+    <div class="card">
+        <div class="card-header"><h3>Edit Tag</h3></div>
+
+    <div class="card-body">
         <input type="text" name="name" value="[% tag.name | html %]">
         <select name="tag_group">
             <option value="">(no tag group)</option>
@@ -17,7 +19,8 @@
 [% END %]
         </select>
         <input type="submit" value="Edit">
-    </fieldset>
+    </div>
+    </div>
 </form>
 
 <h3>Articles</h3>

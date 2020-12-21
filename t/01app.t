@@ -203,7 +203,7 @@ subtest "Redirect URL parameter" => sub {
 
 subtest favicons => sub {
     $t->get_ok('/');
-    $t->content_lacks('icon');
+    $t->content_lacks('<link.+icon');
 
     $t->reload_config(
         icon_url  => 'alpha.ico',

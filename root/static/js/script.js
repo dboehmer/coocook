@@ -1,5 +1,6 @@
 $(function() {
 
+    // reduce options of <select> inputs for unit to units applicable to selected article
     $('select[name=article]').each(function() {
         let $article = $(this);
         let $unit    = $article.closest('form').find('select[name=unit]');
@@ -7,14 +8,21 @@ $(function() {
         if( $unit.length == 1 ) {
             let $units = $unit.find('option');
 
+            // event handler
             $article.change(function() {
-                var units = $article.find('option:selected').attr('data-units').split(',');
+                let data_units = $article.find('option:selected').attr('data-units');
 
-                var units_hash = {};
+                if( ! data_units ) {    // no 'data-units' attribute, e.g. for "choose article" placeholder
+                    $units.show();
+                    return;
+                }
+
+                let units = data_units.split(',');
+                let units_hash = {};
                 units.forEach(function(unit) { units_hash[unit] = true } );
 
                 $units.each(function() {
-                    var $unit = $(this);
+                    let $unit = $(this);
                     $unit.toggle( Boolean( units_hash[ $unit.attr('value') ] ) );
                 });
 
@@ -28,10 +36,11 @@ $(function() {
                     }
                 });
             })
-            .change();
+            .change();    // trigger on page load
         }
     });
 
+    // show Markdown preview right of <textarea> inputs with class .with-markdown-preview
     $('textarea.with-markdown-preview, input[type="text"].with-markdown-preview').each(function() {
         let $input   = $(this);
         let $preview = $('<div>', {class: 'markdown-preview'}).insertBefore($input);

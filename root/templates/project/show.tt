@@ -1,3 +1,4 @@
+<div class="container-fluid">
 [% IF project.archived %]
 <div class="message message-info">
     [% IF can_unarchive %]
@@ -74,3 +75,4 @@
 [% INCLUDE 'print/project.tt' %]
 
 <p>Created at [% project.created %]</p>
+</div>

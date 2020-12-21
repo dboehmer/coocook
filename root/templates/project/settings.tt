@@ -7,38 +7,50 @@
 </form>
 
 <form action="[% rename_url %]" method="post">
-    <fieldset>
-        <legend>Rename project <em>[% project.name | html %]</em></legend>
+    <div class="card">
+        <div class="card-header"><h3>Rename project <em>[% project.name | html %]</em></h3></div>
+
+    <div class="card-body">
         <input type="text" name="name" value="[% project.name | html %]">
         <input type="submit" value="Rename project">
-    </fieldset>
+    </div>
+    </div>
 </form>
 
 <form method="post" action="[% visibility_url %]">
-    <fieldset>
-        <legend>Visibility</legend>
+    <div class="card">
+        <div class="card-header"><h3>Visibility</h3></div>
+
+    <div class="card-body">
         <p>Project is: <strong>[% project.is_public ? 'public' : '🔒private' %]</strong></p>
 [% IF NOT project.is_public %]
         <input type="hidden" name="public" value="on">
 [% END %]
         <input type="submit" value="[% project.is_public ? 'Make 🔒private' : 'Make public' %]">
-    </fieldset>
+    </div>
+    </div>
 </form>
 
-<fieldset>
-    <legend>Archiving</legend>
+<div class="card">
+    <div class="card-header"><h3>Archiving</h3></div>
+
+<div class="card-body">
     <p>This project is [% project.archived ? '📁' : '<strong>not</strong>' %] archived.</p>
 
     <form method="post" action="[% project.archived ? project_urls.unarchive : project_urls.archive %]">
         <input type="submit" value="[% project.archived ? 'Un-archive' : '📁 Archive' %]">
     </form>
-</fieldset>
+</div>
+</div>
 
 <form method="post" action="[% delete_url %]">
-    <fieldset>
-        <legend>Delete project <em>[% project.name | html %]</em></legend>
+    <div class="card">
+        <div class="card-header"><h3>Delete project <em>[% project.name | html %]</em></h3></div>
+
+    <div class="card-body">
         <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion of project <em>[% project.name | html %]</em>.</p>
         <input type="text" name="confirmation" autocomplete="off">
         <input type="submit" value="Delete project">
-    </fieldset>
+    </div>
+    </div>
 </form>

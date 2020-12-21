@@ -9,8 +9,10 @@
 <p><a href="[% all_my_projects_url %]">All my projects</a></p>
 
 <form method="post" action="[% project_create_url %]">
-<fieldset>
-    <legend>Create new project</legend>
+<div class="card">
+    <div class="card-header"><h3>Create new project</h3></div>
+
+<div class="card-body">
     <input type="text" name="name" placeholder="name">
 
 [% IF can_create_private_project %]
@@ -21,7 +23,8 @@
 [% END %]
 
     <input type="submit" value="Create project">
-</fieldset>
+</div>
+</div>
 </form>
 
 <h2>Other public projects</h2>
