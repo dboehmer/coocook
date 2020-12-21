@@ -43,7 +43,7 @@
                         <div class="form-group row">
                             <label for="unit" class="col-sm-2 col-form-label">Unit</label>
                             <div class="col-sm-10">
-                                <select name="unit" class="form-control" id="unit">
+                                <select name="unit" class="custom-select" id="unit">
                                     <option value="" disabled selected>Choose unit</option>
                     [% FOR unit IN units %]
                                     <option value="[% unit.id %]">[% display_unit(unit) %]</option>
