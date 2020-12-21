@@ -215,21 +215,8 @@ code {
     display: inline;
 }
 
-input:hover, input:focus {
-    box-shadow:         2px 2px 3px grey;
-}
-
 input[type="number"] {
     text-align: right;
-}
-
-input[type="submit"] {
-    background-color: #f5f5ef;
-    border: 1px solid #333333;
-}
-
-input[type="submit"]:hover, input[type="submit"]:active{
-    background-color: #4CAF50;
 }
 
 /* <li>s with checkbox inside should not have any bullet point */
