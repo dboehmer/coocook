@@ -7,8 +7,10 @@
 [% END %]
 
 <form action="[% update_url %]" method="post">
-    <fieldset>
-        <legend>Edit Tag Group</legend>
+    <div class="card">
+        <div class="card-header"><h3>Edit Tag Group</h3></div>
+
+    <div class="card-body">
         <p>
             <label for="name">Name:</label>
             <input  id="name" type="text" name="name" value="[% tag_group.name | html %]">
@@ -18,7 +20,8 @@
             <input  id="comment" type="text" name="comment" value="[% tag_group.comment %]">
         </p>
         <input type="submit" value="Edit">
-    </fieldset>
+    </div>
+    </div>
 </form>
 
 <p>Tags:
@@ -29,9 +32,12 @@
 
 <form action="[% create_tag_url %]" method="post">
     <input type="hidden" name="tag_group" value="[% tag_group.id %]">
-    <fieldset>
-        <legend>New Tag</legend>
+    <div class="card">
+        <div class="card-header"><h3>New Tag</h3></div>
+
+<div class="card-body">
         <input type="text" name="name" placeholder="name">
         <input type="submit" value="Create">
-    </fieldset>
+    </div>
+    </div>
 </form>

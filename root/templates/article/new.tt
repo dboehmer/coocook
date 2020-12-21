@@ -10,8 +10,10 @@
     <option value="[% section.id %]">[% section.name | html %]</option>
 [% END %]
 </select>
-<fieldset>
-    <legend>Applicable Units</legend>
+<div class="card">
+    <div class="card-header"><h3>Applicable Units</h3></div>
+
+<div class="card-body">
     <table>
 [% FOR quantity IN quantities %]
         <tr>
@@ -26,9 +28,13 @@
         </tr>
 [% END %]
     </table>
-</fieldset>
-<fieldset>
-    <legend>Preorder</legend>
+</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Preorder</h3></div>
+
+<div class="card-body">
 
     <input type="checkbox" name="preorder" id="preorder">
     <label for="preorder">preorder</label>
@@ -39,13 +45,19 @@
     if
     <input  id="preorder_servings" type="number" name="preorder_servings" value="[% default_preorder_servings %]">
     <label for="preorder_servings">servings or more</label>
-</fieldset>
-<fieldset>
-    <legend>Shelf Life</legend>
+</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Shelf Life</h3></div>
+
+<div class="card-body">
     <input type="checkbox" name="shelf_life" id="shelf_life"> <label for="shelf_life">known shelf life</label>
     of
     <input  id="shelf_life_days" type="number" name="shelf_life_days" value="[% default_shelf_life_days %]">
     <label for="shelf_life_days">days</label>
-</fieldset>
+</div>
+</div>
+
 <p><input type="submit" value="Create"></p>
 </form>

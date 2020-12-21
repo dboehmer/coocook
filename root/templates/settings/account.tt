@@ -3,20 +3,26 @@
 <p><a href="[% profile_url %]">View your profile</a></p>
 
 <form method="post" action="[% change_display_name_url %]">
-<fieldset>
-    <legend>Change your user’s display name</legend>
+<div class="card">
+    <div class="card-header"><h3>Change your user’s display name</h3></div>
+
+<div class="card-body">
     <input type="text" name="display_name" value="[% user.display_name | html %]">
     <input type="submit" value="Update user">
-</fieldset>
+</div>
+</div>
 </form>
 
 <form method="post" action="[% change_password_url %]">
-<fieldset>
-    <legend>Change your password</legend>
+<div class="card">
+    <div class="card-header"><h3>Change your password</h3></div>
+
+<div class="card-body">
     <input type="password" name="old_password"  placeholder="old password">
     <input type="password" name="new_password"  placeholder="new password">
     <input type="password" name="new_password2" placeholder="new password">
 
     <input type="submit" value="Change password">
-</fieldset>
+</div>
+</div>
 </form>

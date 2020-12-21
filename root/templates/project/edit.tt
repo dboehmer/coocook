@@ -77,12 +77,14 @@
         <td>
             <form action="[% meal_create_url %]" method="post">
                 <input type="hidden" name="date" value="[% day.date.ymd %]">
-                <fieldset>
-                    <legend>Add meal on [% display_date(day.date, {html=>1}) %]</legend>
+                <div class="card">
+                    <div class="card-header"><h3>Add meal on [% display_date(day.date, {html=>1}) %]</h3></div>
+
+<div class="card-body">
                     Name:    <input type="text" name="name"    placeholder="name" required>
                     Comment: <input type="text" name="comment" placeholder="comment">
                     <input type="submit" value="Add meal">
-                </fieldset>
+                </div>
             </form>
         </td>
     </tr>
@@ -90,11 +92,13 @@
 </table>
 
 <form action="[% meal_create_url %]" method="post">
-    <fieldset>
-        <legend>Add meal</legend>
+    <div class="card">
+        <div class="card-header"><h3>Add meal</h3></div>
+
+<div class="card-body">
         Date:    <input type="date" name="date"    placeholder="YYYY-MM-DD" required value="[% default_date.ymd %]">
         Name:    <input type="text" name="name"    placeholder="name"       required>
         Comment: <input type="text" name="comment" placeholder="comment">
         <input type="submit" value="Add meal">
-    </fieldset>
+    </div>
 </form>

@@ -42,9 +42,10 @@
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]
 
 <form method="post" action="[% dish.recalculate_url %]">
-<fieldset>
-    <legend>Recalculate values</legend>
+<div class="card">
+    <div class="card-header"><h3>Recalculate values</h3></div>
 
+<div class="card-body">
     <p>Adjust the values in the table above by <strong>changing the number of servings</strong>
         (currently [% dish.servings %])
         and <strong>automatically de-/increasing the numbers</strong> in the same ratio.</p>
@@ -53,5 +54,6 @@
     <label for="recalculate_servings">Servings:</label>
     <input  id="recalculate_servings" type="number" name="servings" value="[% dish.servings %]">
     <input type="submit" value="Recalculate values">
-</fieldset>
+</div>
+</div>
 </form>
