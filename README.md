@@ -85,6 +85,7 @@ Daniel Böhmer <post@daniel-boehmer.de>
 
 * [@ChristinaSi](https://github.com/ChristinaSi) Christina Sixtus
 * [@moseschmiedel](https://github.com/moseschmiedel) Mose Schmiedel
+* [@rico-hengst](https://github.com/rico-hengst) Rico Hengst
 
 ## Copyright and License
 
