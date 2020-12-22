@@ -134,7 +134,7 @@ sub check_rows {
                 my $val = $row->{ $rel . '_project' } // next;
 
                 if ( $val != $project_id ) {
-                    printf STDERR "Project IDs differ for %s row (%s): %s\n", $rs_class,
+                    warn sprintf "Project IDs differ for %s row (%s): %s\n", $rs_class,
                       join( ", ", map { "$_ = " . $row->{$_} } @pk_cols ),
                       join( ", ", map { $_ . ".project = " . ( $row->{ $_ . '_project' } // "undef" ) } @tables );
 
