@@ -184,19 +184,13 @@ sub check_values {
         }
     }
 
-    my $organizations = $schema->resultset('Organization');
+    for my $table (qw< Organization User >) {
+        my $rs = $schema->resultset($table);
 
-    while ( my $organization = $organizations->next ) {
-        $organization->name_fc eq fc( $organization->name )
-          or warn sprintf( "Incorrect name_fc for organization '%s': '%s'\n",
-            $organization->name, $organization->name_fc );
-    }
-
-    my $users = $schema->resultset('User');
-
-    while ( my $user = $users->next ) {
-        $user->name_fc eq fc( $user->name )
-          or warn sprintf "Incorrect name_fc for user '%s': '%s'\n", $user->name, $user->name_fc;
+        while ( my $row = $rs->next ) {
+            $row->name_fc eq fc( $row->name )
+              or warn sprintf( "Incorrect name_fc for $table '%s': '%s'\n", $row->name, $row->name_fc );
+        }
     }
 
     my $projects = $schema->resultset('Project');
