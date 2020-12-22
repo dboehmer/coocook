@@ -14,6 +14,16 @@ with 'Coocook::Script::Role::HasDebug';
 with 'Coocook::Script::Role::HasSchema';
 with 'MooseX::Getopt';
 
+# columns which tend to receive the empty string '' as value in SQLite
+# TODO should we automatically select all boolean and non-FK numeric columns?
+our $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS = {
+    Project          => 'is_public',
+    DishIngredient   => [ 'prepare',   'value' ],
+    RecipeIngredient => [ 'prepare',   'value' ],
+    Item             => [ 'purchased', 'value' ],
+    Unit             => 'space',
+};
+
 sub run {
     my $self = shift;
 
@@ -151,11 +161,15 @@ sub check_values {
     my $schema = $self->_schema;
 
     if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite allows '' for an INTEGER column
-        for my $table (qw< DishIngredient RecipeIngredient Item >) {
-            my $count = $schema->resultset($table)->search( { value => '' } );
+        for my $rs ( sort keys %$SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS ) {
+            my @cols = map { ref ? @$_ : $_ } $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS->{$rs};
 
-            $count > 0
-              and warn "Found $count rows with value of empty string '' in table $table\n";
+            for my $col (@cols) {
+                my $count = $schema->resultset($rs)->search( { $col => '' } );
+
+                $count > 0
+                  and warn "Found $count rows with column '$col' being empty string '' in table $rs\n";
+            }
         }
     }
 

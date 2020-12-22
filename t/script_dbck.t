@@ -6,7 +6,7 @@ use lib 't/lib/';
 use Coocook;
 use TestDB;
 use Test::Output;
-use Test::Most tests => 12;
+use Test::Most tests => 17;
 
 use_ok 'Coocook::Script::Dbck';
 
@@ -52,14 +52,25 @@ warning_is { $app->run } undef, "no warnings with test data";
     $db->txn_rollback;
 }
 
-for my $table (qw< DishIngredient RecipeIngredient Item >) {
-    $db->txn_begin;
+my $cols = do { no warnings 'once'; $Coocook::Script::Dbck::SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS }
+  || die;
 
-    $db->resultset($table)->one_row->update( { value => '' } );
+for my $rs ( sort keys %$cols ) {
+    my @cols = map { ref ? @$_ : $_ } $cols->{$rs};
 
-    warning_like { $app->run } qr/value of empty string ''/, "value of '' in $table";
+    for my $col (@cols) {
+        my $table = $db->resultset($rs)->result_source->name();
 
-    $db->txn_rollback;
+        $db->txn_begin;
+
+        # can't use DBIC update() here because Component::Result::Boolify is too good
+        $db->storage->dbh_do(
+            sub { $_[1]->do("UPDATE $table SET $col='' WHERE id=(SELECT id FROM $table LIMIT 1)") } );
+
+        warning_like { $app->run } qr/column \W?$col\W? .+ empty string ''/, "$col of '' in $rs";
+
+        $db->txn_rollback;
+    }
 }
 
 for my $table (qw< Organization User >) {
