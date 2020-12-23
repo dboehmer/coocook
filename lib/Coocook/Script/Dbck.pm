@@ -34,7 +34,7 @@ sub run {
     my $self = shift;
 
     $self->check_schema();
-    $self->check_rows();
+    $self->check_relationships();
     $self->check_values();
 }
 
@@ -92,7 +92,7 @@ sub check_schema {
     }
 }
 
-sub check_rows {
+sub check_relationships {
     my $self = shift;
 
     my @m_n_tables = (
@@ -112,7 +112,7 @@ sub check_rows {
     for (@m_n_tables) {
         my ( $rs_class, $joins ) = %$_;
 
-        $self->_debug("Checking rows in table '$rs_class' ...");
+        $self->_debug("Checking relationships from table '$rs_class' ...");
 
         @$joins >= 2
           or die "need 2 or more relationships to compare project IDs";
