@@ -58,7 +58,7 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     }
     else {
         my $name = $c->stash->{meal}->name;
-        $c->stash->error("$name cannot be deleted, because it contains dishes!");
+        $c->messages->error("$name cannot be deleted, because it contains dishes!");
     }
 
     $c->detach('redirect');

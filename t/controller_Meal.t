@@ -19,9 +19,15 @@ subtest "delete meal" => sub {
 
     $t->get_ok('/project/1/Test-Project/edit');
     $t->content_lacks('Delete meal');
+
+    $t->content_lacks('cannot be deleted, because it contains dishes');
+    $t->post("/project/1/Test-Project/meals/$meal_id/delete");
+    $t->content_contains('cannot be deleted, because it contains dishes');
+
     ok $schema->resultset('Meal')->find($meal_id)->dishes->results_exist, "Dishes exist in meal";
     $t->post("/project/1/Test-Project/meals/$meal_id/delete_dishes");
     ok !$schema->resultset('Meal')->find($meal_id)->dishes->results_exist, "Dishes were deleted";
+
     $t->content_lacks('Delete meal');
     $t->content_contains('has pending dishes to prepare');
     $schema->resultset('Meal')->find($meal_id)
