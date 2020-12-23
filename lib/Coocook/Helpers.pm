@@ -146,7 +146,12 @@ sub has_capability {
           and $_ = $_->get_object;
     }
 
-    return $authz->has_capability( $capability, $input );
+    my $result = $authz->has_capability( $capability, $input );
+
+    $c->log->debug(
+        $result ? "User has capability '$capability'" : "User does NOT have capability '$capability'" );
+
+    return $result;
 }
 
 =head2 $c->require_capability( $capability, \%input? )
