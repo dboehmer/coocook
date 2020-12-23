@@ -35,7 +35,7 @@
     </tr>
     <tr>
         <td>
-            <form method="post" action="[% meal.update_url %]">
+            <form name="update_meal" method="post" action="[% meal.update_url %]">
                 <input type="text" name="name"    value="[% meal.name | html %]">
                 <input type="text" name="comment" value="[% meal.comment | html %]" placeholder="comment">
                 <input type="submit" value="Update meal">
@@ -52,7 +52,7 @@
         [% END %]
     <tr>
         <td>
-            <form action="[% dish_create_url %]" method="post">
+            <form name="create_dish" action="[% dish_create_url %]" method="post">
                 <input type="hidden" name="meal" value="[% meal.id %]">
                 <input type="text"   name="name" placeholder="name">
                 <input type="number" name="servings" value="4">
@@ -75,7 +75,7 @@
     [% END %]
     <tr>
         <td>
-            <form action="[% meal_create_url %]" method="post">
+            <form name="create_meal" action="[% meal_create_url %]" method="post">
                 <input type="hidden" name="date" value="[% day.date.ymd %]">
                 <div class="card">
                     <div class="card-header"><h3>Add meal on [% display_date(day.date, {html=>1}) %]</h3></div>

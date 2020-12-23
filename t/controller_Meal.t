@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 2;
+use Test::Most tests => 4;
 
 my $t = Test::Coocook->new();
 
@@ -30,4 +30,44 @@ subtest "delete meal" => sub {
     $t->content_contains('Delete meal');
     $t->post("/project/1/Test-Project/meals/$meal_id/delete");
     ok !$schema->resultset('Meal')->find($meal_id), "Meal was successfully eaten up";
-  }
+};
+
+subtest "create meal" => sub {
+    $t->get_ok('/project/1/Test-Project/edit');
+    $t->content_lacks('Autonomous Meal');
+    $t->submit_form_ok(
+        {
+            form_name   => 'create_meal',
+            form_number => 6,
+            with_fields => {
+                name    => 'Autonomous Meal',
+                comment => 'The bots are cooking!',
+            },
+            strict_forms => 0,
+        },
+        "create a meal with name 'Autonomous Meal'"
+    );
+    $t->get_ok('/project/1/Test-Project/edit');
+    $t->content_contains('Autonomous Meal');
+};
+
+subtest "update meal" => sub {
+    $t->get_ok('/project/1/Test-Project/edit');
+    $t->content_lacks('Meal for Robots');
+    $t->content_contains('Autonomous Meal');
+    $t->submit_form_ok(
+        {
+            form_name   => 'update_meal',
+            form_number => 7,
+            with_fields => {
+                name    => 'Meal for Robots',
+                comment => 'Crunch! Crunch! Crunch!',
+            },
+            strict_forms => 0,
+        },
+        "change name and comment for meal with name 'Autonomous Meal' to 'Meal for Robots'"
+    );
+    $t->get_ok('/project/1/Test-Project/edit');
+    $t->content_lacks('Autonomous Meal');
+    $t->content_contains('Meal for Robots');
+};
