@@ -23,6 +23,12 @@ our $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS = {
     Item             => [ 'purchased', 'value' ],
     Unit             => 'space',
 };
+our $SQLITE_NUMERIC_COLUMNS = {
+    DishIngredient   => 'value',
+    RecipeIngredient => 'value',
+    Item             => [ 'offset', 'value' ],
+    Quantity         => 'to_default_quantity',
+};
 
 sub run {
     my $self = shift;
@@ -160,7 +166,7 @@ sub check_values {
 
     my $schema = $self->_schema;
 
-    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite allows '' for an INTEGER column
+    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite has weak typing
         for my $rs ( sort keys %$SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS ) {
             my @cols = map { ref ? @$_ : $_ } $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS->{$rs};
 
@@ -169,6 +175,18 @@ sub check_values {
 
                 $count > 0
                   and warn "Found $count rows with column '$col' being empty string '' in table $rs\n";
+            }
+        }
+
+        for my $rs ( sort keys %$SQLITE_NUMERIC_COLUMNS ) {
+            my @cols = map { ref ? @$_ : $_ } $SQLITE_NUMERIC_COLUMNS->{$rs};
+
+            for my $col (@cols) {
+                my $rows = $schema->resultset($rs)->search( { $col => { -like => '%,%' } } );
+
+                while ( my $row = $rows->next ) {
+                    warn sprintf "$rs ID %i has invalid number format $col='%s'\n", $row->id, $row->$col;
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ use lib 't/lib/';
 use Coocook;
 use TestDB;
 use Test::Output;
-use Test::Most tests => 17;
+use Test::Most tests => 20;
 
 use_ok 'Coocook::Script::Dbck';
 
@@ -70,6 +70,18 @@ for my $rs ( sort keys %$cols ) {
         warning_like { $app->run } qr/column \W?$col\W? .+ empty string ''/, "$col of '' in $rs";
 
         $db->txn_rollback;
+
+        if ( $col eq 'value' ) {
+            $db->txn_begin;
+
+            $db->storage->dbh_do(
+                sub { $_[1]->do("UPDATE $table SET value='0,1' WHERE id=(SELECT id FROM $table LIMIT 1)") } );
+
+            warning_like { $app->run } qr/($rs|$table) .+ number.format .+ '0,1'/x,
+              "invalid number format '0,1' in $rs";
+
+            $db->txn_rollback;
+        }
     }
 }
 
