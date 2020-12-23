@@ -1,5 +1,7 @@
 use strict;
 use warnings;
+
+use open ':locale';
 use utf8;
 
 use lib 't/lib';
@@ -67,7 +69,7 @@ subtest "change item total" => sub {
 
     $t->content_contains('value="39"');
 
-    $t->text_contains('-3.5g – rounding difference');
+    $t->text_contains("-3.5g \N{EN DASH} rounding difference");
 
     $t->submit_form_ok(
         {
