@@ -44,7 +44,7 @@ sub internal_server_error : HEAD GET Chained('/base') Public {
 
     # do NOT set status to 500 because this actually works
 
-    $c->response->header( 'X-Robots-Tag' => 'noindex' );    # hide this in search engines
+    $c->stash->{robots}->index(0);    # hide this in search engines
 }
 
 =head2 not_found

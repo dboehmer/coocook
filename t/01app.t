@@ -147,6 +147,13 @@ subtest "robots meta tag" => sub {
         $t->content_contains('noindex');
     };
 
+    subtest "internal server error" => sub {
+        $t->get_ok('/internal_server_error');
+        $t->status_is(200);
+        $t->content_contains('noarchive');
+        $t->content_contains('noindex');
+    };
+
     $t->get_ok('/user/john_doe');
     $t->content_contains('noarchive');
     $t->content_lacks('noindex');
