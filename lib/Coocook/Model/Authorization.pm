@@ -220,7 +220,7 @@ my @rules = (
               : $capability eq 'add_user_permission'         ? $_->{user_object}->projects_users
               :                                                die "code broken";
 
-            return if $permissions->results_exist( { project => $project->id } );    # already has permission
+            return if $permissions->results_exist( { project_id => $project->id } );    # already has permission
 
             return (
                      $user->has_any_role('site_owner')
