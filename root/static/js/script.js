@@ -34,7 +34,7 @@
     document.querySelectorAll("textarea.with-markdown-preview, input[type=text].with-markdown-preview").forEach( elem => {
         let row = elem.parentNode.parentNode;
         let col = document.createElement("div");
-        col.className = "col-sm-6";
+        col.className = "col-md-6";
         let preview = document.createElement("div");
         preview.className = "markdown-preview";
 

@@ -112,7 +112,7 @@
 
 
     <main class="container-md mb-2">
-        <div class="row py-3">
+        <div class="row my-3">
             <div class="col-12">
             [% WHILE (message = messages.next) %]
                 <div class="alert alert-[% SWITCH message.type; CASE "debug" %]dark[% CASE "warn" %]warning[% CASE "error" %]danger[% CASE %]success[% END %]" role="alert">
