@@ -121,10 +121,6 @@ button.alert-link {
     display: inline;
 }
 
-input[type="number"] {
-    text-align: right;
-}
-
 /* <li>s with checkbox inside should not have any bullet point */
 li.checkbox {
     list-style-type: none;
