@@ -1,0 +1,10 @@
+---
+development:
+  dsn: dbi:SQLite:coocook.sqlite
+  sqlite_unicode: 1
+
+pgsql:
+  dsn: dbi:Pg:host=localhost;port=5432;dbname=coocook
+  user:     coocook
+  password: coocook
+  pg_enable_utf8: 1

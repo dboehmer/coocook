@@ -3,6 +3,7 @@
 
 # custom config file
 /coocook_local.*
+/dbic.yaml
 
 # build files
 /blib/
@@ -27,7 +28,7 @@
 # KDE
 .directory
 
-# Windows XP
+# Windows
 Thumbs.db
 
 # Vim, see https://github.com/github/gitignore/blob/master/Global/Vim.gitignore

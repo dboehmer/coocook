@@ -11,7 +11,7 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('terms');
 
 __PACKAGE__->add_columns(
-    id         => { data_type => 'int', is_auto_increment => 1 },
+    id         => { data_type => 'integer', is_auto_increment => 1 },
     valid_from => { data_type => 'date' },
     content_md => { data_type => 'text' },
 );

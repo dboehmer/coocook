@@ -14,34 +14,23 @@ use MooseX::MarkAsMethods autoclean => 1;
 # at .../site_perl/5.26.0/Context/Preserve.pm line 43.
 use lib '.';
 
+{    # workaround to let Producer::SQLite NOT mangle index names
+    use SQL::Translator::Producer::SQLite;
+    no warnings 'redefine';
+    my $orig = \&SQL::Translator::Producer::SQLite::mk_name;
+    *SQL::Translator::Producer::SQLite::mk_name = sub {
+        my ($name) = @_;
+        my $ret = $orig->(@_);
+        $ret eq $name or $ret eq qq("$name") or warn "mk_name(@_) => $ret";
+        return $name;
+    };
+}
+
 extends 'App::DH';
 
 has '+schema' => ( default => 'Coocook::Schema' );
 
-has '+_schema' => ( predicate => 'has__schema' );
-
-###
-# TODO solve workaround
-# t/db_upgrade.t fails with PRAGMA foreign_keys = ON:-(
-sub BUILD {
-    my $self = shift;
-
-    if ( $self->has__schema ) {
-        $self->_schema->disable_fk_checks();
-    }
-}
-
-around _build__schema => sub {
-    my $orig = shift;
-    my $self = shift;
-
-    my $schema = $self->$orig(@_);
-
-    $schema->disable_fk_checks();
-
-    return $schema;
-};
-###
+sub _build_database { [qw< SQLite PostgreSQL >] }
 
 __PACKAGE__->meta->make_immutable;
 

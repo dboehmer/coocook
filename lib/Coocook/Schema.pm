@@ -2,12 +2,13 @@ package Coocook::Schema;
 
 # ABSTRACT: DBIx::Class-based SQL database representation
 
+use Carp;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
 use DBIx::Class::Helpers::Util qw< normalize_connect_info >;
 
-our $VERSION = 21;    # version of schema definition, not software version!
+our $VERSION = 22;    # version of schema definition, not software version!
 
 extends 'DBIx::Class::Schema::Config';
 
@@ -108,7 +109,7 @@ sub sqlite_pragma {
     my ( $self, $pragma, $set_value ) = @_;
 
     $self->storage->sqlt_type eq 'SQLite'
-      or die "only implemented for SQLite";
+      or croak "sqlite_pragma() works only on SQLite";
 
     my $sql = "PRAGMA '$pragma'";
 

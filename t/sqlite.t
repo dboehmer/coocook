@@ -1,13 +1,12 @@
 use strict;
 use warnings;
 
-use Coocook::Script::Deploy;
 use Coocook::Schema;
 use DBICx::TestDatabase;
 use Test::Most;
 
 use lib 't/lib/';
-use TestDB;
+use TestDB qw(install_ok upgrade_ok);
 
 # first upgrade scripts created columns in different order
 # or had other subtle differences to a fresh deployment
@@ -54,32 +53,6 @@ schema_eq(
     $schema_from_upgrades => $schema_from_code,
     "schema from upgrade SQLs and schema from Coocook::Schema code are equal"
 );
-
-sub install_ok {
-    my ( $schema, $version, $name ) = @_;
-
-    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    $version
-      and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
-
-    ok $dh->install(), $name || "install version " . $dh->to_version;
-}
-
-sub upgrade_ok {
-    my ( $schema, $version, $name ) = @_;
-
-    my $dh = Coocook::Script::Deploy->new( _schema => $schema )->_dh;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    $version
-      and local *DBIx::Class::DeploymentHandler::to_version = sub { $version };
-
-    ok $dh->upgrade(), $name || "upgrade to version " . $dh->to_version;
-}
 
 sub schema_eq {
     my ( $schema1, $schema2, $test_name ) = @_;

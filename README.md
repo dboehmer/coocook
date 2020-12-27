@@ -21,7 +21,21 @@ Web application for collecting recipes and making food plans
 
 ## Quick start
 
+Get source code:
+
+    $ git clone https://github.com/dboehmer/coocook.git
+
+### Configure database
+
+Copy the config template [`share/examples/dbic.yaml`](share/examples/dbic.yaml) to the working directory:
+
+    $ cp share/examples/dbic.yaml dbic.yaml
+
+A database from the YAML file other than `development` or a literal DSN can be configured in `coocook_local.yaml`.
+For other possible settings see the default values defined in [`lib/Coocook.pm`](lib/Coocook.pm).
+
 ### Run with native Perl (works best on Unix-like Operating Systems)
+
 Prerequisites:
 
 * [Perl5](https://www.perl.org/get.html)
@@ -35,20 +49,16 @@ With Ubuntu or Debian Linux:
 
     $ sudo apt-get install cpanminus libdbd-sqlite3-perl sqlite3
 
-Get source code:
-
-    $ git clone https://github.com/dboehmer/coocook.git
-
 Install Perl5 dependencies required for running the application:
 
     $ cd coocook/
     $ cpanm --installdeps .
 
-For development purposes there are a few *recommended* dependencies. To install these as well run:
+For development purposes there are a few *recommended* and *suggested* dependencies. To install these as well run:
 
     $ cpanm --with-develop --with-recommends --with-suggests --installdeps .
 
-Install database into a local SQLite file and start development server in debug mode:
+Install database schema into configured database (see above) and start development server in debug mode:
 
     $ script/coocook_deploy.pl install
     $ script/coocook_server.pl --debug
@@ -58,7 +68,8 @@ Install database into a local SQLite file and start development server in debug 
 Hint: With the `--restart` option the development server restarts automatically when files in `lib/` are changed.
 This requires `Catalyst::Restarter`.
 
-### Using Docker
+### Run with Docker
+
 Goto [https://hub.docker.com/r/coocook/coocook-dev](https://hub.docker.com/r/coocook/coocook-dev) and follow the instructions there to use the Dockerimage for Development.
 
 ## Mailing list

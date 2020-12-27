@@ -9,7 +9,7 @@ __PACKAGE__->table('roles_users');
 
 __PACKAGE__->add_columns(
     role    => { data_type => 'text' },
-    user_id => { data_type => 'int' },
+    user_id => { data_type => 'integer' },
 );
 
 __PACKAGE__->set_primary_key(qw< role user_id >);

@@ -10,8 +10,8 @@ __PACKAGE__->load_components('Ordered');
 __PACKAGE__->table('faqs');
 
 __PACKAGE__->add_columns(
-    id          => { data_type => 'int', is_auto_increment => 1 },
-    position    => { data_type => 'int', default_value     => 1 },
+    id          => { data_type => 'integer', is_auto_increment => 1 },
+    position    => { data_type => 'integer', default_value     => 1 },
     anchor      => { data_type => 'text' },
     question_md => { data_type => 'text' },
     answer_md   => { data_type => 'text' },

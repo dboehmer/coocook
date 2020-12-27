@@ -3,6 +3,6 @@ perl:
 - "5.30"
 - "5.22"
 env:
-- PERL_CPANM_OPT="--with-configure --with-develop"
+- PERL_CPANM_OPT="--with-configure --with-develop --with-recommends"
 script:
 - 'perl Makefile.PL && make test TEST_FILES="t/*.t xt/*.t"'    # same as Travis' default but run extended tests, too

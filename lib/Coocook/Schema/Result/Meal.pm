@@ -8,8 +8,8 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('meals');
 
 __PACKAGE__->add_columns(
-    id         => { data_type => 'int', is_auto_increment => 1 },
-    project_id => { data_type => 'int' },
+    id         => { data_type => 'integer', is_auto_increment => 1 },
+    project_id => { data_type => 'integer' },
     date       => { data_type => 'date' },
     name       => { data_type => 'text' },
     comment    => { data_type => 'text' },

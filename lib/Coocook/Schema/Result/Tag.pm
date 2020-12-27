@@ -8,9 +8,9 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('tags');
 
 __PACKAGE__->add_columns(
-    id           => { data_type => 'int', is_auto_increment => 1 },
-    project_id   => { data_type => 'int' },
-    tag_group_id => { data_type => 'int', is_nullable => 1 },
+    id           => { data_type => 'integer', is_auto_increment => 1 },
+    project_id   => { data_type => 'integer' },
+    tag_group_id => { data_type => 'integer', is_nullable => 1 },
     name         => { data_type => 'text' },
 );
 

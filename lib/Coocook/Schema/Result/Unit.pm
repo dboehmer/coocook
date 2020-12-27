@@ -8,11 +8,11 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('units');
 
 __PACKAGE__->add_columns(
-    id                  => { data_type => 'int', is_auto_increment => 1 },
-    project_id          => { data_type => 'int' },
-    quantity_id         => { data_type => 'int',  is_nullable => 0 },
-    to_quantity_default => { data_type => 'real', is_nullable => 1 },
-    space               => { data_type => 'bool' },
+    id                  => { data_type => 'integer', is_auto_increment => 1 },
+    project_id          => { data_type => 'integer' },
+    quantity_id         => { data_type => 'integer', is_nullable => 0 },
+    to_quantity_default => { data_type => 'real',    is_nullable => 1 },
+    space               => { data_type => 'boolean' },
     short_name          => { data_type => 'text' },
     long_name           => { data_type => 'text' },
 );

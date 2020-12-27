@@ -8,9 +8,9 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('terms_users');
 
 __PACKAGE__->add_columns(
-    terms_id => { data_type => 'int' },
-    user_id  => { data_type => 'int' },
-    approved => { data_type => 'datetime' },
+    terms_id => { data_type => 'integer' },
+    user_id  => { data_type => 'integer' },
+    approved => { data_type => 'timestamp without time zone' },
 );
 
 __PACKAGE__->set_primary_key(qw< terms_id user_id >);

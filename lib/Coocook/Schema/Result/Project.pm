@@ -12,15 +12,19 @@ extends 'Coocook::Schema::Result';
 __PACKAGE__->table('projects');
 
 __PACKAGE__->add_columns(
-    id          => { data_type => 'int', is_auto_increment => 1 },
+    id          => { data_type => 'integer', is_auto_increment => 1 },
     name        => { data_type => 'text' },
     url_name    => { data_type => 'text' },
-    url_name_fc => { data_type => 'text' },                          # fold cased
+    url_name_fc => { data_type => 'text' },                              # fold cased
     description => { data_type => 'text' },
-    is_public   => { data_type => 'bool', default_value => 1 },
-    owner_id    => { data_type => 'int' },
-    created  => { data_type => 'datetime', default_value => \'CURRENT_TIMESTAMP', set_on_create => 1 },
-    archived => { data_type => 'datetime', is_nullable   => 1 },
+    is_public   => { data_type => 'boolean', default_value => 1 },
+    owner_id    => { data_type => 'integer' },
+    created     => {
+        data_type     => 'timestamp without time zone',
+        default_value => \'CURRENT_TIMESTAMP',
+        set_on_create => 1,
+    },
+    archived => { data_type => 'timestamp without time zone', is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key('id');

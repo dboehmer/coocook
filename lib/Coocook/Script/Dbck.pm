@@ -14,11 +14,27 @@ with 'Coocook::Script::Role::HasDebug';
 with 'Coocook::Script::Role::HasSchema';
 with 'MooseX::Getopt';
 
+# columns which tend to receive the empty string '' as value in SQLite
+# TODO should we automatically select all boolean and non-FK numeric columns?
+our $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS = {
+    Project          => 'is_public',
+    DishIngredient   => [ 'prepare',   'value' ],
+    RecipeIngredient => [ 'prepare',   'value' ],
+    Item             => [ 'purchased', 'value' ],
+    Unit             => 'space',
+};
+our $SQLITE_NUMERIC_COLUMNS = {
+    DishIngredient   => 'value',
+    RecipeIngredient => 'value',
+    Item             => [ 'offset', 'value' ],
+    Quantity         => 'to_default_quantity',
+};
+
 sub run {
     my $self = shift;
 
     $self->check_schema();
-    $self->check_rows();
+    $self->check_relationships();
     $self->check_values();
 }
 
@@ -76,7 +92,7 @@ sub check_schema {
     }
 }
 
-sub check_rows {
+sub check_relationships {
     my $self = shift;
 
     my @m_n_tables = (
@@ -96,7 +112,7 @@ sub check_rows {
     for (@m_n_tables) {
         my ( $rs_class, $joins ) = %$_;
 
-        $self->_debug("Checking rows in table '$rs_class' ...");
+        $self->_debug("Checking relationships from table '$rs_class' ...");
 
         @$joins >= 2
           or die "need 2 or more relationships to compare project IDs";
@@ -134,7 +150,7 @@ sub check_rows {
                 my $val = $row->{ $rel . '_project' } // next;
 
                 if ( $val != $project_id ) {
-                    printf STDERR "Project IDs differ for %s row (%s): %s\n", $rs_class,
+                    warn sprintf "Project IDs differ for %s row (%s): %s\n", $rs_class,
                       join( ", ", map { "$_ = " . $row->{$_} } @pk_cols ),
                       join( ", ", map { $_ . ".project = " . ( $row->{ $_ . '_project' } // "undef" ) } @tables );
 
@@ -150,12 +166,28 @@ sub check_values {
 
     my $schema = $self->_schema;
 
-    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite allows '' for an INTEGER column
-        for my $table (qw< DishIngredient RecipeIngredient Item >) {
-            my $count = $schema->resultset($table)->search( { value => '' } );
+    if ( $schema->storage->sqlt_type eq 'SQLite' ) {    # only SQLite has weak typing
+        for my $rs ( sort keys %$SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS ) {
+            my @cols = map { ref ? @$_ : $_ } $SQLITE_NOTORIOUS_EMPTY_STRING_COLUMNS->{$rs};
 
-            $count > 0
-              and warn "Found $count rows with value of empty string '' in table $table\n";
+            for my $col (@cols) {
+                my $count = $schema->resultset($rs)->search( { $col => '' } );
+
+                $count > 0
+                  and warn "Found $count rows with column '$col' being empty string '' in table $rs\n";
+            }
+        }
+
+        for my $rs ( sort keys %$SQLITE_NUMERIC_COLUMNS ) {
+            my @cols = map { ref ? @$_ : $_ } $SQLITE_NUMERIC_COLUMNS->{$rs};
+
+            for my $col (@cols) {
+                my $rows = $schema->resultset($rs)->search( { $col => { -like => '%,%' } } );
+
+                while ( my $row = $rows->next ) {
+                    warn sprintf "$rs ID %i has invalid number format $col='%s'\n", $row->id, $row->$col;
+                }
+            }
         }
     }
 
@@ -170,19 +202,13 @@ sub check_values {
         }
     }
 
-    my $organizations = $schema->resultset('Organization');
+    for my $table (qw< Organization User >) {
+        my $rs = $schema->resultset($table);
 
-    while ( my $organization = $organizations->next ) {
-        $organization->name_fc eq fc( $organization->name )
-          or warn sprintf( "Incorrect name_fc for organization '%s': '%s'\n",
-            $organization->name, $organization->name_fc );
-    }
-
-    my $users = $schema->resultset('User');
-
-    while ( my $user = $users->next ) {
-        $user->name_fc eq fc( $user->name )
-          or warn sprintf "Incorrect name_fc for user '%s': '%s'\n", $user->name, $user->name_fc;
+        while ( my $row = $rs->next ) {
+            $row->name_fc eq fc( $row->name )
+              or warn sprintf( "Incorrect name_fc for $table '%s': '%s'\n", $row->name, $row->name_fc );
+        }
     }
 
     my $projects = $schema->resultset('Project');
