@@ -34,6 +34,17 @@ MACRO display_value_unit(value, unit, opts) BLOCK;
     display_unit(unit, opts);
 END;
 
+MACRO link_organization(organization, url) BLOCK;
+    THROW "no URL" UNLESS url;
+    # the font we use has no glyph for groups as of December 2020 ~%]
+    <i class="material-icons">group</i> [% organization.name %] <a href="[% url %]">[% organization.display_name | html %]</a>
+[%~ END;
+
+MACRO link_user(user, url) BLOCK;
+    THROW "no URL" UNLESS url ~%]
+    👤 [% user.name %] <a href="[% url %]">[% user.display_name | html %]</a>
+[%~ END;
+
 MACRO numerus(number, singular, plural, opts) BLOCK; # apply correct grammatical number
     IF opts.nice_number;
         USE NiceNumber;

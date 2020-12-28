@@ -27,7 +27,7 @@
     [% FOR organization_user IN organizations_users;
         organization = organization_user.organization %]
         <li>
-            <a href="[% organization_user.organization_url %]">👥[% organization.name %]</a> [% organization.display_name | html %] ([% organization_user.role %])
+            [% link_organization(organization_user.organization, organization_user.organization_url) %] ([% organization_user.role %])
         [% IF organization_user.leave_url %]
             <form class="inline" method="post" action="[% organization_user.leave_url %]">
                 <input type="submit" value="Leave organization">

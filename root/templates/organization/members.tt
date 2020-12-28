@@ -12,7 +12,7 @@
     <tbody>
 [% FOR g_u IN organizations_users %]
         <tr>
-            <td><a href="[% g_u.user_url %]">👤[% g_u.user.name %]</a> [% g_u.user.display_name | html %]</td>
+            <td>[% link_user(g_u.user, g_u.user_url) %]</td>
             <td>
     [% IF g_u.edit_url %]
                 <form method="post" action="[% g_u.edit_url %]" class="inline">

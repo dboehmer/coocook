@@ -12,11 +12,11 @@
 [% FOR permission IN permissions %]
         <tr>
             <td>
-    [% IF permission.organization %]
-        <a href="[% permission.organization_url %]">👥[% permission.organization.name %]</a> [% permission.organization.display_name | html %]
-    [% ELSIF permission.user %]
-        <a href="[% permission.user_url %]">👤[% permission.user.name %]</a> [% permission.user.display_name | html %]
-    [% ELSE;
+    [% IF permission.organization;
+        link_organization(permission.organization, permission.organization_url);
+    ELSIF permission.user;
+        link_user(permission.user, permission.user_url);
+    ELSE;
         THROW undef "permissions neither organization nor user";
     END %]
             </td>

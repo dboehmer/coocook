@@ -3,8 +3,7 @@
 <table>
 <thead>
     <tr>
-        <th>User</th>
-        <th>Display Name</th>
+        <th>Name</th>
         <th>Admin Comment</th>
         <th>Owned projects</th>
         <th>Registered</th>
@@ -14,8 +13,7 @@
 <tbody>
 [% FOR u IN users %]
     <tr>
-        <td><a href="[% u.url %]">👤[% u.name %]</a></td>
-        <td>[% u.display_name | html %]</td>
+        <td>[% link_user(u, u.url) %]</td>
         <td>[% u.admin_comment | html %]</td>
         <td style="text-align:center">[% u.projects_count %]</td>
         <td>[% u.created %]</td>
