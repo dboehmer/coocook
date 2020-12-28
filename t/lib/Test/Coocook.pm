@@ -135,8 +135,8 @@ sub register_ok {
         $self->submit_form_ok( { with_fields => $field_values },
             "register account '$field_values->{username}'" );
 
-        $self->content_like(qr/e-mail/)
-          or note $self->content;
+        $self->text_like(qr/e-mail/)
+          or note $self->text;
     };
 }
 
@@ -151,8 +151,8 @@ sub register_fails_like {
         note "Register account '$$field_values{username}' ...";
         $self->submit_form( with_fields => $field_values );
 
-        $self->status_is(400) and $self->content_like($error_regex)
-          or note $self->content;
+        $self->status_is(400) and $self->text_like($error_regex)
+          or note $self->text;
     };
 }
 
@@ -226,8 +226,8 @@ sub is_logged_in {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_contains( 'Settings', $name || "client is logged in" )
-      or note $self->content;
+    $self->text_contains( 'Settings', $name || "client is logged in" )
+      or note $self->text;
 }
 
 sub is_logged_out {
@@ -235,8 +235,8 @@ sub is_logged_out {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    $self->content_like( qr/Sign [Ii]n/, $name || "client is logged out" )
-      or note $self->content;
+    $self->text_like( qr/Sign [Ii]n/, $name || "client is logged out" )
+      or note $self->text;
 }
 
 sub login {
@@ -288,8 +288,8 @@ sub login_fails {
     subtest $name || "login with $username:$password fails", sub {
         $self->login( $username, $password );
 
-        ( $self->content_like(qr/fail/) and $self->content_like(qr/Sign in/) )
-          or note $self->content;
+        ( $self->text_like(qr/fail/) and $self->text_like(qr/Sign in/) )
+          or note $self->text;
     };
 }
 
@@ -351,8 +351,8 @@ sub request_recovery_link_ok {
             "submit e-mail recovery form"
         );
 
-        $self->content_contains('Recovery link sent')
-          or note $self->content;
+        $self->text_contains('Recovery link sent')
+          or note $self->text;
     };
 }
 
@@ -400,8 +400,8 @@ sub create_project_ok {
 
         $self->submit_form_ok( { with_fields => $fields }, "submit create project form" );
 
-        $self->content_contains( $fields->{name} )
-          or note $self->content;
+        $self->text_contains( $fields->{name} )
+          or note $self->text;
     };
 }
 
