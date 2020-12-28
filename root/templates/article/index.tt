@@ -1,5 +1,9 @@
 [% title = "Articles" %]
 
+[% new = BLOCK %]
+<p><a href="[% new_url %]">New article</a></p>
+[% END; new %]
+
 <table>
     <thead>
         <tr>
@@ -34,3 +38,5 @@
 [% END %]
     </tbody>
 </table>
+
+[% new %]

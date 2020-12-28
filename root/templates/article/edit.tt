@@ -1,9 +1,19 @@
-[% escape_title( 'Article', article.name ) %]
+[% IF article; escape_title( 'Article', article.name ); ELSE; title="New Article"; END %]
 
-<form method="post" action="[% update_url %]">
-    <p>Applicable units:</p>
+<form method="post" action="[% submit_url %]">
+<input type="text" name="name"    placeholder="name"    value="[% article.name | html %]">
+<input type="text" name="comment" placeholder="comment" value="[% article.comment | html %]">
+<select name="shop_section">
+    <option value="" style="font-style:italic">(no shop section)</option>
+[% FOREACH section IN shop_sections %]
+    <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name | html %]</option>
+[% END %]
+</select>
+<div class="card">
+    <div class="card-header"><h3>Applicable Units</h3></div>
 
-    <table style="margin-left: 2em">
+<div class="card-body">
+    <table>
 [% FOR quantity IN quantities %]
         <tr>
             <th>[% quantity.name | html %]</th>
@@ -13,34 +23,56 @@
         IF units_in_use.$id; # pass ID of used unit as hidden field because value of disabled checkbox isn't sent %]
         <input type="hidden" name="units" value="[% id %]">
         [% END %]
-        <input type="checkbox" id="a[% article.id %]u[% unit.id %]" name="units" value="[% unit.id %]" [% 'title="article is used with this unit" disabled' IF units_in_use.$id %] [% 'checked' IF selected_units.$id %]>
-        <label for="a[% article.id %]u[% unit.id %]">[% display_unit(unit, {html=>1}) %]</label>
+        <input type="checkbox" id="u[% unit.id %]" name="units" value="[% unit.id %]" [% 'title="article is used with this unit" disabled' IF units_in_use.$id %] [% 'checked' IF selected_units.$id %]>
+        [%~ '&nbsp;' ~%]
+        <label for="u[% unit.id %]">[% display_unit(unit, {html => 1}) %]</label>
     [% END %]
             </td>
         </tr>
 [% END %]
     </table>
-    <p>Preorder:
-        <input type="checkbox" name="preorder" id="preorder[% article.id %]" [% 'checked' IF article.preorder_workdays.defined %]><label for="preorder[% article.id %]">preorder</label>
-        <input type="number" name="preorder_workdays" value="[% article.preorder_workdays OR default_preorder_workdays %]"> business days in advance
-        if <input type="number" name="preorder_servings" value="[% article.preorder_servings OR default_preorder_servings %]"> servings or more
-    </p>
-    <p>Shelf life:
-        <input type="checkbox" name="shelf_life" id="shelf_life" [% 'checked' IF article.shelf_life_days.defined %]>
-        <label for="shelf_life">known</label>, up to <input type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]"> days
-    </p>
-    <p>Name: <input type="text" name="name" value="[% article.name | html %]"></p>
-    <p>Comment: <input type="text" name="comment" value="[% article.comment %]" placeholder="comment"></p>
-    <p>Shop section: <select name="shop_section">
-        <option value="" style="font-style:italic">(no shop section)</option>
-[% FOREACH section IN shop_sections %]
-        <option value="[% section.id %]" [% 'selected' IF section.id == article.shop_section.id %]>[% section.name | html %]</option>
-[% END %]
-    </select></p>
-    <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>
-    <input type="submit" value="Update">
+</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Preorder</h3></div>
+
+<div class="card-body">
+    <input type="checkbox" name="preorder" id="preorder" [% 'checked' IF article.preorder_workdays.defined %]>
+    <label for="preorder">preorder</label>
+
+    <input  id="preorder_workdays" type="number" name="preorder_workdays" value="[% article.preorder_workdays OR default_preorder_workdays %]">
+    <label for="preorder_workdays">business days in advance</label>
+
+    if
+    <input  id="preorder_servings" type="number" name="preorder_servings" value="[% article.preorder_servings OR default_preorder_servings %]">
+    <label for="preorder_servings">servings or more</label>
+</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Shelf Life</h3></div>
+
+<div class="card-body">
+    <input type="checkbox" name="shelf_life" id="shelf_life" [% 'checked' IF article.shelf_life_days.defined %]> <label for="shelf_life">known shelf life</label>
+    of
+    <input  id="shelf_life_days" type="number" name="shelf_life_days" value="[% article.shelf_life_days.defined ? article.shelf_life_days : default_shelf_life_days %]">
+    <label for="shelf_life_days">days</label>
+</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Tags</h3></div>
+
+    <div class="card-body">
+        <p>Tags: <input type="text" name="tags" value="[% article.tags_rs.joined %]" placeholder="tags"></p>
+    </div>
+</div>
+
+<p><input type="submit" value="[% article ? 'Update' : 'Create' %]"></p>
 </form>
 
+[% IF article %]
 <h2>Where <em>[% article.name | html %]</em> is used</h2>
 
 <ul>
@@ -58,3 +90,4 @@
     <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> on [% display_date(dish.meal.date, {html=>1}) %]</li>
 [% END %]
 </ul>
+[% END %]

@@ -17,22 +17,7 @@ Catalyst Controller.
 
 =cut
 
-sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
-    my ( $self, $c ) = @_;
-
-    $c->stash(
-        submenu_items => [
-            { text => "All articles", action => 'article/index' },
-            { text => "Add article",  action => 'article/new_article' },
-        ]
-    );
-}
-
-=head2 index
-
-=cut
-
-sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
+sub index : GET HEAD Chained('/project/base') PathPart('articles') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -76,24 +61,24 @@ sub index : GET HEAD Chained('submenu') PathPart('articles') Args(0)
     }
 
     $c->stash(
-        articles   => \@articles,
-        create_url => $c->project_uri( $self->action_for('create') ),
+        articles => \@articles,
+        new_url  => $c->project_uri( $self->action_for('new_article') ),
     );
 }
 
-sub new_article : GET HEAD Chained('submenu') PathPart('articles/new')
+sub new_article : GET HEAD Chained('/project/base') PathPart('articles/new')
   RequiresCapability('edit_project') {
     my ( $self, $c ) = @_;
 
     $c->forward('fetch_project_data');
 
     $c->stash(
-        template   => 'article/new.tt',
-        create_url => $c->project_uri( $self->action_for('create') ),
+        template   => 'article/edit.tt',
+        submit_url => $c->project_uri( $self->action_for('create') ),
     );
 }
 
-sub base : Chained('submenu') PathPart('article') CaptureArgs(1) {
+sub base : Chained('/project/base') PathPart('article') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     $c->stash( article => $c->project->articles->find($id) || $c->detach('/error/not_found') );
@@ -112,7 +97,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     my $units_in_use = $article->units_in_use;
 
     $c->stash(
-        update_url     => $c->project_uri( $self->action_for('update'), $article->id ),
+        submit_url     => $c->project_uri( $self->action_for('update'), $article->id ),
         selected_units => { map { $_ => 1 } $units->get_column('id')->all },
         units_in_use   => { map { $_ => 1 } $units_in_use->get_column('id')->all },
     );
