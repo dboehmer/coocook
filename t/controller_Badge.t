@@ -3,11 +3,10 @@ use warnings;
 
 use lib 't/lib/';
 
-use DBICx::TestDatabase;
 use Test::Coocook;
 use Test::Most tests => 26;
 
-my $t = Test::Coocook->new( deploy => 0 );
+my $t = Test::Coocook->new( test_data => 0 );
 
 my $user = $t->schema->resultset('User')
   ->create( { map { $_ => '' } qw< name display_name password_hash email_fc > } );

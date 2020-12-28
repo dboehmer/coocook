@@ -3,11 +3,10 @@ use warnings;
 
 use lib 't/lib';
 
-use DBICx::TestDatabase;
 use Test::Coocook;
 use Test::Most tests => 6;
 
-my $t = Test::Coocook->new( deploy => 0 );
+my $t = Test::Coocook->new( test_data => 0 );
 
 my %ok_input = (
     username  => 'test',

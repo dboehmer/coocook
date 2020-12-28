@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use Coocook::Schema;
-use DBICx::TestDatabase;
 use Test::Most;
 
 use lib 't/lib/';
@@ -25,12 +24,12 @@ plan tests => 1 + 3 * ( $Coocook::Schema::VERSION - 1 ) + 2;
 
 my $schema_from_code = TestDB->new();
 my $schema_from_deploy;
-my $schema_from_upgrades = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+my $schema_from_upgrades = TestDB->new( deploy => 0 );
 
 install_ok( $schema_from_upgrades, 1 );
 
 for my $version ( 2 .. $Coocook::Schema::VERSION ) {
-    $schema_from_deploy = DBICx::TestDatabase->new( 'Coocook::Schema', { nodeploy => 1 } );
+    $schema_from_deploy = TestDB->new( deploy => 0 );
     install_ok( $schema_from_deploy, $version );
 
     upgrade_ok( $schema_from_upgrades, $version );

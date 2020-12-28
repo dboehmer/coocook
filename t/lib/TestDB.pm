@@ -13,14 +13,23 @@ use Test::Most;
 
 =head1 new(...)
 
-Like L<DBICx::TestDatabase> but initializes database with C<share/test_data.sql>.
+Like L<DBICx::TestDatabase> but can initialize database with C<share/test_data.sql>.
 
 =cut
 
 sub new {
-    my $class = shift;
+    my ( $class, %opts ) = @_;
 
-    my $schema = $class->next::method( 'Coocook::Schema', @_ );
+    my $deploy    = delete $opts{deploy}    // 1;
+    my $test_data = delete $opts{test_data} // 1;
+
+    $deploy
+      or $opts{nodeploy} = 1;
+
+    my $schema = $class->next::method( 'Coocook::Schema', \%opts );
+
+    ( $deploy and $test_data )
+      or return $schema;
 
     open my $fh, '<', 'share/test_data.sql';
 

@@ -3,12 +3,11 @@ use warnings;
 
 use lib 't/lib';
 
-use DBICx::TestDatabase;
 use Test::Coocook;
 use Test::Most tests => 75;
 use Time::HiRes 'time';
 
-my $t = Test::Coocook->new( deploy => 0 );
+my $t = Test::Coocook->new( test_data => 0 );
 
 my $schema = $t->schema;
 

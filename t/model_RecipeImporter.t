@@ -8,7 +8,7 @@ use TestDB;
 use Test::Deep;
 use Test::Most tests => 33;
 
-my $schema = TestDB->new( { deploy => 1 } );
+my $schema = TestDB->new();
 
 my $source_project = $schema->resultset('Project')->find(1);
 my $source_recipe  = $schema->resultset('Recipe')->find(1);

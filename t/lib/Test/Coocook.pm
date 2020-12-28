@@ -8,7 +8,6 @@ use open ':locale';    # respect encoding configured in terminal
 our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
 
 use Carp;
-use DBICx::TestDatabase;
 use Email::Sender::Simple;
 use FindBin;
 use HTML::Meta::Robots;
@@ -40,8 +39,10 @@ sub new {
       and croak "Can't use both arguments 'deploy' and 'schema'";
 
     my $config = delete $args{config};
-    my $deploy = delete $args{deploy} // 1;
     my $schema = delete $args{schema};
+
+    my $deploy    = delete $args{deploy}    // 1;
+    my $test_data = delete $args{test_data} // 1;
 
     my $self = $class->next::method(
         catalyst_app => 'Coocook',
@@ -53,10 +54,7 @@ sub new {
         $self->catalyst_app->log->disable('info');
     }
 
-    $schema //=
-      $deploy
-      ? TestDB->new()
-      : DBICx::TestDatabase->new('Coocook::Schema');
+    $schema //= TestDB->new( deploy => $deploy, test_data => $test_data );
 
     $self->catalyst_app->model('DB')->schema->storage( $schema->storage );
 
