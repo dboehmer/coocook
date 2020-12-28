@@ -70,9 +70,6 @@ sub auto : Private {
 
     if ( $c->action ne 'user/register' and $c->action ne 'user/post_register' ) {    # don't loop
         if ( !$c->user and !$c->model('DB::User')->results_exist ) {
-            $c->messages->info( "There are currently no users registered at this Coocook installation."
-                  . " The first user you register will be site admin!" );
-
             $c->redirect_detach( $c->uri_for_action('/user/register') );
         }
     }

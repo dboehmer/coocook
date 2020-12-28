@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 75;
+use Test::Most tests => 77;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -27,6 +27,10 @@ my $organization = $schema->resultset('Organization')->create(
 );
 
 $t->get_ok('/');
+
+$t->text_contains("first user");
+
+$t->content_contains('noindex');
 
 {
     my %userdata_ok = (

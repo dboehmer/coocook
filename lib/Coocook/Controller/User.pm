@@ -75,6 +75,13 @@ sub register : GET HEAD Chained('/base') Args(0) Does('~HasCSS') Does('~HasJS') 
     $c->user_registration_enabled
       or $c->detach('/error/forbidden');
 
+    if ( not $c->model('DB::User')->results_exist ) {
+        $c->messages->info( "There are currently no users registered at this Coocook installation."
+              . " The first user you register will be site admin!" );
+
+        $c->stash->{robots}->index(0);
+    }
+
     $c->session( register_form_served_epoch => time() );
 
     push @{ $c->stash->{js} }, '/lib/zxcvbn.js';
