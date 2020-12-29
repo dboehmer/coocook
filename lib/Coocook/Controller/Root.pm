@@ -79,7 +79,6 @@ sub auto : Private {
           qw<
           date_format_short
           date_format_long
-          footer_html
           help_links
           icon_type
           icon_url
@@ -202,7 +201,6 @@ sub homepage : Private {
     $c->stash(
         meta_description       => $c->config->{homepage_meta_description},
         meta_keywords          => $c->config->{homepage_meta_keywords},
-        homepage_text_md       => $c->config->{homepage_text_md},
         max_recipes            => $max_recipes,
         public_recipes         => \@public_recipes,
         active_public_projects => \@active_public_projects,
@@ -251,10 +249,8 @@ sub statistics : GET HEAD Chained('/base') Args(0) Public {
 sub about : GET HEAD Chained('/base') Args(0) Public {
     my ( $self, $c ) = @_;
 
-    $c->stash(
-        title         => $c->config->{about_page_title},
-        about_page_md => $c->config->{about_page_md},
-    );
+    # configured globally (instead of in TT) for menu item
+    $c->stash( title => $c->config->{about_page_title} );
 }
 
 =head2 end

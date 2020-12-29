@@ -1,5 +1,3 @@
-[% DEFAULT title = "About";
+[%# title is configured in coocook.yaml with default in lib/Coocook.pm! %]
 
-USE Markdown;
-
-about_page_md | markdown %]
+<p>This is an instance of the Coocook food planning software.</p>

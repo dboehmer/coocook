@@ -221,7 +221,7 @@ END %]
     <script src="[% path %]"></script>
 [% END %]
 
-[% footer_html %]
+[% INSERT wrapper_footer.tt %]
 
 </div>
 </body>

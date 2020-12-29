@@ -87,25 +87,7 @@ __PACKAGE__->config(
         'private_projects',                    # disable to prohibit new users creating private projects
     ],
 
-    homepage_text_md => do {    # Markdown text for homepage, default: abstract of Coocook.pm
-        open my $fh, '<', __FILE__;    # read abstract from this file
-        my $abstract;
-        while (<$fh>) {
-            /^# ?ABSTRACT: (.+)$/ or next;
-            $abstract = $1;
-            last;
-        }
-        close $fh;
-        $abstract;
-    },
-
     about_page_title => "About",
-
-    about_page_md => <<EOT,
-This is an instance of the Coocook food planning software.
-
-<!-- define 'about_page_md' in 'coocook_local' config file to replace this text -->
-EOT
 
     # TODO move to local config of Coocook.org once 3rd party instances exist
     help_links => [

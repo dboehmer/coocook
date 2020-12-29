@@ -1,5 +1,4 @@
-[% USE Markdown;
-homepage_text_md | markdown %]
+[% INSERT homepage_intro.tt %]
 
 <h2>Recent public recipes</h2>
 
