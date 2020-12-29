@@ -219,7 +219,7 @@ sub update_or_insert : Private {
 
     # $name contains nothing more than whitespace
     # TODO preserve form input
-    if ( $name !~ m/\S/ ) {
+    if ( !defined $name or $name !~ m/\S/ ) {
         $c->messages->error("Name must not be empty");
 
         $c->redirect_detach( $c->project_uri( '/article/edit', $article->id ) );
@@ -227,25 +227,31 @@ sub update_or_insert : Private {
 
     my @tags = $c->project->tags->from_names( $c->req->params->get('tags') )->only_id_col->all;
 
-    my @units =
-      $c->project->units->search( { id => { -in => [ $c->req->params->get_all('units') ] } } )
-      ->only_id_col->all;
+    my $articles_units = $article->articles_units;
 
-    my $missing_units = $article->units_in_use->search(
-        {
-            id => { -not_in => [ map { $_->id } @units ] },
-        }
-    );
+    my @units_in_use = $article->units_in_use->get_column('id')->all;
 
-    if ( $missing_units->count > 0 ) {
-        $c->log->warn("missing used unit $_") for $missing_units->get_column('id')->all;
+    my %selected_units = map { $_ => 1 } my @selected_units = $c->req->params->get_all('units');
+    my %all_units      = map { $_ => 1 } my @all_units      = $c->project->units->get_column('id')->all;
+    my %current_units = map { $_ => 1 } my @current_units = $articles_units->get_column('unit_id')->all;
 
-        $c->detach('/error/bad_request');    # TODO add error text
+    for my $sent_id (@selected_units) {
+        $all_units{$sent_id}
+          or $c->detach( '/error/bad_request', ["Your browser sent an invalid unit ID."] );
     }
+
+    for my $id (@units_in_use) { # this isn't input verification, the HTML form doesn't allow to do this
+        $selected_units{$id}
+          or $c->detach( '/error/bad_request', ["You've deselected a unit that is in use."] );
+    }
+
+    my @units_to_remove = grep { not $selected_units{$_} } @current_units;
+    my @units_to_add    = grep { not $current_units{$_} } @selected_units;
 
     my $shop_section;
     if ( my $id = $c->req->params->get('shop_section') ) {
-        $shop_section = $c->project->shop_sections->find($id);
+        $shop_section = $c->project->shop_sections->find($id)
+          or $c->detach( '/error/bad_request', ["Your browser sent an invalid shop section ID."] );
     }
 
     $article->txn_do(
@@ -277,7 +283,15 @@ sub update_or_insert : Private {
 
             # works only after update_or_insert()
             $article->set_tags( \@tags );
-            $article->set_units( \@units );
+
+            # set_units() does a DELETE on all and then re-inserts what violates FK constraints
+            # (that's safe for tags because there is no FK constraint on the combination of article & tag)
+            @units_to_remove
+              and $articles_units->search( { unit_id => { -in => \@units_to_remove } } )->delete();
+
+            @units_to_add
+              and $articles_units->populate(
+                [ [ 'article_id', 'unit_id' ], map { [ $article->id, $_ ] } @units_to_add ] );
         }
     );
 
