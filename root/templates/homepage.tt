@@ -1,4 +1,4 @@
-[% INSERT homepage_intro.tt %]
+[% INCLUDE 'homepage_intro.tt' %]
 
 <h2>Recent public recipes</h2>
 
