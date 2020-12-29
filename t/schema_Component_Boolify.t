@@ -14,9 +14,9 @@ use Test::Most;
     __PACKAGE__->table('a');
 
     __PACKAGE__->add_columns(
-        id   => { data_type => 'INT' },
-        flag => { data_type => 'BOOL' },
-        str  => { data_type => 'TEXT' },
+        id   => { data_type => 'integer' },
+        flag => { data_type => 'boolean' },
+        str  => { data_type => 'text' },
     );
 
     __PACKAGE__->set_primary_key('id');

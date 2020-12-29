@@ -7,7 +7,7 @@ use warnings;
 
 use parent 'DBIx::Class::FilterColumn';
 
-my $BOOL_RE = qr/^bool$/i;
+my $BOOL_RE = qr/^bool(?:ean)?$/i;
 
 sub register_column {
     my $class = shift;
