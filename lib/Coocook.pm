@@ -144,8 +144,6 @@ __PACKAGE__->config(
     # send e-mails to site_owners about new users registered
     notify_site_owners_about_registrations => 1,
 
-    project_deletion_confirmation => "I really want to loose my project",
-
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header                      => 1,    # Send X-Catalyst header

@@ -43,12 +43,12 @@
 </div>
 </div>
 
-<form method="post" action="[% delete_url %]">
+<form method="post" action="[% delete_url %]" name="delete">
     <div class="card">
         <div class="card-header"><h3>Delete project <em>[% project.name | html %]</em></h3></div>
 
     <div class="card-body">
-        <p>Type <code>[% deletion_confirmation %]</code> to confirm deletion of project <em>[% project.name | html %]</em>.</p>
+        <p>To confirm deletion enter the name of the project.</p>
         <input type="text" name="confirmation" autocomplete="off">
         <input type="submit" value="Delete project">
     </div>

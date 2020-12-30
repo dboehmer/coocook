@@ -6,7 +6,7 @@ use lib 't/lib';
 use DateTime;
 use TestDB;
 use Test::Coocook;
-use Test::Most tests => 39;
+use Test::Most tests => 40;
 
 my $t = Test::Coocook->new();
 
@@ -214,3 +214,19 @@ sub message_like {
     $t->text_like(@_)
       or note $t->text;
 }
+
+subtest "project deletion" => sub {
+    $t->get_ok('/project/1/Test-Project/settings');
+
+    $t->submit_form_ok( { form_name => 'delete', with_fields => { confirmation => 'foo' } } );
+    $t->text_contains("not deleted");
+
+    $t->submit_form_ok( { form_name => 'delete', with_fields => { confirmation => 'Test Project' } } );
+    $t->base_is('https://localhost/');
+    $t->text_contains('Test Project');
+    $t->text_contains('deleted');
+
+    $t->reload();
+    $t->text_lacks('Test Project')
+      or note $t->content;
+};

@@ -182,11 +182,10 @@ sub settings : GET HEAD Chained('submenu') PathPart('settings') Args(0)
     my ( $self, $c ) = @_;
 
     $c->stash(
-        update_url            => $c->project_uri('/project/update'),
-        rename_url            => $c->project_uri('/project/rename'),
-        visibility_url        => $c->project_uri('/project/visibility'),
-        delete_url            => $c->project_uri('/project/delete'),
-        deletion_confirmation => $c->config->{project_deletion_confirmation},
+        update_url     => $c->project_uri('/project/update'),
+        rename_url     => $c->project_uri('/project/rename'),
+        visibility_url => $c->project_uri('/project/visibility'),
+        delete_url     => $c->project_uri('/project/delete'),
     );
 }
 
@@ -344,11 +343,13 @@ sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_v
 sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
     my ( $self, $c ) = @_;
 
-    if ( $c->req->params->get('confirmation') eq $c->config->{project_deletion_confirmation} ) {
+    if ( $c->req->params->get('confirmation') eq $c->project->name ) {
         $c->project->delete;
+        $c->messages->info( sprintf "Project '%s' has been deleted.", $c->project->name );
         $c->response->redirect( $c->uri_for_action('/index') );
     }
     else {
+        $c->messages->warn("Project is not deleted without confirmation!");
         $c->response->redirect( $c->project_uri('/project/settings') );
     }
 }
