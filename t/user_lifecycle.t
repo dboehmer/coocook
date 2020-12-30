@@ -17,12 +17,19 @@ $schema->resultset('BlacklistEmail')
 $schema->resultset('BlacklistUsername')
   ->add_username( my $blacklist_username = 'blacklisted', comment => __FILE__ );
 
-my $organization = $schema->resultset('Organization')->create(
-    {
-        name           => "TestOrganization",
-        display_name   => "Test Organization",
-        description_md => __FILE__,
-        owner_id       => 9999
+# normally an organization needs an owner
+# but then we couldn't test all the error cases in one block ...
+# so we trick a little
+my $organization = $schema->fk_checks_off_do(
+    sub {
+        return $schema->resultset('Organization')->create(
+            {
+                name           => "TestOrganization",
+                display_name   => "Test Organization",
+                description_md => __FILE__,
+                owner_id       => 9999,
+            }
+        );
     }
 );
 

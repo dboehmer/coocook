@@ -58,6 +58,8 @@ subtest fk_checks_off_do => sub {
     $db->fk_checks_off_do( sub { is join( '', @_ ) => 'abc', "fk_checks_off_do() passes args" },
         'a' .. 'c' );
 
+    is $db->fk_checks_off_do( sub { return 'foo' } ) => 'foo', "fk_checks_off_do() passes return value";
+
     {
         no warnings 'once', 'redefine';
         local *DBIx::Class::Storage::DBI::sqlt_type = sub { 'OtherDBMS' };

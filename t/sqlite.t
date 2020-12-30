@@ -28,6 +28,12 @@ my $schema_from_upgrades = TestDB->new( deploy => 0 );
 
 install_ok( $schema_from_upgrades, 1 );
 
+# generated upgrade scripts contain
+# CREATE TEMPORARY TABLE ... with FKs on main tables which is impossible
+# http://sqlite.1065341.n5.nabble.com/Foreign-keys-amp-TEMPORARY-tables-td92306.html
+diag "TODO disabling PRAGMA foreign_keys on DB from upgrade SQLs";
+$schema_from_upgrades->disable_fk_checks();
+
 for my $version ( 2 .. $Coocook::Schema::VERSION ) {
     $schema_from_deploy = TestDB->new( deploy => 0 );
     install_ok( $schema_from_deploy, $version );

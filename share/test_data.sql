@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 INSERT INTO 'users'
 (id,       name,    name_fc, password_hash, display_name,                   admin_comment,               email_fc,    email_verified, token_hash, token_expires,           created) VALUES
 ( 1, 'john_doe', 'john_doe',        'KOHL',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP),

@@ -37,40 +37,30 @@ Overrides original C<connection> in order to set sane default values.
 sub connection {
     my $self = shift;
 
-    my $args = normalize_connect_info(@_);
+    my @connect_info  = normalize_connect_info(@_);
+    my $on_connect_do = \$connect_info[0]->{on_connect_do};
 
-    my $on_connect_do = \$args->{on_connect_do};
-
+    # identifying the sql_type at connect time is easier than parsing the DSN
     my $enable_fk = sub {
         my $storage = shift;
 
-        if ( $storage->sqlt_type eq 'SQLite' ) {
-            return ['PRAGMA foreign_keys = 1'];
-        }
-        else {
-            return;
-        }
+        $storage->sqlt_type eq 'SQLite'
+          and return ['PRAGMA foreign_keys = 1'];
+
+        return;    # required because otherwise returns result '' from 'eq' above
     };
 
     if ( not defined $$on_connect_do ) {
         $$on_connect_do = [$enable_fk];
     }
     elsif ( ref $$on_connect_do eq 'ARRAY' ) {
-        push @$$on_connect_do, $enable_fk;
+        unshift @$$on_connect_do, $enable_fk;
     }
-    elsif ( ref $$on_connect_do eq 'CODE' ) {
-        my $coderef = $$on_connect_do;
-
-        $$on_connect_do = [
-            sub { $coderef->(); return () },    # ignore return value
-            $enable_fk,
-        ];
-    }
-    else {                                      # scalar
-        $$on_connect_do = [ $$on_connect_do, $enable_fk ];
+    else {         # coderef or scalar
+        $$on_connect_do = [ $enable_fk, $$on_connect_do ];    # $enable_fk first to allow overriding
     }
 
-    return $self->next::method(@_);
+    return $self->next::method(@connect_info);
 }
 
 =head2 count(@resultsets?)
@@ -87,19 +77,35 @@ sub count {
     return $records;
 }
 
+=head2 $schema->fk_checks_off_do( sub { ... } )
+
+Runs given coderef with SQLite pragma C<foreign_keys> temporarily turned off.
+The original pragma state is then restored.
+
+In case of success the coderef's return value is passed if it is true.
+In other cases the return value is undefined.
+
+Probably we should enforce an FK integrity check after the
+completion of the (possibly long) subroutine as soon as we
+know how to do this.
+
+=cut
+
 sub fk_checks_off_do {
-    my $self = shift;
-    my $cb   = shift;
+    my $self    = shift;
+    my $coderef = shift;
 
     my $original_state = $self->sqlite_pragma('foreign_keys');
 
     $original_state
       and $self->disable_fk_checks();
 
-    $cb->(@_);
+    my $result = $coderef->(@_);
 
     $original_state
       and $self->enable_fk_checks();
+
+    return $result;
 }
 
 sub enable_fk_checks  { shift->sqlite_pragma( foreign_keys => 1 ) }
