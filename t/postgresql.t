@@ -14,22 +14,22 @@ use TestDB qw(install_ok upgrade_ok);
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-plan tests => 5 + 4 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 1;
+plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 1;
 
-my $pg_dbic = Test::PostgreSQL->new();
-ok my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
+my $pg_dbic          = Test::PostgreSQL->new();
+my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
 lives_ok { $schema_from_dbic->deploy() } "deploy with DBIx::Class";
 
-my $pg_deploy = Test::PostgreSQL->new();
-ok my $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
+my $pg_deploy          = Test::PostgreSQL->new();
+my $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
 
-my $pg_upgrades = Test::PostgreSQL->new();
-ok my $schema_from_upgrades = Coocook::Schema->connect( $pg_upgrades->dsn );
+my $pg_upgrades          = Test::PostgreSQL->new();
+my $schema_from_upgrades = Coocook::Schema->connect( $pg_upgrades->dsn );
 install_ok( $schema_from_upgrades, $FIRST_PGSQL_SCHEMA_VERSION );
 
 for my $version ( $FIRST_PGSQL_SCHEMA_VERSION + 1 .. $Coocook::Schema::VERSION ) {
-    $pg_deploy = Test::PostgreSQL->new();
-    ok $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
+    $pg_deploy          = Test::PostgreSQL->new();
+    $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
     install_ok( $schema_from_deploy, $version );
 
     upgrade_ok( $schema_from_upgrades, $version );
