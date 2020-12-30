@@ -109,6 +109,8 @@ on 'develop' => sub {
 
 on 'develop' => sub {
   recommends "CatalystX::LeakChecker" => "0";
+  recommends "DBD::Pg" => "0";
+  recommends "DateTime::Format::Pg" => "0";
 };
 
 on 'develop' => sub {

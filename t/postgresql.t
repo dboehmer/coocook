@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test2::Require::Module 'Test::PostgreSQL';
+use Test2::Require::Module 'DateTime::Format::Pg';
 
 use Coocook::Script::Deploy;
 use Coocook::Schema;
