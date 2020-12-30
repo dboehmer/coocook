@@ -9,9 +9,9 @@ use Coocook::Script::Deploy;
 use Sub::Exporter -setup => { exports => [qw(install_ok upgrade_ok)] };
 use Test::Most;
 
-=head2 CLASS METHODS
+=head1 CLASS METHODS
 
-=head1 new(...)
+=head2 new(...)
 
 Like L<DBICx::TestDatabase> but can initialize database with C<share/test_data.sql>.
 
@@ -29,7 +29,20 @@ sub new {
     my $schema = $class->next::method( 'Coocook::Schema', \%opts );
 
     ( $deploy and $test_data )
-      or return $schema;
+      and $class->execute_test_data($schema);
+
+    return $schema;
+}
+
+=head2 execute_test_data($schema)
+
+Executes statements from C<share/test_data.sql>.
+Returns C<$schema> again.
+
+=cut
+
+sub execute_test_data {    # not 'insert_' because not all statements are INSERTs
+    my ( $class, $schema ) = @_;
 
     open my $fh, '<', 'share/test_data.sql';
 
