@@ -39,8 +39,8 @@ Overrides original C<connection> in order to set sane default values.
 sub connection {
     my $self = shift;
 
-    my @connect_info  = normalize_connect_info(@_);
-    my $on_connect_do = \$connect_info[0]->{on_connect_do};
+    my $connect_info  = normalize_connect_info(@_);
+    my $on_connect_do = \$connect_info->{on_connect_do};
 
     # identifying the sql_type at connect time is easier than parsing the DSN
     my $enable_fk = sub {
@@ -58,11 +58,25 @@ sub connection {
     elsif ( ref $$on_connect_do eq 'ARRAY' ) {
         unshift @$$on_connect_do, $enable_fk;
     }
-    else {         # coderef or scalar
-        $$on_connect_do = [ $enable_fk, $$on_connect_do ];    # $enable_fk first to allow overriding
+    elsif ( ref $$on_connect_do eq 'CODE' ) {
+        my $coderef = $$on_connect_do;    # copy original value
+        $$on_connect_do = [
+            $enable_fk,                   # $enable_fk first to allow overriding
+            sub {
+                $coderef->();             # return value of original simple coderef is to be ignored
+                return [];
+            }
+        ];
+    }
+    else {                                # scalar
+        my $scalar = $$on_connect_do;     # copy original value
+        $$on_connect_do = [
+            $enable_fk,                   # $enable_fk first to allow overriding
+            sub { [$scalar] }
+        ];
     }
 
-    return $self->next::method(@connect_info);
+    return $self->next::method($connect_info);
 }
 
 =head2 count(@resultsets?)
