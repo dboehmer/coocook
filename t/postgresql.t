@@ -14,7 +14,7 @@ use TestDB qw(install_ok upgrade_ok);
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 4;
+plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 5;
 
 my $pg_dbic          = Test::PostgreSQL->new();
 my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
@@ -42,6 +42,16 @@ for my $version ( $FIRST_PGSQL_SCHEMA_VERSION + 1 .. $Coocook::Schema::VERSION )
 ok( TestDB->execute_test_data($schema_from_dbic),     "Execute test data in DB from DBIx::Class" );
 ok( TestDB->execute_test_data($schema_from_deploy),   "Execute test data in DB from deploy SQL" );
 ok( TestDB->execute_test_data($schema_from_upgrades), "Execute test data in DB from upgrade SQLs" );
+
+subtest "boolean values" => sub {
+    my $row = $schema_from_dbic->resultset('Project')->one_row;
+    my $col = 'is_public';
+
+    like $row->get_column($col) => qr/^[01]$/, "DBD::Pg returns 0 or 1";
+
+    ok $row->update( { $col => $_ } ), "SET $col = $_" for 0, 1;
+    ok $row->update( { $col => '' } ), "SET $col = ''";
+};
 
 my $sqlite_schema = TestDB->new();
 
