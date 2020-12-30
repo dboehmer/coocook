@@ -126,11 +126,11 @@ sub usage {
 
     Commands:
 
-	deploy            Manage the database of the Coocook instance
-	serve             Run the local development server
-	help              Display this and exit
-	help [command]    Display help for specific command
-	},
+    deploy            Manage the database of the Coocook instance
+    serve             Run the local development server
+    help              Display this and exit
+    help [command]    Display help for specific command
+    },
 
         deploy => qq{Usage:
     $0 deploy [flags]
@@ -139,9 +139,9 @@ sub usage {
 
     flags:
 
-	-i --install    create new database
-	-u --upgrade    upgrade existing database to fit new schema
-	},
+    -i --install    create new database
+    -u --upgrade    upgrade existing database to fit new schema
+    },
 
         serve => qq{Usage:
     $0 serve [flags]
@@ -150,14 +150,14 @@ sub usage {
 
     flags:
 
-	-d --debug      Enable debug output
-	-r --restart    Enable live reload when files are changed
-	},
+    -d --debug      Enable debug output
+    -r --restart    Enable live reload when files are changed
+    },
         help => qq{Usage:
     $0 help [command]
 
     Display help for specific command.
-	},
+    },
     );
 
     defined $help{$command} or say error("$command is not a valid command for $0.") and exit(1);
