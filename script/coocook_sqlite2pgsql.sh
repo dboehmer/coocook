@@ -77,14 +77,20 @@ sqlite3 "$sqlite" .tables \
     | xargs -n1 echo \
     | grep -Evx "$EXCLUDED_TABLES" \
     | while read table
-    do cat <<SQLITE
+    do
+        <<SQLITE sqlite3 "$sqlite" | perl -pe "$PERL_FILTER"
 .headers on
 .mode insert $table
 SELECT * FROM $table;
 SQLITE
-    done \
-    | sqlite3 "$sqlite" \
-    | perl -pe "$PERL_FILTER"
+
+        # reset Pgsql sequence if table has an 'id' primary key column
+        echo -e ".headers off\n.mode csv\nPRAGMA table_info($table)" \
+        | sqlite3 "$sqlite" \
+        | cut -d',' -f2 \
+        | grep -x 'id' \
+        && echo "SELECT setval('${table}_id_seq', (SELECT MAX(id) FROM $table), true);"
+    done
 
 cat <<PGSQL
 COMMIT TRANSACTION;
