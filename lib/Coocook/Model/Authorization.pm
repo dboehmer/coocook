@@ -76,7 +76,7 @@ my @rules = (
             return unless grep { $role eq $_ } organization_roles();
 
             # is already organization member
-            return if $organization->organizations_users->results_exist( { user => $user_object->id } );
+            return if $organization->organizations_users->results_exist( { user_id => $user_object->id } );
 
             return (
                      $user->has_any_organization_role( $organization, qw< admin owner > )
