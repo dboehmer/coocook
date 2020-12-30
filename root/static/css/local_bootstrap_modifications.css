@@ -9,6 +9,14 @@ BOOSTRAP LOCAL CUSTOMIZATION
 }
 
 
+.mt-n3 {
+  margin-top: -1rem !important;
+}
+
+textarea {
+  resize: vertical;
+}
+
 
 /*
 redefined list -> non-indended

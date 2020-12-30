@@ -79,6 +79,7 @@ main a {
 main a:hover,
 main a:focus {
     color: var(--bs-dark);
+    text-decoration: underline;
 }
 
 a.btn-secondary {
@@ -138,10 +139,6 @@ table td input[type="checkbox"]:first-child:last-child {
 }
 
 table td.right-align { text-align: right }
-
-select:hover, select:active {
-    box-shadow: 2px 2px 3px grey;
-}
 
 fieldset{
     border: 1px solid #333333;
