@@ -1,68 +1,103 @@
 [% escape_title( 'Dish', dish.name ) %]
 
-<p>for meal <em>[% dish.meal.name | html %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
-
-[% IF dish.recipe %]
-<p>from recipe <a href="[% dish.recipe.url %]">[% dish.recipe.name | html %]</a></p>
-[% END %]
-
-<form method="post" action="[% delete_url %]">
-    <input type="submit" value="Delete dish">
-</form>
+<div class="row mb-3 mt-n3">
+	<div class="col-sm-6">
+		<p class="m-0">for meal <em>[% dish.meal.name | html %]</em> on [% display_date(dish.meal.date, {html=>1}) %]</p>
+		[% IF dish.recipe %]
+			<p class="m-0">from recipe <a href="[% dish.recipe.url %]">[% dish.recipe.name | html %]</a></p>
+		[% END %]
+	</div>
+	
+	<form class="col-sm-3 offset-sm-3 col-lg-2 offset-lg-4 mt-3 mt-sm-0 btn-group" method="post" action="[% delete_url %]">
+		<button type="button" class="btn btn-danger" title="Delete dish" aria-expanded="false">
+			<i class="material-icons">delete_forever</i> Delete
+		</button>
+	</form>
+</div>
 
 <form action="[% dish.update_url %]" method="post">
-<p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
-<p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
-<p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn’t recalculate values!</em></p>
-<p>Tags: <input type="text" name="tags" value="[% dish.tags_joined %]"></p>
-<p><label for="prepare_at_meal">Prepare at meal:</label>
-    <select id="prepare_at_meal" name="prepare_at_meal">
-        <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
-[% FOR meal IN prepare_meals %]
-        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
-[% END %]
-    </select>
-</p>
 
-<h3>Preparation</h3>
-<div class="row mb-2">
-    <div class="col-sm-6 mb-sm-0 mb-2">
-        <textarea class="form-control with-markdown-preview" name="preparation" rows="10">[% dish.preparation | html %]</textarea>
+<div class="card">
+	<div class="card-header">
+	    <h3 id="section_general_information"><a name="add ingredients">General information</a></h3>
+	</div>
+	<div class="card-body">
+	    <div class="mb-3">
+	    	<label for="name" class="form-label">Name</label>
+            <input id="name" class="form-control" type="text" name="name" value="[% dish.name | html %]">
+	    </div>
+	    <div class="mb-3">
+	    	<label for="comment" class="form-label">Comment</label>
+            <textarea id="comment" class="form-control" name="comment">[% dish.comment %]</textarea>
+	    </div>
+	    <div class="mb-3">
+	    	<label for="tags" class="form-label">Tags</label>
+            <input id="tags" class="form-control" type="text" name="tags" value="[% dish.tags_joined %]">
+	    </div>
+	    <div class="row mb-3">
+            <div class="col-md">
+                <label for="servings" class="form-label">Servings</label>
+                <input id="servings" class="form-control" type="number" name="servings" value="[% dish.servings %]" readonly>
+	    		<small class="text-muted">For a recalculation see <a href="#section_recalculate_values">form</a> below.</small>
+	    	</div>
+            <div class="col-md mt-3 mt-md-0">
+	    		<label for="prepare_at_meal" class="form-label">Prepare at meal</label>
+                <select id="prepare_at_meal" class="form-control" name="prepare_at_meal">
+	    		    <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %] >(none)</option>
+	    			[% FOR meal IN prepare_meals %]
+	    				<option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
+	    			[% END %]
+	    		</select>
+	    	</div>
+	    </div>
+	    <div class="mb-3">
+	    	<label for="preparation" class="form-label">Preparation</label>
+            <div class="row">
+                <div class="col-md-6 mb-md-0 mb-2">
+                    <textarea id="preparation" class="form-control with-markdown-preview" name="preparation" rows="10">[% dish.preparation | html %]</textarea>
+                </div>
+	    	</div>
+	    </div>
+	    <div class="mb-3">
+	    	<label for="description" class="form-label">Description</label>
+            <div class="row">
+                <div class="col-md-6 mb-md-0 mb-2">
+                    <textarea id="description" class="form-control with-markdown-preview" name="description" rows="10">[% dish.description | html %]</textarea>
+                </div>
+            </div>
+	    </div>
+	    <div class="text-end">
+            <button type="submit" class="btn btn-primary">Update dish</button>
+        </div>
     </div>
 </div>
-
-
-<h3>Description</h3>
-<div class="row mb-2">
-    <div class="col-sm-6 mb-sm-0 mb-2">
-        <textarea class="form-control with-markdown-preview" name="description" rows="10">[% dish.description | html %]</textarea>
-    </div>
-</div>
-
-<p><input type="submit" value="Update Dish"></p>
-
-<h2><a name="ingredients">Ingredients</a></h2>
-
+			
 [% INCLUDE 'includes/forms/ingredients_editor.tt' %]
 
-<input type="submit" value="Update Dish">
 </form>
 
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]
 
-<form method="post" action="[% dish.recalculate_url %]">
-<div class="card">
-    <div class="card-header"><h3>Recalculate values</h3></div>
-
-<div class="card-body">
-    <p>Adjust the values in the table above by <strong>changing the number of servings</strong>
-        (currently [% dish.servings %])
-        and <strong>automatically de-/increasing the numbers</strong> in the same ratio.</p>
 
 
-    <label for="recalculate_servings">Servings:</label>
-    <input  id="recalculate_servings" type="number" name="servings" value="[% dish.servings %]">
-    <input type="submit" value="Recalculate values">
-</div>
-</div>
+<form class="mt-3" method="post" action="[% dish.recalculate_url %]">
+	<div class="card">
+		<div class="card-header">
+			<h3 id="section_recalculate_values">Recalculate values</h3>
+		</div>
+        <div class="card-body">
+			<p>Adjust the values in the <a href="#ingredients">table above</a> above by changing the number of servings</strong>
+				(currently [% dish.servings %])
+				and <strong>automatically de-/increasing the numbers</strong> in the same ratio.</p>
+		    <div class="row align-items-center">
+		    	<label for="value" class="col-sm-3 col-form-label">Servings</label>
+                <div class="col-sm-5">
+		    		<input  id="recalculate_servings" type="number" name="servings" value="[% dish.servings %]" class="form-control">
+		    	</div>
+		    	<div class="col-sm-4 mt-3 mt-sm-0 text-end">
+                    <button type="submit" class="btn btn-primary">Recalculate values</button>
+                </div>
+		    </div>
+        </div>
+	</div>
 </form>
