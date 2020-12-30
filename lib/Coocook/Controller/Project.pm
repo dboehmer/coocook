@@ -344,7 +344,12 @@ sub delete : POST Chained('base') Args(0) RequiresCapability('delete_project') {
     my ( $self, $c ) = @_;
 
     if ( $c->req->params->get('confirmation') eq $c->project->name ) {
-        $c->project->delete;
+        $c->project->txn_do(
+            sub {
+                $c->model('DB')->schema->pgsql_set_constraints_deferred();
+                $c->project->delete;
+            }
+        );
         $c->messages->info( sprintf "Project '%s' has been deleted.", $c->project->name );
         $c->response->redirect( $c->uri_for_action('/index') );
     }

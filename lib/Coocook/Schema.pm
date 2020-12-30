@@ -22,6 +22,8 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->load_namespaces( default_resultset_class => '+Coocook::Schema::ResultSet' );
 
+=head1 Generic Methods
+
 =head2 connection
 
 Overrides original C<connection> in order to set sane default values.
@@ -77,6 +79,38 @@ sub count {
     return $records;
 }
 
+sub statistics {
+    my $self = shift;
+
+    return {
+        dishes_served   => $self->resultset('Dish')->in_past_or_today->sum_servings,
+        dishes_planned  => $self->resultset('Dish')->in_future->sum_servings,
+        recipes         => $self->resultset('Recipe')->count_distinct('name'),
+        public_projects => $self->resultset('Project')->public->count,
+        users           => $self->resultset('User')->count,
+        organizations   => $self->resultset('Organization')->count,
+    };
+}
+
+=head1 PostgreSQL-specific Methods
+
+=head2 pgsql_set_constraints_deferred()
+
+Issues `SET CONSTRAINTS ALL DEFERRED` if connected to PostgreSQL.
+Otherwise does nothing.
+
+=cut
+
+sub pgsql_set_constraints_deferred {
+    my $self = shift;
+
+    if ( $self->storage->sqlt_type eq 'PostgreSQL' ) {
+        $self->storage->dbh_do( sub { $_[1]->do('SET CONSTRAINTS ALL DEFERRED') } );
+    }
+}
+
+=head1 SQLite-specific Methods
+
 =head2 $schema->fk_checks_off_do( sub { ... } )
 
 Runs given coderef with SQLite pragma C<foreign_keys> temporarily turned off.
@@ -131,19 +165,6 @@ sub sqlite_pragma {
     else {
         return $self->storage->dbh_do( sub { return $_[1]->selectrow_array($sql) } );
     }
-}
-
-sub statistics {
-    my $self = shift;
-
-    return {
-        dishes_served   => $self->resultset('Dish')->in_past_or_today->sum_servings,
-        dishes_planned  => $self->resultset('Dish')->in_future->sum_servings,
-        recipes         => $self->resultset('Recipe')->count_distinct('name'),
-        public_projects => $self->resultset('Project')->public->count,
-        users           => $self->resultset('User')->count,
-        organizations   => $self->resultset('Organization')->count,
-    };
 }
 
 1;

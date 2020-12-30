@@ -11,10 +11,11 @@ use Test::Most;
 
 use lib 't/lib';
 use TestDB qw(install_ok upgrade_ok);
+use Test::Coocook;
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 5;
+plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 6;
 
 my $pg_dbic          = Test::PostgreSQL->new();
 my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
@@ -54,6 +55,18 @@ subtest "boolean values" => sub {
 };
 
 my $sqlite_schema = TestDB->new();
+
+subtest "deleting projects" => sub {
+    my $t = Test::Coocook->new( schema => $schema_from_dbic );
+    $t->get_ok('/');
+    $t->login_ok( 'john_doe', 'P@ssw0rd' );
+    $t->get_ok('https://localhost/project/1/Test-Project/settings');
+
+    $t->submit_form_ok( { form_name => 'delete', with_fields => { confirmation => 'Test Project' } },
+        "delete project" );
+
+    is $schema_from_dbic->resultset('Project')->find(1) => undef, "project has vanished";
+};
 
 # rename Pgsql schema to match SQLite schema name 'main'
 $schema_from_deploy->storage->dbh_do( sub { $_[1]->do('ALTER SCHEMA public RENAME TO main') } );
