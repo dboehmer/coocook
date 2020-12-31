@@ -3,6 +3,7 @@ package Coocook::Schema;
 # ABSTRACT: DBIx::Class-based SQL database representation
 
 use Carp;
+use Clone; # indirect dependency required for connection()
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
@@ -36,6 +37,9 @@ Overrides original C<connection> in order to set sane default values.
 
 =cut
 
+# DBIx::Class uses Hash::Merge for merging our $connect_info with other data.
+# That module uses Clone::Choose but only with Clone.pm it can do the merge.
+# So we need to require Clone.pm
 sub connection {
     my $self = shift;
 
