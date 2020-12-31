@@ -114,7 +114,7 @@ sub new_unit : GET HEAD Chained('submenu') PathPart('units/new') RequiresCapabil
     my ( $self, $c ) = @_;
 
     $c->stash(
-        template   => 'unit/new.tt',
+        template   => 'project/unit/new.tt',
         create_url => $c->project_uri( $self->action_for('create') ),
         quantities =>
           [ $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } )->all ],

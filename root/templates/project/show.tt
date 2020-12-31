@@ -72,7 +72,7 @@
 </div>
 [% END %]
 
-[% INCLUDE 'print/project.tt' %]
+[% INCLUDE 'project/print/project.tt' %]
 
 <p>Created at [% project.created %]</p>
 </div>

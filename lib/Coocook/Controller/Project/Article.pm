@@ -75,7 +75,7 @@ sub new_article : GET HEAD Chained('/project/base') PathPart('articles/new')
     $c->forward('fetch_project_data');
 
     $c->stash(
-        template   => 'article/edit.tt',
+        template   => 'project/article/edit.tt',
         submit_url => $c->project_uri( $self->action_for('create') ),
     );
 }

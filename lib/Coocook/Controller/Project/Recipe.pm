@@ -114,7 +114,7 @@ sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
     my ( $self, $c ) = @_;
 
     $c->stash(
-        template   => 'recipe/new.tt',
+        template   => 'project/recipe/new.tt',
         create_url => $c->project_uri( $self->action_for('create') ),
     );
 }
