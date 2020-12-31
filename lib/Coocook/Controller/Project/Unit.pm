@@ -135,7 +135,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
     my @articles = $unit->articles->sorted->hri->all;
 
     for my $article (@articles) {
-        $article->{url} = $c->project_uri( '/article/edit', $article->{id} );
+        $article->{url} = $c->project_uri( '/project/article/edit', $article->{id} );
     }
 
     $c->stash(

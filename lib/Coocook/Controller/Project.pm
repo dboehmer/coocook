@@ -82,15 +82,15 @@ sub base : Chained('/base') PathPart('project') CaptureArgs(2) {
         project_urls => {
             project          => $c->project_uri('/project/show'),
             edit             => $c->project_uri('/project/edit'),
-            recipes          => $c->project_uri('/recipe/index'),
-            articles         => $c->project_uri('/article/index'),
-            tags             => $c->project_uri('/tag/index'),
-            unassigned_items => $c->project_uri('/item/unassigned'),
-            purchase_lists   => $c->project_uri('/purchase_list/index'),
-            print            => $c->project_uri('/print/index'),
-            shop_sections    => $c->project_uri('/shop_section/index'),
-            units            => $c->project_uri('/unit/index'),
-            quantities       => $c->project_uri('/quantity/index'),
+            recipes          => $c->project_uri('/project/recipe/index'),
+            articles         => $c->project_uri('/project/article/index'),
+            tags             => $c->project_uri('/project/tag/index'),
+            unassigned_items => $c->project_uri('/project/item/unassigned'),
+            purchase_lists   => $c->project_uri('/project/purchase_list/index'),
+            print            => $c->project_uri('/project/print/index'),
+            shop_sections    => $c->project_uri('/project/shop_section/index'),
+            units            => $c->project_uri('/project/unit/index'),
+            quantities       => $c->project_uri('/project/quantity/index'),
             import           => $c->project_uri('/project/get_import'),
             archive          => $c->project_uri('/project/archive'),
             unarchive        => $c->project_uri('/project/unarchive'),
@@ -119,7 +119,7 @@ sub show : GET HEAD Chained('submenu') PathPart('') Args(0) RequiresCapability('
     for my $day (@$days) {
         for my $meal ( @{ $day->{meals} } ) {
             for my $dish ( @{ $meal->{dishes} } ) {
-                $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+                $dish->{url} = $c->project_uri( '/project/dish/edit', $dish->{id} );
             }
         }
     }
@@ -147,18 +147,18 @@ sub edit : GET HEAD Chained('submenu') PathPart('edit') Args(0) RequiresCapabili
             my $dishes = $meal->{dishes};
 
             for my $dish (@$dishes) {
-                $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+                $dish->{url} = $c->project_uri( '/project/dish/edit', $dish->{id} );
             }
 
             $day->{dishes} += @$dishes;
 
-            $meal->{update_url} = $c->project_uri( '/meal/update', $meal->{id} );
+            $meal->{update_url} = $c->project_uri( '/project/meal/update', $meal->{id} );
 
             if ( $meal->{deletable} ) {
-                $meal->{delete_url} = $c->project_uri( '/meal/delete', $meal->{id} );
+                $meal->{delete_url} = $c->project_uri( '/project/meal/delete', $meal->{id} );
             }
             elsif ( @{ $meal->{dishes} } > 0 ) {
-                $meal->{delete_dishes_url} = $c->project_uri( '/meal/delete_dishes', $meal->{id} );
+                $meal->{delete_dishes_url} = $c->project_uri( '/project/meal/delete_dishes', $meal->{id} );
             }
             elsif ( @{ $meal->{prepared_dishes} } > 0 ) {
                 $meal->{prepared_dishes_exist} = 1;
@@ -171,9 +171,9 @@ sub edit : GET HEAD Chained('submenu') PathPart('edit') Args(0) RequiresCapabili
         default_date         => $default_date,
         recipes              => [ $c->project->recipes->sorted->all ],
         days                 => $days,
-        dish_create_url      => $c->project_uri('/dish/create'),
-        dish_from_recipe_url => $c->project_uri('/dish/from_recipe'),
-        meal_create_url      => $c->project_uri('/meal/create'),
+        dish_create_url      => $c->project_uri('/project/dish/create'),
+        dish_from_recipe_url => $c->project_uri('/project/dish/from_recipe'),
+        meal_create_url      => $c->project_uri('/project/meal/create'),
     );
 }
 

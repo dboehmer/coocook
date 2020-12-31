@@ -116,9 +116,9 @@ sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view
     $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
 
     my %relationships = (
-        articles => '/article/edit',
-        dishes   => '/dish/edit',
-        recipes  => '/recipe/edit',
+        articles => '/project/article/edit',
+        dishes   => '/project/dish/edit',
+        recipes  => '/project/recipe/edit',
     );
 
     while ( my ( $rel => $path ) = each %relationships ) {

@@ -190,7 +190,7 @@ sub messages { return shift->stash->{messages} }
 Return URI for project-specific Catalyst action with the current project's C<id> and C<url_name>
 plus any number of C<@arguments> and possibly C<\%query_params>.
 
-    my $uri = $c->project_uri( '/article/edit', $article->id, { key => 'value' } );
+    my $uri = $c->project_uri( '/project/article/edit', $article->id, { key => 'value' } );
     # http://localhost/project/MyProject/article/42?key=value
 
     my $uri = $c->project_uri( $self->action_for('edit'), $article->id, { key => 'value' } );

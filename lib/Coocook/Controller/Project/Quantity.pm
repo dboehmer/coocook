@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET HEAD Chained('/unit/submenu') PathPart('quantities') Args(0)
+sub index : GET HEAD Chained('/project/unit/submenu') PathPart('quantities') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 

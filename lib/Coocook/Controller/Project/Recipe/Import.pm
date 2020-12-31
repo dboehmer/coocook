@@ -122,7 +122,7 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
         ingredients => \%ingredients,
     );
 
-    $c->redirect_detach( $c->project_uri( '/recipe/edit', $new_recipe->id ) );
+    $c->redirect_detach( $c->project_uri( '/project/recipe/edit', $new_recipe->id ) );
 }
 
 1;

@@ -60,7 +60,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
             recipe => $dish->recipe
             ? {
                 name => $dish->recipe->name,
-                url  => $c->project_uri( '/recipe/edit', $dish->recipe->id ),
+                url  => $c->project_uri( '/project/recipe/edit', $dish->recipe->id ),
               }
             : undef,
 
@@ -74,12 +74,12 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         articles           => $ingredients->all_articles,
         units              => $ingredients->all_units,
         prepare_meals      => [ $prepare_meals->all ],
-        add_ingredient_url => $c->project_uri( '/dish/add',    $dish->id ),
-        delete_url         => $c->project_uri( '/dish/delete', $dish->id ),
+        add_ingredient_url => $c->project_uri( '/project/dish/add',    $dish->id ),
+        delete_url         => $c->project_uri( '/project/dish/delete', $dish->id ),
     );
 
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
-        $ingredient->{reposition_url} = $c->project_uri( '/dish/reposition', $ingredient->{id} );
+        $ingredient->{reposition_url} = $c->project_uri( '/project/dish/reposition', $ingredient->{id} );
     }
 }
 
@@ -108,7 +108,7 @@ sub create : POST Chained('/project/base') PathPart('dishes/create') Args(0)
         }
     );
 
-    $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
+    $c->response->redirect( $c->project_uri( '/project/dish/edit', $dish->id ) );
 }
 
 sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') Args(0)
@@ -127,7 +127,7 @@ sub from_recipe : POST Chained('/project/base') PathPart('dishes/from_recipe') A
         )
     );
 
-    $c->response->redirect( $c->project_uri( '/dish/edit', $dish->id ) );
+    $c->response->redirect( $c->project_uri( '/project/dish/edit', $dish->id ) );
 }
 
 sub recalculate : POST Chained('base') Args(0) RequiresCapability('edit_project') {
