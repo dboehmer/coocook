@@ -1,4 +1,4 @@
-package Coocook::Controller::Item;
+package Coocook::Controller::Project::Item;
 
 use DateTime;
 use Moose;
@@ -8,7 +8,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Items - Catalyst Controller
+Coocook::Controller::Project::Items - Catalyst Controller
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,4 @@
-package Coocook::Controller::PurchaseList;
+package Coocook::Controller::Project::PurchaseList;
 
 use DateTime;
 use Moose;
@@ -10,7 +10,7 @@ __PACKAGE__->config( namespace => 'purchase_list' );
 
 =head1 NAME
 
-Coocook::Controller::PurchaseList - Catalyst Controller
+Coocook::Controller::Project::PurchaseList - Catalyst Controller
 
 =head1 DESCRIPTION
 

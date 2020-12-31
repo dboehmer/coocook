@@ -1,4 +1,4 @@
-package Coocook::Controller::Recipe::Import;
+package Coocook::Controller::Project::Recipe::Import;
 
 use Moose;
 

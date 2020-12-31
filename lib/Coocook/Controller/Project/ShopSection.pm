@@ -1,4 +1,4 @@
-package Coocook::Controller::ShopSection;
+package Coocook::Controller::Project::ShopSection;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -9,7 +9,7 @@ __PACKAGE__->config( namespace => 'shop_section' );
 
 =head1 NAME
 
-Coocook::Controller::ShopSection - Catalyst Controller
+Coocook::Controller::Project::ShopSection - Catalyst Controller
 
 =head1 DESCRIPTION
 

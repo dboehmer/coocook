@@ -1,4 +1,4 @@
-package Coocook::Controller::Article;
+package Coocook::Controller::Project::Article;
 
 use utf8;
 
@@ -9,7 +9,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Article - Catalyst Controller
+Coocook::Controller::Project::Article - Catalyst Controller
 
 =head1 DESCRIPTION
 

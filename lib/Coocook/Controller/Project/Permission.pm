@@ -1,4 +1,4 @@
-package Coocook::Controller::Permission;
+package Coocook::Controller::Project::Permission;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;

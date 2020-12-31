@@ -1,4 +1,4 @@
-package Coocook::Controller::Dish;
+package Coocook::Controller::Project::Dish;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -7,7 +7,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Dish - Catalyst Controller
+Coocook::Controller::Project::Dish - Catalyst Controller
 
 =head1 DESCRIPTION
 
