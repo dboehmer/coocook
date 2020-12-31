@@ -62,10 +62,12 @@
 <div class="card-body">
 
 [% IF other_identities %]
+    <p>Select the name of the other user (or organization). That’s the name they use to login and that is distinct on [% name %].</p>
+
     <form method="post" action="[% add_permission_url %]">
         <select name="id">
 [% FOR other_identity IN other_identities %]
-            <option value="[% other_identity.name %]">[% other_identity.is_organization ? '👥' : '👤'; other_identity.name | html %] ([% other_identity.display_name | html %])</option>
+            <option value="[% other_identity.name %]">[% other_identity.name; other_identity.is_organization ? '👥' : '👤' %]</option>
 [% END %]
         </select>
 

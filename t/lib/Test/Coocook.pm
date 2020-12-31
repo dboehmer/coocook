@@ -301,18 +301,6 @@ sub logout_ok {
     $self->click_ok( 'logout', $name || "click logout button" );
 }
 
-sub change_password_ok {
-    my ( $self, $field_values, $name ) = @_;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    subtest $name || "change password", sub {
-        $self->follow_link_ok( { text => 'settings Settings' } );
-
-        $self->submit_form_ok( { with_fields => $field_values }, "submit change password form" );
-    };
-}
-
 sub change_display_name_ok {
     my ( $self, $display_name, $name ) = @_;
 

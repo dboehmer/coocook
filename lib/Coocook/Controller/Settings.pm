@@ -30,6 +30,7 @@ sub account : GET HEAD Chained('base') Args(0) RequiresCapability('view_account_
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
         change_password_url     => $c->uri_for( $self->action_for('change_password') ),
+        recovery_url            => $c->uri_for_action( '/user/recover', { email => $c->user->email_fc } ),
     );
 }
 
@@ -49,8 +50,8 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     my $user = $c->user
       or die;
 
-    $user->check_password( $c->req->params->get('old_password') )
-      or $c->detach( redirect => [ { error => "old password doesn't match" } ] );
+    $user->check_password( $c->req->params->get('current_password') )
+      or $c->detach( redirect => [ { error => "current password doesn't match" } ] );
 
     my $new_password = $c->req->params->get('new_password');
 
@@ -60,7 +61,10 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     $c->req->params->get('new_password2') eq $new_password
       or $c->detach( redirect => [ { error => "new passwords don't match" } ] );
 
+    # TODO this should probably logout all other existing sessions of this user!
     $user->update( { password => $new_password } );
+
+    $c->messages->info("Your password has been changed.");
 
     $c->visit( '/email/password_changed', [$user] );
 
@@ -97,7 +101,14 @@ sub organizations : GET HEAD Chained('base') Args(0) RequiresCapability('view_us
 sub projects : GET HEAD Chained('base') RequiresCapability('view_user_projects') {
     my ( $self, $c ) = @_;
 
-    my @projects = $c->user->projects->sorted->hri->all;
+    my $projects_users = $c->user->projects_users;
+
+    my @projects = $projects_users->related_resultset('project')->search(
+        undef,
+        {
+            '+columns' => { role => $projects_users->me('role') },
+        }
+    )->hri->sorted->all;
 
     for my $project (@projects) {
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );

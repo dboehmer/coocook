@@ -1,4 +1,4 @@
-[% title = "Account settings" %]
+[% title = "My Account settings" %]
 
 <p><a href="[% profile_url %]">View your profile</a></p>
 
@@ -7,8 +7,16 @@
     <div class="card-header"><h3>Change your user’s display name</h3></div>
 
 <div class="card-body">
+    <p>
     <input type="text" name="display_name" value="[% user.display_name | html %]">
-    <input type="submit" value="Update user">
+    <input type="submit" value="Change display name">
+    </p>
+
+    <p>
+        You can’t change your username that you use for login
+        and that others use to reference your account,
+        e.g. to give you permissions on their projects.
+    </p>
 </div>
 </div>
 </form>
@@ -18,11 +26,19 @@
     <div class="card-header"><h3>Change your password</h3></div>
 
 <div class="card-body">
-    <input type="password" name="old_password"  placeholder="old password">
+    <p>
+    <input type="password" name="current_password"  placeholder="current password">
     <input type="password" name="new_password"  placeholder="new password">
     <input type="password" name="new_password2" placeholder="new password">
 
     <input type="submit" value="Change password">
+    </p>
+
+    <p>
+        If you don’t know your current password anymore, you can
+        <a href="[% recovery_url %]">request a recovery link</a>
+        to set a new password.
+    </p>
 </div>
 </div>
 </form>

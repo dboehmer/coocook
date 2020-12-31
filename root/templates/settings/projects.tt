@@ -1,22 +1,31 @@
 [% title = "My Projects" %]
 
+[% IF projects.size > 0 %]
+<p>These are all projects that you own or that you have permissions for.</p>
+
 <table>
     <thead>
         <tr>
-            <th>📁</th>
-            <th>🔒</th>
+            <th title="Archived projects">📁</th>
+            <th title="Private projects">🔒</th>
             <th>Name</th>
+            <th>Your role</th>
             <th>Created</th>
         </tr>
     </thead>
     <tbody>
 [% FOR proj IN projects %]
         <tr>
-            <td>[% '📁' IF proj.archived %]</td>
-            <td>[% '🔒' UNLESS proj.is_public %]</td>
+            <td[%  proj.archived  ? ' title="Project is archived.">📁' : '>' %]</td>
+            <td[% !proj.is_public ? ' title="Project is private." >🔒' : '>' %]</td>
             <td><a href="[% proj.url %]">[% proj.name | html %]</a></td>
+            <td>[% IF proj.role == 'owner' %]<strong>owner</strong>[% ELSE; proj.role; END %]</td>
             <td>[% proj.created %]</td>
         </tr>
 [% END %]
     </tbody>
 </table>
+
+[% ELSE %]
+<p>You don’t have any projects yet.</p>
+[% END %]

@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 77;
+use Test::Most tests => 79;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -164,13 +164,20 @@ $t->login_fails( 'test2', 's3cr3t' );    # not verified
     cmp_ok $t2 - $t1, '>', 1, "login request took more than 1 second";
 }
 
-$t->change_password_ok(
+$t->follow_link_ok( { text => 'settings Settings' } );
+
+$t->submit_form_ok(
     {
-        old_password  => 's3cr3t',
-        new_password  => 'P@ssw0rd',
-        new_password2 => 'P@ssw0rd',
+        with_fields => {
+            current_password => 's3cr3t',
+            new_password     => 'P@ssw0rd',
+            new_password2    => 'P@ssw0rd',
+        },
     },
+    "submit change password form"
 );
+
+$t->text_contains('Your password has been changed');
 
 $t->email_like(qr/ password .+ changed /x);
 
