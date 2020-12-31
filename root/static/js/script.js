@@ -43,7 +43,13 @@ $(function() {
     // show Markdown preview right of <textarea> inputs with class .with-markdown-preview
     $('textarea.with-markdown-preview, input[type="text"].with-markdown-preview').each(function() {
         let $input   = $(this);
-        let $preview = $('<div>', {class: 'markdown-preview'}).insertBefore($input);
+        let $row     = $('<div>', {class: 'row'}).insertBefore($input);
+        let $preview = $('<div>', {class: 'markdown-preview'}).appendTo($row);
+
+        $input.detach().prependTo($row);
+
+        $input.addClass('col');
+        $preview.addClass('col');
 
         $input.on('change input', function() {
             $preview.html( marked( $input.val() ) );

@@ -3,7 +3,7 @@
 <form method="post" action="[% update_url %]">
     <textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% project.description | html %]</textarea>
 
-    <input type="submit" value="Update project">
+    <input type="submit" value="Update description">
 </form>
 
 <form action="[% rename_url %]" method="post">

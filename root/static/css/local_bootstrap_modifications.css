@@ -80,28 +80,14 @@ i.material-icons, i.material-icons-outlined {
 
 
 /*===========================================================================
-markdown preview taken from coocook's style.css
+markdown preview
 ===========================================================================*/
-.markdown-preview {
-    width: 50%;
-    float: right;
+.row .markdown-preview {
     overflow: auto;
     background-color: rgb(240,240,240);
     border: 1px solid white;
     border-radius:4px;
-    padding-left:5px;
-}
-
-.markdown-preview + input[type="text"],
-.markdown-preview + textarea {
-    display: block;
-    width: 45%;
-    width: calc( 50% - 2em );
-}
-
-.markdown-preview + input[type="text"] + *,
-.markdown-preview + textarea           + * {
-    clear: both;
+    margin-left:1em;
 }
 
 
