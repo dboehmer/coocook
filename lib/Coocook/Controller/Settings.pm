@@ -1,5 +1,7 @@
 package Coocook::Controller::Settings;
 
+use utf8;
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -51,7 +53,7 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
       or die;
 
     $user->check_password( $c->req->params->get('current_password') )
-      or $c->detach( redirect => [ { error => "current password doesn't match" } ] );
+      or $c->detach( redirect => [ { error => "current password doesn’t match" } ] );
 
     my $new_password = $c->req->params->get('new_password');
 
@@ -59,7 +61,7 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
       or $c->detach( redirect => [ { error => "new password must not be empty" } ] );
 
     $c->req->params->get('new_password2') eq $new_password
-      or $c->detach( redirect => [ { error => "new passwords don't match" } ] );
+      or $c->detach( redirect => [ { error => "new passwords don’t match" } ] );
 
     # TODO this should probably logout all other existing sessions of this user!
     $user->update( { password => $new_password } );

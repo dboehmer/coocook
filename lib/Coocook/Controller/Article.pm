@@ -1,5 +1,7 @@
 package Coocook::Controller::Article;
 
+use utf8;
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -242,7 +244,7 @@ sub update_or_insert : Private {
 
     for my $id (@units_in_use) { # this isn't input verification, the HTML form doesn't allow to do this
         $selected_units{$id}
-          or $c->detach( '/error/bad_request', ["You've deselected a unit that is in use."] );
+          or $c->detach( '/error/bad_request', ["You’ve deselected a unit that is in use."] );
     }
 
     my @units_to_remove = grep { not $selected_units{$_} } @current_units;

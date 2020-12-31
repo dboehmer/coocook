@@ -1,5 +1,7 @@
 package Coocook::Controller::Unit;
 
+use utf8;
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use Scalar::Util qw(looks_like_number);
@@ -189,7 +191,7 @@ sub update_or_insert : Private {
         $unit->set_column( to_quantity_default => $c->req->params->get('to_quantity_default') );
 
         ( $unit->to_quantity_default eq '' or looks_like_number( $unit->to_quantity_default ) )
-          or push @errors, "Factor to quantity's default unit must be empty or a valid number!";
+          or push @errors, "Factor to quantity’s default unit must be empty or a valid number!";
     }
 
     length $unit->short_name

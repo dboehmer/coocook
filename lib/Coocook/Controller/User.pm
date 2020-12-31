@@ -1,11 +1,12 @@
 package Coocook::Controller::User;
 
+use feature 'fc';
+use utf8;
+
 use Data::Validate::Email 'is_email';
 use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
-
-use feature 'fc';
 
 BEGIN { extends 'Coocook::Controller' }
 
@@ -130,7 +131,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     }
     else {
         if ( $password ne $c->req->params->get('password2') ) {
-            push @errors, "password's don't match";
+            push @errors, "passwords don’t match";
         }
     }
 
