@@ -5,7 +5,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => 'shop_section' );
+# Catalyst compiles ShopSection into shopsection
+__PACKAGE__->config( namespace => 'project/shop_section' );
 
 =head1 NAME
 

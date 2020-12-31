@@ -6,7 +6,8 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => 'purchase_list' );
+# Catalyst compiles PurchaseList into purchaselist
+__PACKAGE__->config( namespace => 'project/purchase_list' );
 
 =head1 NAME
 
