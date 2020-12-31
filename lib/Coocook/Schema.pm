@@ -3,7 +3,7 @@ package Coocook::Schema;
 # ABSTRACT: DBIx::Class-based SQL database representation
 
 use Carp;
-use Clone; # indirect dependency required for connection()
+use Clone;    # indirect dependency required for connection()
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use DateTime;
