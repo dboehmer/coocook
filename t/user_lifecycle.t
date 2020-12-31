@@ -258,7 +258,17 @@ subtest "expired password reset token URL" => sub {
 };
 
 subtest "password recovery" => sub {
-    $t->recover_account_ok( 'test@example.com', 'new, nice & shiny' );
+    my $user         = $t->schema->resultset('User')->find( { email_fc => 'test@example.com' } );
+    my $new_password = 'new, nice & shiny';
+
+    ok !$user->check_password($new_password), "password is different before";
+
+    $t->request_recovery_link_ok('test@example.com');
+    $t->submit_form_ok( { with_fields => { map { $_ => $new_password } 'password', 'password2' } },
+        "submit password reset form" );
+
+    $user->discard_changes();
+    ok $user->check_password($new_password), "password has been changed";
 
     $t->logout_ok();
 
@@ -266,12 +276,15 @@ subtest "password recovery" => sub {
 };
 
 subtest "password recovery marks e-mail address verified" => sub {
-    my $test2 = $schema->resultset('User')->find( { name => 'test2' } );
+    my $test2        = $schema->resultset('User')->find( { name => 'test2' } );
+    my $new_password = 'sUpEr s3cUr3';
 
     is $test2->email_verified => undef,
       "email_verified IS NULL";
 
-    $t->recover_account_ok( 'test2@example.com', 'sUpEr s3cUr3' );
+    $t->request_recovery_link_ok('test2@example.com');
+    $t->submit_form_ok( { with_fields => { map { $_ => 'sUpEr s3cUr3' } 'password', 'password2' } },
+        "submit password reset form" );
 
     $test2->discard_changes;
     isnt $test2->email_verified => undef,

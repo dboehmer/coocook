@@ -341,40 +341,11 @@ sub request_recovery_link_ok {
 
         $self->text_contains('Recovery link sent')
           or note $self->text;
-    };
-}
 
-sub reset_password_ok {
-    my ( $self, $password, $name ) = @_;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    subtest $name || "reset password to '$password'", sub {
         $self->get_email_link_ok(
             qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
             $name || "click e-mail recovery link"
         );
-
-        $self->submit_form_ok(
-            {
-                with_fields => {
-                    password  => $password,
-                    password2 => $password,
-                },
-            },
-            "submit password reset form"
-        );
-    };
-}
-
-sub recover_account_ok {
-    my ( $self, $email, $password, $name ) = @_;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    subtest $name || "reset password for $email to '$password'", sub {
-        $self->request_recovery_link_ok($email);
-        $self->reset_password_ok($password);
     };
 }
 
