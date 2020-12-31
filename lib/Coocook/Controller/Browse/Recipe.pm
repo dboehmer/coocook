@@ -123,8 +123,7 @@ sub import : GET HEAD Chained('base') PathPart('import') Args(0)
     my @projects = $projects->hri->all;
 
     for my $project (@projects) {
-        $project->{import_url} =
-          $c->uri_for_action( '/project/recipe/import/preview',
+        $project->{import_url} = $c->uri_for_action( '/project/recipe/import/preview',
             [ $project->{id}, $project->{url_name}, $recipe->id ] );
 
         $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );

@@ -105,7 +105,8 @@ sub day : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print/day
 
             my $meal = $dish->{meal};
 
-            $meal->{url} ||= $c->project_uri( '/project/print/day', map { $meal->{date}->$_ } qw< year month day > );
+            $meal->{url} ||=
+              $c->project_uri( '/project/print/day', map { $meal->{date}->$_ } qw< year month day > );
         }
     }
 
@@ -129,8 +130,8 @@ sub project : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print
     );
 }
 
-sub purchase_list : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print/purchase_list')
-  Args(1) RequiresCapability('view_project') {
+sub purchase_list : GET HEAD Chained('/project/purchase_list/submenu')
+  PathPart('print/purchase_list') Args(1) RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);
