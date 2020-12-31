@@ -22,10 +22,10 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All tags",       action => 'tag/index' },
-            { text => "Add tag",        action => 'tag/new_tag' },
-            { text => "All tag groups", action => 'tag/index_tag_group' },
-            { text => "Add tag group",  action => 'tag/new_tag_group' },
+            { text => "All tags",       action => 'project/tag/index' },
+            { text => "Add tag",        action => 'project/tag/new_tag' },
+            { text => "All tag groups", action => 'project/tag/index_tag_group' },
+            { text => "Add tag group",  action => 'project/tag/new_tag_group' },
         ],
     );
 }

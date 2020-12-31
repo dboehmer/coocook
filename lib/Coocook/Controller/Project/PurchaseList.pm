@@ -26,10 +26,10 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "Purchase lists",   action => 'purchase_list/index' },
-            { text => "Unassigned items", action => 'item/unassigned' },
-            { text => "Shop sections",    action => 'shop_section/index' },
-            { text => "Printing",         action => 'print/index' },
+            { text => "Purchase lists",   action => 'project/purchase_list/index' },
+            { text => "Unassigned items", action => 'project/item/unassigned' },
+            { text => "Shop sections",    action => 'project/shop_section/index' },
+            { text => "Printing",         action => 'project/print/index' },
         ]
     );
 }

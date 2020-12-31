@@ -105,7 +105,7 @@ sub submenu : Chained('base') PathPart('') CaptureArgs(0) {
         submenu_items => [
             { text => "Show project",   action => 'project/show' },
             { text => "Meals & Dishes", action => 'project/edit' },
-            { text => "Permissions",    action => 'permission/index' },
+            { text => "Permissions",    action => 'project/permission/index' },
             { text => "Settings",       action => 'project/settings' },
         ],
     );

@@ -26,9 +26,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All recipes",    action => 'recipe/index' },
-            { text => "Add recipe",     action => 'recipe/new_recipe' },
-            { text => "Import recipes", action => 'recipe/importable_recipes' },
+            { text => "All recipes",    action => 'project/recipe/index' },
+            { text => "Add recipe",     action => 'project/recipe/new_recipe' },
+            { text => "Import recipes", action => 'project/recipe/importable_recipes' },
         ]
     );
 }

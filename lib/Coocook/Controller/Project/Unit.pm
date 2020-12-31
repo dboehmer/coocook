@@ -25,9 +25,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All units",  action => 'unit/index' },
-            { text => "Add unit",   action => 'unit/new_unit' },
-            { text => "Quantities", action => 'quantity/index' },
+            { text => "All units",  action => 'project/unit/index' },
+            { text => "Add unit",   action => 'project/unit/new_unit' },
+            { text => "Quantities", action => 'project/quantity/index' },
         ]
     );
 }
