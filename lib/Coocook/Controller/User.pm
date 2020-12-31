@@ -291,13 +291,18 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     my $user = $c->stash->{user_object};
 
     # for rationale see reset_password()
-    ( $user->token_expires and $user->check_base64_token($base64_token) )
-      or die;
+    if ( not( $user->token_expires and $user->check_base64_token($base64_token) ) ) {
+        $c->messages->error("Your password reset link is invalid or expired!");
+        $c->detach('/error/bad_request');
+    }
 
     my $new_password = $c->req->params->get('password');
 
-    $c->req->params->get('password2') eq $new_password
-      or die "new passwords don't match";    # TODO error handling
+    if ( $c->req->params->get('password2') ne $new_password ) {
+        $c->messages->error("New passwords don’t match!");
+        $c->redirect_detach(
+            $c->uri_for( $self->action_for('reset_password'), [ $user->name, $base64_token ] ) );
+    }
 
     $user->set_columns(
         {
@@ -327,8 +332,10 @@ sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) Public {
     my $user = $c->stash->{user_object};
 
     if ( !$user->email_verified ) {
+
+        # TODO better error message when user requested new password and then clicked link
         $user->check_base64_token($base64_token)
-          or die;    # TODO error handling
+          or $c->detach('/error/bad_request');
 
         $user->update(
             {

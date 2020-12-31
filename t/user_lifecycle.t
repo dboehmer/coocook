@@ -264,8 +264,24 @@ subtest "password recovery" => sub {
     ok !$user->check_password($new_password), "password is different before";
 
     $t->request_recovery_link_ok('test@example.com');
+
+    $t->submit_form_ok(
+        {
+            with_fields => {
+                password  => 'foo',
+                password2 => 'bar',
+            }
+        },
+        "submit two different passwords"
+    );
+
+    $t->text_like(qr/don.t match/);
+
+    $user->discard_changes();
+    ok !$user->check_password($new_password), "password hasn't been changed";
+
     $t->submit_form_ok( { with_fields => { map { $_ => $new_password } 'password', 'password2' } },
-        "submit password reset form" );
+        "submit new password twice" );
 
     $user->discard_changes();
     ok $user->check_password($new_password), "password has been changed";
