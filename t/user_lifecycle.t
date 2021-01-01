@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 79;
+use Test::Most tests => 81;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -83,12 +83,21 @@ $t->robots_flags_ok( { index => 0 } );
 }
 
 for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
+    ok $user1->get_column($_), "column '$_' is set" for 'token_created';
+    is $user1->get_column($_) => undef, "column '$_' is NULL" for 'token_expires';
+
     ok $user1->has_any_role('site_owner'),       "1st user created has 'site_owner' role";
     ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
 subtest "verify email address" => sub {
     $t->get_ok_email_link_like( qr/verify/, "verify email address" );
+
+    # TODO is GET on the link enough? maybe email clients or "security" software will fetch it?
+    # - there is no point in requesting the password first
+    #   because user needs to be able reset the password via e-mail
+    # - maybe display a page with a POST button first?
+    # - but every website I know does it with a simple GET
 
     $t->title_like( qr/sign in/i, "got redirected to login page" );
 
@@ -210,6 +219,7 @@ $t->logout_ok();
 {
     my $original_length = length $t->cookie_jar->as_string;
 
+    # we want to clear only that specific cookie
     $t->cookie_jar->clear( 'localhost.local', '/', 'coocook_session' )
       and note "deleted session cookie";
 

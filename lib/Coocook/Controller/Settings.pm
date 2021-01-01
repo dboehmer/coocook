@@ -28,10 +28,14 @@ sub index : GET HEAD Chained('base') PathPart('') Args(0) Public {
 sub account : GET HEAD Chained('base') Args(0) RequiresCapability('view_account_settings') {
     my ( $self, $c ) = @_;
 
+    $c->user->new_email_fc
+      and $c->stash( cancel_email_change_url => $c->uri_for_action('/settings/change_email/cancel') );
+
     $c->stash(
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
         change_password_url     => $c->uri_for( $self->action_for('change_password') ),
+        change_email_url        => $c->uri_for_action('/settings/change_email/request'),
         recovery_url            => $c->uri_for_action( '/user/recover', { email => $c->user->email_fc } ),
     );
 }

@@ -72,6 +72,15 @@ around [ 'set_column', 'store_column' ] => sub {
 
         ( $column => $value ) = ( password_hash => $password->to_salted_hash );
     }
+    elsif ( $column eq 'token_hash' ) {
+        if ( defined $value ) {          # automatically set 'token_created' when 'token_hash' is set
+            $self->$orig( token_created => \'CURRENT_TIMESTAMP' );
+        }
+        else {                           # reset when 'token_hash' is unset
+            $self->$orig( token_created => undef );
+            $self->$orig( token_expires => undef );
+        }
+    }
 
     return $self->$orig( $column => $value );
 };
@@ -98,6 +107,9 @@ sub check_password {    # method name defined by Catalyst::Authentication::Crede
 
 sub check_base64_token {
     my ( $self, $token ) = @_;
+
+    $self->token_hash
+      or return;
 
     if ( my $expires = $self->token_expires ) {
         $expires > DateTime->now

@@ -94,6 +94,14 @@ sub emails {
 sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
 sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
 
+sub emails_are_empty {
+    my ( $self, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    is( Email::Sender::Simple->default_transport->deliveries => 0, $name || "no emails" );
+}
+
 sub local_config_guard {
     my $self = shift;
 
@@ -157,7 +165,9 @@ sub register_fails_like {
     };
 }
 
-=head2 get_ok_email_link_like( qr/.../ )
+=head2 get_ok_email_link_like( qr/.../, "test name"? )
+
+=head2 get_ok_email_link_like( qr/.../, $expected_status, "test name" )
 
 Matches all URLs found in the email against the given regex
 and calls C<get_ok()> on that URL.
@@ -165,7 +175,10 @@ and calls C<get_ok()> on that URL.
 =cut
 
 sub get_ok_email_link_like {
-    my ( $self, $regex, $name ) = @_;
+    my $self            = shift;
+    my $regex           = shift;
+    my $name            = pop;
+    my $expected_status = pop;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -186,7 +199,13 @@ sub get_ok_email_link_like {
             return;
         }
 
-        $self->get_ok( $urls[0] );
+        if ($expected_status) {
+            $self->get( $urls[0] );
+            $self->status_is(400);
+        }
+        else {
+            $self->get_ok( $urls[0] );
+        }
     };
 }
 
