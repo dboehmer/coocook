@@ -206,7 +206,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     $password = 'x' x length $password;
     undef $password;
 
-    $c->visit( '/email/verification', [ $user, $token ] );
+    $c->visit( '/email/verify', [ $user, $token ] );
 
     $terms
       and $user->create_related(

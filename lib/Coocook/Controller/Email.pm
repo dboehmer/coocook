@@ -28,9 +28,8 @@ sub notify_admin_about_registration : Private {
 
     $c->stash(
         email => {
-            to       => $admin->email_fc,
-            subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
-            template => 'notify_admin_about_registration.tt',
+            to      => $admin->email_fc,
+            subject => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
         },
         admin            => $admin,
         email_anonymized => $email_anonymized,
@@ -45,9 +44,8 @@ sub password_changed : Private {
 
     $c->stash(
         email => {
-            to       => $user->email_fc,
-            subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
-            template => 'password_changed.tt',
+            to      => $user->email_fc,
+            subject => sprintf( "Your password at %s has changed", $c->config->{name} ),
         },
         user         => $user,
         recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email_fc } ),
@@ -69,9 +67,8 @@ sub recovery_link : Private {
 
     $c->stash(
         email => {
-            to       => $user->email_fc,
-            subject  => "Account recovery at " . $c->config->{name},
-            template => 'recovery_link.tt',
+            to      => $user->email_fc,
+            subject => "Account recovery at " . $c->config->{name},
         },
         user         => $user,
         expires      => $expires,
@@ -84,22 +81,20 @@ sub recovery_unregistered : Private {
 
     $c->stash(
         email => {
-            to       => $email,
-            subject  => "Account recovery at " . $c->config->{name},
-            template => 'recovery_unregistered.tt',
+            to      => $email,
+            subject => "Account recovery at " . $c->config->{name},
         },
         register_url => $c->uri_for_action('/user/register'),
     );
 }
 
-sub verification : Private {
+sub verify : Private {
     my ( $self, $c, $user, $token ) = @_;
 
     $c->stash(
         email => {
-            to       => $user->email_fc,
-            subject  => "Verify your Account at " . $c->config->{name},
-            template => 'verify.tt',
+            to      => $user->email_fc,
+            subject => "Verify your Account at " . $c->config->{name},
         },
         verification_url => $c->uri_for_action( '/user/verify', [ $user->name, $token->to_base64 ] ),
         user             => $user,

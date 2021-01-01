@@ -20,15 +20,19 @@ Catalyst View.
 before process => sub {
     my ( $self, $c ) = @_;
 
-    my $stash_key = $self->stash_key;
+    my $stash = $c->stash->{ $self->stash_key };
+
+    # automatically set template filename based on action path
+    $stash->{template} ||= do {
+        my $action = $c->action;
+        $action =~ s!^email/!!
+          or warn "Unexpected action '$action'";
+
+        $action . '.tt';
+    };
 
     $c->log->info(
-        sprintf(
-            "Sending e-mail to <%s> with subject '%s'",
-            $c->stash->{$stash_key}{to},
-            $c->stash->{$stash_key}{subject},
-        )
-    );
+        sprintf( "Sending e-mail to <%s> with subject '%s'", $stash->{to}, $stash->{subject} ) );
 };
 
 __PACKAGE__->meta->make_immutable;
