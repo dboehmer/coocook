@@ -1,3 +1,5 @@
+[% email.subject = BLOCK %]New account '[% user.name %]' registered at [% name; END ~%]
+
 Hi [% admin.display_name %]!
 
 Somebody registered an account at [% name %].

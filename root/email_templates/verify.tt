@@ -1,3 +1,5 @@
+[% email.subject = BLOCK %]Verify your account at [% name; END ~%]
+
 Hi [% user.name %]!
 
 Welcome to [% name %]!

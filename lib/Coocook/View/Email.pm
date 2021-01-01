@@ -30,9 +30,6 @@ before process => sub {
 
         $action . '.tt';
     };
-
-    $c->log->info(
-        sprintf( "Sending email to <%s> with subject '%s'", $stash->{to}, $stash->{subject} ) );
 };
 
 __PACKAGE__->meta->make_immutable;

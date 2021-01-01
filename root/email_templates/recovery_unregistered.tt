@@ -1,3 +1,5 @@
+[% email.subject = BLOCK %]Account recovery at [% name; END ~%]
+
 Hi [% email.to %]!
 
 Somebody at [% name %] tried to recover a password for your email address
