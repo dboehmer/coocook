@@ -19,8 +19,10 @@ __PACKAGE__->add_columns(
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
     email_fc       => { data_type => 'text' },
+    new_email_fc   => { data_type => 'text',                        is_nullable => 1 },
     email_verified => { data_type => 'timestamp without time zone', is_nullable => 1 },
     token_hash     => { data_type => 'text',                        is_nullable => 1 },
+    token_created  => { data_type => 'timestamp without time zone', is_nullable => 1 },
     token_expires  => { data_type => 'timestamp without time zone', is_nullable => 1 },
     created        => {
         data_type     => 'timestamp without time zone',
