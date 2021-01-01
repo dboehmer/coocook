@@ -40,7 +40,7 @@ CREATE UNIQUE INDEX users_password_hash ON users (password_hash);
 
 CREATE UNIQUE INDEX users_token_hash ON users (token_hash);
 
--- LOWER() should be the same as fc() for valid e-mail addresses
+-- LOWER() should be the same as fc() for valid email addresses
 INSERT INTO users SELECT id, name, name_fc, password_hash, display_name, admin_comment, LOWER(email), email_verified, token_hash, token_expires, created FROM users_temp_alter;
 
 DROP TABLE users_temp_alter;

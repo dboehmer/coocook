@@ -57,7 +57,7 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
         with 'CatalystX::LeakChecker';
     }
 
-    # print e-mails on STDOUT in debugging mode
+    # print emails on STDOUT in debugging mode
     $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
 }
 
@@ -141,7 +141,7 @@ __PACKAGE__->config(
         return $c->config->{name} . " " . $c->uri_for_action('/index');
     },
 
-    # send e-mails to site_owners about new users registered
+    # send emails to site_owners about new users registered
     notify_site_owners_about_registrations => 1,
 
     # Disable deprecated behavior needed by old applications

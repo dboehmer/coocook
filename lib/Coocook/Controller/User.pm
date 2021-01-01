@@ -138,7 +138,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     is_email($email_fc)
       and !$c->model('DB::User')->results_exist( { email_fc => $email_fc } )
       and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
-      or push @errors, "e-mail address is invalid or already taken";
+      or push @errors, "email address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;
 
@@ -231,8 +231,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
 
     $user->add_roles( \@roles );
 
-    $c->messages->info( "You should receive an e-mail with a web link."
-          . " Please click that link to verify your e-mail address." );
+    $c->messages->info( "You should receive an email with a web link."
+          . " Please click that link to verify your email address." );
 
     $c->redirect_detach( $c->uri_for('/') );
 }
@@ -252,7 +252,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
     my $email_fc = fc $c->req->params->get('email');
 
     if ( not is_email($email_fc) ) {
-        $c->messages->error("Enter a valid e-mail address");
+        $c->messages->error("Enter a valid email address");
 
         $c->redirect_detach( $c->uri_for( $self->action_for('recover') ) );
     }

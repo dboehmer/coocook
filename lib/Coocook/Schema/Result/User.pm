@@ -168,7 +168,7 @@ sub status {
         return ok => "ok";
     }
 
-    return unverified => "e-mail address not yet verified with verification link";
+    return unverified => "email address not yet verified with verification link";
 }
 
 1;

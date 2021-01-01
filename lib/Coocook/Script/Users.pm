@@ -18,7 +18,7 @@ with 'Coocook::Script::Role::HasSchema';
 has blacklist => (
     is            => 'rw',
     isa           => 'Bool',
-    documentation => "blacklist username and e-mail address of discarded users",
+    documentation => "blacklist username and email address of discarded users",
 );
 
 has created => (
@@ -37,7 +37,7 @@ has email_verified => (
     is            => 'rw',
     isa           => 'Str',
     documentation =>
-      "select users with e-mail address verified (1) or not verified (0), default any ('')",
+      "select users with email address verified (1) or not verified (0), default any ('')",
 );
 
 has username => (
@@ -55,7 +55,7 @@ has display_name => (
 has email_address => (
     is            => 'rw',
     isa           => 'Bool',
-    documentation => "print the e-mail address for each user",
+    documentation => "print the email address for each user",
 );
 
 has total => (

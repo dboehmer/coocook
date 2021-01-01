@@ -50,12 +50,12 @@ $t->robots_flags_ok( { index => 0 } );
     $t->register_fails_like( { %userdata_ok, password2 => 'something-else' }, qr/match/ );
 
     $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
-        qr/e-mail address is invalid or already taken/ );
+        qr/email address is invalid or already taken/ );
 
     $t->register_fails_like(
         { %userdata_ok, email => uc $blacklist_email },
-        qr/e-mail address is invalid or already taken/,
-        "blacklisted e-mail in uppercase"
+        qr/email address is invalid or already taken/,
+        "blacklisted email in uppercase"
     );
 
     $t->register_fails_like( { %userdata_ok, username => $blacklist_username },
@@ -87,10 +87,10 @@ for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
     ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
 }
 
-subtest "verify e-mail address" => sub {
+subtest "verify email address" => sub {
     $t->get_email_link_ok(
         qr/ http \S+ verify \S+ /x,    # TODO regex is very simple and will break easily
-        "verify e-mail address"
+        "verify email address"
     );
 
     $t->title_like( qr/sign in/i, "got redirected to login page" );
@@ -115,15 +115,15 @@ $t->register_ok(
     }
 );
 
-# TODO Test::Cooocook warns that 2 e-mails are stored but that is correct
+# TODO Test::Cooocook warns that 2 emails are stored but that is correct
 $t->email_like(qr/Hi test2/);
 $t->email_like(qr/Please verify/);
 $t->shift_emails();
 
 $t->email_like(qr/Hi test\b/);
-$t->email_like(qr/somebody registered/);
+$t->email_like(qr/somebody registered/i);
 $t->email_like(qr/test2/);
-$t->email_like(qr/example\.com/);      # contains domain part of e-mail address
+$t->email_like(qr/example\.com/);      # contains domain part of email address
 $t->email_unlike(qr/test2.+example.+com/);
 $t->email_like(qr{ /user/test2 }x);    # URLs to user info pages
 $t->email_like(qr{ /admin/user/test2 }x);
@@ -136,8 +136,8 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
 
 $t->register_fails_like(
     { username => 'new_user', email => 'TEST2@example.com' },
-    qr/e-mail address is invalid or already taken/,
-    "registration of existing e-mail address (in uppercase) fails"
+    qr/email address is invalid or already taken/,
+    "registration of existing email address (in uppercase) fails"
 );
 
 $t->register_fails_like(
@@ -286,7 +286,7 @@ subtest "password recovery" => sub {
     $t->clear_emails();
 };
 
-subtest "password recovery marks e-mail address verified" => sub {
+subtest "password recovery marks email address verified" => sub {
     my $test2        = $schema->resultset('User')->find( { name => 'test2' } );
     my $new_password = 'sUpEr s3cUr3';
 

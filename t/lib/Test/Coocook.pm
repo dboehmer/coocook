@@ -16,7 +16,7 @@ use TestDB;
 use Test::Most;
 
 BEGIN {
-    # don't actually send any e-mails
+    # don't actually send any emails
     $ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
 
     # point Catalyst to t/ to avoid reading local config files
@@ -135,7 +135,7 @@ sub register_ok {
         $self->submit_form_ok( { with_fields => $field_values },
             "register account '$field_values->{username}'" );
 
-        $self->text_like(qr/e-mail/)
+        $self->text_like(qr/email/)
           or note $self->text;
     };
 }
@@ -161,7 +161,7 @@ sub get_email_link_ok {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    subtest $name || "GET link from first e-mail", sub {
+    subtest $name || "GET link from first email", sub {
         my @urls = $self->email_like($url_regex);
 
         is scalar @urls => 1,
@@ -180,22 +180,22 @@ sub email_unlike { shift->_email_un_like( 0, @_ ) }
 sub _email_un_like {
     my ( $self, $like, $regex, $name ) = @_;
 
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    local $Test::Builder::Level = $Test::Builder::Level + 2;
 
-    $name ||= "first e-mail like $regex";
+    $name ||= "first email like $regex";
 
     my $emails = $self->emails;
 
     if ( @$emails == 0 ) {
         fail $name;
-        diag "no e-mails stored";
+        diag "no emails stored";
         return;
     }
 
     @$emails > 1
-      and carp "More than 1 e-mail stored";
+      and carp "More than 1 email stored";
 
-    my $email = $emails->[0]->{email};    # use first e-mail
+    my $email = $emails->[0]->{email};    # use first email
 
     note $email->as_string;
 
@@ -325,7 +325,7 @@ sub request_recovery_link_ok {
                     email => $email,
                 },
             },
-            "submit e-mail recovery form"
+            "submit email recovery form"
         );
 
         $self->text_contains('Recovery link sent')
@@ -333,7 +333,7 @@ sub request_recovery_link_ok {
 
         $self->get_email_link_ok(
             qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
-            $name || "click e-mail recovery link"
+            $name || "click email recovery link"
         );
     };
 }

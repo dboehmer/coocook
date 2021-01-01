@@ -1,11 +1,11 @@
-Hi [% email.to %],
+Hi [% email.to %]!
 
-somebody at [% name %] tried to recover a password for your e-mail address
-but your e-mail address is not yet registered at [% name %].
+Somebody at [% name %] tried to recover a password for your email address
+but your email address is not yet registered at [% name %].
 
 Do you want to register an account at [% name %]? Then go to
 [% register_url %]
 
-Otherwise you can ignore this e-mail.
+Otherwise you can ignore this email.
 
 [% name %]

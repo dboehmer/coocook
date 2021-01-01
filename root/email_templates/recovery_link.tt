@@ -1,12 +1,12 @@
-Hi [% user.display_name %],
+Hi [% user.display_name %]!
 
-somebody requested to recover your account '[% user.name %]' at [% name %].
+Somebody requested to recover your account '[% user.name %]' at [% name %].
 
 If you want to reset your password, you can do so at the page
 [% recovery_url %]
 
 The link is valid until [% expires %].
 
-If you didn’t request the recovery, you can safely ignore this e-mail.
+If you didn’t request the recovery, you can safely ignore this email.
 
 [% name %]

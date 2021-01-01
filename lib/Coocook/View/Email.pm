@@ -1,6 +1,6 @@
 package Coocook::View::Email;
 
-# ABSTRACT: create e-mails with TT templates
+# ABSTRACT: create emails with TT templates
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -32,7 +32,7 @@ before process => sub {
     };
 
     $c->log->info(
-        sprintf( "Sending e-mail to <%s> with subject '%s'", $stash->{to}, $stash->{subject} ) );
+        sprintf( "Sending email to <%s> with subject '%s'", $stash->{to}, $stash->{subject} ) );
 };
 
 __PACKAGE__->meta->make_immutable;
