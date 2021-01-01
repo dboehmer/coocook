@@ -17,10 +17,7 @@ sub begin : Private {
         $c->stash( signature => $signature );
     }
 
-    $c->stash(
-        name => $c->config->{name},
-        view => 'Email',
-    );
+    $c->stash( view => 'Email' );
 }
 
 sub notify_admin_about_registration : Private {
