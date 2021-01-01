@@ -174,17 +174,6 @@ sub get_email_link_ok {
     };
 }
 
-sub verify_email_ok {
-    my ( $self, $name ) = @_;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    $self->get_email_link_ok(
-        qr/http\S+verify\S+/,    # TODO regex is very simple and will break easily
-        $name || "verify e-mail address"
-    );
-}
-
 sub email_like   { shift->_email_un_like( 1, @_ ) }
 sub email_unlike { shift->_email_un_like( 0, @_ ) }
 

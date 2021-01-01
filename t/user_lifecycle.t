@@ -88,7 +88,10 @@ for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
 }
 
 subtest "verify e-mail address" => sub {
-    $t->verify_email_ok();
+    $t->get_email_link_ok(
+        qr/ http \S+ verify \S+ /x,    # TODO regex is very simple and will break easily
+        "verify e-mail address"
+    );
 
     $t->title_like( qr/sign in/i, "got redirected to login page" );
 
