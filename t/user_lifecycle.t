@@ -88,10 +88,7 @@ for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
 }
 
 subtest "verify email address" => sub {
-    $t->get_email_link_ok(
-        qr/ http \S+ verify \S+ /x,    # TODO regex is very simple and will break easily
-        "verify email address"
-    );
+    $t->get_ok_email_link_like( qr/verify/, "verify email address" );
 
     $t->title_like( qr/sign in/i, "got redirected to login page" );
 
@@ -245,7 +242,7 @@ subtest "expired password reset token URL" => sub {
 
     $schema->resultset('User')->update( { token_expires => '2000-01-01 00:00:00' } );
 
-    $t->get_email_link_ok(qr/http\S+reset_password\S+/);
+    $t->get_ok_email_link_like(qr/reset_password/);
 
     $t->text_like(qr/expired/);
 

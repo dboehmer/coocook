@@ -11,6 +11,7 @@ use Carp;
 use Email::Sender::Simple;
 use FindBin;
 use HTML::Meta::Robots;
+use Regexp::Common 'URI';
 use Scope::Guard qw< guard >;
 use TestDB;
 use Test::Most;
@@ -156,21 +157,36 @@ sub register_fails_like {
     };
 }
 
-sub get_email_link_ok {
-    my ( $self, $url_regex, $name ) = @_;
+=head2 get_ok_email_link_like( qr/.../ )
+
+Matches all URLs found in the email against the given regex
+and calls C<get_ok()> on that URL.
+
+=cut
+
+sub get_ok_email_link_like {
+    my ( $self, $regex, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "GET link from first email", sub {
-        my @urls = $self->email_like($url_regex);
+        my $body = $self->_get_email_body();
 
-        is scalar @urls => 1,
-          "found 1 URL"
-          or return;
+        my @urls;
 
-        my $verification_url = $urls[0];
+        while ( $body =~ m/$RE{URI}{HTTP}{ -scheme => 'https' }{-keep}/g ) {
+            my $url = $1;    # can't match in list context because RE has groups
 
-        $self->get_ok($verification_url);
+            $url =~ $regex
+              and push @urls, $url;
+        }
+
+        if ( not is( scalar @urls => 1, "found 1 URL matching $regex" ) ) {
+            note $body;
+            return;
+        }
+
+        $self->get_ok( $urls[0] );
     };
 }
 
@@ -184,11 +200,36 @@ sub _email_un_like {
 
     $name ||= "first email like $regex";
 
+    my $body = $self->_get_email_body;
+
+    if ( not defined $body ) {
+        fail $name;
+        return;
+    }
+
+    if ($like) {
+        my @matches = ( $body =~ m/$regex/g );
+
+        ok @matches >= 1, $name
+          or note $body;
+
+        return @matches;
+    }
+    else {
+        my $ok = unlike( $body => $regex, $name )
+          or note $body;
+
+        return $ok;
+    }
+}
+
+sub _get_email_body {
+    my $self = shift;
+
     my $emails = $self->emails;
 
     if ( @$emails == 0 ) {
-        fail $name;
-        diag "no emails stored";
+        carp "no emails stored";
         return;
     }
 
@@ -197,17 +238,7 @@ sub _email_un_like {
 
     my $email = $emails->[0]->{email};    # use first email
 
-    note $email->as_string;
-
-    my @matches = ( $email->get_body =~ m/$regex/g );
-
-    if ($like) {
-        ok @matches >= 1, $name;
-        return @matches;
-    }
-    else {
-        ok @matches == 0, $name;
-    }
+    return $email->get_body;
 }
 
 sub is_logged_in {
@@ -331,10 +362,7 @@ sub request_recovery_link_ok {
         $self->text_contains('Recovery link sent')
           or note $self->text;
 
-        $self->get_email_link_ok(
-            qr/http\S+reset_password\S+/,    # TODO regex is very simple and will break easily
-            $name || "click email recovery link"
-        );
+        $self->get_ok_email_link_like( qr/reset_password/, $name || "click email recovery link" );
     };
 }
 
