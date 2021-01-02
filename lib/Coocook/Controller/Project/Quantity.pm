@@ -1,4 +1,4 @@
-package Coocook::Controller::Quantity;
+package Coocook::Controller::Project::Quantity;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -7,7 +7,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Quantity - Catalyst Controller
+Coocook::Controller::Project::Quantity - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET HEAD Chained('/unit/submenu') PathPart('quantities') Args(0)
+sub index : GET HEAD Chained('/project/unit/submenu') PathPart('quantities') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 

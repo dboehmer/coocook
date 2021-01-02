@@ -1,4 +1,4 @@
-package Coocook::Controller::Print;
+package Coocook::Controller::Project::Print;
 
 use DateTime;
 use Moose;
@@ -9,7 +9,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Print - Catalyst Controller
+Coocook::Controller::Project::Print - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -29,7 +29,7 @@ sub auto : Private {
     push @{ $c->stash->{css} }, '/css/print.css';
 }
 
-sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('print') Args(0)
+sub index : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 
@@ -49,7 +49,7 @@ sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('print') Args(0)
             push @days,
               {
                 date => $date,
-                url  => $c->project_uri( '/print/day', $date->year, $date->month, $date->day ),
+                url  => $c->project_uri( '/project/print/day', $date->year, $date->month, $date->day ),
               };
         }
     }
@@ -63,7 +63,7 @@ sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('print') Args(0)
               {
                 date => $list->date,
                 name => $list->name,
-                url  => $c->project_uri( '/print/purchase_list', $list->id ),
+                url  => $c->project_uri( '/project/print/purchase_list', $list->id ),
               };
         }
     }
@@ -74,11 +74,11 @@ sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('print') Args(0)
         days        => \@days,
         lists       => \@lists,
         projects    => \@projects,
-        project_url => $c->project_uri('/print/project'),
+        project_url => $c->project_uri('/project/print/project'),
     );
 }
 
-sub day : GET HEAD Chained('/purchase_list/submenu') PathPart('print/day') Args(3)
+sub day : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print/day') Args(3)
   RequiresCapability('view_project') {
     my ( $self, $c, $year, $month, $day ) = @_;
 
@@ -92,20 +92,21 @@ sub day : GET HEAD Chained('/purchase_list/submenu') PathPart('print/day') Args(
 
     for my $meal (@$meals) {
         for my $dish ( @{ $meal->{dishes} } ) {
-            $dish->{url} = $c->project_uri( '/dish/edit', $dish->{id} );
+            $dish->{url} = $c->project_uri( '/project/dish/edit', $dish->{id} );
 
             if ( my $prep_meal = $dish->{prepare_at_meal} ) {
                 $prep_meal->{url} =
-                  $c->project_uri( '/print/day', map { $prep_meal->{date}->$_ } qw< year month day > );
+                  $c->project_uri( '/project/print/day', map { $prep_meal->{date}->$_ } qw< year month day > );
             }
         }
 
         for my $dish ( @{ $meal->{prepared_dishes} } ) {
-            $dish->{url} ||= $c->project_uri( '/dish/edit', $dish->{id} );
+            $dish->{url} ||= $c->project_uri( '/project/dish/edit', $dish->{id} );
 
             my $meal = $dish->{meal};
 
-            $meal->{url} ||= $c->project_uri( '/print/day', map { $meal->{date}->$_ } qw< year month day > );
+            $meal->{url} ||=
+              $c->project_uri( '/project/print/day', map { $meal->{date}->$_ } qw< year month day > );
         }
     }
 
@@ -117,7 +118,7 @@ sub day : GET HEAD Chained('/purchase_list/submenu') PathPart('print/day') Args(
     );
 }
 
-sub project : GET HEAD Chained('/purchase_list/submenu') PathPart('print/project') Args(0)
+sub project : GET HEAD Chained('/project/purchase_list/submenu') PathPart('print/project') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
@@ -129,8 +130,8 @@ sub project : GET HEAD Chained('/purchase_list/submenu') PathPart('print/project
     );
 }
 
-sub purchase_list : GET HEAD Chained('/purchase_list/submenu') PathPart('print/purchase_list')
-  Args(1) RequiresCapability('view_project') {
+sub purchase_list : GET HEAD Chained('/project/purchase_list/submenu')
+  PathPart('print/purchase_list') Args(1) RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
     my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);

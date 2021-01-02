@@ -1,4 +1,4 @@
-package Coocook::Controller::Unit;
+package Coocook::Controller::Project::Unit;
 
 use utf8;
 
@@ -10,7 +10,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Unit - Catalyst Controller
+Coocook::Controller::Project::Unit - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -25,9 +25,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All units",  action => 'unit/index' },
-            { text => "Add unit",   action => 'unit/new_unit' },
-            { text => "Quantities", action => 'quantity/index' },
+            { text => "All units",  action => 'project/unit/index' },
+            { text => "Add unit",   action => 'project/unit/new_unit' },
+            { text => "Quantities", action => 'project/quantity/index' },
         ]
     );
 }
@@ -114,7 +114,7 @@ sub new_unit : GET HEAD Chained('submenu') PathPart('units/new') RequiresCapabil
     my ( $self, $c ) = @_;
 
     $c->stash(
-        template   => 'unit/new.tt',
+        template   => 'project/unit/new.tt',
         create_url => $c->project_uri( $self->action_for('create') ),
         quantities =>
           [ $c->project->quantities->sorted->search( undef, { prefetch => 'default_unit' } )->all ],
@@ -135,7 +135,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('edi
     my @articles = $unit->articles->sorted->hri->all;
 
     for my $article (@articles) {
-        $article->{url} = $c->project_uri( '/article/edit', $article->{id} );
+        $article->{url} = $c->project_uri( '/project/article/edit', $article->{id} );
     }
 
     $c->stash(

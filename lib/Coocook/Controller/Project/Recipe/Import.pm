@@ -1,4 +1,4 @@
-package Coocook::Controller::Recipe::Import;
+package Coocook::Controller::Project::Recipe::Import;
 
 use Moose;
 
@@ -94,7 +94,7 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
     #   when going back in browser history and sending the form again.
     if ( $c->project->recipes->results_exist( { name => $c->req->params->get('name') } ) ) {
         $c->messages->error("A recipe with that name does already exist");
-        $c->stash( template => 'recipe/import/preview.tt' );
+        $c->stash( template => 'project/recipe/import/preview.tt' );
         $c->detach('preview');
     }
 
@@ -122,7 +122,7 @@ sub post : POST Chained('base') PathPart('') Args(0) RequiresCapability('import_
         ingredients => \%ingredients,
     );
 
-    $c->redirect_detach( $c->project_uri( '/recipe/edit', $new_recipe->id ) );
+    $c->redirect_detach( $c->project_uri( '/project/recipe/edit', $new_recipe->id ) );
 }
 
 1;

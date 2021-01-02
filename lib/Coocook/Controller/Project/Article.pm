@@ -1,4 +1,4 @@
-package Coocook::Controller::Article;
+package Coocook::Controller::Project::Article;
 
 use utf8;
 
@@ -9,7 +9,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Article - Catalyst Controller
+Coocook::Controller::Project::Article - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -75,7 +75,7 @@ sub new_article : GET HEAD Chained('/project/base') PathPart('articles/new')
     $c->forward('fetch_project_data');
 
     $c->stash(
-        template   => 'article/edit.tt',
+        template   => 'project/article/edit.tt',
         submit_url => $c->project_uri( $self->action_for('create') ),
     );
 }
@@ -187,7 +187,7 @@ sub dishes_recipes : Private {
     my %recipes = map { $_->{recipe}{id} => $_ } @recipes;               # by recipe ID
 
     for my $r (@recipes) {
-        $r->{recipe}{url} = $c->project_uri( '/recipe/edit', $r->{recipe}{id} );
+        $r->{recipe}{url} = $c->project_uri( '/project/recipe/edit', $r->{recipe}{id} );
     }
 
     my @dishes;
@@ -197,7 +197,7 @@ sub dishes_recipes : Private {
 
         my $meal = $dish->meal;
         $dish         = $dish->as_hashref;
-        $dish->{url}  = $c->project_uri( '/dish/edit', $dish->{id} );
+        $dish->{url}  = $c->project_uri( '/project/dish/edit', $dish->{id} );
         $dish->{meal} = $meal;
 
         if ( defined $recipe and exists $recipes{$recipe} ) {
@@ -224,7 +224,7 @@ sub update_or_insert : Private {
     if ( !defined $name or $name !~ m/\S/ ) {
         $c->messages->error("Name must not be empty");
 
-        $c->redirect_detach( $c->project_uri( '/article/edit', $article->id ) );
+        $c->redirect_detach( $c->project_uri( '/project/article/edit', $article->id ) );
     }
 
     my @tags = $c->project->tags->from_names( $c->req->params->get('tags') )->only_id_col->all;

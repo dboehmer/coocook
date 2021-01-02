@@ -1,15 +1,16 @@
-package Coocook::Controller::ShopSection;
+package Coocook::Controller::Project::ShopSection;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => 'shop_section' );
+# Catalyst compiles ShopSection into shopsection
+__PACKAGE__->config( namespace => 'project/shop_section' );
 
 =head1 NAME
 
-Coocook::Controller::ShopSection - Catalyst Controller
+Coocook::Controller::Project::ShopSection - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -23,7 +24,7 @@ Catalyst Controller.
 
 =cut
 
-sub index : GET HEAD Chained('/purchase_list/submenu') PathPart('shop_sections') Args(0)
+sub index : GET HEAD Chained('/project/purchase_list/submenu') PathPart('shop_sections') Args(0)
   RequiresCapability('view_project') {
     my ( $self, $c ) = @_;
 

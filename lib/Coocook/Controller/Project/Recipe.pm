@@ -1,4 +1,4 @@
-package Coocook::Controller::Recipe;
+package Coocook::Controller::Project::Recipe;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -11,7 +11,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Recipe - Catalyst Controller
+Coocook::Controller::Project::Recipe - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -26,9 +26,9 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All recipes",    action => 'recipe/index' },
-            { text => "Add recipe",     action => 'recipe/new_recipe' },
-            { text => "Import recipes", action => 'recipe/importable_recipes' },
+            { text => "All recipes",    action => 'project/recipe/index' },
+            { text => "Add recipe",     action => 'project/recipe/new_recipe' },
+            { text => "Import recipes", action => 'project/recipe/importable_recipes' },
         ]
     );
 }
@@ -84,7 +84,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
                 name => $dish->name,
                 meal => $dish->meal->name,
                 date => $dish->meal->date,
-                url  => $c->project_uri( '/dish/edit', $dish->id ),
+                url  => $c->project_uri( '/project/dish/edit', $dish->id ),
               };
         }
     }
@@ -100,7 +100,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     );
 
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
-        $ingredient->{reposition_url} = $c->project_uri( '/recipe/reposition', $ingredient->{id} );
+        $ingredient->{reposition_url} = $c->project_uri( '/project/recipe/reposition', $ingredient->{id} );
     }
 
     $c->user
@@ -114,7 +114,7 @@ sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')
     my ( $self, $c ) = @_;
 
     $c->stash(
-        template   => 'recipe/new.tt',
+        template   => 'project/recipe/new.tt',
         create_url => $c->project_uri( $self->action_for('create') ),
     );
 }
@@ -141,7 +141,7 @@ sub create : POST Chained('submenu') Args(0) RequiresCapability('edit_project') 
     my ( $self, $c ) = @_;
 
     my $name       = $c->req->params->get('name');
-    my $input_okay = $self->check_name( $c, { name => $name, current_page => "/recipes" } );
+    my $input_okay = $self->check_name( $c, { name => $name, current_page => "/project/recipes" } );
     if ($input_okay) {
         my $recipe = $c->project->create_related(
             recipes => {
@@ -177,7 +177,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
     my $recipe = $c->stash->{recipe};
     my $name   = $c->req->params->get('name');
     my $input_okay =
-      $self->check_name( $c, { name => $name, current_page => "/recipe/" . $recipe->id } );
+      $self->check_name( $c, { name => $name, current_page => "/project/recipe/" . $recipe->id } );
     if ($input_okay) {
         $recipe->txn_do(
             sub {
@@ -271,7 +271,7 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
         $recipe->project->owner->{url} ||=
           $c->uri_for_action( '/user/show', [ $recipe->project->owner->name ] );
 
-        $recipe->{import_url} = $c->project_uri( '/recipe/import/preview', $recipe->id );
+        $recipe->{import_url} = $c->project_uri( '/project/recipe/import/preview', $recipe->id );
     }
 
     $c->stash( recipes => \@recipes );

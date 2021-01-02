@@ -57,8 +57,10 @@ around uri_for => sub {
 
     return $uri if $uri;
 
-    local @Coocook::Helpers::CARP_NOT = 'Class::MOP::Method::Wrapped';
-    croak 'Catalyst->uri_for() returned undef';
+    local $Carp::Internal{'Catalyst'}                    = 1;
+    local $Carp::Internal{'Class::MOP::Method::Wrapped'} = 1;
+
+    croak "Catalyst->uri_for() returned undef for path '$_[0]'";
 };
 
 =head2 uri_for_action_if_permitted( $action, \%input?, @args? )
@@ -190,7 +192,7 @@ sub messages { return shift->stash->{messages} }
 Return URI for project-specific Catalyst action with the current project's C<id> and C<url_name>
 plus any number of C<@arguments> and possibly C<\%query_params>.
 
-    my $uri = $c->project_uri( '/article/edit', $article->id, { key => 'value' } );
+    my $uri = $c->project_uri( '/project/article/edit', $article->id, { key => 'value' } );
     # http://localhost/project/MyProject/article/42?key=value
 
     my $uri = $c->project_uri( $self->action_for('edit'), $article->id, { key => 'value' } );
@@ -207,6 +209,8 @@ sub project_uri {
 
     # if last argument is hashref that's the \%query_values argument
     my @query = ref $_[-1] eq 'HASH' ? pop @_ : ();
+
+    local $Carp::Internal{ __PACKAGE__() } = 1;
 
     return $c->uri_for_action( $action, [ $project->id, $project->url_name, @_ ], @query );
 }

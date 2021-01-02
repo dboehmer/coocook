@@ -1,4 +1,4 @@
-package Coocook::Controller::Tag;
+package Coocook::Controller::Project::Tag;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -7,7 +7,7 @@ BEGIN { extends 'Coocook::Controller' }
 
 =head1 NAME
 
-Coocook::Controller::Tag - Catalyst Controller
+Coocook::Controller::Project::Tag - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -22,10 +22,10 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "All tags",       action => 'tag/index' },
-            { text => "Add tag",        action => 'tag/new_tag' },
-            { text => "All tag groups", action => 'tag/index_tag_group' },
-            { text => "Add tag group",  action => 'tag/new_tag_group' },
+            { text => "All tags",       action => 'project/tag/index' },
+            { text => "Add tag",        action => 'project/tag/new_tag' },
+            { text => "All tag groups", action => 'project/tag/index_tag_group' },
+            { text => "Add tag group",  action => 'project/tag/new_tag_group' },
         ],
     );
 }
@@ -116,9 +116,9 @@ sub edit : GET HEAD Chained('tag') PathPart('') Args(0) RequiresCapability('view
     $c->stash( groups => [ $c->project->tag_groups->sorted->all ] );
 
     my %relationships = (
-        articles => '/article/edit',
-        dishes   => '/dish/edit',
-        recipes  => '/recipe/edit',
+        articles => '/project/article/edit',
+        dishes   => '/project/dish/edit',
+        recipes  => '/project/recipe/edit',
     );
 
     while ( my ( $rel => $path ) = each %relationships ) {

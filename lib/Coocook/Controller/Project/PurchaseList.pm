@@ -1,4 +1,4 @@
-package Coocook::Controller::PurchaseList;
+package Coocook::Controller::Project::PurchaseList;
 
 use DateTime;
 use Moose;
@@ -6,11 +6,12 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 BEGIN { extends 'Coocook::Controller' }
 
-__PACKAGE__->config( namespace => 'purchase_list' );
+# Catalyst compiles PurchaseList into purchaselist
+__PACKAGE__->config( namespace => 'project/purchase_list' );
 
 =head1 NAME
 
-Coocook::Controller::PurchaseList - Catalyst Controller
+Coocook::Controller::Project::PurchaseList - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -25,10 +26,10 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
     $c->stash(
         submenu_items => [
-            { text => "Purchase lists",   action => 'purchase_list/index' },
-            { text => "Unassigned items", action => 'item/unassigned' },
-            { text => "Shop sections",    action => 'shop_section/index' },
-            { text => "Printing",         action => 'print/index' },
+            { text => "Purchase lists",   action => 'project/purchase_list/index' },
+            { text => "Unassigned items", action => 'project/item/unassigned' },
+            { text => "Shop sections",    action => 'project/shop_section/index' },
+            { text => "Printing",         action => 'project/print/index' },
         ]
     );
 }
@@ -98,13 +99,13 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     for my $sections ( @{ $c->stash->{sections} } ) {
         for my $item ( @{ $sections->{items} } ) {
-            $item->{convert_url} = $c->project_uri( '/item/convert', $item->{id} );
+            $item->{convert_url} = $c->project_uri( '/project/item/convert', $item->{id} );
 
-            $item->{update_offset_url} = $c->project_uri( '/item/update_offset', $item->{id} );
+            $item->{update_offset_url} = $c->project_uri( '/project/item/update_offset', $item->{id} );
 
             for my $ingredient ( @{ $item->{ingredients} } ) {
                 $ingredient->{remove_url} =
-                  $c->project_uri( '/purchase_list/remove_ingredient', $ingredient->{id} );
+                  $c->project_uri( '/project/purchase_list/remove_ingredient', $ingredient->{id} );
             }
         }
     }
