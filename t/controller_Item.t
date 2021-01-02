@@ -6,7 +6,6 @@ use utf8;
 
 use lib 't/lib';
 
-use TestDB;
 use Test::Coocook;
 use Test::Most tests => 4;
 

@@ -4,7 +4,6 @@ use warnings;
 use lib 't/lib';
 
 use DateTime;
-use TestDB;
 use Test::Coocook;
 use Test::Most tests => 40;
 
