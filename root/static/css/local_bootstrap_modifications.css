@@ -17,6 +17,18 @@ textarea {
   resize: vertical;
 }
 
+.btn-sm.btn-quad {
+  padding: .25rem;
+}
+
+.btn-icon-1 {
+  width: calc(24px + 1.5rem);
+}
+
+.table colgroup + thead {
+  border-top: none !important;
+}
+
 
 /*
 redefined list -> non-indended

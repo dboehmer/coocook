@@ -117,11 +117,6 @@ button.alert-link {
     padding: 0;
 }
 
-.inline,
-.inline * {
-    display: inline;
-}
-
 /* <li>s with checkbox inside should not have any bullet point */
 li.checkbox {
     list-style-type: none;
@@ -196,30 +191,17 @@ ul {
                        * see https://stackoverflow.com/a/710264/498634 */
 }
 
-/* incognito text input fields that don't clutter the page until they are focused
- * see https://webapphuddle.com/inline-edit-design/ */
-.editable-content {
-    text-align: right;
-}
-.editable-content:not(:focus) {
-    border: 1px solid grey;
-    border-radius: 0.25em;
-    background-color: inherit;
-    box-shadow: none;
+#pl-editor {
+    min-width: 1150px;
 }
 
-input[type=number].editable-content:not(:focus)::-webkit-inner-spin-button,
-input[type=number].editable-content:not(:focus)::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+
+/* unstyled list without a specific type */
+ul.list-style-type-none {
+	list-style-type:none;
+	padding-left: 0;
 }
 
-input[type=number].editable-content:not(:focus) {
-    -moz-appearance: textfield;
-}
-
-.hidden {
-    display: none;
-}
 
 input:focus {
     box-shadow: none !important;
