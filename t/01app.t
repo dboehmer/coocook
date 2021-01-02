@@ -140,8 +140,7 @@ subtest "robots meta tag" => sub {
         my $guard = $t->local_config_guard( enable_user_registration => 1 );
 
         $t->get_ok('/register');
-        ok $t->submit_form( with_fields => { username => '' } ), "submit form";
-        $t->status_is(400);
+        $t->submit_form_fails( { with_fields => { username => '' } }, "submit form" );
         $t->content_contains('noarchive');
         $t->content_contains('noindex');
     };

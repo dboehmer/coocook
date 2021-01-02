@@ -33,8 +33,7 @@ $t->follow_link_ok( { text => 'cheese' } );
 my $update_req;
 
 subtest "invalid unit IDs" => sub {
-    my $res = $t->submit_form( with_fields => { units => 9999 }, strict_forms => 0 );
-    $t->status_is(400);
+    my $res = $t->submit_form_fails( { with_fields => { units => 9999 }, strict_forms => 0 } );
     $t->text_contains('invalid');
 
     $update_req = $res->request;

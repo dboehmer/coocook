@@ -38,9 +38,7 @@ subtest "form_max_time_secs" => sub {
 
     $t->get_ok('/register');
     sleep 2;
-    $t->submit_form( with_fields => \%ok_input );
-
-    $t->status_is(400);
+    $t->submit_form_fails( { with_fields => \%ok_input } );
     $t->text_like(qr/robot/);
 };
 

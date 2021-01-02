@@ -149,10 +149,10 @@ sub register_fails_like {
     subtest $name || "register fails like '$error_regex'" => sub {
         $self->follow_link_ok( { text => 'Sign up' } );
 
-        note "Register account '$$field_values{username}' ...";
-        $self->submit_form( with_fields => $field_values );
+        $self->submit_form_fails( { with_fields => $field_values },
+            "register account '$$field_values{username}' ..." );
 
-        $self->status_is(400) and $self->text_like($error_regex)
+        $self->text_like($error_regex)
           or note $self->text;
     };
 }
@@ -508,6 +508,24 @@ sub status_like {
 
     like $self->response->code => $expected,
       $name || "Response has status code like '$expected'";
+}
+
+sub submit_form_fails {
+    my ( $self, $params, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    my $res = $self->submit_form(%$params);
+
+    if ( not $res ) {
+        fail $name;
+        return;
+    }
+
+    $self->status_is( 400, $name )
+      or return;
+
+    return $res;
 }
 
 1;
