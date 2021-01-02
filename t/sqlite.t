@@ -40,13 +40,15 @@ for my $version ( 2 .. $Coocook::Schema::VERSION ) {
 
     upgrade_ok( $schema_from_upgrades, $version );
 
-    $SCHEMA_VERSIONS_WITH_DIFFERENCES{$version}
-      and local $TODO = "Upgrade SQL files are known to be broken";
+  SKIP: {
+        $SCHEMA_VERSIONS_WITH_DIFFERENCES{$version}
+          and skip "Upgrade SQL files are known to be broken", 1;
 
-    schema_eq(
-        $schema_from_upgrades => $schema_from_deploy,
-        "schema version $version from upgrade SQLs and schema from deploy SQL are equal"
-    );
+        schema_eq(
+            $schema_from_upgrades => $schema_from_deploy,
+            "schema version $version from upgrade SQLs and schema from deploy SQL are equal"
+        );
+    }
 }
 
 schema_eq(
