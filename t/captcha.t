@@ -19,7 +19,7 @@ subtest "POST /register without session" => sub {
     $t->post( 'https://localhost/register', \%ok_input );
 
     $t->status_is(400);
-    $t->content_like(qr/robot/);
+    $t->text_like(qr/robot/);
 };
 
 {
@@ -41,7 +41,7 @@ subtest "form_max_time_secs" => sub {
     $t->submit_form( with_fields => \%ok_input );
 
     $t->status_is(400);
-    $t->content_like(qr/robot/);
+    $t->text_like(qr/robot/);
 };
 
 ok !$t->schema->resultset('User')->find( { name => $_ } ), "no user '$_' has been created"

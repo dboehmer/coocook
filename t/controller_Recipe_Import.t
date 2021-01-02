@@ -36,6 +36,7 @@ $t->text_contains("Import recipe pizza from project Test")
 
 $t->content_contains('existingRecipeNames');
 
+# JSON data in <script> element
 $t->content_contains( 'Spätzle über Bratklößchen', "Unicode characters encoded properly" )
   or note $t->content;
 

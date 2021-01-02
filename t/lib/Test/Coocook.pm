@@ -364,6 +364,45 @@ sub create_project_ok {
     };
 }
 
+sub checkbox_is_on  { shift->_checkbox_is_on_off( 1, @_ ) }
+sub checkbox_is_off { shift->_checkbox_is_on_off( 0, @_ ) }
+
+sub _checkbox_is_on_off {
+    my ( $self, $expected, $input, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 2;
+
+    my $value = $self->value($input);
+
+    if ($expected) {
+        is $value => 'on', $name || "checkbox '$input' is checked";
+    }
+    else {
+        is $value => undef, $name || "checkbox '$input' is not checked";
+    }
+}
+
+=head2 input_has_value($input, $value, $test_name?)
+
+Finds input element with name C<$input> globally on the page (name must be unique)
+and compares value to the expected C<$value>.
+
+=cut
+
+sub input_has_value {
+    my ( $self, $input, $value, $name ) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    my @inputs = $self->find_all_inputs( name => $input );
+
+    @inputs == 1
+      or croak "More than 1 input element";
+
+    is( $inputs[0]->value => $value, $name || "Input with name '$input' has value '$value'" )
+      or note $self->content;
+}
+
 sub redirect_is {
     my ( $self, $url, $expected, $status, $name ) = @_;
 

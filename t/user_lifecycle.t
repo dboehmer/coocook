@@ -37,7 +37,7 @@ $t->get_ok('/');
 
 $t->text_contains("first user");
 
-$t->content_contains('noindex');
+$t->robots_flags_ok( { index => 0 } );
 
 {
     my %userdata_ok = (
@@ -92,15 +92,12 @@ subtest "verify e-mail address" => sub {
 
     $t->title_like( qr/sign in/i, "got redirected to login page" );
 
-    # TODO replace evil HTML "parser" hackery by reasonable HTML parser
-    $t->content_like( qr/ <input [^<>]+ name="username" [^<>]+ value="test" /x,
-        "username is prefilled in login form" )
-      or note $t->uri, $t->content;
+    $t->input_has_value( username => 'test', "username is prefilled in login form" );
 };
 
 $t->clear_emails();
 
-$t->content_lacks('Sign up');
+$t->text_lacks('Sign up');
 
 $t->reload_config( enable_user_registration => 1 );
 
@@ -191,21 +188,17 @@ $t->get_ok('/login');
 
 $t->robots_flags_ok( { index => 1, archive => 1 }, "plain /login may be indexed" );
 
-$t->content_unlike( qr/ name="username" .+ value="test" /x,
-    "... username is deleted from session cookie by logout" );
+$t->input_has_value( username => '', "... username is deleted from session cookie by logout" );
 
-$t->content_unlike( qr/ name="store_username" .+ checked /x,
-    '... checkbox "store username" is NOT checked' );
+$t->checkbox_is_off('store_username');
 
 $t->get_ok('/login?username=from_query');
 
 $t->robots_flags_ok( { index => 0, archive => 0 }, "/login with query string may NOT be indexed" );
 
-$t->content_like( qr/ name="username" .+ value="from_query" /x,
-    "... username is prefilled from URL query" );
+$t->input_has_value( username => 'from_query', "... username is prefilled from URL query" );
 
-$t->content_unlike( qr/ name="store_username" .+ checked /x,
-    '... checkbox "store username" is NOT checked' );
+$t->checkbox_is_off('store_username');
 
 is $t->cookie_jar->get_cookies( $t->base, 'username' ) => undef,
   "username is not stored in persistent cookie";
@@ -229,14 +222,13 @@ $t->get_ok('/login');
 is $t->cookie_jar->get_cookies( $t->base, 'username' ) => 'test',
   "'username' cookie contains username 'test'";
 
-$t->content_like( qr/ name="username" .+ value="test" /x,
-    "username is prefilled from persistent cookie" )
-  or diag $t->content;
+$t->input_has_value( username => 'test', "username is prefilled from persistent cookie" );
 
 $t->robots_flags_ok( { index => 0, archive => 0 },
     "/login with username from cookie may NOT be indexed" );
 
-$t->content_like( qr/ name="store_username" .+ checked /x, 'checkbox "store username" is checked' );
+$t->form_number(2);
+$t->checkbox_is_on('store_username');
 
 $t->login_ok( 'test', 'P@ssw0rd', store_username => '' );
 
@@ -252,7 +244,7 @@ subtest "expired password reset token URL" => sub {
 
     $t->get_email_link_ok(qr/http\S+reset_password\S+/);
 
-    $t->content_like(qr/expired/);
+    $t->text_like(qr/expired/);
 
     $t->clear_emails();
 };
@@ -384,7 +376,7 @@ $t->create_project_ok( { name => "Test Project 2" } );
 
 $t->base_like( qr/import/, "redirected to importer" );
 
-$t->content_contains("Test Project 1");
+$t->text_contains("Test Project 1");
 
 ok my $project = $schema->resultset('Project')->find( { name => "Test Project 1" } ),
   "project is in database";

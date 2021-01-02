@@ -14,13 +14,13 @@
         <th colspan="1" style="text-align:left">
             [% meal.name | html %]
         [% IF meal.delete_url %]
-            <form class="inline" method="post" action="[% meal.delete_url %]">
-                <input type="submit" value="Delete meal">
+            <form class="inline" method="post" action="[% meal.delete_url %]" name="delete-meal[% meal.id %]">
+                <input type="submit" name="delete-meal" value="Delete meal">
             </form>
         [% ELSIF meal.delete_dishes_url %]
             <form class="inline" method="post" onsubmit="return confirm('Do you really want to delete all dishes in [% meal.name | html %]?')"
             action="[% meal.delete_dishes_url %]">
-                <input type="submit" value="Delete dishes">
+                <input type="submit" name="delete-dishes" value="Delete dishes">
             </form>
         [% ELSIF meal.prepared_dishes_exist %]
             <span>[% meal.name %] has pending dishes to prepare. Reorganize them before deleting!</span>
@@ -100,5 +100,6 @@
         Name:    <input type="text" name="name"    placeholder="name"       required>
         Comment: <input type="text" name="comment" placeholder="comment">
         <input type="submit" value="Add meal">
+</div>
     </div>
 </form>

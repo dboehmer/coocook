@@ -17,49 +17,53 @@ subtest "delete meal" => sub {
     my $meal_id = 2;
 
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->content_lacks('Delete meal');
+    $t->text_lacks('Delete meal');
 
-    $t->content_lacks('cannot be deleted, because it contains dishes');
+    $t->text_lacks('cannot be deleted, because it contains dishes');
     $t->post("/project/1/Test-Project/meals/$meal_id/delete");
-    $t->content_contains('cannot be deleted, because it contains dishes');
+    $t->text_contains('cannot be deleted, because it contains dishes');
 
     ok $schema->resultset('Meal')->find($meal_id)->dishes->results_exist, "Dishes exist in meal";
     $t->post("/project/1/Test-Project/meals/$meal_id/delete_dishes");
     ok !$schema->resultset('Meal')->find($meal_id)->dishes->results_exist, "Dishes were deleted";
 
-    $t->content_lacks('Delete meal');
-    $t->content_contains('has pending dishes to prepare');
+    $t->lacks_button_ok( my $button = 'delete-meal' );
+    $t->text_contains('has pending dishes to prepare');
     $schema->resultset('Meal')->find($meal_id)
       ->prepared_dishes->update( { prepare_at_meal_id => undef } );
     $t->reload();
-    $t->content_contains('Delete meal');
+    $t->form_name("delete-meal$meal_id");
+    $t->button_exists_ok($button);
     $t->post("/project/1/Test-Project/meals/$meal_id/delete");
     ok !$schema->resultset('Meal')->find($meal_id), "Meal was successfully eaten up";
 };
 
+my $meal_name1 = 'Autonomous Meal';
+my $meal_name2 = 'Meal for Robots';
+
 subtest "create meal" => sub {
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->content_lacks('Autonomous Meal');
+    $t->text_lacks($meal_name1);
     $t->submit_form_ok(
         {
             form_name   => 'create_meal',
             form_number => 6,
             with_fields => {
-                name    => 'Autonomous Meal',
+                name    => $meal_name1,
                 comment => 'The bots are cooking!',
             },
             strict_forms => 0,
         },
-        "create a meal with name 'Autonomous Meal'"
+        "create a meal with name '$meal_name1'"
     );
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->content_contains('Autonomous Meal');
+    $t->text_contains($meal_name1);
 };
 
 subtest "update meal" => sub {
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->content_lacks('Meal for Robots');
-    $t->content_contains('Autonomous Meal');
+    $t->text_lacks('Meal for Robots');
+    $t->text_contains($meal_name1);
     $t->submit_form_ok(
         {
             form_name   => 'update_meal',
@@ -70,9 +74,9 @@ subtest "update meal" => sub {
             },
             strict_forms => 0,
         },
-        "change name and comment for meal with name 'Autonomous Meal' to 'Meal for Robots'"
+        "change name and comment for meal with name '$meal_name1' to 'Meal for Robots'"
     );
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->content_lacks('Autonomous Meal');
-    $t->content_contains('Meal for Robots');
+    $t->text_lacks($meal_name1);
+    $t->text_contains('Meal for Robots');
 };
