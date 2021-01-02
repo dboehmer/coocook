@@ -1,77 +1,100 @@
 [% escape_title( 'Purchase list', list.name );
 
-title      =      title _ ' on ' _ display_date(list.date, {short=>1});
-html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
+title      =      title _ ' for ' _ display_date(list.date, {short=>1});
+html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 %]
 
 [% FOREACH section IN sections %]
-<h3>[% section.name || "No shop section" | html %]</h3>
-
-<table class="purchase-items">
-    <thead>
-        <tr>
-            <th>Amount</th>
-            <th>Article</th>
-            <th>Dishes</th>
-            <th>Comment</th>
-            <th>Convert to &hellip;</th>
-        </tr>
-    </thead>
-    [% FOREACH item IN section.items %]
-    <tr>
-        <td>
-            <form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
-                [% IF item.offset %]
-                <label for="item_value">ca.</label>
-                [% END %]
-                <input type="number" min="0" step="any" class="editable-content" id="total" name="total" value="[% item.value + item.offset %]">
-                <input type="submit" class="hidden" value="submit" title="Submit new value for item">
-            </form>
-            [% '&nbsp' IF item.unit.space;
-            display_unit( item.unit, {html=>1} ) %]
-        </td>
-        <td>[% item.article.name | html %]</td>
-        <td class="small-font"><ul>
-        [% FOREACH ingredient IN item.ingredients %]
-            <li>
-                [% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]
-                –
-                [% ingredient.dish.meal.date.strftime('%a, %F') %]
-                [% ingredient.dish.meal.name | html %]:
-                [% ingredient.dish.name | html %]
-                [% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]
-                [% IF ingredient.remove_url %]
-                <form class="inline" method="post" action="[% ingredient.remove_url %]"><input type="submit" value="Remove"></form>
-                [% END %]
-            </li>
-        [% END %]
-        [% IF item.offset %]
-            <li>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em>
-            <form name="remove-offset" class="inline" method="post" action="[% item.update_offset_url %]">
-                <input type="hidden" name="offset" value="0">
-                <input type="submit" value="Remove">
-            </form>
-            </li>
-        [% END %]
-        </ul></td>
-        <td>[% item.comment %]</td>
-        <td>
-        [% FOREACH unit IN item.convertible_into;
-            IF item.convert_url %]
-            <form class="inline" method="post" action="[% item.convert_url %]">
-                <input type="hidden" name="unit" value="[% unit.id %]">
-                <input type="submit" value="[% unit.short_name | html %]" title="[% unit.long_name | html %]">
-            </form>
-            [% END;
-        END %]
-        </td>
-    <tr>
-    [% END %]
-</table>
+<div class="row my-3">
+	<div class="col-12 mb-2">
+		<h3 class="text-success">[% section.name || "No shop section" | html FILTER ucfirst %]</h3>
+	</div>
+	
+	<div class="col-12 mb-2 table-responsive">
+		<table id="pl-editor" class="table align-middle">
+			<colgroup>
+				<col style="width:25%">
+				<col style="width:10%">
+				<col style="width:5%">
+				<col style="width:15%">
+				<col style="width:10%">
+				<col style="width:10%">
+				<col class="btn-icon-1">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Amount</th>
+					<th>Article</th>
+					<th colspan="5">Dishes</th>
+					<th>Comment</th>
+				</tr>
+			</thead>
+			<tbody>
+			[% FOREACH item IN section.items %]
+				<tr>
+					[% rowspan = item.ingredients.size;
+					IF item.offset;
+					rowspan = rowspan + 1;
+					END;
+					 %]
+					<td rowspan="[% rowspan %]">
+						<datalist id="values-[% loop.count %]">
+							<option value="[% item.value + item.offset %]">
+							<option value="[% item.next_higher_value %]">
+							<option value="[% item.next_lower_value%]">
+						</datalist>
+                        <form id="total-[% loop.count %]" name="total" method="post" action="[% item.update_offset_url %]"></form>
+						<form id="units-[% loop.count %]" method="post" action="[% item.convert_url %]"></form>
+                        <div class="d-flex justify-content-between">
+							<div class="input-group flex-nowrap">
+								[% IF item.offset %]<span class="input-group-text px-1">ca.</span>[% END %]
+								<input id="total" class="form-control" form="total-[% loop.count %]" type="number" min="0" step="any" name="total" list="values-[% loop.count %]" value="[% item.value + item.offset %]">
+								<span class="input-group-text">[% display_unit( item.unit, {html=>1} ) %]</span>
+							</div>
+							<button class="btn btn-outline-primary ms-1 material-icons" form="total-[% loop.count %]" type="submit" title="Update amount">sync</button>
+						</div>
+						[% IF item.convert_url %]
+						<div class="d-flex flex-wrap border rounded my-1 w-100">
+						[% idx = loop.count;
+							FOREACH unit IN item.convertible_into %]
+							<button class="btn btn-outline-secondary btn-sm m-1" form="units-[% idx %]" type="submit" name="unit" value="[% unit.id %]">[% unit.short_name | html %]</button>
+							[% END;
+						END %]
+						</div>
+					</td>
+					<td rowspan="[% rowspan %]">[% item.article.name | html %]</td>
+					
+					[% FOREACH ingredient IN item.ingredients %]
+						[% IF loop.index == 0 %]
+							[% INCLUDE purchase_list/snippet_dish.tt %]
+				</tr>
+						
+						[% ELSE %]
+				<tr>
+							[% INCLUDE purchase_list/snippet_dish.tt %]
+				</tr>
+						[% END;
+					END;
+					
+					IF item.offset %]
+				<tr>	
+					<td colspan="4" class="text-end">
+						<small>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em></small>
+					</td>
+					<td>
+						<form name="remove-offset" method="post" action="[% item.update_offset_url %]">
+							<button type="submit" class="btn btn-danger btn-sm btn-quad mb-1 material-icons" title="Reset rounding" name="offset" value="0">undo</button>
+						</form>
+					</td>
+					<td></td>
+				</tr>
+					[% END;
+					
+			END %]
+			</tbody>
+		</table>
+		
+	</div>
+</div>
 [% END %]
-
-<style>
-table.purchase-items {
-    width: 100%; /* there are several tables with many columns and they should have identical width */
-}
-</style>

@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <title>
-        [% title        _ ' · ' | html IF title %]
-        [% project.name _ ' · ' | html IF project %]
-        [% name | html %]
+        [% IF window_title;
+            window_title _ ' · ' | html;
+        ELSIF title;
+            title        _ ' · ' | html;
+        END;
+
+        IF project;
+            project.name _ ' · ' | html;
+        END;
+
+        name | html %]
     </title>
 
     <meta charset="UTF-8">
@@ -109,7 +117,6 @@
             </div>
         </nav>
     </header>
-
 
     <main class="container-md mb-2">
         <div class="row my-3">

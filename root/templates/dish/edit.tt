@@ -8,11 +8,16 @@
 		[% END %]
 	</div>
 	
-	<form class="col-sm-3 offset-sm-3 col-lg-2 offset-lg-4 mt-3 mt-sm-0 btn-group" method="post" action="[% delete_url %]">
-		<button type="button" class="btn btn-danger" title="Delete dish" aria-expanded="false">
-			<i class="material-icons">delete_forever</i> Delete
-		</button>
-	</form>
+	<div class="offset-sm-1 col-sm-5 text-left">
+		<div class="d-flex justify-content-end">
+			<form method="post" action="[% delete_url %]">
+				<button type="button" class="btn btn-danger" title="Delete dish" aria-expanded="false">
+					<i class="material-icons">delete_forever</i> Delete
+				</button>
+			</form>
+		</div>
+		
+	</div>
 </div>
 
 <form action="[% dish.update_url %]" method="post">
