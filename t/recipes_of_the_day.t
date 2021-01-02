@@ -28,7 +28,7 @@ $rotd->create(
     }
 );
 
-$t->reload();
+$t->reload_ok();
 $t->text_like(qr/recipe of the day/i);
 $t->text_contains( $recipe1->name );
 

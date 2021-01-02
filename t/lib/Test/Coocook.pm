@@ -437,6 +437,14 @@ sub redirect_is {
     };
 }
 
+sub reload_ok {
+    my $self = shift;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    ok $self->reload(), "reload " . $self->base;
+}
+
 sub robots_flags_ok {
     my ( $self, $flags, $name ) = @_;
 

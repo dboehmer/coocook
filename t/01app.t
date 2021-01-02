@@ -166,7 +166,7 @@ subtest "robots meta tag" => sub {
         ok local *Coocook::Model::Authorization::has_capability = sub { 1 },    # everything allowed
           "install simulation";
 
-        $t->reload;
+        $t->reload_ok();
         $t->status_is(200);                                                     # not the login page
 
         $t->content_contains('noarchive');
@@ -219,7 +219,7 @@ subtest favicons => sub {
             '72x72' => '72.png',
         },
     );
-    $t->reload();
+    $t->reload_ok();
     $t->content_contains(q{<link rel="icon" type="image/x-icon" href="alpha.ico">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed"  href="beta.png">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed" sizes="72x72" href="72.png">});
