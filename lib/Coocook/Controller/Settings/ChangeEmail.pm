@@ -43,7 +43,7 @@ sub request : POST Chained('base') PathPart('') Args(0) RequiresCapability('chan
             new_email_fc  => $email_fc,
             token_hash    => $token->to_salted_hash,
             token_expires => $user->format_datetime($expires),
-            token_created => \'CURRENT_TIMESTAMP',
+            token_created => $user->format_datetime( DateTime->now ),
         }
     );
 

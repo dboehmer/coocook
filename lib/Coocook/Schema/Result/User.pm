@@ -74,7 +74,7 @@ around [ 'set_column', 'store_column' ] => sub {
     }
     elsif ( $column eq 'token_hash' ) {
         if ( defined $value ) {          # automatically set 'token_created' when 'token_hash' is set
-            $self->$orig( token_created => \'CURRENT_TIMESTAMP' );
+            $self->$orig( token_created => $self->format_datetime( DateTime->now ) );
         }
         else {                           # reset when 'token_hash' is unset
             $self->$orig( token_created => undef );

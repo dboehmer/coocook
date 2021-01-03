@@ -16,7 +16,7 @@ use Test::Coocook;
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
-plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 6;
+plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION ) + 7;
 
 my $pg_dbic          = Test::PostgreSQL->new();
 my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
@@ -44,6 +44,24 @@ for my $version ( $FIRST_PGSQL_SCHEMA_VERSION + 1 .. $Coocook::Schema::VERSION )
 ok( TestDB->execute_test_data($schema_from_dbic),     "Execute test data in DB from DBIx::Class" );
 ok( TestDB->execute_test_data($schema_from_deploy),   "Execute test data in DB from deploy SQL" );
 ok( TestDB->execute_test_data($schema_from_upgrades), "Execute test data in DB from upgrade SQLs" );
+
+note "Fixing Pgsql sequences after bulk insert";
+for my $source ( $schema_from_dbic->sources ) {
+    $source eq 'Session'    # this table has string id column
+      and next;
+
+    my $result_source = $schema_from_dbic->resultset($source)->result_source;
+
+    if ( $result_source->has_column('id') ) {
+        my $table = $result_source->name;
+
+        $schema_from_dbic->storage->dbh_do(
+            sub {
+                $_[1]->do(<<SQL) } );
+SELECT setval('${table}_id_seq', (SELECT MAX(id) FROM $table), true)
+SQL
+    }
+}
 
 subtest "boolean values" => sub {
     my $row = $schema_from_dbic->resultset('Project')->one_row;
@@ -117,6 +135,58 @@ schema_diff_like(
         },
     }
 );
+
+# most important finding: CURRENT_TIMESTAMP is UTC in SQLite but local timezone in PostgreSQL
+subtest "timestamps are stored in UTC" => sub {
+    my $schema = $schema_from_dbic;
+
+    # with Test::PostgreSQL the default timezone is UTC which makes bugs unnoticeable
+    $schema->storage->dbh_do(
+        sub {
+            $_[1]->do("SET TIME ZONE 'Pacific/Chatham'");    # weird timezone UTC+12:45
+        }
+    );
+
+    my $t = Test::Coocook->new(
+        config => { enable_user_registration => 1 },
+        schema => $schema,
+    );
+
+    $t->get_ok('/');
+    $t->register_ok( { username => 'u', email => 'u@example.com', password => 'p', password2 => 'p' } );
+    $t->get_ok_email_link_like(qr/verify/);
+    $t->clear_emails();
+    $t->submit_form_ok( { with_fields => { password => 'p' } } );
+
+    my $utc_hour  = sprintf '%02i', (gmtime)[2];    # gmtime() provides UTC and calls it "GMT"
+    my $utc_regex = qr/ $utc_hour:..:../;
+
+    my $user = $schema->resultset('User')->find( { name_fc => 'u' } );
+    like $user->get_column('email_verified') => $utc_regex, "column 'email_verified' is in UTC";
+
+    $t->request_recovery_link_ok('u@example.com');
+    $user->discard_changes();
+    like( $user->get_column($_) => $utc_regex, "column '$_' is in UTC" )
+      for qw< token_created token_expires >;
+
+    ok $user->update( { map { $_ => undef } qw< token_created token_expires > } ),
+      "set columns NULL to avoid false positives";
+
+    $t->follow_link_ok( { text        => 'settings Settings' } );
+    $t->submit_form_ok( { with_fields => { new_email => 'x@example.com' } } );
+    $user->discard_changes();
+    like( $user->get_column($_) => $utc_regex, "column '$_' is in UTC" )
+      for qw< token_created token_expires >;
+
+    $t->get_ok('/');
+    $t->submit_form_ok( { with_fields => { name => 'Project UTC' } }, "create project" );
+    $t->follow_link_ok( { text        => 'Project' } );
+    $t->follow_link_ok( { text        => 'Settings' } );
+    note $t->content;
+    $t->submit_form_ok( { with_fields => { archive => 'on' } } );
+    my $project = $schema->resultset('Project')->find( { name => 'Project UTC' } ) || die;
+    like( $project->get_column($_) => $utc_regex, "column '$_' is in UTC" ) for qw< created archived >;
+};
 
 sub schema_diff_like {
     my ( $schema1, $schema2, $expected_diff, $name ) = @_;

@@ -211,7 +211,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     $terms
       and $user->create_related(
         terms_users => {
-            terms    => $terms->id,
+            terms_id => $terms->id,
             approved => $terms->format_datetime( DateTime->now ),
         }
       );

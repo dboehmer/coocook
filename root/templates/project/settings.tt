@@ -58,7 +58,7 @@
 
     <form method="post" action="[% project.archived ? project_urls.unarchive : project_urls.archive %]">
         <p>
-        <input type="submit" value="[% project.archived ? 'Un-archive' : '📁 Archive' %]">
+        <input type="submit" name="[% project.archived ? 'unarchive' : 'archive' %]" value="[% project.archived ? 'Un-archive' : '📁 Archive' %]">
         </p>
     </form>
 

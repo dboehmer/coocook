@@ -7,7 +7,7 @@ Somebody requested to recover your account '[% user.name %]' at [% name %].
 If you want to reset your password, you can do so at the page
 [% recovery_url %]
 
-The link is valid until [% display_datetime(expires) %].
+The link is valid until [% display_datetime(expires) %] UTC.
 
 If you didn’t request the recovery, you can safely ignore this email.
 

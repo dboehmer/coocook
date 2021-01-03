@@ -20,7 +20,7 @@
             <td[% !proj.is_public ? ' title="Project is private." >🔒' : '>' %]</td>
             <td><a href="[% proj.url %]">[% proj.name | html %]</a></td>
             <td>[% IF proj.role == 'owner' %]<strong>owner</strong>[% ELSE; proj.role; END %]</td>
-            <td>[% display_datetime(proj.created, {short=>1}) %]</td>
+            <td>[% display_datetime(proj.created, {short=>1}) %] UTC</td>
         </tr>
 [% END %]
     </tbody>
