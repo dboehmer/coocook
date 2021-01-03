@@ -258,7 +258,17 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
     }
 
     if ( my $user = $c->model('DB::User')->find( { email_fc => $email_fc } ) ) {
-        $c->visit( '/email/recovery_link', [$user] );
+        my $token   = $c->model('Token')->new();
+        my $expires = DateTime->now->add( days => 1 );
+
+        $user->update(
+            {
+                token_hash    => $token->to_salted_hash,
+                token_expires => $user->format_datetime($expires),
+            }
+        );
+
+        $c->visit( '/email/recovery_link', [ $user, $token ] );
     }
     else {
         $c->visit( '/email/recovery_unregistered', [$email_fc] );

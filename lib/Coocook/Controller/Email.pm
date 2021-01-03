@@ -47,22 +47,12 @@ sub password_changed : Private {
 }
 
 sub recovery_link : Private {
-    my ( $self, $c, $user ) = @_;
-
-    my $token   = $c->model('Token')->new();
-    my $expires = DateTime->now->add( days => 1 );
-
-    $user->update(
-        {
-            token_hash    => $token->to_salted_hash,
-            token_expires => $user->format_datetime($expires),
-        }
-    );
+    my ( $self, $c, $user, $token ) = @_;
 
     $c->stash(
         email        => { to => $user->email_fc },
         user         => $user,
-        expires      => $expires,
+        expires      => $user->token_expires,
         recovery_url => $c->uri_for_action( '/user/reset_password', [ $user->name, $token->to_base64 ] ),
     );
 }
