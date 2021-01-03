@@ -189,13 +189,17 @@ __PACKAGE__->config(
     default_view => 'HTML',
 
     'View::Email::TT' => {
-        INCLUDE_PATH => __PACKAGE__->path_to(qw< root email_templates >),
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to(qw< root email_templates >),
+            __PACKAGE__->path_to(qw< root common_templates >),
+        ],
     },
 
     'View::HTML' => {
         INCLUDE_PATH => [
             __PACKAGE__->path_to(qw< root custom_templates >),    # allow overriding with custom files
             __PACKAGE__->path_to(qw< root templates >),
+            __PACKAGE__->path_to(qw< root common_templates >),
         ],
     },
 );
