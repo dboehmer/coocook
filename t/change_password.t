@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DateTime;
 use Test::Coocook;
-use Test::Most tests => 52;
+use Test::Most tests => 53;
 
 my $t = Test::Coocook->new;
 
@@ -104,11 +104,21 @@ $t->submit_form_ok( { form_name => 'confirm_email_change' } );
 cols_are_null();
 is $john_doe->email_fc => $johns_new_email, "email address has changed";
 
+subtest "password recovery after email change request" => sub {
+    $t->submit_form_ok( { with_fields => { new_email => $johns_cancelled_email } } );
+    cols_are_set();
+    $t->clear_emails();
+    $t->request_recovery_link_ok($johns_new_email);
+    cols_are_null('new_email_fc');
+    $t->submit_form_ok( { with_fields => { password => 'p', password2 => 'p' } }, "reset password" );
+    cols_are_null();
+};
+
 sub cols_are_null {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     $john_doe->discard_changes();
     is( $john_doe->get_column($_) => undef, "$_ is NULL" )
-      for qw< new_email_fc token_hash token_created token_expires >;
+      for @_ ? @_ : (qw< new_email_fc token_hash token_created token_expires >);
 }
 
 sub cols_are_set {

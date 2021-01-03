@@ -265,6 +265,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
             {
                 token_hash    => $token->to_salted_hash,
                 token_expires => $user->format_datetime($expires),
+                new_email_fc  => undef,                              # cancel email change, if in process
             }
         );
 
@@ -319,6 +320,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
             password      => $new_password,
             token_hash    => undef,
             token_expires => undef,
+            token_created => undef,
         }
     );
 

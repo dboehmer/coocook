@@ -365,9 +365,16 @@ sub request_recovery_link_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     subtest $name || "request recovery link for $email", sub {
-        $self->follow_link_ok( { text => 'person Sign in' } );
+        my $logged_in = ( $self->text =~ m/settings Settings/ );
 
-        $self->follow_link_ok( { text => 'Lost your password?' } );
+        if ($logged_in) {
+            $self->follow_link_ok( { text => 'settings Settings' } );
+            $self->follow_link_ok( { text => 'request a recovery link' } );
+        }
+        else {
+            $self->follow_link_ok( { text => 'person Sign in' } );
+            $self->follow_link_ok( { text => 'Lost your password?' } );
+        }
 
         $self->submit_form_ok(
             {
