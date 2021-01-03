@@ -114,10 +114,13 @@ sub projects : GET HEAD Chained('base') RequiresCapability('view_user_projects')
         {
             '+columns' => { role => $projects_users->me('role') },
         }
-    )->hri->sorted->all;
+    )->sorted->all;
 
-    for my $project (@projects) {
-        $project->{url} = $c->uri_for_action( '/project/show', [ $project->{id}, $project->{url_name} ] );
+    for (@projects) {
+        $_ = $_->as_hashref(
+            created => $_->created,                                                       # DateTime object
+            url     => $c->uri_for_action( '/project/show', [ $_->id, $_->url_name ] ),
+        );
     }
 
     $c->stash( projects => \@projects );

@@ -26,6 +26,7 @@ __PACKAGE__->meta->make_immutable;
 __PACKAGE__->config(
     ENCODING           => 'utf-8',
     PLUGIN_BASE        => 'Coocook::Filter',
+    PRE_PROCESS        => 'macros.tt',
     WRAPPER            => 'wrapper.tt',
     TEMPLATE_EXTENSION => '.tt',
     render_die         => 1,

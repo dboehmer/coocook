@@ -13,9 +13,9 @@
     </form>
 [% END %]
 
-<p>Registered: [% user_object.created %]</p>
+<p>Registered: [% display_datetime(user_object.created) %]</p>
 
-<p>Verified email address: [% user_object.email_verified || '&mdash;' %]</p>
+<p>Verified email address: [% IF user_object.email_verified; display_datetime(user_object.email_verified); ELSE; '&mdash;'; END %]</p>
 
 <p>Email address: <a href="mailto:[% user_object.email_fc %]">[% user_object.email_fc %]</a></p>
 

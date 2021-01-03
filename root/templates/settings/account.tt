@@ -72,7 +72,7 @@
         <form method="post" action="[% cancel_email_change_url %]" name="cancel_email_change">
             <p>
             You’ve requested change to <strong>[% user.new_email_fc | html %]</strong>
-            at [% user.token_created %]
+            at [% display_datetime(user.token_created, {short=>1}) %]
                 <input type="submit" value="Cancel">
             </p>
         </form>

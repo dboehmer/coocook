@@ -83,8 +83,11 @@ __PACKAGE__->config(
     # https://en.wikipedia.org/w/index.php?title=Calendar_date&oldid=799176855
     date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
 
+    datetime_format_short => '%{day} %b %Y %H:%M:%S',        # 31 Dec 2001 12:34:56
+    datetime_format_long  => '%A, %{day} %B %Y %H:%M:%S',    # Monday, 31 December 2001 12:34:56
+
     new_user_default_roles => [
-        'private_projects',                    # disable to prohibit new users creating private projects
+        'private_projects',    # disable to prohibit new users creating private projects
     ],
 
     about_page_title => "About",
