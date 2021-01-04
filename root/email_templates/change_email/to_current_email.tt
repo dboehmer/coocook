@@ -1,0 +1,21 @@
+[% email.subject = BLOCK %]New email address for your account '[% user.name %]' at [% name; END ~%]
+
+Hi [% user.display_name %]!
+
+You’ve requested to change the email address
+of your account '[% user.name %]' at [% name %]
+
+from your current address: [% current_email %]
+
+to the new address: [% new_email %]
+
+You’ve received another email to the new address
+with a verification link that you need to click.
+
+If this wasn’t you, you can cancel the change
+and quickly change your password here:
+
+[% account_settings_url %]
+
+
+[% name %]

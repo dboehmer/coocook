@@ -83,7 +83,11 @@ sub register : GET HEAD Chained('/base') Args(0) Does('~HasCSS') Does('~HasJS') 
         $c->stash->{robots}->index(0);
     }
 
-    $c->session( register_form_served_epoch => time() );
+    # set register_form_served_epoch, except we're already in the progress and already have a timestamp
+    for ( \$c->session->{register_form_served_epoch} ) {
+        if ( $c->stash->{last_input} ) { $$_ ||= time }
+        else                           { $$_ = time }
+    }
 
     push @{ $c->stash->{js} }, '/lib/zxcvbn.js';
 
@@ -138,7 +142,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     is_email($email_fc)
       and !$c->model('DB::User')->results_exist( { email_fc => $email_fc } )
       and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
-      or push @errors, "e-mail address is invalid or already taken";
+      or push @errors, "email address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;
 
@@ -206,12 +210,12 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
     $password = 'x' x length $password;
     undef $password;
 
-    $c->visit( '/email/verification', [ $user, $token ] );
+    $c->visit( '/email/verify', [ $user, $token ] );
 
     $terms
       and $user->create_related(
         terms_users => {
-            terms    => $terms->id,
+            terms_id => $terms->id,
             approved => $terms->format_datetime( DateTime->now ),
         }
       );
@@ -231,8 +235,8 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
 
     $user->add_roles( \@roles );
 
-    $c->messages->info( "You should receive an e-mail with a web link."
-          . " Please click that link to verify your e-mail address." );
+    $c->messages->info( "You should receive an email with a web link."
+          . " Please click that link to verify your email address." );
 
     $c->redirect_detach( $c->uri_for('/') );
 }
@@ -252,13 +256,24 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
     my $email_fc = fc $c->req->params->get('email');
 
     if ( not is_email($email_fc) ) {
-        $c->messages->error("Enter a valid e-mail address");
+        $c->messages->error("Enter a valid email address");
 
         $c->redirect_detach( $c->uri_for( $self->action_for('recover') ) );
     }
 
     if ( my $user = $c->model('DB::User')->find( { email_fc => $email_fc } ) ) {
-        $c->visit( '/email/recovery_link', [$user] );
+        my $token   = $c->model('Token')->new();
+        my $expires = DateTime->now->add( days => 1 );
+
+        $user->update(
+            {
+                token_hash    => $token->to_salted_hash,
+                token_expires => $user->format_datetime($expires),
+                new_email_fc  => undef,                              # cancel email change, if in process
+            }
+        );
+
+        $c->visit( '/email/recovery_link', [ $user, $token ] );
     }
     else {
         $c->visit( '/email/recovery_unregistered', [$email_fc] );
@@ -309,6 +324,7 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
             password      => $new_password,
             token_hash    => undef,
             token_expires => undef,
+            token_created => undef,
         }
     );
 
@@ -318,6 +334,8 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
     $user->update();
 
     $c->visit( '/email/password_changed', [$user] );
+
+    $c->messages->info("Your password has been changed.");
 
     # no point in letting user log in again
     # https://security.stackexchange.com/q/64828/91275

@@ -31,7 +31,7 @@ subtest "delete meal" => sub {
     $t->text_contains('has pending dishes to prepare');
     $schema->resultset('Meal')->find($meal_id)
       ->prepared_dishes->update( { prepare_at_meal_id => undef } );
-    $t->reload();
+    $t->reload_ok();
     $t->form_name("delete-meal$meal_id");
     $t->button_exists_ok($button);
     $t->post("/project/1/Test-Project/meals/$meal_id/delete");

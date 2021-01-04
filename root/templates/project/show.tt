@@ -74,5 +74,5 @@
 
 [% INCLUDE 'print/project.tt' %]
 
-<p>Created at [% project.created %]</p>
+<p>Created at [% display_datetime(project.created) %] UTC</p>
 </div>

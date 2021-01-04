@@ -17,24 +17,7 @@ sub begin : Private {
         $c->stash( signature => $signature );
     }
 
-    $c->stash(
-        name => $c->config->{name},
-        view => 'Email',
-    );
-}
-
-sub email_address_reused : Private {
-    my ( $self, $c, $user ) = @_;
-
-    $c->stash(
-        email => {
-            to       => $user->email_fc,
-            subject  => "Your e-mail address was registered at " . $c->config->{name},
-            template => 'email_address_reused.tt',
-        },
-        user         => $user,
-        recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email_fc } ),
-    );
+    $c->stash( view => 'Email' );
 }
 
 sub notify_admin_about_registration : Private {
@@ -44,11 +27,7 @@ sub notify_admin_about_registration : Private {
     $email_anonymized =~ s/ ^ .+ \@ /***@/x;
 
     $c->stash(
-        email => {
-            to       => $admin->email_fc,
-            subject  => sprintf( "New account '%s' registered at %s", $user->name, $c->config->{name} ),
-            template => 'notify_admin_about_registration.tt',
-        },
+        email            => { to => $admin->email_fc },
         admin            => $admin,
         email_anonymized => $email_anonymized,
         user             => $user,
@@ -61,37 +40,19 @@ sub password_changed : Private {
     my ( $self, $c, $user ) = @_;
 
     $c->stash(
-        email => {
-            to       => $user->email_fc,
-            subject  => sprintf( "Your password at %s has changed", $c->config->{name} ),
-            template => 'password_changed.tt',
-        },
+        email        => { to => $user->email_fc },
         user         => $user,
         recovery_url => $c->uri_for_action( '/user/recover', { email => $user->email_fc } ),
     );
 }
 
 sub recovery_link : Private {
-    my ( $self, $c, $user ) = @_;
-
-    my $token   = $c->model('Token')->new();
-    my $expires = DateTime->now->add( days => 1 );
-
-    $user->update(
-        {
-            token_hash    => $token->to_salted_hash,
-            token_expires => $user->format_datetime($expires),
-        }
-    );
+    my ( $self, $c, $user, $token ) = @_;
 
     $c->stash(
-        email => {
-            to       => $user->email_fc,
-            subject  => "Account recovery at " . $c->config->{name},
-            template => 'recovery_link.tt',
-        },
+        email        => { to => $user->email_fc },
         user         => $user,
-        expires      => $expires,
+        expires      => $user->token_expires,
         recovery_url => $c->uri_for_action( '/user/reset_password', [ $user->name, $token->to_base64 ] ),
     );
 }
@@ -100,24 +61,16 @@ sub recovery_unregistered : Private {
     my ( $self, $c, $email ) = @_;
 
     $c->stash(
-        email => {
-            to       => $email,
-            subject  => "Account recovery at " . $c->config->{name},
-            template => 'recovery_unregistered.tt',
-        },
+        email        => { to => $email },
         register_url => $c->uri_for_action('/user/register'),
     );
 }
 
-sub verification : Private {
+sub verify : Private {
     my ( $self, $c, $user, $token ) = @_;
 
     $c->stash(
-        email => {
-            to       => $user->email_fc,
-            subject  => "Verify your Account at " . $c->config->{name},
-            template => 'verify.tt',
-        },
+        email            => { to => $user->email_fc },
         verification_url => $c->uri_for_action( '/user/verify', [ $user->name, $token->to_base64 ] ),
         user             => $user,
     );

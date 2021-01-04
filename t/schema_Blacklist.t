@@ -36,7 +36,7 @@ subtest BlacklistEmail => sub {
     email_not_ok 'any@coocook.org';
     email_not_ok 'any@any-subdomain.coocook.org';
 
-    email_not_ok 'SOMEBODY@EXAMPLE.COM', "uppercase literal e-mail";
+    email_not_ok 'SOMEBODY@EXAMPLE.COM', "uppercase literal email";
     email_not_ok 'ANY@COOCOOK.ORG',      "uppercase wildcard pattern";
 
     subtest add_email => sub {
@@ -49,7 +49,7 @@ subtest BlacklistEmail => sub {
         ok !$blacklist->is_email_ok($literal);
         ok !$blacklist->is_email_ok( uc $literal ), "uppercase";
         ok !$blacklist->results_exist( { email_fc => $literal } ),
-          "table doesn't contain e-mail address in cleartext";
+          "table doesn't contain email address in cleartext";
     };
 };
 

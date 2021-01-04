@@ -10,7 +10,7 @@
 
 <p>Username: [% user_object.name %]</p>
 
-<p>Registered: [% user_object.created.ymd %]</p>
+<p>Registered: [% display_date(user_object.created) %]</p>
 
 <p>Public projects owned by [% user_object.name %]:</p>
 

@@ -76,7 +76,7 @@ Goto [https://hub.docker.com/r/coocook/coocook-dev](https://hub.docker.com/r/coo
 
 * <coocook@lists.coocook.org>
 * subscribe at [lists.coocook.org/mailman/listinfo/coocook](https://lists.coocook.org/mailman/listinfo/coocook)
-* or send e-mail with subject `subscribe` to
+* or send an email with subject `subscribe` to
 [coocook-request@lists.coocook.org](mailto:coocook-request@lists.coocook.org?subject=subscribe)
 
 ## Terminology

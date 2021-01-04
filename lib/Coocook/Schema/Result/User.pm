@@ -19,8 +19,10 @@ __PACKAGE__->add_columns(
     display_name   => { data_type => 'text' },
     admin_comment  => { data_type => 'text', default_value => '' },
     email_fc       => { data_type => 'text' },
+    new_email_fc   => { data_type => 'text',                        is_nullable => 1 },
     email_verified => { data_type => 'timestamp without time zone', is_nullable => 1 },
     token_hash     => { data_type => 'text',                        is_nullable => 1 },
+    token_created  => { data_type => 'timestamp without time zone', is_nullable => 1 },
     token_expires  => { data_type => 'timestamp without time zone', is_nullable => 1 },
     created        => {
         data_type     => 'timestamp without time zone',
@@ -70,6 +72,15 @@ around [ 'set_column', 'store_column' ] => sub {
 
         ( $column => $value ) = ( password_hash => $password->to_salted_hash );
     }
+    elsif ( $column eq 'token_hash' ) {
+        if ( defined $value ) {          # automatically set 'token_created' when 'token_hash' is set
+            $self->$orig( token_created => $self->format_datetime( DateTime->now ) );
+        }
+        else {                           # reset when 'token_hash' is unset
+            $self->$orig( token_created => undef );
+            $self->$orig( token_expires => undef );
+        }
+    }
 
     return $self->$orig( $column => $value );
 };
@@ -96,6 +107,9 @@ sub check_password {    # method name defined by Catalyst::Authentication::Crede
 
 sub check_base64_token {
     my ( $self, $token ) = @_;
+
+    $self->token_hash
+      or return;
 
     if ( my $expires = $self->token_expires ) {
         $expires > DateTime->now
@@ -168,7 +182,7 @@ sub status {
         return ok => "ok";
     }
 
-    return unverified => "e-mail address not yet verified with verification link";
+    return unverified => "email address not yet verified with verification link";
 }
 
 1;

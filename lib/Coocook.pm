@@ -57,7 +57,7 @@ if ( $ENV{CATALYST_DEBUG} ) {    # Coocook->debug() doesn't work here, always re
         with 'CatalystX::LeakChecker';
     }
 
-    # print e-mails on STDOUT in debugging mode
+    # print emails on STDOUT in debugging mode
     $ENV{EMAIL_SENDER_TRANSPORT} //= 'Print';
 }
 
@@ -83,8 +83,11 @@ __PACKAGE__->config(
     # https://en.wikipedia.org/w/index.php?title=Calendar_date&oldid=799176855
     date_format_long => '%A, %{day} %B %Y',    # Monday, 31 December 2001
 
+    datetime_format_short => '%{day} %b %Y %H:%M:%S',        # 31 Dec 2001 12:34:56
+    datetime_format_long  => '%A, %{day} %B %Y %H:%M:%S',    # Monday, 31 December 2001 12:34:56
+
     new_user_default_roles => [
-        'private_projects',                    # disable to prohibit new users creating private projects
+        'private_projects',    # disable to prohibit new users creating private projects
     ],
 
     about_page_title => "About",
@@ -141,7 +144,7 @@ __PACKAGE__->config(
         return $c->config->{name} . " " . $c->uri_for_action('/index');
     },
 
-    # send e-mails to site_owners about new users registered
+    # send emails to site_owners about new users registered
     notify_site_owners_about_registrations => 1,
 
     # Disable deprecated behavior needed by old applications
@@ -189,13 +192,17 @@ __PACKAGE__->config(
     default_view => 'HTML',
 
     'View::Email::TT' => {
-        INCLUDE_PATH => __PACKAGE__->path_to(qw< root email_templates >),
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to(qw< root email_templates >),
+            __PACKAGE__->path_to(qw< root common_templates >),
+        ],
     },
 
     'View::HTML' => {
         INCLUDE_PATH => [
             __PACKAGE__->path_to(qw< root custom_templates >),    # allow overriding with custom files
             __PACKAGE__->path_to(qw< root templates >),
+            __PACKAGE__->path_to(qw< root common_templates >),
         ],
     },
 );

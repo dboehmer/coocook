@@ -1,6 +1,6 @@
 package Coocook::View::Email;
 
-# ABSTRACT: create e-mails with TT templates
+# ABSTRACT: create emails with TT templates
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -20,15 +20,16 @@ Catalyst View.
 before process => sub {
     my ( $self, $c ) = @_;
 
-    my $stash_key = $self->stash_key;
+    my $stash = $c->stash->{ $self->stash_key };
 
-    $c->log->info(
-        sprintf(
-            "Sending e-mail to <%s> with subject '%s'",
-            $c->stash->{$stash_key}{to},
-            $c->stash->{$stash_key}{subject},
-        )
-    );
+    # automatically set template filename based on action path
+    $stash->{template} ||= do {
+        my $action = $c->action;
+        $action =~ s!^email/!!
+          or warn "Unexpected action '$action'";
+
+        $action . '.tt';
+    };
 };
 
 __PACKAGE__->meta->make_immutable;

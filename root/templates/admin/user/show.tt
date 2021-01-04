@@ -13,11 +13,11 @@
     </form>
 [% END %]
 
-<p>Registered: [% user_object.created %]</p>
+<p>Registered: [% display_datetime(user_object.created) %] UTC</p>
 
-<p>Verified e-mail address: [% user_object.email_verified || '&mdash;' %]</p>
+<p>Verified email address: [% IF user_object.email_verified; display_datetime(user_object.email_verified); ELSE; '&mdash;'; END %] UTC</p>
 
-<p>E-mail address: <a href="mailto:[% user_object.email_fc %]">[% user_object.email_fc %]</a></p>
+<p>Email address: <a href="mailto:[% user_object.email_fc %]">[% user_object.email_fc %]</a></p>
 
 <form method="post" action="[% update_url %]">
     <p>

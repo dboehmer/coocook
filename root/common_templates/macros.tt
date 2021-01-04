@@ -6,6 +6,10 @@
     END;
 END;
 
+MACRO display_datetime(datetime, opts) BLOCK;
+    datetime.strftime( opts.short ? datetime_format_short : datetime_format_long );
+END;
+
 MACRO display_unit(unit, opts) BLOCK;
     IF opts.html ~%]
         <abbr title="[% unit.long_name | html %]">[% unit.short_name | html %]</abbr>

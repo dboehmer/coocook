@@ -77,6 +77,7 @@ on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
   requires "FindBin" => "0";
+  requires "Regexp::Common" => "0";
   requires "Scope::Guard" => "0";
   requires "Sub::Exporter" => "0";
   requires "Test2::Require::Module" => "0";

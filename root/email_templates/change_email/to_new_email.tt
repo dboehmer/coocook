@@ -1,0 +1,19 @@
+[% email.subject = BLOCK %]Verify new email address for your account '[% user.name %]' at [% name; END ~%]
+
+Hi [% user.display_name %]!
+
+You’ve requested to change the email address
+of your account '[% user.name %]' at [% name %]
+
+from your old address: [% current_email %]
+
+to this new address: [% new_email %]
+
+You can activate the change by clicking
+the following verification link:
+
+[% verification_url %]
+
+The verification link is valid until [% display_datetime(expires) %] UTC.
+
+[% name %]

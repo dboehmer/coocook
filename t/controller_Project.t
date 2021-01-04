@@ -225,7 +225,7 @@ subtest "project deletion" => sub {
     $t->text_contains('Test Project');
     $t->text_contains('deleted');
 
-    $t->reload();
+    $t->reload_ok();
     $t->text_lacks('Test Project')
       or note $t->content;
 };

@@ -25,7 +25,7 @@ my @rules = (
         grants_capabilities => [
             qw<
               view_dashboard create_project
-              view_account_settings change_display_name change_password
+              view_account_settings change_display_name change_password change_email
               view_user_organizations create_organization
               view_user_projects
               logout

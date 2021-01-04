@@ -3,9 +3,9 @@
 -- SQL code in this file SHOULD be compliant to the latest ANSI/ISO standard SQL.
 
 INSERT INTO "users"
-(id,       name,    name_fc, password_hash, display_name,                   admin_comment,               email_fc,    email_verified, token_hash, token_expires,           created) VALUES
-( 1, 'john_doe', 'john_doe',        'KOHL',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP),
-( 2,    'other',    'other',       'other', 'Other User', 'other test user from test SQL',    'other@example.com', CURRENT_TIMESTAMP,       NULL,          NULL, CURRENT_TIMESTAMP);
+(id,       name,    name_fc, password_hash, display_name,                   admin_comment,               email_fc,    email_verified) VALUES
+( 1, 'john_doe', 'john_doe',        'KOHL',   'John Doe',       'test user from test SQL', 'john.doe@example.com', CURRENT_TIMESTAMP),
+( 2,    'other',    'other',       'other', 'Other User', 'other test user from test SQL',    'other@example.com', CURRENT_TIMESTAMP);
 
 -- password: P@ssw0rd
 UPDATE "users" SET password_hash = '$argon2i$v=19$m=32768,t=3,p=1$Gwe2aqtW9TbCpSosuN0O6Q$ISAlqvQF0LJNjj1KMgkBcw' WHERE id = 1;

@@ -1,10 +1,12 @@
-Hi [% admin.display_name %],
+[% email.subject = BLOCK %]New account '[% user.name %]' registered at [% name; END ~%]
 
-somebody registered an account at [% name %].
+Hi [% admin.display_name %]!
+
+Somebody registered an account at [% name %].
 
 Username: "[% user.name %]"
 
-E-mail address: [% email_anonymized %]
+Email address: [% email_anonymized %]
 
 User page: [% user_url %]
 
@@ -12,6 +14,6 @@ User page for site admins: [% user_admin_url %]
 
 This is just a notification. Everything is probably fine.
 
-You received this e-mail because you are site owner at [% name %].
+You received this email because you are site owner at [% name %].
 
 [% name %]

@@ -11,7 +11,7 @@ __PACKAGE__->load_components('+Coocook::Schema::Component::ResultSet::Blacklist'
 
 =head2 add_email($email_address, %other_column_data)
 
-Adds a literal e-mail address to the blacklist.
+Adds a literal email address to the blacklist.
 
 =cut
 

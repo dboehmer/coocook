@@ -1,9 +1,15 @@
-Hi [% user.name %],
+[% email.subject = BLOCK %]Verify your account at [% name; END ~%]
 
-welcome to [% name %]!
+Hi [% user.display_name %]!
 
-Please verify your e-mail address by clicking on this link:
+Welcome to [% name %]!
+
+Please verify your email address by clicking on this link:
 
 [% verification_url %]
+
+You’ve received this email because somebody recently created
+the account '[% user.name %]' at [% name %]. If this wasn’t you,
+please ignore this email.
 
 [% name %]

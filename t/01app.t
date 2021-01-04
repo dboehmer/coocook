@@ -140,8 +140,7 @@ subtest "robots meta tag" => sub {
         my $guard = $t->local_config_guard( enable_user_registration => 1 );
 
         $t->get_ok('/register');
-        ok $t->submit_form( with_fields => { username => '' } ), "submit form";
-        $t->status_is(400);
+        $t->submit_form_fails( { with_fields => { username => '' } }, "submit form" );
         $t->content_contains('noarchive');
         $t->content_contains('noindex');
     };
@@ -166,7 +165,7 @@ subtest "robots meta tag" => sub {
         ok local *Coocook::Model::Authorization::has_capability = sub { 1 },    # everything allowed
           "install simulation";
 
-        $t->reload;
+        $t->reload_ok();
         $t->status_is(200);                                                     # not the login page
 
         $t->content_contains('noarchive');
@@ -219,7 +218,7 @@ subtest favicons => sub {
             '72x72' => '72.png',
         },
     );
-    $t->reload();
+    $t->reload_ok();
     $t->content_contains(q{<link rel="icon" type="image/x-icon" href="alpha.ico">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed"  href="beta.png">});
     $t->content_contains(q{<link rel="apple-touch-icon-precomposed" sizes="72x72" href="72.png">});
