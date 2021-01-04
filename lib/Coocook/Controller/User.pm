@@ -331,6 +331,8 @@ sub post_reset_password : POST Chained('base') PathPart('reset_password') Args(1
 
     $c->visit( '/email/password_changed', [$user] );
 
+    $c->messages->info("Your password has been changed.");
+
     # no point in letting user log in again
     # https://security.stackexchange.com/q/64828/91275
     $c->set_authenticated( $c->find_user( { id => $user->id } ) );

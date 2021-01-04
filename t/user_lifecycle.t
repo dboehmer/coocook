@@ -255,6 +255,7 @@ subtest "expired password reset token URL" => sub {
     $t->get_ok_email_link_like(qr/reset_password/);
 
     $t->text_like(qr/expired/);
+    $t->text_lacks('verified');
 
     $t->clear_emails();
 };
@@ -266,6 +267,8 @@ subtest "password recovery" => sub {
     ok !$user->check_password($new_password), "password is different before";
 
     $t->request_recovery_link_ok('test@example.com');
+
+    $t->text_contains('verified');
 
     $t->submit_form_ok(
         {
@@ -284,6 +287,8 @@ subtest "password recovery" => sub {
 
     $t->submit_form_ok( { with_fields => { map { $_ => $new_password } 'password', 'password2' } },
         "submit new password twice" );
+
+    $t->text_like(qr/ password .+ changed/x);
 
     $user->discard_changes();
     ok $user->check_password($new_password), "password has been changed";
