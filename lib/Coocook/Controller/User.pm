@@ -83,7 +83,11 @@ sub register : GET HEAD Chained('/base') Args(0) Does('~HasCSS') Does('~HasJS') 
         $c->stash->{robots}->index(0);
     }
 
-    $c->session( register_form_served_epoch => time() );
+    # set register_form_served_epoch, except we're already in the progress and already have a timestamp
+    for ( \$c->session->{register_form_served_epoch} ) {
+        if ( $c->stash->{last_input} ) { $$_ ||= time }
+        else                           { $$_ = time }
+    }
 
     push @{ $c->stash->{js} }, '/lib/zxcvbn.js';
 
