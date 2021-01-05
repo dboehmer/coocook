@@ -188,6 +188,13 @@ subtest "timestamps are stored in UTC" => sub {
     like( $project->get_column($_) => $utc_regex, "column '$_' is in UTC" ) for qw< created archived >;
 };
 
+# explicitly destroy DBIC objects before Pg.
+# otherwise order of destruction is random
+# and DBIC might throw errors if Pg is already dead
+for my $schema ( $schema_from_dbic, $schema_from_deploy, $schema_from_upgrades ) {
+    $schema->storage->dbh->disconnect();
+}
+
 sub schema_diff_like {
     my ( $schema1, $schema2, $expected_diff, $name ) = @_;
 
