@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 83;
+use Test::Most tests => 84;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -88,6 +88,14 @@ $t->robots_flags_ok( { index => 0 } );
 
     $t->register_ok( \%userdata_ok );
 
+    my $user1 = $schema->resultset('User')->find( { name => 'test' } );
+
+    ok $user1->get_column($_), "column '$_' is set" for 'token_created';
+    is $user1->get_column($_) => undef, "column '$_' is NULL" for 'token_expires';
+
+    ok $user1->has_any_role('site_owner'),       "1st user created has 'site_owner' role";
+    ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
+
     $t->text_lacks( 'Sign up', "registration is not enabled by default" );
 
     $t->reload_config( enable_user_registration => 1 );
@@ -117,15 +125,26 @@ $t->robots_flags_ok( { index => 0 } );
 
     $userdata_ok{email} = 'new_user@example.com';
 
+    $t->schema->txn_begin();
+    $user1->update(
+        {
+            new_email_fc  => $userdata_ok{email},
+            token_expires => $user1->format_datetime( DateTime->now->add( hours => 12 ) )
+        }
+    );
+
+    $t->register_fails_like(
+        \%userdata_ok,
+        qr/email address is invalid or already taken/,
+        "email address that existing user wants to change to"
+    );
+
+    note "email change of existing user expires ...";
+    $user1->update( { token_expires => $user1->format_datetime_now } );
+
     $t->register_ok( \%userdata_ok );
-}
 
-for my $user1 ( $schema->resultset('User')->find( { name => 'test' } ) ) {
-    ok $user1->get_column($_), "column '$_' is set" for 'token_created';
-    is $user1->get_column($_) => undef, "column '$_' is NULL" for 'token_expires';
-
-    ok $user1->has_any_role('site_owner'),       "1st user created has 'site_owner' role";
-    ok $user1->has_any_role('private_projects'), "1st user created has 'private_projects' role";
+    $t->schema->txn_rollback();
 }
 
 subtest "verify email address" => sub {

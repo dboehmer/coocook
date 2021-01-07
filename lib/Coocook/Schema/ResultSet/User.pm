@@ -23,9 +23,21 @@ sub email_valid_and_available {
 
     my $blacklist = $self->result_source->schema->resultset('BlacklistEmail');
 
-    return (  is_email($email)
-          and !$self->results_exist( { email_fc => fc $email } )
-          and $blacklist->is_email_ok($email) );
+    is_email($email)
+      or return;
+
+    $blacklist->is_email_ok($email)
+      or return;
+
+    return !$self->results_exist(
+        [    # OR
+            email_fc => fc $email,
+            {    # AND
+                new_email_fc  => fc $email,
+                token_expires => { '>' => $self->format_datetime_now },
+            },
+        ],
+    );
 }
 
 sub name_available {

@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DateTime;
 use Test::Coocook;
-use Test::Most tests => 53;
+use Test::Most tests => 56;
 
 my $t = Test::Coocook->new;
 
@@ -36,6 +36,35 @@ $t->submit_form_fails( { with_fields => { new_email => 'imposter@coocook.org' } 
     "blacklisted address" );
 $t->content_is( $content_invalid_email, "no information leak" );
 $t->back();
+
+$other->update(
+    {
+        new_email_fc  => $johns_new_email,
+        token_hash    => 'random',
+        token_created => $other->format_datetime( DateTime->now ),
+        token_expires => $other->format_datetime( DateTime->now->add( hours => 12 ) ),
+    }
+);
+
+$t->submit_form_fails( { with_fields => { new_email => $other->new_email_fc } },
+    "post new_email_fc of other account" );
+$t->content_is( $content_invalid_email, "no information leak" );
+$t->back();
+
+subtest "registration works if other user tried to change to same address but request expired" =>
+  sub {
+    note "email change of other user expires ...";
+    $other->update( { token_expires => $other->format_datetime_now } );
+
+    $t->schema->txn_begin();
+
+    $t->submit_form_ok( { with_fields => { new_email => $johns_new_email } } );
+    $t->back();
+
+    $t->schema->txn_rollback();    # undo changes
+
+    $t->clear_emails();
+  };
 
 $t->submit_form_ok( { with_fields => { new_email => $johns_old_email } }, "same email address" );
 $t->text_lacks('verification link');
