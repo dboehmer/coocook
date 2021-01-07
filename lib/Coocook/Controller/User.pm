@@ -211,7 +211,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
       and $user->create_related(
         terms_users => {
             terms_id => $terms->id,
-            approved => $terms->format_datetime( DateTime->now ),
+            approved => $terms->format_datetime_now,
         }
       );
 
@@ -352,7 +352,7 @@ sub verify : GET HEAD Chained('base') PathPart('verify') Args(1) Public {
 
         $user->update(
             {
-                email_verified => $user->format_datetime( DateTime->now ),
+                email_verified => $user->format_datetime_now,
                 token_hash     => undef,
                 token_expires  => undef,
             }

@@ -1,6 +1,5 @@
 package Coocook::Schema::ResultSet::RecipeOfTheDay;
 
-use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -25,7 +24,7 @@ sub today {
 
     $self = $self->search( undef, { prefetch => 'recipe' } );
 
-    my $date = $self->format_date( DateTime->today );
+    my $date = $self->format_date_today;
 
     my $today_rs = $self->search( { day => $date } );
 

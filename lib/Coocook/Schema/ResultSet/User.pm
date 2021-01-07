@@ -3,7 +3,6 @@ package Coocook::Schema::ResultSet::User;
 use feature 'fc';
 
 use Data::Validate::Email 'is_email';
-use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -92,7 +91,7 @@ sub with_valid_limited_token {
         {
             $self->me('token_expires') => {    # AND
                 '!=' => undef,
-                '>'  => $self->format_datetime( DateTime->now ),
+                '>'  => $self->format_datetime_now,
             }
         }
     );
@@ -105,7 +104,7 @@ sub with_valid_or_unlimited_token {
         {
             $self->me('token_expires') => [    # OR
                 '=' => undef,
-                '>' => $self->format_datetime( DateTime->now )
+                '>' => $self->format_datetime_now,
             ]
         }
     );

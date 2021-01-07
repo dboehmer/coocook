@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use lib 't/lib';
 
-use DateTime;
 use Test::Coocook;
 use Test::Most;
 
@@ -23,7 +22,7 @@ my ( $recipe1, $recipe2 ) = $public->all;
 
 $rotd->create(
     {
-        day       => $rotd->format_date( DateTime->today ),
+        day       => $rotd->format_date_today,
         recipe_id => $recipe1->id,
     }
 );

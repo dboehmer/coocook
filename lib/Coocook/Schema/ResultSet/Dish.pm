@@ -1,6 +1,5 @@
 package Coocook::Schema::ResultSet::Dish;
 
-use DateTime;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -52,7 +51,7 @@ sub in_past_or_today {
 
     return $self->search(
         {
-            'meal.date' => { '<=' => $self->format_date( DateTime->today ) },
+            'meal.date' => { '<=' => $self->format_date_today },
         },
         {
             join => 'meal',
@@ -65,7 +64,7 @@ sub in_future {
 
     return $self->search(
         {
-            'meal.date' => { '>' => $self->format_date( DateTime->today ) },
+            'meal.date' => { '>' => $self->format_date_today },
         },
         {
             join => 'meal',
