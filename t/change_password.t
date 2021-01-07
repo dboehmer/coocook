@@ -5,7 +5,7 @@ use lib 't/lib';
 
 use DateTime;
 use Test::Coocook;
-use Test::Most tests => 56;
+use Test::Most tests => 58;
 
 my $t = Test::Coocook->new;
 
@@ -81,6 +81,8 @@ $t->submit_form_ok( { with_fields => { new_email => $johns_cancelled_email } } )
 $t->text_contains('verification link');
 cols_are_set();
 
+$t->email_count_is(2);
+
 # email to current_address
 $t->email_like( qr/John Doe/, "user's display name" );
 $t->email_like( qr/john_doe/, "username" );
@@ -115,6 +117,8 @@ is $john_doe->email_fc => $johns_old_email, "email address wasn't changed";
 
 $t->follow_link_ok( { text        => 'settings Settings' } );
 $t->submit_form_ok( { with_fields => { new_email => $johns_new_email } } );
+
+$t->email_count_is(2);
 
 $t->cookie_jar->clear()
   and note "cleared cookies";

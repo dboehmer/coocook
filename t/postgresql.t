@@ -154,6 +154,7 @@ subtest "timestamps are stored in UTC" => sub {
 
     $t->get_ok('/');
     $t->register_ok( { username => 'u', email => 'u@example.com', password => 'p', password2 => 'p' } );
+    $t->email_count_is(2);
     $t->get_ok_email_link_like(qr/verify/);
     $t->clear_emails();
     $t->submit_form_ok( { with_fields => { password => 'p' } } );
