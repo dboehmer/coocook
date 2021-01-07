@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 81;
+use Test::Most tests => 83;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -47,10 +47,14 @@ $t->robots_flags_ok( { index => 0 } );
         password2 => 's3cr3t',
     );
 
-    $t->register_fails_like( { %userdata_ok, password2 => 'something-else' }, qr/match/ );
+    $t->register_fails_like( { %userdata_ok, password2 => 'something-else' },
+        qr/match/, "two different passwords" );
 
-    $t->register_fails_like( { %userdata_ok, email => $blacklist_email },
-        qr/email address is invalid or already taken/ );
+    $t->register_fails_like(
+        { %userdata_ok, email => $blacklist_email },
+        qr/email address is invalid or already taken/,
+        "blacklisted email"
+    );
 
     $t->register_fails_like(
         { %userdata_ok, email => uc $blacklist_email },
@@ -58,8 +62,11 @@ $t->robots_flags_ok( { index => 0 } );
         "blacklisted email in uppercase"
     );
 
-    $t->register_fails_like( { %userdata_ok, username => $blacklist_username },
-        qr/username is not available/ );
+    $t->register_fails_like(
+        { %userdata_ok, username => $blacklist_username },
+        qr/username is not available/,
+        "blacklisted username"
+    );
 
     $t->register_fails_like(
         { %userdata_ok, username => uc $blacklist_username },
@@ -78,6 +85,37 @@ $t->robots_flags_ok( { index => 0 } );
         qr/username is not available/,
         "organization name in uppercase"
     );
+
+    $t->register_ok( \%userdata_ok );
+
+    $t->text_lacks( 'Sign up', "registration is not enabled by default" );
+
+    $t->reload_config( enable_user_registration => 1 );
+    $t->get('/');
+
+    $t->register_fails_like( \%userdata_ok, qr/username is not available/, "existing username" );
+
+    $t->register_fails_like(
+        { %userdata_ok, username => 'TEST' },
+        qr/username is not available/,
+        "existing username in uppercase"
+    );
+
+    $userdata_ok{username} = 'new_user';
+
+    $t->register_fails_like(
+        \%userdata_ok,
+        qr/email address is invalid or already taken/,
+        "existing email address"
+    );
+
+    $t->register_fails_like(
+        { %userdata_ok, email => uc $userdata_ok{email} },
+        qr/email address is invalid or already taken/,
+        "existing email address"
+    );
+
+    $userdata_ok{email} = 'new_user@example.com';
 
     $t->register_ok( \%userdata_ok );
 }
@@ -106,12 +144,6 @@ subtest "verify email address" => sub {
 
 $t->clear_emails();
 
-$t->text_lacks('Sign up');
-
-$t->reload_config( enable_user_registration => 1 );
-
-$t->get('/');
-
 $t->register_ok(
     {
         username  => 'test2',
@@ -139,24 +171,6 @@ for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
     ok !$user2->has_any_role('site_owner'), "2nd user created hasn't 'site_owner' role";
     ok $user2->has_any_role('private_projects'), "2nd user created has 'private_projects' role";
 }
-
-$t->register_fails_like(
-    { username => 'new_user', email => 'TEST2@example.com' },
-    qr/email address is invalid or already taken/,
-    "registration of existing email address (in uppercase) fails"
-);
-
-$t->register_fails_like(
-    { username => 'TEST2' },
-    qr/username is not available/,
-    "registration of existing username (in uppercase) fails"
-);
-
-$t->register_fails_like(
-    { username => 'foobar ' },    # note space char
-    qr/username must not contain/,
-    "registration with invalid existing username fails"
-);
 
 $t->login_fails( 'test', 'invalid' );    # wrong password
 
