@@ -87,6 +87,14 @@ around [ 'set_column', 'store_column' ] => sub {
 
 __PACKAGE__->meta->make_immutable;
 
+sub alternative_email_valid_and_available {
+    my $self = shift;
+
+    my $other_users = $self->result_source->resultset->search( { id => { '!=' => $self->id } } );
+
+    return $other_users->email_valid_and_available(@_);
+}
+
 sub blacklist {
     my $self = shift;
 

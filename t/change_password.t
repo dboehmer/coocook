@@ -53,12 +53,20 @@ $t->back();
 
 subtest "registration works if other user tried to change to same address but request expired" =>
   sub {
+    $t->clear_emails();
+
     note "email change of other user expires ...";
     $other->update( { token_expires => $other->format_datetime_now } );
 
     $t->schema->txn_begin();
 
     $t->submit_form_ok( { with_fields => { new_email => $johns_new_email } } );
+    $t->email_count_is(2);
+    $t->back();
+
+    $t->submit_form_ok( { with_fields => { new_email => $johns_new_email } },
+        "form can be sent again" );
+    $t->email_count_is(4);
     $t->back();
 
     $t->schema->txn_rollback();    # undo changes
@@ -97,7 +105,7 @@ $t->shift_emails();
 $t->get_ok_email_link_like( qr{verify}, 400, "verification link is now 400" );
 
 $t->shift_emails();
-$t->emails_are_empty("no more emails");
+$t->email_count_is( 0, "no more emails" );
 
 $t->reload_ok();
 $t->text_lacks($johns_cancelled_email);
@@ -120,7 +128,7 @@ $t->email_like( qr/john_doe/, "username" );
 $t->get_ok_email_link_like( qr{verify}, "follw link to verify address change" );
 
 $t->shift_emails();
-$t->emails_are_empty("no more emails left");
+$t->email_count_is( 0, "no more emails left" );
 
 $t->submit_form_ok( { with_fields => { username => 'john_doe', password => 'P@ssw0rd' } },
     "login again" );

@@ -94,12 +94,15 @@ sub emails {
 sub clear_emails { Email::Sender::Simple->default_transport->clear_deliveries }
 sub shift_emails { Email::Sender::Simple->default_transport->shift_deliveries }
 
-sub emails_are_empty {
-    my ( $self, $name ) = @_;
+sub email_count_is {
+    my ( $self, $count, $name ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    is( Email::Sender::Simple->default_transport->deliveries => 0, $name || "no emails" );
+    is(
+        Email::Sender::Simple->default_transport->deliveries => $count,
+        $name || sprintf( "%i emails stored", $count )
+    );
 }
 
 sub local_config_guard {

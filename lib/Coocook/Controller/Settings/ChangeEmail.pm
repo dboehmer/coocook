@@ -31,7 +31,7 @@ sub request : POST Chained('base') PathPart('') Args(0) RequiresCapability('chan
     my $user = $c->user;
 
     # TODO show input page again with input kept
-    $c->model('DB::User')->email_valid_and_available($email)
+    $user->alternative_email_valid_and_available($email)
       or $c->detach( '/error/bad_request', ["email address is invalid or already taken"] );
 
     my $token   = $c->model('Token')->new();
