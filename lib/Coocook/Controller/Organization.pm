@@ -1,7 +1,6 @@
 package Coocook::Controller::Organization;
 
 use utf8;
-use feature 'fc';    # Perl v5.16
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -25,21 +24,17 @@ sub create : POST Chained('/base') PathPart('organization/create') Args(0)
   RequiresCapability('create_organization') {
     my ( $self, $c ) = @_;
 
-    my $name = $c->req->params->get('name');
+    my $name          = $c->req->params->get('name');
+    my $organizations = $c->model('Organizations');
 
     {
         my @errors;
 
-        if ( $name !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
+        if ( not $organizations->name_valid($name) ) {
             push @errors, "The organization’s name must not contain other characters than 0-9, a-z, A-Z or _.";
         }
-        else {
-            my $name_fc = fc($name);
-
-            !$c->model('DB::Organization')->results_exist( { name_fc => $name_fc } )
-              and !$c->model('DB::User')->results_exist( { name_fc => $name_fc } )
-              and $c->model('DB::BlacklistUsername')->is_username_ok($name)
-              or push @errors, "name is not available";
+        elsif ( not $organizations->name_available($name) ) {
+            push @errors, "name is not available";
         }
 
         if (@errors) {
@@ -54,7 +49,7 @@ sub create : POST Chained('/base') PathPart('organization/create') Args(0)
         }
     }
 
-    my $organization = $c->model('Organizations')->create(
+    my $organization = $organizations->create(
         name     => $name,
         owner_id => $c->user->id,
     );

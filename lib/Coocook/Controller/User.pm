@@ -115,19 +115,16 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
 
     my @errors;
 
+    my $users = $c->model('DB::User');
+
     if ( length $username == 0 ) {
         push @errors, "username must not be empty";
     }
-    elsif ( $username !~ m/ \A [0-9a-zA-Z_]+ \Z /x ) {
+    elsif ( not $users->name_valid($username) ) {
         push @errors, "username must not contain other characters than 0-9, a-z, A-Z or _.";
     }
-    else {
-        my $name_fc = fc($username);
-
-        !$c->model('DB::Organization')->results_exist( { name_fc => $name_fc } )
-          and !$c->model('DB::User')->results_exist( { name_fc => $name_fc } )
-          and $c->model('DB::BlacklistUsername')->is_username_ok($username)
-          or push @errors, "username is not available";
+    elsif ( not $users->name_available($username) ) {
+        push @errors, "username is not available";
     }
 
     if ( length $password == 0 ) {
@@ -139,9 +136,7 @@ sub post_register : POST Chained('/base') PathPart('register') Args(0) Public {
         }
     }
 
-    is_email($email_fc)
-      and !$c->model('DB::User')->results_exist( { email_fc => $email_fc } )
-      and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
+    $c->model('DB::User')->email_valid_and_available($email_fc)
       or push @errors, "email address is invalid or already taken";
 
     my $terms = $c->model('DB::Terms')->valid_today;

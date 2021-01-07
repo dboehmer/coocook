@@ -28,13 +28,12 @@ sub request : POST Chained('base') PathPart('') Args(0) RequiresCapability('chan
         $c->redirect_detach( $c->uri_for_action('/settings/account') );
     }
 
+    my $user = $c->user;
+
     # TODO show input page again with input kept
-    is_email($email_fc)
-      and !$c->model('DB::User')->results_exist( { email_fc => $email_fc } )
-      and $c->model('DB::BlacklistEmail')->is_email_ok($email_fc)
+    $c->model('DB::User')->email_valid_and_available($email)
       or $c->detach( '/error/bad_request', ["email address is invalid or already taken"] );
 
-    my $user    = $c->user;
     my $token   = $c->model('Token')->new();
     my $expires = DateTime->now->add( days => 1 );
 
