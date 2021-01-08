@@ -170,10 +170,11 @@ __PACKAGE__->config(
                 password_type  => 'self_check',
             },
             store => {
-                class         => 'DBIx::Class',
-                user_model    => 'DB::User',
-                role_relation => 'roles_users',
-                role_field    => 'role',
+                class            => 'DBIx::Class',
+                user_model       => 'DB::User',
+                role_relation    => 'roles_users',
+                role_field       => 'role',
+                store_user_class => 'Coocook::Authentication::Store::DBIx::Class::User',    # custom implementation
             },
         }
     },
