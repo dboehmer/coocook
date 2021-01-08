@@ -2,8 +2,8 @@ package Test::Coocook;
 
 use strict;
 use warnings;
-
 use open ':locale';    # respect encoding configured in terminal
+use utf8;
 
 our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
 
@@ -27,6 +27,7 @@ BEGIN {
 # don't spill STDERR with info messages when not in verbose mode
 our $DISABLE_LOG_LEVEL_INFO //= !$ENV{TEST_VERBOSE};
 
+use parent 'Test::Coocook::Base';
 use parent 'Test::WWW::Mechanize::Catalyst';
 
 =head1 CONSTRUCTOR

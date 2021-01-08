@@ -1,5 +1,5 @@
-use strict;
-use warnings;
+use lib 't/lib';
+use Test::Coocook::Base;
 
 use Test::Most tests => 7;
 

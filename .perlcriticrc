@@ -1,2 +1,5 @@
 exclude = TestingAndDebugging::ProhibitNoStrict
 include = Miscellanea::ProhibitUnrestrictedNoCritic TestingAndDebugging::ProhibitProlongedStrictureOverride
+
+[TestingAndDebugging::RequireUseStrict]
+equivalent_modules = TestDB Test::Coocook Test::Coocook::Base

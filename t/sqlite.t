@@ -1,11 +1,8 @@
-use strict;
-use warnings;
+use lib 't/lib/';
 
 use Coocook::Schema;
-use Test::Most;
-
-use lib 't/lib/';
 use TestDB qw(install_ok upgrade_ok);
+use Test::Most;
 
 # first upgrade scripts created columns in different order
 # or had other subtle differences to a fresh deployment

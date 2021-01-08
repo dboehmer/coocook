@@ -1,8 +1,6 @@
-use strict;
-use warnings;
+use lib 't/lib';
 
-use FindBin '$Bin';
-use lib "$Bin/lib";
+use Test::Coocook::Base;
 use Test::Most;
 
 use_ok 'TestDB';

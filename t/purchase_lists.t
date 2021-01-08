@@ -1,8 +1,4 @@
-use strict;
-use warnings;
-
-use FindBin '$Bin';
-use lib "$Bin/lib";
+use lib 't/lib';
 
 use TestDB;
 use Test::Most;

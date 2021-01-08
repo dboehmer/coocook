@@ -1,9 +1,6 @@
-use strict;
-use warnings;
+use lib 't/lib';
 
 use DateTime;
-use FindBin '$Bin';
-use lib "$Bin/lib";
 use TestDB;
 use Test::Memory::Cycle;
 use Test::MockObject;

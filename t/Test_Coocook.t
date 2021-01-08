@@ -1,8 +1,6 @@
-use strict;
-use warnings;
-
 use lib 't/lib';
 
+use Test::Coocook::Base;
 use Test::Most;
 
 use_ok 'Test::Coocook';

@@ -1,18 +1,15 @@
-use strict;
-use warnings;
-
 use Test2::Require::Module 'Test::PostgreSQL';
 use Test2::Require::Module 'DateTime::Format::Pg';
+
+use lib 't/lib';
 
 use Coocook::Script::Deploy;
 use Coocook::Schema;
 use DBIx::Diff::Schema qw(diff_db_schema);
-use Test::Deep;
-use Test::Most;
-
-use lib 't/lib';
 use TestDB qw(install_ok upgrade_ok);
 use Test::Coocook;
+use Test::Deep;
+use Test::Most;
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
@@ -183,7 +180,6 @@ subtest "timestamps are stored in UTC" => sub {
     $t->submit_form_ok( { with_fields => { name => 'Project UTC' } }, "create project" );
     $t->follow_link_ok( { text        => 'Project' } );
     $t->follow_link_ok( { text        => 'Settings' } );
-    note $t->content;
     $t->submit_form_ok( { with_fields => { archive => 'on' } } );
     my $project = $schema->resultset('Project')->find( { name => 'Project UTC' } ) || die;
     like( $project->get_column($_) => $utc_regex, "column '$_' is in UTC" ) for qw< created archived >;

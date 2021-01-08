@@ -1,7 +1,3 @@
-use strict;
-use warnings;
-use utf8;    # German umlauts in this source file
-
 use lib 't/lib/';
 
 use Coocook::Model::ProjectImporter;

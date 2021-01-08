@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use parent 'DBICx::TestDatabase';
+use parent 'Test::Coocook::Base';
 
 use Coocook::Script::Deploy;
 use Sub::Exporter -setup => { exports => [qw(install_ok upgrade_ok)] };

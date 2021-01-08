@@ -1,9 +1,3 @@
-use strict;
-use warnings;
-
-use open ':locale';
-use utf8;
-
 use lib 't/lib';
 
 use Test::Coocook;
