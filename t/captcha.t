@@ -49,7 +49,7 @@ ok !$t->schema->resultset('User')->find( { name => $_ } ), "no user '$_' has bee
 # and fix their input quickly. this is still legit.
 # time spent on the form shall add up over reloads.
 subtest "form reloads add up to form_min_time_secs" => sub {
-    my $guard = $t->local_config_guard( captcha => { form_min_time_secs => 3 } );
+    my $guard = $t->local_config_guard( captcha => { form_min_time_secs => 4 } );
     $t->register_fails_like( \%ok_input, qr/robot/, "too fast" );
     sleep 2;
     $t->submit_form_fails( { with_fields => \%ok_input }, "still too fast" );
