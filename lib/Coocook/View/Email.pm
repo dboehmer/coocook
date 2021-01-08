@@ -32,6 +32,19 @@ before process => sub {
     };
 };
 
+around generate_message => sub {
+    my $orig = shift;
+    my $self = shift;
+    my $attr = $_[1];
+
+    # workaround for https://github.com/dboehmer/coocook/issues/139
+    # be more specific what kind of header we have
+    # https://metacpan.org/pod/release/RJBS/Email-MIME-1.949/lib/Email/MIME.pm#header
+    $attr->{header_str} = delete $attr->{header};
+
+    return $self->$orig(@_);
+};
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__->config(
