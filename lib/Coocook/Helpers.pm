@@ -311,6 +311,7 @@ sub redirect_uri_for_action {
 
             for ($current_uri_local_part) {
                 last if $_ eq '/';
+                last if $_ eq '/internal_server_error';
                 last if $_ eq '/login';
                 last if $_ eq '/register';
 

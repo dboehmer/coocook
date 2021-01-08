@@ -5,7 +5,7 @@ use lib 't/lib/';
 
 use TestDB;
 use Test::Output;
-use Test::Most tests => 4;
+use Test::Most tests => 6;
 
 use_ok 'Coocook::Script::Get';
 
@@ -17,4 +17,8 @@ throws_ok { Coocook::Script::Get->new_with_options( ARGV => [] ) } qr/usage/i,
 
 ok my $app = Coocook::Script::Get->new_with_options( ARGV => ['/internal_server_error'] );
 
-stdout_like { $app->run } qr/Oo+ps/, "GET /internal_server_error contains Ooops";
+ok my $stdout = stdout_from { $app->run }, "acquire STDOUT";
+
+like $stdout => qr/Oo+ps/, "GET /internal_server_error contains Ooops";
+
+unlike $stdout => qr/internal_server_error/, "HTML contains no references to error page URL";

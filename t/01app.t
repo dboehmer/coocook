@@ -146,6 +146,12 @@ subtest "robots meta tag" => sub {
     };
 
     subtest "internal server error" => sub {
+        ok $t->get('/internal_server_error'), "GET /internal_server_error";
+        $t->status_is(404);
+
+        no warnings 'once';
+        $Coocook::Controller::Error::ENABLE_INTERNAL_SERVER_ERROR_PAGE = 1;
+
         $t->get_ok('/internal_server_error');
         $t->status_is(200);
         $t->content_contains('noarchive');

@@ -38,6 +38,9 @@ sub new_with_options {
 sub run {
     my $self = shift;
 
+    # enable output of that error page for deployment config
+    $Coocook::Controller::Error::ENABLE_INTERNAL_SERVER_ERROR_PAGE = 1;
+
     my $uri = URI->new( $self->path );
     $uri->scheme('https');    # HTTPS is required
 
