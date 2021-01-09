@@ -1,7 +1,7 @@
 use lib 't/lib';
 
 use Test::Coocook;
-use Test::Most tests => 87;
+use Test::Most tests => 88;
 use Time::HiRes 'time';
 
 my $t = Test::Coocook->new( test_data => 0 );
@@ -225,6 +225,8 @@ $t->clear_emails;
 $t->change_display_name_ok('John Doe');
 
 $t->logout_ok();
+
+$t->text_contains('logged out');
 
 $t->get_ok('/login');
 

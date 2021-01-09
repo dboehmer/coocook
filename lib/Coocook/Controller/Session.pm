@@ -1,5 +1,7 @@
 package Coocook::Controller::Session;
 
+use utf8;
+
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 
@@ -79,6 +81,8 @@ sub logout : POST Chained('/base') Args(0) RequiresCapability('logout') {
     $c->logout();
 
     delete $c->session->{username};    # if user wants to store username, it's in persistent cookie
+
+    $c->messages->info("You’ve been logged out.");
 
     $c->detach('/_validated_redirect');
 }
