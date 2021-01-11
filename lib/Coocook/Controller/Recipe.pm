@@ -279,8 +279,7 @@ sub importable_recipes : GET HEAD Chained('submenu') PathPart('recipes/import') 
 
 sub check_name : Private {
     my ( $self, $c, $args ) = @_;
-    my $name = $args->{name};
-    $c->log->info("name$name");
+    my $name         = $args->{name};
     my $current_page = $args->{current_page};
     my $result       = 1;
 
