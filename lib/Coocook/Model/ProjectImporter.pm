@@ -338,7 +338,7 @@ sub import_data {    # import() is used by 'use'
                             push @buffer, $row;
                         }
 
-                        $rs->populate( \@buffer );                             # must be in void context to save time!
+                        $rs->populate( \@buffer );    # must be in void context to save time!
                     }
                 }
             }

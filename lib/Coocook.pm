@@ -44,7 +44,7 @@ use Catalyst (
       Session::State::Cookie
       Authentication
       Static::Simple
-      >,
+    >,
     ( mod_installed 'Catalyst::Plugin::StackTrace' ? 'StackTrace' : () ),
 );
 

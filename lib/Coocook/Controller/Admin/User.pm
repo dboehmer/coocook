@@ -46,7 +46,7 @@ sub base : Chained('/admin/base') PathPart('user') CaptureArgs(1) {
             qw<
               private_projects
               site_owner
-              >
+            >
         ],
     );
 }

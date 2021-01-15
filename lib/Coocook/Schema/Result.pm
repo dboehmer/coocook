@@ -18,7 +18,7 @@ __PACKAGE__->load_components(
       +Coocook::Schema::Component::Result::Boolify
       Helper::Row::SelfResultSet
       TimeStamp
-      >
+    >
 );
 
 =head2 as_hashref(%extra_kv_pairs?)

@@ -95,7 +95,7 @@ sub BUILD {
             }
         )->hri;
 
-        my %convertible_units;        # units by article, quantity
+        my %convertible_units;    # units by article, quantity
 
         while ( my $article_unit = $articles_units->next ) {
             my $article = $articles{ $article_unit->{article_id} } || die $article_unit->{article_id};

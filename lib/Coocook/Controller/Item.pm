@@ -45,7 +45,7 @@ sub unassigned : GET HEAD Chained('/purchase_list/submenu') PathPart('items/unas
                       meal.date
                       article.shop_section_id
                       article.name
-                      >
+                    >
                 ],
             }
         )->hri->all;

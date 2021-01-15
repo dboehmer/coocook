@@ -66,7 +66,7 @@ sub _is_value_ok {
         }
     }
 
-    return 1;                          # nothing matched -> value is ok
+    return 1;    # nothing matched -> value is ok
 }
 
 1;

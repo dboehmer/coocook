@@ -31,13 +31,13 @@ subtest "attributes of controller actions" => sub {
 
             my %attrs = do {
                 my @attrs = @{ $action->attributes };
-                s/ \( .+ $ //x for @attrs;         # remove arguments in parenthesis, e.g. RequiresCapability(foo)
+                s/ \( .+ $ //x for @attrs;    # remove arguments in parenthesis, e.g. RequiresCapability(foo)
                 map { $_ => 1 } @attrs;
             };
 
             my $methods = join '+', grep { m/^( DELETE | GET | HEAD | POST | PUT)$/x } sort keys %attrs;
 
-            if ( $attrs{AnyMethod} ) {             # special keyword indicating any method will be ok
+            if ( $attrs{AnyMethod} ) {        # special keyword indicating any method will be ok
                 $methods .= '+' if length $methods;
                 $methods .= 'any';
             }

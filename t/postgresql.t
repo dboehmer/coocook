@@ -121,7 +121,7 @@ schema_diff_like(
                   terms
                   units
                   users
-                  > ),
+                > ),
             map { 'main.' . $_ => ignore }    # https://github.com/perlancar/perl-DBIx-Diff-Schema/issues/1
               qw<
               dish_ingredients

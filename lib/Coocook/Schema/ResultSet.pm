@@ -22,7 +22,7 @@ __PACKAGE__->load_components(
       Helper::ResultSet::SetOperations
       Helper::ResultSet::Shortcut::ResultsExist
       Helper::ResultSet::Shortcut::HRI
-      >
+    >
 );
 
 # discourage use of first(), except for Catalyst::Auth::Store::DBIC (upstream code)

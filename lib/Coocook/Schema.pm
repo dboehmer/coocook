@@ -16,7 +16,7 @@ extends 'DBIx::Class::Schema::Config';
 __PACKAGE__->load_components(
     qw<
       Helper::Schema::QuoteNames
-      >
+    >
 );
 
 __PACKAGE__->meta->make_immutable;
@@ -72,10 +72,10 @@ sub connection {
             }
         ];
     }
-    else {                                # scalar
-        my $scalar = $$on_connect_do;     # copy original value
+    else {    # scalar
+        my $scalar = $$on_connect_do;    # copy original value
         $$on_connect_do = [
-            $enable_fk,                   # $enable_fk first to allow overriding
+            $enable_fk,                  # $enable_fk first to allow overriding
             sub { [$scalar] }
         ];
     }

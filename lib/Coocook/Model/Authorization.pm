@@ -29,7 +29,7 @@ my @rules = (
               view_user_organizations create_organization
               view_user_projects
               logout
-              >
+            >
         ],
     },
     {
@@ -204,7 +204,7 @@ my @rules = (
               view_project_settings
               update_project rename_project delete_project
               archive_project unarchive_project
-              >
+            >
         ],
     },
     {
@@ -262,7 +262,7 @@ my @rules = (
             qw<
               edit_organization_permission revoke_organization_permission
               edit_user_permission  revoke_user_permission
-              >
+            >
         ],
     },
     {
