@@ -9,7 +9,6 @@ our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
 
 use Carp;
 use Email::Sender::Simple;
-use FindBin;
 use HTML::Meta::Robots;
 use Regexp::Common 'URI';
 use Scope::Guard qw< guard >;
@@ -21,7 +20,7 @@ BEGIN {
     $ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
 
     # point Catalyst to t/ to avoid reading local config files
-    $ENV{COOCOOK_CONFIG} = "$FindBin::Bin";
+    $ENV{COOCOOK_CONFIG} = 't/';
 }
 
 # don't spill STDERR with info messages when not in verbose mode
@@ -128,10 +127,18 @@ sub local_config_guard {
     return guard { $self->reload_config($original_config) };
 }
 
+=head2 $t->reload_config(\%config)
+
+=head2 Test::Coocook->reload_config(\%config)
+
+When called as a class method acts globally on L<Coocook>.
+
+=cut
+
 sub reload_config {
     my $self = shift;
 
-    my $app = $self->catalyst_app;
+    my $app = ref $self ? $self->catalyst_app : 'Coocook';
 
     $app->setup_finished(0);
 

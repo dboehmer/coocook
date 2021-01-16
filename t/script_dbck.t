@@ -2,6 +2,7 @@ use lib 't/lib/';
 
 use Coocook;
 use TestDB;
+use Test::Coocook;    # makes Coocook::Script::Dbck not read real config files
 use Test::Output;
 use Test::Most tests => 20;
 

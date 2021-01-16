@@ -1,7 +1,7 @@
-use strict;
-use warnings;
+use lib 't/lib';
 
 use DateTime::Format::SQLite;
+use Test::Coocook;    # makes Coocook::Script::Users not read real config files
 use Test::Most;
 use Test::Deep;
 

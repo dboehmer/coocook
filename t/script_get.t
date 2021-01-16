@@ -1,10 +1,13 @@
 use lib 't/lib/';
 
 use TestDB;
+use Test::Coocook;    # also makes Coocook::Script::Get not read real config files
 use Test::Output;
 use Test::Most tests => 6;
 
 use_ok 'Coocook::Script::Get';
+
+Test::Coocook->reload_config( { canonical_url_base => 'https://coocook.example/' } );
 
 my $db = TestDB->new();
 Coocook->model('DB')->schema->storage( $db->storage );

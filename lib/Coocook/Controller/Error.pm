@@ -47,9 +47,10 @@ sub internal_server_error : HEAD GET Chained('/base') Public {
     $ENABLE_INTERNAL_SERVER_ERROR_PAGE
       or $c->detach( $self->action_for('not_found') );
 
-    # do NOT set status to 500 because this actually works
+    # do NOT set status to 500 because this request actually works
 
-    $c->stash->{robots}->index(0);    # hide this in search engines
+    $c->stash->{canonical_url} = undef;    # can't have dynamic URL in static HTML file
+    $c->stash->{robots}->index(0);         # hide this in search engines
 }
 
 =head2 not_found
