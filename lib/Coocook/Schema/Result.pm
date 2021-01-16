@@ -5,6 +5,7 @@ package Coocook::Schema::Result;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 use MooseX::NonMoose;
+use mro 'c3';
 
 extends 'DBIx::Class::Core';
 

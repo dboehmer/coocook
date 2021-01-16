@@ -5,6 +5,7 @@ package Coocook::Schema::Component::ProxyMethods;
 use strict;
 use warnings;
 
+use mro 'c3';
 use parent 'DBIx::Class';
 
 use DateTime;

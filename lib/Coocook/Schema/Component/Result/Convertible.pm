@@ -5,6 +5,7 @@ package Coocook::Schema::Component::Result::Convertible;
 use strict;
 use warnings;
 
+use mro 'c3';
 use parent 'DBIx::Class';
 
 sub convertible_into {

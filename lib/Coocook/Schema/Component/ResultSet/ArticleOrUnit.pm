@@ -5,6 +5,7 @@ package Coocook::Schema::Component::ResultSet::ArticleOrUnit;
 use strict;
 use warnings;
 
+use mro 'c3';
 use parent 'DBIx::Class::ResultSet';
 
 =head2 in_use()

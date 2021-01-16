@@ -5,6 +5,7 @@ package Coocook::Schema::Component::ResultSet::SortByName;
 use strict;
 use warnings;
 
+use mro 'c3';
 use parent 'DBIx::Class::ResultSet';
 
 sub sorted_by_columns { 'name' }
