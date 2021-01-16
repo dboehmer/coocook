@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use feature 'fc';    # Perl v5.16
+use parent 'DBIx::Class::ResultSet';
 
 use Crypt::Digest::SHA256 qw(sha256_b64);
 

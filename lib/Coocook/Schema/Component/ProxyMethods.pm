@@ -5,6 +5,8 @@ package Coocook::Schema::Component::ProxyMethods;
 use strict;
 use warnings;
 
+use parent 'DBIx::Class';
+
 use DateTime;
 
 # DateTime formatting

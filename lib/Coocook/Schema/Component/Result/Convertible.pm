@@ -5,6 +5,8 @@ package Coocook::Schema::Component::Result::Convertible;
 use strict;
 use warnings;
 
+use parent 'DBIx::Class';
+
 sub convertible_into {
     my $self = shift;
 

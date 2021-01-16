@@ -5,6 +5,8 @@ package Coocook::Schema::Component::ResultSet::ArticleOrUnit;
 use strict;
 use warnings;
 
+use parent 'DBIx::Class::ResultSet';
+
 =head2 in_use()
 
 Returns a new resultset with articles/units which have any of
