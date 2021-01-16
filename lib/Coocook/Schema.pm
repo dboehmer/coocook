@@ -166,7 +166,9 @@ sub disable_fk_checks { shift->sqlite_pragma( foreign_keys => 0 ) }
 sub sqlite_pragma {
     my ( $self, $pragma, $set_value ) = @_;
 
-    $self->storage->sqlt_type eq 'SQLite'
+    my $storage = $self->storage;
+
+    $storage->sqlt_type eq 'SQLite'
       or croak "sqlite_pragma() works only on SQLite";
 
     my $sql = "PRAGMA '$pragma'";
@@ -174,14 +176,14 @@ sub sqlite_pragma {
     defined $set_value
       and $sql .= " = '$set_value'";
 
-    $ENV{DBIC_TRACE}
-      and warn "$sql\n";
+    $storage->debug
+      and $storage->debugfh->print("$sql\n");
 
     if ( defined $set_value ) {
-        return $self->storage->dbh_do( sub { $_[1]->do($sql) } );
+        return $storage->dbh_do( sub { $_[1]->do($sql) } );
     }
     else {
-        return $self->storage->dbh_do( sub { return $_[1]->selectrow_array($sql) } );
+        return $storage->dbh_do( sub { return $_[1]->selectrow_array($sql) } );
     }
 }
 

@@ -71,10 +71,12 @@ sub execute_test_data {    # not 'insert_' because not all statements are INSERT
         # Only let DBICx::TestDatabase execute the SQL-Statement if it is complete, i.e.
         # there is a semicolon at the end of the line
         if ( $line =~ m/ ; $ /x ) {
-            $ENV{DBIC_TRACE}
-              and warn "$continued_line\n";
+            my $storage = $schema->storage;
 
-            $schema->storage->dbh_do( sub { $_[1]->do($continued_line) } );
+            $storage->debug
+              and $storage->debugfh->print("$continued_line\n");
+
+            $storage->dbh_do( sub { $_[1]->do($continued_line) } );
 
             $continued_line = "";
         }
