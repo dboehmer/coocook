@@ -1,48 +1,41 @@
-use strict;
-use warnings;
+use lib 't/lib';
 
+use TestDB;
 use Test::Most;
 
-{
-    ## no critic (RequireFilenameMatchesPackage)
-    package MySchema::Result::A;
+my $schema = TestDB->new();
 
-    use parent 'DBIx::Class::Core';
+my %isa_already_shown;
 
-    __PACKAGE__->load_components('+Coocook::Schema::Component::Result::Boolify');
+for my $source ( $schema->sources ) {
+    my $rs = $schema->resultset($source);
 
-    __PACKAGE__->table('a');
+    my $row = $rs->one_row;
 
-    __PACKAGE__->add_columns(
-        id   => { data_type => 'integer' },
-        flag => { data_type => 'boolean' },
-        str  => { data_type => 'text' },
-    );
+    my $columns_info = $rs->result_source->columns_info;
 
-    __PACKAGE__->set_primary_key('id');
+    while ( my ( $col => $info ) = each %$columns_info ) {
+        if ( $info->{data_type} eq 'boolean' ) {
+            if ( not $isa_already_shown{$source}++ ) {
+                my $class = $rs->result_source->result_class;
 
-    package MySchema;
+                note "mro::get_linear_isa('$class'):";
+                note " - $_" for @{ mro::get_linear_isa($class) };
+            }
 
-    use parent 'DBIx::Class::Schema';
+            subtest "$source.$col" => sub {
+                $row or plan skip_all => "No row for Result::$source";
 
-    __PACKAGE__->load_classes( { 'MySchema::Result' => ['A'] } );
+                $row->update( { $col => '' } );
+                $row->discard_changes();
+                is $row->get_column($col) => 0, "'' => 0";
+
+                $row->update( { $col => 42 } );
+                $row->discard_changes();
+                is $row->get_column($col) => 1, "42 => 1";
+            };
+        }
+    }
 }
-
-my $schema = MySchema->connect('dbi:SQLite::memory:');
-
-$schema->deploy();
-
-$schema->resultset('A')->create( { id => 1, flag => 'true', str => 'value' } );
-
-my $row = $schema->resultset('A')->find(1);
-
-is $row->flag => 1,       "bool column stored 1";
-is $row->str  => 'value', "text column stored text";
-
-$row->update( { flag => '' } );
-
-$row->discard_changes();
-
-is $row->flag => 0, "bool column stored 0";
 
 done_testing();
