@@ -5,8 +5,6 @@ use MooseX::MarkAsMethods autoclean => 1;
 
 extends 'Coocook::Schema::Result';
 
-__PACKAGE__->load_components('Ordered');
-
 __PACKAGE__->table('faqs');
 
 __PACKAGE__->add_columns(
