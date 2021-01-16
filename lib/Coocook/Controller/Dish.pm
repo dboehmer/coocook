@@ -151,7 +151,7 @@ sub add : POST Chained('base') Args(0) RequiresCapability('edit_project') {
             value      => $c->req->params->get('value') + 0,
             unit_id    => $c->req->params->get('unit'),
             comment    => $c->req->params->get('comment'),
-            prepare    => !!$c->req->params->get('prepare'),
+            prepare    => $dish->format_bool( !!$c->req->params->get('prepare') ),
         }
     );
 
@@ -190,7 +190,7 @@ sub update : POST Chained('base') Args(0) RequiresCapability('edit_project') {
                 else {
                     $ingredient->update(
                         {
-                            prepare => !!$c->req->params->get( 'prepare' . $ingredient->id ),
+                            prepare => $dish->format_bool( !!$c->req->params->get( 'prepare' . $ingredient->id ) ),
                             value   => $c->req->params->get( 'value' . $ingredient->id ) + 0,
                             unit_id => $c->req->params->get( 'unit' . $ingredient->id ),
                             comment => $c->req->params->get( 'comment' . $ingredient->id ),

@@ -103,7 +103,7 @@ sub day {
         while ( my $ingredient = $ingredients->next ) {
             push @{ $dishes{ $ingredient->dish_id }{ingredients} },
               {
-                prepare => $ingredient->prepare,
+                prepare => $ingredient->format_bool( $ingredient->prepare ),
                 value   => $ingredient->value,
                 unit    => {
                     short_name => $ingredient->unit->short_name,

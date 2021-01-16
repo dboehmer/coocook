@@ -275,8 +275,8 @@ sub create : POST Chained('/base') PathPart('project/create') Args(0)
             name           => $c->req->params->get('name'),
             description    => '',
             owner_id       => $c->user->id,
-            is_public      => $is_public,
-            projects_users => [                               # relationship automatically triggers transaction
+            is_public      => $projects->format_bool($is_public),
+            projects_users => [    # relationship automatically triggers transaction
                 {
                     user_id => $c->user->id,
                     role    => 'owner',
@@ -335,7 +335,8 @@ sub rename : POST Chained('base') Args(0) RequiresCapability('rename_project') {
 sub visibility : POST Chained('base') Args(0) RequiresCapability('edit_project_visibility') {
     my ( $self, $c ) = @_;
 
-    $c->project->update( { is_public => !!$c->req->params->get('public') } );
+    $c->project->update(
+        { is_public => $c->project->format_bool( !!$c->req->params->get('public') ) } );
 
     $c->response->redirect( $c->project_uri('/project/settings') );
 }

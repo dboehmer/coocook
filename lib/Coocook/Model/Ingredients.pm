@@ -73,7 +73,7 @@ sub as_arrayref {
             push @ingredients,
               {
                 id      => $ingredient->id,
-                prepare => $ingredient->prepare,
+                prepare => $ingredient->format_bool( $ingredient->prepare ),
                 value   => $ingredient->value * $self->factor,
                 comment => $ingredient->comment,
                 unit    => $units{ $ingredient->unit_id },
