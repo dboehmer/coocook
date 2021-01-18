@@ -11,7 +11,7 @@ sub base : Chained('/project/base') PathPart('recipes/import') CaptureArgs(1) {
     my ( $self, $c, $id ) = @_;
 
     my $external_recipes =
-      $c->model('DB::Recipe')->search( { project => { '!=' => $c->project->id } } );
+      $c->model('DB::Recipe')->search( { project_id => { '!=' => $c->project->id } } );
 
     my $recipe = $external_recipes->find($id)
       or $c->detach('/error/not_found');
