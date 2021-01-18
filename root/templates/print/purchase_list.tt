@@ -5,7 +5,7 @@ html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
 %]
 
 [% FOREACH section IN sections %]
-<h3>[% section.name | html %]</h3>
+<h3>[% section.name || "No shop section" | html %]</h3>
 
 <table>
 <thead>

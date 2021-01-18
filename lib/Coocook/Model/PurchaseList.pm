@@ -44,7 +44,7 @@ sub BUILD {
         $item->{unit}        = $units{ $item->{unit_id} };
         $item->{ingredients} = [];
 
-        push @{ $items_per_section{ $item->{article}{shop_section_id} } }, $item;
+        push @{ $items_per_section{ $item->{article}{shop_section_id} || '' } }, $item;
     }
 
     {    # add ingredients to each item
