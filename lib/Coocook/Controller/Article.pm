@@ -291,8 +291,9 @@ sub update_or_insert : Private {
             @units_to_remove
               and $articles_units->search( { unit_id => { -in => \@units_to_remove } } )->delete();
 
+            # when calling populate() on the related $articles_units resultset, DBIC adds a column 'article'
             @units_to_add
-              and $articles_units->populate(
+              and $articles_units->result_source->resultset->populate(
                 [ [ 'article_id', 'unit_id' ], map { [ $article->id, $_ ] } @units_to_add ] );
         }
     );
