@@ -11,8 +11,7 @@ use sigtrap qw/die normal-signals/;
 use Term::ANSIColor;
 use File::Basename;
 use Cwd 'abs_path';
-use Getopt::Long;
-Getopt::Long::Configure("bundling");
+use Getopt::Long qw/:config auto_abbrev bundling/;
 
 # Directory where current script is located used to find other Coocook scripts
 my $dir = abs_path( dirname(__FILE__) );
