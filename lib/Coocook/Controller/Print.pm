@@ -133,7 +133,8 @@ sub purchase_list : GET HEAD Chained('/purchase_list/submenu') PathPart('print/p
   Args(1) RequiresCapability('view_project') {
     my ( $self, $c, $id ) = @_;
 
-    my $list = $c->stash->{list} = $c->project->purchase_lists->find($id);
+    my $list = $c->stash->{list} = $c->project->purchase_lists->find($id)
+      or $c->detach('/error/not_found');
 
     my $model_list = $c->model('PurchaseList')->new( list => $c->stash->{list} );
 
