@@ -44,7 +44,7 @@
 			<tbody>
 			[% FOREACH item IN section.items %]
 				<tr>
-					[% rowspan = item.ingredients.size; IF item.offset;  rowspan=rowspan+1; END; %]
+					[% rowspan = item.ingredients.size; %]
 					<td rowspan="[% rowspan %]">
 						<div class="d-flex justify-content-between">
 							<div class="p">
