@@ -41,13 +41,26 @@ Prerequisites:
 * [Perl5](https://www.perl.org/get.html)
   with [`cpanm`](https://metacpan.org/pod/App::cpanminus#INSTALLATION)
 
-* by default [SQLite](https://www.sqlite.org/)
-  with [`DBD::SQLite`](https://metacpan.org/pod/DBD::SQLite)
-  or some other RDBMS
+* database
+
+  * by default [SQLite](https://www.sqlite.org/)
+    with [`DBD::SQLite`](https://metacpan.org/pod/DBD::SQLite)
+  
+  * or [PostgreSQL](https://www.postgresql.org/)
+    with [`DBD::Pg`](https://metacpan.org/pod/DBD::Pg)
 
 With Ubuntu or Debian Linux:
 
-    $ sudo apt-get install cpanminus libdbd-sqlite3-perl sqlite3
+    $ sudo apt-get install cpanminus sqlite3
+
+To install Perl distributions that include C code you’ll probably need a C toolchain and some libraries:
+
+    $ sudo apt-get install build-essential
+    $ sudo apt-get install libssl-dev zlib1g-dev             # for Net::SSLeay
+    $ sudo apt-get install libexpat1-dev                     # for XML::Parser
+    $ sudo apt-get install libncurses-dev libreadline-dev    # for Term::ReadLine::Gnu for development mode
+    $ sudo apt-get install libsqlite3-dev                    # for DBD::SQLite
+    $ sudo apt-get install libpq-dev                         # for DBD::Pg
 
 Install Perl5 dependencies required for running the application:
 
