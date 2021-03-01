@@ -172,3 +172,9 @@ form-control - width reduced, cause form-controll in tables doesnt work properly
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
+
+button.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
