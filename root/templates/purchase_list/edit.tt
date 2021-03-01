@@ -5,8 +5,8 @@
 %]
 
 
-<div class="row pb-4">
-	<div class="col-sm-6">
+<div class="row pb-5">
+	<div class="col-sm-12">
 		<h2>[% 'Purchase list "' _ list.name  _ '" on ' _ display_date(list.date, {html=>1}) %]</h2>
 	</div>
 </div>
@@ -16,9 +16,7 @@
 [% FOREACH section IN sections %]
 <div class="row pb-4">
 	<div class="col-sm-6">
-		<button type="button" class="btn btn-outline-success mb-3">
-			<h3>[% section.name | html %]</h3>
-		</button>
+		<h3 class="text-success">[% section.name | html FILTER ucfirst %]</h3>
 	</div>
 	
 	<div class="col-sm-12 mt-1 mb-4">
@@ -44,9 +42,13 @@
 			<tbody>
 			[% FOREACH item IN section.items %]
 				<tr>
-					[% rowspan = item.ingredients.size; %]
+					[% rowspan = item.ingredients.size;
+					IF item.offset;
+					rowspan = rowspan + 1;
+					END;
+					 %]
 					<td rowspan="[% rowspan %]">
-						<div class="d-flex justify-content-between">
+					<div class="d-flex justify-content-between">
 							<div class="p">
 								<form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
 									<div class="input-group mb-3">
@@ -73,18 +75,7 @@
 								</div>
 								
 							</div>
-							<div class="">
-								[% IF item.offset %]
-								<form name="remove-offset pr-2" class="inline" method="post" action="[% item.update_offset_url %]">
-									<abbr title="Remove">
-										<button type="button" class="btn btn-sm btn-remove mb-1" aria-expanded="false">
-											<i class="material-icons">delete_forever</i>
-										</button>
-									</abbr>
-								</form><br>
-								<small>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em></small>
-								[% END %]
-							</div>
+							
 						 </div>
 		
 						
@@ -105,12 +96,30 @@
 						[% IF loop.index == 0 %]
 							[% INCLUDE purchase_list/snippet_dish.tt %]
 				</tr>
+						
 						[% ELSE %]
 				<tr>
 							[% INCLUDE purchase_list/snippet_dish.tt %]
 				</tr>
 						[% END;
 					END;
+					
+					IF item.offset %]
+				<tr>	
+					<td colspan="6">				
+						<form name="remove-offset" class="inline" method="post" action="[% item.update_offset_url %]">
+							<input type="hidden" name="offset" value="0">
+							<abbr title="Reset">
+								<button type="submit" class="btn btn-sm btn-remove mb-1">
+									<i class="material-icons">delete_forever</i>
+								</button>
+							</abbr>
+						</form>
+						<small class="px-3">[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em></small>
+					</td>
+				</tr>
+					[% END;
+					
 			END %]
 			</tbody>
 		</table>
