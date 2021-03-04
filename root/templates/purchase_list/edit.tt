@@ -56,6 +56,8 @@
 										<label for="item_value">ca.</label>
 										[% END %]
 										<input type="number" min="0" step="any" class="editable-content form-control-table w-50" id="total" name="total" value="[% item.value + item.offset %]">
+        higher: [% item.next_higher_value %]
+        lower: [% item.next_lower_value %]
 										<input type="submit" class="hidden" value="submit" title="Submit new value for item">
 									</div>
 								</form>
