@@ -1,13 +1,11 @@
-[% #escape_title( 'Purchase list', list.name );
-
-#title      =      title _ ' on ' _ display_date(list.date, {short=>1});
-#html_title = html_title _ ' on ' _ display_date(list.date, {html=>1});
+[% 
+window_title = "Purchase list " _ list.name  _ " on " _ display_date(list.date, {html=>1});
 %]
 
 
 <div class="row pb-5">
 	<div class="col-sm-12">
-		<h2>[% 'Purchase list "' _ list.name  _ '" on ' _ display_date(list.date, {html=>1}) %]</h2>
+		<h2>[% window_title %]</h2>
 	</div>
 </div>
 
@@ -48,18 +46,18 @@
 					END;
 					 %]
 					<td rowspan="[% rowspan %]">
-					<div class="d-flex justify-content-between">
-							<div class="p">
+						
+					
+							
 								<form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
 									<div class="input-group mb-3">
 										[% IF item.offset %]
-										<label for="item_value">ca.</label>
+										<div class="input-group-prepend">
+											<div class="input-group-text px-1">ca.</div>
+										</div>
 										[% END %]
 										<input type="number" min="0" step="any" class="editable-content form-control-table w-50" id="total" name="total" value="[% item.value + item.offset %]">
-        higher: [% item.next_higher_value %]
-        lower: [% item.next_lower_value %]
-										<input type="submit" class="hidden" value="submit" title="Submit new value for item">
-									</div>
+									</div>						
 								</form>
 								
 								<div class="btn-group btn-group-sm">
@@ -73,13 +71,15 @@
 									<button type="button" class="btn btn-outline-secondary" onclick="window.location.href=[% item.convert_url %]">[% unit.short_name | html %]</button>
 										[% END;
 									END %]
-									
 								</div>
 								
-							</div>
 							
-						 </div>
-		
+						[% IF item.offset %]
+						<div class="btn-group-vertical">
+							<button type="button" class="btn btn-sm btn-outline-primary"><i class="material-icons">arrow_drop_up</i>[% item.next_higher_value %]</button>
+							<button type="button" class="btn btn-sm btn-primary"><i class="material-icons">arrow_drop_down</i>[% item.next_lower_value %]</button>
+						</div> 
+						[% END %]
 						
 					</td>
 					<td rowspan="[% rowspan %]"> 
