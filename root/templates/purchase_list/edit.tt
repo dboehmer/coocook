@@ -33,7 +33,6 @@
 			<thead>
 				<tr>
 					<th>Amount</th>
-					<th>Convert to &hellip;</th>
 					<th>Article</th>
 					<th colspan="5">Dishes</th>
 					<th>Comment</th>
@@ -62,6 +61,7 @@
 									</div>
 								</form>
 								
+						<form method="post" action="[% item.convert_url %]">
 								<div class="btn-group btn-group-sm">
 									<button type="button" class="btn btn-outline-secondary active">
 										[% '&nbsp' IF item.unit.space;
@@ -69,28 +69,18 @@
 									</button>
 									[% FOREACH unit IN item.convertible_into;
 										IF item.convert_url %]
-										[% #  TODO: make sure, that the link is able to convert without a hidden input %]
-									<button type="button" class="btn btn-outline-secondary" onclick="window.location.href=[% item.convert_url %]">[% unit.short_name | html %]</button>
+									<button type="submit" class="btn btn-outline-secondary" name="unit" value="[% unit.id %]">[% unit.short_name | html %]</button>
 										[% END;
 									END %]
 									
 								</div>
+						</form>
 								
 							</div>
 							
 						 </div>
 		
 						
-					</td>
-					<td rowspan="[% rowspan %]"> 
-					[% FOREACH unit IN item.convertible_into;
-						IF item.convert_url %]
-						<form class="inline" method="post" action="[% item.convert_url %]">
-							<input type="hidden" name="unit" value="[% unit.id %]" class="btnc btn-primary">
-							<button type="submit" class="btn bnt-sm btn-secondary">[% unit.short_name | html %]</button>
-						</form>
-						[% END;
-					END %]
 					</td>
 					<td rowspan="[% rowspan %]">[% item.article.name | html %]</td>
 					
