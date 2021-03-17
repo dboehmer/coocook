@@ -72,8 +72,8 @@ window_title = "Purchase list " _ list.name  _ " on " _ display_date(list.date, 
 						[% IF item.offset %]
                         <form class="d-inline" method="post" action="[% item.update_offset_url %]">
                             <div class="btn-group-vertical" role="group" >
-                                <button type="submit" class="btn btn-sm btn-outline-primary" name="next_higher_value" value="[% item.next_higher_value %]"><i class="material-icons">arrow_drop_up</i>[% item.next_higher_value %]</button>
-                                <button type="submit" class="btn btn-sm btn-primary" name="next_lower_value" value="[% item.next_lower_value %]"><i class="material-icons">arrow_drop_down</i>[% item.next_lower_value %]</button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" name="total" value="[% item.next_higher_value %]"><i class="material-icons">arrow_drop_up</i>[% item.next_higher_value %]</button>
+                                <button type="submit" class="btn btn-sm btn-primary" name="total" value="[% item.next_lower_value %]"><i class="material-icons">arrow_drop_down</i>[% item.next_lower_value %]</button>
                             </div> 
                         </form>
 						[% END %]
