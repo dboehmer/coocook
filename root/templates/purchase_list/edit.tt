@@ -19,8 +19,7 @@ window_title = "Purchase list " _ list.name  _ " on " _ display_date(list.date, 
 	
 	<div class="col-sm-12 mt-1 mb-4">
 		<table class="table table-hover">
-			<col style="width:25%">
-			<col style="width:10%">
+			<col style="width:35%">
 			<col style="width:10%">
 			<col style="width:5%">
 			<col style="width:5%">
@@ -44,41 +43,39 @@ window_title = "Purchase list " _ list.name  _ " on " _ display_date(list.date, 
 					rowspan = rowspan + 1;
 					END;
 					 %]
-					<td rowspan="[% rowspan %]">
-						
-					
-							
-								<form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
-									<div class="input-group mb-3">
-										[% IF item.offset %]
-										<div class="input-group-prepend">
-											<div class="input-group-text px-1">ca.</div>
-										</div>
-										[% END %]
-										<input type="number" min="0" step="any" class="editable-content form-control-table w-50" id="total" name="total" value="[% item.value + item.offset %]">
-									</div>						
-								</form>
+					<td rowspan="[% rowspan %]">							
+                        <form name="total" class="inline" method="post" action="[% item.update_offset_url %]">
+                            <div class="input-group mb-3">
+                                [% IF item.offset %]
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text px-1">ca.</div>
+                                </div>
+                                [% END %]
+                                <input type="number" min="0" step="any" class="editable-content form-control-table w-50" id="total" name="total" value="[% item.value + item.offset %]">
+                            </div>			
+                        </form>
 								
-						<form method="post" action="[% item.convert_url %]">
-								<div class="btn-group btn-group-sm">
-									<button type="button" class="btn btn-outline-secondary active">
-										[% '&nbsp' IF item.unit.space;
-										display_unit( item.unit, {html=>1} ) %]
-									</button>
-									[% FOREACH unit IN item.convertible_into;
-										IF item.convert_url %]
-									<button type="submit" class="btn btn-outline-secondary" name="unit" value="[% unit.id %]">[% unit.short_name | html %]</button>
-										[% END;
-									END %]
-								</div>
+						<form class="inline" method="post" action="[% item.convert_url %]">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-secondary active"  style="pointer-events: none">
+                                    [% '&nbsp' IF item.unit.space;
+                                    display_unit( item.unit, {html=>1} ) %]
+                                </button>
+                                [% FOREACH unit IN item.convertible_into;
+                                    IF item.convert_url %]
+                                <button type="submit" class="btn btn-outline-secondary" name="unit" value="[% unit.id %]">[% unit.short_name | html %]</button>
+                                    [% END;
+                                END %]
+                            </div>
 						</form>
-								
-							
+  
 						[% IF item.offset %]
-						<div class="btn-group-vertical">
-							<button type="button" class="btn btn-sm btn-outline-primary"><i class="material-icons">arrow_drop_up</i>[% item.next_higher_value %]</button>
-							<button type="button" class="btn btn-sm btn-primary"><i class="material-icons">arrow_drop_down</i>[% item.next_lower_value %]</button>
-						</div> 
+                        <form class="d-inline" method="post" action="[% item.update_offset_url %]">
+                            <div class="btn-group-vertical" role="group" >
+                                <button type="submit" class="btn btn-sm btn-outline-primary" name="next_higher_value" value="[% item.next_higher_value %]"><i class="material-icons">arrow_drop_up</i>[% item.next_higher_value %]</button>
+                                <button type="submit" class="btn btn-sm btn-primary" name="next_lower_value" value="[% item.next_lower_value %]"><i class="material-icons">arrow_drop_down</i>[% item.next_lower_value %]</button>
+                            </div> 
+                        </form>
 						[% END %]
 						
 					</td>
