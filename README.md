@@ -55,21 +55,23 @@ With Ubuntu or Debian Linux:
 
 To install Perl distributions that include C code you’ll probably need a C toolchain and some libraries:
 
-    $ sudo apt-get install build-essential
-    $ sudo apt-get install libssl-dev zlib1g-dev             # for Net::SSLeay
-    $ sudo apt-get install libexpat1-dev                     # for XML::Parser
-    $ sudo apt-get install libncurses-dev libreadline-dev    # for Term::ReadLine::Gnu for development mode
-    $ sudo apt-get install libsqlite3-dev                    # for DBD::SQLite
-    $ sudo apt-get install libpq-dev                         # for DBD::Pg
+```console
+$ sudo apt-get install build-essential
+$ sudo apt-get install libssl-dev zlib1g-dev             # for Net::SSLeay
+$ sudo apt-get install libexpat1-dev                     # for XML::Parser
+$ sudo apt-get install libncurses-dev libreadline-dev    # for Term::ReadLine::Gnu for development mode
+$ sudo apt-get install libsqlite3-dev                    # for DBD::SQLite
+$ sudo apt-get install libpq-dev                         # for DBD::Pg
+```
 
 Install Perl5 dependencies required for running the application:
 
     $ cd coocook/
     $ cpanm --installdeps .
 
-For development purposes there are a few *recommended* and *suggested* dependencies. To install these as well run:
+There are a few additional dependencies for *development* as well *recommended* and *suggested* dependencies. To install these as well run:
 
-    $ cpanm --with-develop --with-recommends --with-suggests --installdeps .
+    $ cpanm --installdeps --with-develop --with-recommends --with-suggests .
 
 Install database schema into configured database (see above) and start development server in debug mode:
 
@@ -79,11 +81,11 @@ Install database schema into configured database (see above) and start developme
     HTTP::Server::PSGI: Accepting connections at http://0:3000/
 
 Hint: With the `--restart` option the development server restarts automatically when files in `lib/` are changed.
-This requires `Catalyst::Restarter`.
+This requires [`Catalyst::Restarter`](https://metacpan.org/pod/Catalyst::Restarter).
 
 ### Run with Docker
 
-Goto [https://hub.docker.com/r/coocook/coocook-dev](https://hub.docker.com/r/coocook/coocook-dev) and follow the instructions there to use the Dockerimage for Development.
+Follow the instructions at [hub.docker.com/r/coocook/coocook-dev](https://hub.docker.com/r/coocook/coocook-dev) to use the Docker image for development.
 
 ## Mailing list
 
