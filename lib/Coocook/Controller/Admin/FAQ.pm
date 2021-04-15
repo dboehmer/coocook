@@ -21,8 +21,8 @@ sub index : GET HEAD Chained('/admin/base') PathPart('faq') Args(0)
     );
 }
 
-sub new_faq : GET HEAD Chained('/admin/base') PathPart('faq/new')
-  RequiresCapability('manage_faqs') {
+sub new_faq : GET HEAD Chained('/admin/base') PathPart('faq/new') RequiresCapability('manage_faqs')
+{
     my ( $self, $c ) = @_;
 
     $c->stash(

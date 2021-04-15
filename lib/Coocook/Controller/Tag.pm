@@ -34,8 +34,8 @@ sub submenu : Chained('/project/base') PathPart('') CaptureArgs(0) {
 
 =cut
 
-sub index : GET HEAD Chained('submenu') PathPart('tags') Args(0)
-  RequiresCapability('view_project') {
+sub index : GET HEAD Chained('submenu') PathPart('tags') Args(0) RequiresCapability('view_project')
+{
     my ( $self, $c ) = @_;
 
     my $groups = $c->project->tag_groups;
