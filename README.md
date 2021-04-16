@@ -24,6 +24,7 @@ Web application for collecting recipes and making food plans
 Get source code:
 
     $ git clone https://github.com/dboehmer/coocook.git
+    $ cd coocook/
 
 ### Configure database
 
@@ -66,7 +67,6 @@ $ sudo apt-get install libpq-dev                         # for DBD::Pg
 
 Install Perl5 dependencies required for running the application:
 
-    $ cd coocook/
     $ cpanm --installdeps .
 
 There are a few additional dependencies for *development* as well *recommended* and *suggested* dependencies. To install these as well run:
