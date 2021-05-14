@@ -228,6 +228,19 @@ sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposit
     $c->detach( redirect => [ $ingredient->dish_id, '#ingredients' ] );
 }
 
+sub ingredients : GET HEAD Does('~Ajax') Chained('base') {
+    my ( $self, $c ) = @_;
+
+    my $ingredients = $c->model('Ingredients')->new(
+        project     => $c->project,
+        ingredients => $c->stash->{dish}->ingredients,
+    );
+
+    $c->stash->{json_data} = $ingredients->for_ingredients_editor;
+
+    #$c->forward('View::JSON');
+}
+
 sub redirect : Private {
     my ( $self, $c, $id, $fragment ) = @_;
 
