@@ -17,7 +17,7 @@ sub begin : Private {
         $c->stash( signature => $signature );
     }
 
-    $c->stash( view => 'Email' );
+    $c->stash( current_view => 'Email' );
 }
 
 sub notify_admin_about_registration : Private {
@@ -76,14 +76,12 @@ sub verify : Private {
     );
 }
 
-sub end : Private {
+sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
     $c->stash->{email}{from} ||= sprintf '"%s" <%s>',
       $c->config->{email_sender_name},
       $c->config->{email_from_address};
-
-    $c->forward( $c->view('Email') );
 }
 
 __PACKAGE__->meta->make_immutable;
