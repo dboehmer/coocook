@@ -114,7 +114,9 @@ sub can_be_quantity_default {
 sub is_quantity_default {
     my $self = shift;
 
-    return ( $self->id == $self->quantity->default_unit_id );
+    my $default_unit_id = $self->quantity->default_unit_id // return;
+
+    return ( $self->id == $default_unit_id );
 }
 
 # marks this unit as its quantity's default and adjusts conversion factors of all units
