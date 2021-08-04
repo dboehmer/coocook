@@ -128,6 +128,7 @@ sub project {
     my %meals;
 
     my $meals = $project->meals;
+    $meals = $meals->search( undef, { order_by => $meals->me('name') } );
 
     while ( my $meal = $meals->next ) {
         my $day = $days{ $meal->date } ||= {
