@@ -1,0 +1,3 @@
+[submodule "share/coocook-react-components"]
+	path = share/coocook-react-components
+	url = git@github.com:moseschmiedel/coocook-react-components
