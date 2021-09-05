@@ -49,6 +49,11 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     $c->stash(
         dish => {
+            project => {
+                id => $c->project->id,
+                name => $c->project->name,
+            },
+            id => $dish->id,
             name        => $dish->name,
             comment     => $dish->comment,
             servings    => $dish->servings,

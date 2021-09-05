@@ -34,6 +34,16 @@
 
 <h2><a name="ingredients">Ingredients</a></h2>
 
+<script>
+const ingredientsEditorData = {
+    project_id: [% dish.project.id %],
+    project_name: "[% dish.project.name %]",
+    dish_id: [% dish.id %],
+};
+</script>
+
+<div id="ingredients-editor"></div>
+<script type="module" src="/static/lib/ingredients_editor/dist/index.js"></script>
 [% INCLUDE 'includes/forms/ingredients_editor.tt' %]
 
 <input type="submit" value="Update Dish">
