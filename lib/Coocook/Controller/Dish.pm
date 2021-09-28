@@ -2,6 +2,7 @@ package Coocook::Controller::Dish;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use JSON;
 
 BEGIN { extends 'Coocook::Controller' }
 
@@ -244,6 +245,15 @@ sub ingredients : GET HEAD Does('~Ajax') Chained('base') {
     $c->stash->{json_data} = $ingredients->for_ingredients_editor;
 
     #$c->forward('View::JSON');
+}
+
+sub updateAJAX : POST PathPart('ingredient/update') Does('~Ajax') Chained('base') RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+    my $json = $c->req->body_data;
+    my $ingredient = $json->{ingredient} || die "wrong JSON body!";
+
+
+    $c->stash->{json_data} = { id => $ingredient->{id} };
 }
 
 sub redirect : Private {
