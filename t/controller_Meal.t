@@ -59,21 +59,21 @@ subtest "create meal" => sub {
 
 subtest "update meal" => sub {
     $t->get_ok('/project/1/Test-Project/edit');
-    $t->text_lacks('Meal for Robots');
+    $t->text_lacks($meal_name2);
     $t->text_contains($meal_name1);
     $t->submit_form_ok(
         {
             form_name   => 'update_meal',
             form_number => 7,
             with_fields => {
-                name    => 'Meal for Robots',
+                name    => $meal_name2,
                 comment => 'Crunch! Crunch! Crunch!',
             },
             strict_forms => 0,
         },
-        "change name and comment for meal with name '$meal_name1' to 'Meal for Robots'"
+        "change name and comment for meal with name '$meal_name1' to '$meal_name2'"
     );
     $t->get_ok('/project/1/Test-Project/edit');
     $t->text_lacks($meal_name1);
-    $t->text_contains('Meal for Robots');
+    $t->text_contains($meal_name2);
 };
