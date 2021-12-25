@@ -64,12 +64,12 @@ subtest "update meal" => sub {
     $t->submit_form_ok(
         {
             form_name   => 'update_meal',
-            form_number => 7,
+            form_number => 3,
             with_fields => {
                 name    => $meal_name2,
                 comment => 'Crunch! Crunch! Crunch!',
             },
-            strict_forms => 0,
+            strict_forms => 1,
         },
         "change name and comment for meal with name '$meal_name1' to '$meal_name2'"
     );
