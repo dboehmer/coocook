@@ -1,17 +1,16 @@
-#!/usr/bin/env perl
+use Test2::V0;
 
-use strict;
-use warnings;
+use Coocook::Filter::NiceNumber;
+use Test::Builder;
+use Test2::API qw(context);
 
-use Test::Most tests => 16;
+plan(15);
 
-use_ok 'Coocook::Filter::NiceNumber';
-
-my $filter = new_ok 'Coocook::Filter::NiceNumber';
+ok my $filter = Coocook::Filter::NiceNumber->new();
 
 isa_ok $filter, 'Template::Plugin::Filter';
 
-throws_ok { $filter->filter("foo") } qr/isn't numeric/, "exception for non-numeric string";
+like dies { $filter->filter("foo") }, qr/isn't numeric/, "exception for non-numeric string";
 
 t( undef() => undef, "undef" );
 t( ""      => "",    "empty string" );
@@ -27,10 +26,9 @@ t( 123456789  => "123000000" );
 t( 0.0101     => "0.0101" );
 t( 0.000001   => "0.000001" );
 
-{
-    local $TODO = 'sprintf("%f") cuts digits off this string--how to fix that?';
+todo 'sprintf("%f") cuts digits off this string--how to fix that?' => sub {
     t( 0.0000012345 => "0.00000123" );
-}
+};
 
 sub t {
     my ( $input, $expected, $name ) = @_;

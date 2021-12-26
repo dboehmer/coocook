@@ -1,17 +1,19 @@
-use lib 't/lib';
+use Test2::V0;
 
 use DateTime;
-use TestDB;
-use Test::Deep;
 use Test::Memory::Cycle;
-use Test::Most tests => 4;
+
+use lib 't/lib';
+use TestDB;
+
+plan(4);
 
 subtest inventory => sub {
     my $db = TestDB->new();
 
     my $inventory = $db->resultset('Project')->find(1)->inventory();
 
-    is_deeply $inventory => {
+    is $inventory => {
         articles         => 5,
         dishes           => 3,
         meals            => 3,
@@ -23,8 +25,7 @@ subtest inventory => sub {
         tag_groups       => 1,
         units            => 5,
         unassigned_items => 7,
-      }
-      or explain $inventory;
+    };
 };
 
 subtest articles_cached_units => sub {
@@ -34,7 +35,11 @@ subtest articles_cached_units => sub {
 
     ok my @result = $project->articles_cached_units, "\$project->articles_cached_units";
 
-    is_deeply [ map ref, @result ] => [ 'ARRAY', 'ARRAY' ], "... returned 2 arrayrefs";
+    is \@result => array {
+        item array { etc() };
+        item array { etc() };
+    },
+      "... returned 2 arrayrefs";
 
     memory_cycle_ok \@result, "... result is free of memory cycles";
 
@@ -109,12 +114,12 @@ subtest stale => sub {
 
     my $rs = $db->resultset('Project');
 
-    is_deeply [ $rs->stale->get_column('id')->all ] => [ 1, 2 ], "ResultSet::Project->stale for today";
+    is [ $rs->stale->get_column('id')->all ] => [ 1, 2 ], "ResultSet::Project->stale for today";
 
     {
         my $date = DateTime->new( year => 2000, month => 1, day => 2 );    # in the middle of project 1
 
-        is_deeply [ $rs->stale($date)->get_column('id')->all ] => [2],
+        is [ $rs->stale($date)->get_column('id')->all ] => [2],
           "ResultSet::Project->stale for $date";
 
         subtest "Result::Project->is_stale()" => sub {

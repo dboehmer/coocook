@@ -1,8 +1,5 @@
-use strict;
-use warnings;
-
+use Test2::V0;
 use Test::Compile v2.2.2;
-use Test::Most;
 
 $ENV{$_} and plan skip_all => "$_ is set" for 'COOCOOK_SKIP_COMPILE';
 

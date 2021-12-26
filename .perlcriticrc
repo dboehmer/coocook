@@ -2,4 +2,4 @@ exclude = TestingAndDebugging::ProhibitNoStrict
 include = Miscellanea::ProhibitUnrestrictedNoCritic TestingAndDebugging::ProhibitProlongedStrictureOverride
 
 [TestingAndDebugging::RequireUseStrict]
-equivalent_modules = TestDB Test::Coocook Test::Coocook::Base
+equivalent_modules = Test2::V0

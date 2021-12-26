@@ -1,7 +1,9 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use Test::Coocook;
-use Test::Most tests => 6;
+
+plan(6);
 
 my $t = Test::Coocook->new( test_data => 0 );
 

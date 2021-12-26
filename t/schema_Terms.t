@@ -1,7 +1,9 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use TestDB;
-use Test::Most tests => 15;
+
+plan(15);
 
 my $db = TestDB->new;
 
@@ -26,7 +28,7 @@ ok $rs->populate(
   ),
   "populate";
 
-throws_ok { $rs->create( { valid_from => '2001-01-01', content_md => "" } ) } qr/UNIQUE/,
+like dies { $rs->create( { valid_from => '2001-01-01', content_md => "" } ) }, qr/UNIQUE/,
   "INSERT with non-unique date fails";
 
 ok $rs->valid_today_rs->results_exist, "valid_today_rs()->results_exist returns true";
@@ -38,8 +40,9 @@ subtest "valid_on_date() with string" => sub {
     is $rs->valid_on_date('2002-01-01')->content_md => "B",   "second date";
     is $rs->valid_on_date('2100-01-01')->content_md => "E",   "far in the future";
 
-    local $TODO = "check not implemented yet";
-    throws_ok { $rs->valid_on_date('foobar') } qr/format/, "throws exception for invalid date format";
+    todo "check not implemented yet" => sub {
+        like dies { $rs->valid_on_date('foobar') }, qr/format/, "throws exception for invalid date format";
+    }
 };
 
 is $rs->valid_today->content_md => "E", "valid_today()";
@@ -53,9 +56,9 @@ subtest neighbors => sub {
     is $d->neighbors(-1)->count => 3, "D->neighbors(-1)";
     is $d->neighbors(+1)->count => 1, "D->neighbors(+1)";
 
-    throws_ok { $c->neighbors( () ) } qr/defined/, "argument missing";
-    throws_ok { $c->neighbors(undef) } qr/defined/, "undef";
-    throws_ok { $c->neighbors(0) } qr/zero/,        "0";
+    like dies { $c->neighbors( () ) },  qr/defined/, "argument missing";
+    like dies { $c->neighbors(undef) }, qr/defined/, "undef";
+    like dies { $c->neighbors(0) },     qr/zero/,    "0";
 };
 
 subtest next => sub {

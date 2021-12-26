@@ -1,8 +1,11 @@
-use lib 't/lib';
+use Test2::V0;
 
 use DateTime;
+
+use lib 't/lib';
 use Test::Coocook;
-use Test::Most tests => 58;
+
+plan(58);
 
 my $t = Test::Coocook->new;
 

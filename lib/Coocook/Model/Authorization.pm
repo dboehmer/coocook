@@ -379,8 +379,6 @@ for my $rule (@rules) {
     }
 }
 
-#Test::Most::explain \%capabilities;
-
 =head2 METHODS
 
 =cut

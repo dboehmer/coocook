@@ -1,7 +1,9 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use Test::Coocook;
-use Test::Most tests => 11;
+
+plan(11);
 
 my $t = Test::Coocook->new( config => { enable_user_registration => 1 }, max_redirect => 0 );
 

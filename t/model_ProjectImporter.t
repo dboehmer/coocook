@@ -1,14 +1,16 @@
-use lib 't/lib';
+use Test2::V0;
 
+use Coocook::Model::ProjectImporter;
 use Scalar::Util qw(refaddr);
+
+use lib 't/lib';
 use TestDB;
-use Test::Most tests => 16;
+
+plan(15);
 
 my $db = TestDB->new;
 
-use_ok 'Coocook::Model::ProjectImporter';
-
-my $importer = new_ok 'Coocook::Model::ProjectImporter';
+ok my $importer = Coocook::Model::ProjectImporter->new();
 
 # TODO this is probably implemented better somewhere on CPAN
 #      but I couldn't find it, even asked #perl-help on IRC
@@ -48,7 +50,7 @@ sub _no_shared_references {
 }
 
 subtest properties => sub {
-    isa_ok my $properties = $importer->properties => 'ARRAY';
+    is my $properties = $importer->properties => array { etc };
 
     my $depends_on = 0;
     $depends_on += @{ $_->{depends_on} } for @$properties;
@@ -63,10 +65,10 @@ subtest properties => sub {
 
     my %properties = map { $_->{key} => $_ } @$properties;
 
-    is_deeply $properties{tags}{conflicts} => [ 'tags', 'tag_groups' ],
+    is $properties{tags}{conflicts} => [ 'tags', 'tag_groups' ],
       "properties.tags.conflicts = [ tags, tag_groups ] like defined in Importer.pm";
 
-    is_deeply $properties{units}{conflicts} => ['units'],
+    is $properties{units}{conflicts} => ['units'],
       "properties.units.conflicts = [ units ] per default";
 
     # properties data structure should be safe to modify
@@ -89,71 +91,68 @@ my $target = $db->resultset('Project')->create(
 subtest can_import_properties => sub {
     my $errors = [];
     ok !$importer->can_import_properties( $target, [], $errors );
-    cmp_deeply $errors => [ re(qr/no property/i) ];
+    like $errors => [qr/no property/i];
 
     $errors = [];
     ok !$importer->can_import_properties( $target, ['foobar'], $errors );
-    cmp_deeply $errors => [ re(qr/( not .+ valid | invalid ) .+ property .+ foobar/ix) ];
+    like $errors => [qr/( not .+ valid | invalid ) .+ property .+ foobar/ix];
 
     $errors = [];
     ok !$importer->can_import_properties( $source, ['units'], $errors );
-    cmp_deeply $errors => [ re(qr/ property .+ ( can't .+ import | unimportable ) .+ units/ix) ];
+    like $errors => [qr/ property .+ ( can't .+ import | unimportable ) .+ units/ix];
 
     $errors = [];
     ok $importer->can_import_properties( $target, [ 'quantities', 'units' ], $errors );
-    cmp_deeply $errors => []
-      or note explain $errors;
+    like $errors => [];
 };
 
 subtest "[un]importable_properties" => sub {
     my @source_importable = map { $_->{key} } $importer->importable_properties($source);
-    is_deeply \@source_importable => [],
-      "importable(source project)"
-      or explain \@source_importable;
+    is \@source_importable => [],
+      "importable(source project)";
 
     my @source_unimportable = map { $_->{key} } $importer->unimportable_properties($source);
-    is_deeply [ sort @source_unimportable ] =>
-      [qw< articles quantities recipes shop_sections tags units >],
-      "unimportable(source project)"
-      or explain \@source_unimportable;
+
+    is \@source_unimportable =>
+      bag { item $_ for qw< articles quantities recipes shop_sections tags units > },
+      "unimportable(source project)";
 
     @source_unimportable =
       map { $_->{key} } $importer->unimportable_properties( $source, ['quantities'] );
-    is_deeply \@source_unimportable => ['quantities'],
-      "unimportable(source project, [quantities])"
-      or explain \@source_unimportable;
+    is \@source_unimportable => ['quantities'],
+      "unimportable(source project, [quantities])";
 
     my @target_importable = map { $_->{key} } $importer->importable_properties($target);
-    is_deeply [ sort @target_importable ] =>
-      [qw< articles quantities recipes shop_sections tags units >],
-      "importable(target project)"
-      or explain \@target_importable;
+    is \@target_importable =>
+      bag { item $_ for qw< articles quantities recipes shop_sections tags units > },
+      "importable(target project)";
 
     ok my $quantity = $target->quantities->create( { name => 'foo' } ), "create a quantity in target";
 
     my @target_importable2 = map { $_->{key} } $importer->importable_properties($target);
-    is_deeply [ sort @target_importable2 ] => [qw< articles shop_sections tags >],
-      "importable(target project)"
-      or explain \@target_importable2;
+
+    is \@target_importable2 => bag { item $_ for qw< articles shop_sections tags > },
+      "importable(target project)";
 
     ok $quantity->delete(), "delete quantity";
 };
 
-throws_ok { $importer->import_data() } qr/argument/, "import_data() dies without arguments";
+like dies { $importer->import_data() } => qr/argument/, "import_data() dies without arguments";
 
-throws_ok { $importer->import_data( $source => $source, [] ) } qr/same/,
+like dies { $importer->import_data( $source => $source, [] ) } => qr/same/,
   "import_data() dies with source == target";
 
-throws_ok { $importer->import_data( $target => $source, ['quantities'] ) }
-qr/ import .+ quantities /x, "import_data() dies if target already has data";
+like dies { $importer->import_data( $target => $source, ['quantities'] ) } =>
+  qr/ import .+ quantities /x,
+  "import_data() dies if target already has data";
 
-throws_ok { $importer->import_data( $source => $target, {} ) } qr/arrayref/i;
-throws_ok { $importer->import_data( $source => $target, ['foobar'] ) } qr/unknown/i;
-throws_ok { $importer->import_data( $source => $target, ['recipes'] ) } qr/require|depend/i;
-throws_ok {
+like dies { $importer->import_data( $source => $target, {} ) }          => qr/arrayref/i;
+like dies { $importer->import_data( $source => $target, ['foobar'] ) }  => qr/unknown/i;
+like dies { $importer->import_data( $source => $target, ['recipes'] ) } => qr/require|depend/i;
+like dies {
     $importer->import_data( $source => $target, [qw< quantities units articles articles_units >] )
-}
-qr/unknown/i, "private properties are rejected";
+} => qr/unknown/i,
+  "private properties are rejected";
 
 subtest "empty import" => sub {
     my $records_before = $db->count;
@@ -195,5 +194,6 @@ subtest "complete import" => sub {
     note sprintf "% 5i %s", $db->resultset($_)->count, $_ for sort $db->sources;
 };
 
-throws_ok { $importer->import_data( $source, $target, ['quantities'] ) }
-qr/already .+ exist .+ quantities/x, "repeated import is rejected";
+like dies { $importer->import_data( $source, $target, ['quantities'] ) } =>
+  qr/already .+ exist .+ quantities/x,
+  "repeated import is rejected";

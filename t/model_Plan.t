@@ -1,21 +1,21 @@
-use lib 't/lib';
+use Test2::V0;
 
+use Coocook::Model::Plan;
 use DateTime;
-use TestDB;
 use Test::Memory::Cycle;
 use Test::MockObject;
-use Test::Most;
+
+use lib 't/lib';
+use TestDB;
 
 my $db = TestDB->new;
 
 my $project = $db->resultset('Project')->find(1);
 
-use_ok 'Coocook::Model::Plan';
-
-my $plan = new_ok 'Coocook::Model::Plan', [ schema => $db ];
+ok my $plan = Coocook::Model::Plan->new( schema => $db );
 
 my $day = $plan->day( $project, DateTime->new( year => 2000, month => 1, day => 1 ) );
-is_deeply $day => [
+is $day => [
     {
         name            => 'breakfast',
         comment         => "Best meal of the day!",
@@ -73,127 +73,124 @@ is_deeply $day => [
         ],
     }
   ],
-  "day(2000-01-01)"
-  or explain $day;
+  "day(2000-01-01)";
 
 memory_cycle_ok $day;
 
 my $day2 = $plan->day( $project, DateTime->new( year => 2000, month => 1, day => 2 ) );
-cmp_deeply $day2 => [
-    superhashof {
-        name            => 'lunch',
-        dishes          => [ superhashof { name => 'pizza' } ],
-        prepared_dishes => [
-            superhashof {
-                name => 'bread',
-                meal => superhashof {
-                    id   => 3,
-                    name => 'dinner',
-                },
-            },
-        ],
+is $day2 => array {
+    item hash {
+        field name   => 'lunch';
+        field dishes => array {
+            item hash { field name => 'pizza'; etc() };
+        };
+        field prepared_dishes => array {
+            item hash {
+                field name => 'bread';
+                field meal => hash {
+                    field id   => 3;
+                    field name => 'dinner';
+                    etc();
+                };
+                etc();
+            };
+        };
+        etc();
     },
-  ],
-  "day(2000-01-02) with prepared dish"
-  or explain $day2;
+},
+  "day(2000-01-02) with prepared dish";
 
 memory_cycle_ok $day2;
 
-my $expected = [
-    {
-        date  => str('2000-01-01T00:00:00'),
-        meals => [
-            {
-                id         => 1,
-                project_id => 1,
-                date       => str('2000-01-01T00:00:00'),
-                name       => 'breakfast',
-                deletable  => bool(0),
-                dishes     => [
-                    {
-                        id                 => 1,
-                        prepare_at_meal_id => undef,
-                        from_recipe_id     => undef,
-                        name               => 'pancakes',
-                        preparation        => '',
-                        description        => 'Make them really sweet!',
-                        comment            => '',
-                        servings           => 4
-                    }
-                ],
-                prepared_dishes => [],
-                comment         => 'Best meal of the day!',
-            }
-        ]
-    },
-    {
-        date  => str('2000-01-02T00:00:00'),
-        meals => [
-            {
-                id         => 2,
-                project_id => 1,
-                date       => str('2000-01-02T00:00:00'),
-                name       => 'lunch',
-                deletable  => bool(0),
-                dishes     => [
-                    {
-                        id                 => 2,
-                        prepare_at_meal_id => undef,
-                        from_recipe_id     => 1,
-                        name               => 'pizza',
-                        preparation        => '',
-                        description        => '',
-                        comment            => '',
-                        servings           => 2
-                    }
-                ],
-                prepared_dishes => '!!! this should become an arrayref before calling is_deeply() !!!',
-                comment         => '',
-            }
-        ]
-    },
-    {
-        date  => str('2000-01-03T00:00:00'),
-        meals => [
-            {
-                id         => 3,
-                project_id => 1,
-                date       => str('2000-01-03T00:00:00'),
-                name       => 'dinner',
-                deletable  => bool(0),
-                dishes     => [
-                    {
-                        id                 => 3,
-                        prepare_at_meal_id => 2,
-                        from_recipe_id     => undef,
-                        name               => 'bread',
-                        preparation        => 'Bake bread!',
-                        description        => '',
-                        comment            => '',
-                        servings           => 4
-                    }
-                ],
-                prepared_dishes => [],
-                comment         => '',
-            }
-        ]
-    }
-];
-$expected->[1]{meals}[0]{prepared_dishes} = [ $expected->[2]{meals}[0]{dishes}[0] ];
+is my $project_plan = $plan->project($project) => array {
+    my $bread;
 
-for (@$expected) {
-    for my $meal ( @{ $_->{meals} } ) {
-        for my $dish ( @{ $meal->{dishes} } ) {
-            $dish->{meal_id} = $meal->{id};
-            $dish->{meal}    = $meal;
-        }
-    }
-}
-my $project_plan = $plan->project($project);
-$_->{date} .= "" for @$project_plan;    # stringify dates for simpler comparison
-cmp_deeply $project_plan => $expected,
-  "project()"
-  or explain $project_plan;
+    item hash {
+        field date  => string '2000-01-01T00:00:00';
+        field meals => array {
+            item hash {
+                field id         => 1;
+                field project_id => 1;
+                field date       => string '2000-01-01T00:00:00';
+                field name       => 'breakfast';
+                field comment    => 'Best meal of the day!';
+                field deletable  => F();
+                field dishes     => array {
+                    item hash {
+                        field id                 => 1;
+                        field meal_id            => 1;
+                        field meal               => hash { field id => 1; etc() };
+                        field prepare_at_meal_id => U();
+                        field from_recipe_id     => U();
+                        field name               => 'pancakes';
+                        field preparation        => '';
+                        field description        => 'Make them really sweet!';
+                        field comment            => '';
+                        field servings => 4
+                    };
+                };
+                field prepared_dishes => [];
+            };
+        };
+    };
+    item hash {
+        field date  => string '2000-01-02T00:00:00';
+        field meals => array {
+            item hash {
+                field id         => 2;
+                field project_id => 1;
+                field date       => string '2000-01-02T00:00:00';
+                field name       => 'lunch';
+                field comment    => '';
+                field deletable  => F();
+                field dishes     => array {
+                    item hash {
+                        field id                 => 2;
+                        field meal_id            => 2;
+                        field meal               => hash { field id => 2; etc() };
+                        field prepare_at_meal_id => U();
+                        field from_recipe_id     => 1;
+                        field name               => 'pizza';
+                        field preparation        => '';
+                        field description        => '';
+                        field comment            => '';
+                        field servings => 2
+                    };
+                };
+                field prepared_dishes => array {
+                    item $bread = hash {
+                        field id                 => 3;
+                        field meal_id            => 3;
+                        field meal               => hash { field id => 3; etc() };
+                        field prepare_at_meal_id => 2;
+                        field from_recipe_id     => U();
+                        field name               => 'bread';
+                        field preparation        => 'Bake bread!';
+                        field description        => '';
+                        field comment            => '';
+                        field servings => 4
+                    };
+                };
+            };
+        };
+    };
+    item hash {
+        field date  => string '2000-01-03T00:00:00';
+        field meals => array {
+            item hash {
+                field id              => 3;
+                field project_id      => 1;
+                field date            => string '2000-01-03T00:00:00';
+                field name            => 'dinner';
+                field deletable       => F();
+                field dishes          => array { item $bread };
+                field prepared_dishes => [];
+                field comment         => '';
+            };
+        };
+    };
+},
+  "project()";
 
 memory_cycle_ok $project_plan;
 

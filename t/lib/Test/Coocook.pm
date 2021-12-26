@@ -1,11 +1,6 @@
 package Test::Coocook;
 
-use strict;
-use warnings;
-use open ':locale';    # respect encoding configured in terminal
-use utf8;
-
-our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
+use Test2::V0 qw(:DEFAULT !meta);
 
 use Carp;
 use Email::Sender::Simple;
@@ -13,7 +8,6 @@ use HTML::Meta::Robots;
 use Regexp::Common 'URI';
 use Scope::Guard qw< guard >;
 use TestDB;
-use Test::Most;
 
 BEGIN {
     # don't actually send any emails
@@ -23,10 +17,11 @@ BEGIN {
     $ENV{COOCOOK_CONFIG} = 't/';
 }
 
+our $DEBUG //= $ENV{TEST_COOCOOK_DEBUG};
+
 # don't spill STDERR with info messages when not in verbose mode
 our $DISABLE_LOG_LEVEL_INFO //= !$ENV{TEST_VERBOSE};
 
-use parent 'Test::Coocook::Base';
 use parent 'Test::WWW::Mechanize::Catalyst';
 
 =head1 CONSTRUCTOR
@@ -499,7 +494,7 @@ sub reload_ok {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    ok $self->reload(), "reload " . $self->base;
+    ok $self->reload(), $self->base ? "reload " . $self->base : "reload";
 }
 
 sub robots_flags_ok {

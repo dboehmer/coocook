@@ -1,12 +1,14 @@
-use lib 't/lib';
+use Test2::V0;
 
+use Coocook::Script::Passwd;
+
+use lib 't/lib';
 use TestDB;
 use Test::Coocook;    # makes Coocook::Script::Passwd not read real config files
-use Test::Most tests => 5;
+
+plan(4);
 
 our $USER = $ENV{USER} ||= 'coocook_test_user';
-
-use_ok 'Coocook::Script::Passwd';
 
 our @stdin;
 {
@@ -25,21 +27,21 @@ sub password_ok {
     ok $user->check_password($password), $name || "user accepts password '$password'";
 }
 
-my $app = new_ok 'Coocook::Script::Passwd' => [
+ok my $app = Coocook::Script::Passwd->new(
     user    => $user->name,
     _schema => $schema,
-];
+);
 
-throws_ok {
+like dies {
     local @stdin = qw< one two >;
     $app->run
-}
-qr/match/, "input passwords don't match";
+} => qr/match/,
+  "input passwords don't match";
 
 subtest "change password" => sub {
     password_ok 'P@ssw0rd';
 
-    lives_ok {
+    ok lives {
         local @stdin = ('s3cr3t') x 2;
 
         $app->run
@@ -51,15 +53,12 @@ subtest "change password" => sub {
 subtest "default username" => sub {
     $user->update( { name => $USER } );
 
-    $app = new_ok
-      'Coocook::Script::Passwd' => [ _schema => $schema ],
-      "app without explicit username";
+    ok $app = Coocook::Script::Passwd->new( _schema => $schema ), "app without explicit username";
 
-    lives_ok {
+    ok lives {
         local @stdin = ('foobar') x 2;
         $app->run;
-    }
-    "run app with same password input twice";
+    }, "run app with same password input twice";
 
     password_ok 'foobar';
 };

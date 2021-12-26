@@ -1,14 +1,12 @@
+use Test2::V0;
+
 use lib 't/lib';
+use Test::Coocook;
 
-use Test::Coocook::Base;
-use Test::Most;
-
-use_ok 'Test::Coocook';
-
-throws_ok { Test::Coocook->new( deploy => 0, schema => "schema_object" ) } qr/arguments/,
+like dies { Test::Coocook->new( deploy => 0, schema => "schema_object" ) } => qr/arguments/,
   "fails with conflicting arguments 'deploy' and 'schema'";
 
-my $t = new_ok 'Test::Coocook';
+ok my $t = Test::Coocook->new();
 
 subtest reload_config => sub {
     my $app = $t->catalyst_app;
@@ -22,8 +20,18 @@ subtest reload_config => sub {
     ok $app->config->{TEST2};
     undef $guard;
 
-    local $TODO = "reload_config() doesn't remove unused keys, only sets original values";
-    ok !$app->config->{TEST2};
+    todo "reload_config() doesn't remove unused keys, only sets original values" => sub {
+        ok !$app->config->{TEST2};
+    };
+};
+
+is intercept( sub { $t->reload_ok } )->squash_info->flatten => array {
+    item hash {
+        field pass       => 0;
+        field trace_file => __FILE__;
+        field trace_line => __LINE__ - 4;
+        etc();
+    };
 };
 
 $ENV{DBIC_KEEP_TEST}

@@ -1,7 +1,9 @@
-use lib 't/lib/';
+use Test2::V0;
 
+use lib 't/lib/';
 use TestDB;
-use Test::Most tests => 1;
+
+plan(1);
 
 my $db = TestDB->new;
 
@@ -11,7 +13,7 @@ subtest make_owner => sub {
     my $editor = $project->projects_users->search( { role => 'editor' } )->one_row
       || die "missing test data";
 
-    throws_ok { $editor->make_owner } qr/admin/, "making an editor to an owner fails";
+    like dies { $editor->make_owner } => qr/admin/, "making an editor to an owner fails";
 
     $editor->update( { role => 'admin' } );
     my $admin = $editor;
@@ -27,5 +29,5 @@ subtest make_owner => sub {
 
     my $owner = $admin;
 
-    warning_like { $owner->make_owner } qr/already/, "warns when making an owner to an owner";
+    like warning { $owner->make_owner } => qr/already/, "warns when making an owner to an owner";
 };

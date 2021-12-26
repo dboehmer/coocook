@@ -1,17 +1,18 @@
-use lib 't/lib/';
+use Test2::V0;
 
-use Test::Most tests => 13;
+use Coocook::Model::Authorization;
+
+use lib 't/lib/';
 use TestDB;
-use Test::Deep;
+
+plan(12);
 
 my $db = TestDB->new;
 
 my ( $project1, $project2 ) = $db->resultset('Project')->all;
 my ( $user1,    $user2 )    = $db->resultset('User')->all;
 
-use_ok 'Coocook::Model::Authorization';
-
-my $authz = new_ok 'Coocook::Model::Authorization';
+ok my $authz = Coocook::Model::Authorization->new();
 
 sub has_cap_ok   { _test_has_capability( 1, @_ ) }
 sub hasnt_cap_ok { _test_has_capability( 0, @_ ) }
@@ -32,20 +33,25 @@ sub _test_has_capability {
 
 is $authz->new => $authz, "is a singleton";
 
-cmp_deeply [ $authz->project_roles ] => bag(qw< owner admin editor viewer >),
+is [ $authz->project_roles ] => bag {
+    item 'owner';
+    item 'admin';
+    item 'editor';
+    item 'viewer';
+},
   "project_roles()";
 
 ok !$authz->capability_exists('foo');
 ok $authz->capability_exists('view_project');
 
-is_deeply [ sort $authz->capability_needs_input('view_user') ]    => [];
-is_deeply [ sort $authz->capability_needs_input('edit_project') ] => [ 'project', 'user' ];
+is [ sort $authz->capability_needs_input('view_user') ]    => [];
+is [ sort $authz->capability_needs_input('edit_project') ] => [ 'project', 'user' ];
 
-throws_ok { $authz->has_capability( foobar => {} ) } qr/capability/, "invalid capability";
+like dies { $authz->has_capability( foobar => {} ) }, qr/capability/, "invalid capability";
 
-throws_ok { $authz->has_capability( view_project => {} ) } qr/missing/, "missing input arguments";
+like dies { $authz->has_capability( view_project => {} ) }, qr/missing/, "missing input arguments";
 
-throws_ok { $authz->has_capability( view_project => { project => $project1 } ) } qr/missing/,
+like dies { $authz->has_capability( view_project => { project => $project1 } ) }, qr/missing/,
   "input key 'user' is always required, even if value is optional";
 
 subtest view_project => sub {

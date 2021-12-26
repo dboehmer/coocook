@@ -1,8 +1,9 @@
-use lib 't/lib/';
+use Test2::V0;
 
 use Coocook::Schema;
+
+use lib 't/lib/';
 use TestDB qw(install_ok upgrade_ok);
-use Test::Most;
 
 # first upgrade scripts created columns in different order
 # or had other subtle differences to a fresh deployment
@@ -75,8 +76,6 @@ sub schema_eq {
             my $sth = $schema->{dbh}->table_info( undef, undef, '%' );
 
             while ( my $table = $sth->fetchrow_hashref ) {
-                ##note explain $table;
-
                 my $type = $table->{TABLE_TYPE};
                 my $name = $table->{TABLE_NAME};
                 my $sql  = $table->{sqlite_sql};

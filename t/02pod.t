@@ -1,7 +1,4 @@
-#!/usr/bin/env perl
-use strict;
-use warnings;
-use Test::Most;
+use Test2::V0;
 
 ## no critic (BuiltinFunctions::ProhibitStringyEval)
 eval "use Test::Pod 1.14";

@@ -1,9 +1,11 @@
+use Test2::V0;
+
+use Coocook::Schema;
+
 use lib 't/lib';
-
 use TestDB;
-use Test::Most tests => 9;
 
-use_ok 'Coocook::Schema';
+plan(8);
 
 ok my $db = TestDB->new;
 
@@ -14,22 +16,23 @@ subtest "one_row() in favor of first()" => sub {
     my $__FILE__ = __FILE__;
     my $rs       = $db->resultset('Project');
 
-    throws_ok { $rs->first() } qr/ one_row .+ \Q$__FILE__\E /x,
+    like dies { $rs->first() }, qr/ one_row .+ \Q$__FILE__\E /x,
       "first() fails, recommends one_row() and names correct source file";
 
-    isa_ok $rs->one_row() => 'DBIx::Class::Row', "one_row() returns Result object";
+    isa_ok $rs->one_row() => ['DBIx::Class::Row'], "one_row() returns Result object";
 };
 
 subtest statistics => sub {
     ok my $stats = $db->statistics(), "\$schema->statistics()";
 
-    cmp_deeply $stats => superhashof {
-        public_projects => 1,
-        users           => 2,
-        organizations   => 1,
-        recipes         => 2,
-        dishes_served   => 4 + 2 + 4,
-        dishes_planned  => 0,
+    is $stats => hash {
+        field public_projects => 1;
+        field users           => 2;
+        field organizations   => 1;
+        field recipes         => 2;
+        field dishes_served   => 4 + 2 + 4;
+        field dishes_planned  => 0;
+        etc();
     };
 };
 
@@ -39,29 +42,39 @@ subtest connection => sub {
     my %extra_attributes = ( on_connect_do => 'SELECT 1' );
 
     # same order as in https://metacpan.org/pod/DBIx::Class::Storage::DBI#connect_info
-    ok Coocook::Schema->connect( 'dbi:SQLite::memory:', 'user', 'password', \%dbi_attributes,
-        \%extra_attributes );
-
-    ok Coocook::Schema->connect(
-        sub { DBI->connect( 'dbi:SQLite::memory:', 'user', 'password', \%dbi_attributes ) },
-        \%extra_attributes );
-
-    ok Coocook::Schema->connect(
-        {
-            dsn      => 'dbi:SQLite::memory:',
-            user     => 'user',
-            password => 'password',
-            %dbi_attributes,
-            %extra_attributes
-        }
+    ok(
+        Coocook::Schema->connect(
+            'dbi:SQLite::memory:', 'user', 'password', \%dbi_attributes, \%extra_attributes
+        )
     );
 
-    ok Coocook::Schema->connect(
-        {
-            dbh_maker => sub { DBI->connect('dbi:SQLite::memory:') },
-            %dbi_attributes,
-            %extra_attributes
-        }
+    ok(
+        Coocook::Schema->connect(
+            sub { DBI->connect( 'dbi:SQLite::memory:', 'user', 'password', \%dbi_attributes ) },
+            \%extra_attributes
+        )
+    );
+
+    ok(
+        Coocook::Schema->connect(
+            {
+                dsn      => 'dbi:SQLite::memory:',
+                user     => 'user',
+                password => 'password',
+                %dbi_attributes,
+                %extra_attributes
+            }
+        )
+    );
+
+    ok(
+        Coocook::Schema->connect(
+            {
+                dbh_maker => sub { DBI->connect('dbi:SQLite::memory:') },
+                %dbi_attributes,
+                %extra_attributes
+            }
+        )
     );
 
     my $dbh = DBI->connect( 'dbi:SQLite::memory:', undef, undef, { RaiseError => 1 } );
@@ -118,40 +131,38 @@ subtest fk_checks_off_do => sub {
     {
         no warnings 'once', 'redefine';
         local *DBIx::Class::Storage::DBI::sqlt_type = sub { 'OtherDBMS' };
-        throws_ok {
+        like dies {
             $db->fk_checks_off_do( sub { } )
-        }
-        qr/SQLite/, "SQLite check";
+        }, qr/SQLite/, "SQLite check";
     }
 
     my $row =
       $db->resultset('ShopSection')
       ->new_result( { project_id => 999, name => "shop section for bogus project" } );
 
-    lives_ok {
+    ok lives {
         $db->fk_checks_off_do(
             sub {
                 $row->insert();
                 $row->delete();
             }
         );
-    }
-    "inserting and deleting invalid FK works inside fk_checks_off_do";
+    }, "inserting and deleting invalid FK works inside fk_checks_off_do";
 
-    throws_ok { $row->insert } qr/FOREIGN KEY constraint failed/, "inserting doesn't work outside";
+    like dies { $row->insert }, qr/FOREIGN KEY constraint failed/, "inserting doesn't work outside";
 
-    local $TODO = "How to enforce checks when re-enabling 'foreign_keys' pragma?";
-    throws_ok {
-        $db->fk_checks_off_do( sub { $row->insert() } )
-    }
-    qr/some error/, "throws error at end of fk_checks_off_do after insert";    # TODO error message
+    todo "How to enforce checks when re-enabling 'foreign_keys' pragma?" => sub {
+        like dies {
+            $db->fk_checks_off_do( sub { $row->insert() } )
+        }, qr/some error/, "throws error at end of fk_checks_off_do after insert";    # TODO error message
+    };
 };
 
 subtest assert_no_sth => sub {
     $db = TestDB->new;
     my $projects = $db->resultset('Project');
 
-    lives_ok { $projects->assert_no_sth } "Passes before next()";
-    ok $projects->next, "Call next()";
-    throws_ok { $projects->assert_no_sth } qr/Statement/, "Fails after next()";
+    ok lives { $projects->assert_no_sth }, "Passes before next()";
+    ok $projects->next,                    "Call next()";
+    like dies { $projects->assert_no_sth }, qr/Statement/, "Fails after next()";
 };

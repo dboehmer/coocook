@@ -1,12 +1,14 @@
-use lib 't/lib/';
+use Test2::V0;
 
 use Coocook;
+use Coocook::Script::Dbck;
+use Test::Output;
+
+use lib 't/lib/';
 use TestDB;
 use Test::Coocook;    # makes Coocook::Script::Dbck not read real config files
-use Test::Output;
-use Test::Most tests => 20;
 
-use_ok 'Coocook::Script::Dbck';
+plan(19);
 
 my $db = TestDB->new();
 
@@ -14,21 +16,21 @@ ok my $app = Coocook::Script::Dbck->new_with_options();
 
 $app->_schema($db);
 
-warning_is { $app->run } undef, "no warnings with test data";
+ok no_warnings { $app->run }, "no warnings with test data";
 
 {
     $db->txn_begin;
 
     $db->storage->dbh_do( sub { $_[1]->do('ALTER TABLE projects ADD COLUMN foobar integer') } );
 
-    warnings_like { $app->run } [
+    like warnings { $app->run } => [
         qr/table \W?projects\W?/,    #perldoc
         qr/<<</,
         qr/CREATE TABLE/,
         qr/---/,
         qr/CREATE TABLE/,
         qr/>>>/,
-    ],
+      ],
       "Error about table schema";
 
     $db->txn_rollback;
@@ -39,12 +41,12 @@ warning_is { $app->run } undef, "no warnings with test data";
 
     $db->resultset('Quantity')->find(1)->update( { project_id => 2 } );
 
-    warnings_are { $app->run } [
+    is warnings { $app->run } => [
         "Project IDs differ for Unit row (id = 1): me.project = 1, quantity.project = 2\n",
         "Project IDs differ for Unit row (id = 2): me.project = 1, quantity.project = 2\n",
         "Project IDs differ for Unit row (id = 4): me.project = 1, quantity.project = 2\n",
         "Project IDs differ for Unit row (id = 5): me.project = 1, quantity.project = 2\n",
-    ],
+      ],
       "Inconsistent project_id";
 
     $db->txn_rollback;
@@ -65,7 +67,7 @@ for my $rs ( sort keys %$cols ) {
         $db->storage->dbh_do(
             sub { $_[1]->do("UPDATE $table SET $col='' WHERE id=(SELECT id FROM $table LIMIT 1)") } );
 
-        warning_like { $app->run } qr/column \W?$col\W? .+ empty string ''/, "$col of '' in $rs";
+        like warning { $app->run } => qr/column \W?$col\W? .+ empty string ''/, "$col of '' in $rs";
 
         $db->txn_rollback;
 
@@ -75,7 +77,7 @@ for my $rs ( sort keys %$cols ) {
             $db->storage->dbh_do(
                 sub { $_[1]->do("UPDATE $table SET value='0,1' WHERE id=(SELECT id FROM $table LIMIT 1)") } );
 
-            warning_like { $app->run } qr/($rs|$table) .+ number.format .+ '0,1'/x,
+            like warning { $app->run } => qr/($rs|$table) .+ number.format .+ '0,1'/x,
               "invalid number format '0,1' in $rs";
 
             $db->txn_rollback;
@@ -88,7 +90,7 @@ for my $table (qw< Organization User >) {
 
     $db->resultset($table)->one_row->update( { name_fc => 'foobar' } );
 
-    warning_like { $app->run } qr/Incorrect name_fc for $table/i, "incorrect name_fc in $table";
+    like warning { $app->run } => qr/Incorrect name_fc for $table/i, "incorrect name_fc in $table";
 
     $db->txn_rollback;
 }
@@ -98,7 +100,7 @@ for my $col (qw< url_name url_name_fc >) {
 
     $db->resultset('Project')->one_row->update( { $col => 'foobar' } );
 
-    warning_like { $app->run } qr/Incorrect $col for project/, "incorrect $col in projects";
+    like warning { $app->run } => qr/Incorrect $col for project/, "incorrect $col in projects";
 
     $db->txn_rollback;
 }

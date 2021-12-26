@@ -1,8 +1,11 @@
-use lib 't/lib';
+use Test2::V0;
 
-use Test::Coocook;
-use Test::Most tests => 88;
 use Time::HiRes 'time';
+
+use lib 't/lib';
+use Test::Coocook;
+
+plan(88);
 
 my $t = Test::Coocook->new( test_data => 0 );
 

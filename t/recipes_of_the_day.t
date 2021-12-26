@@ -1,7 +1,7 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use Test::Coocook;
-use Test::Most;
 
 my $t = Test::Coocook->new();
 
@@ -37,6 +37,6 @@ $t->get_ok('/');
 $t->text_like(qr/recipes of the day/i);
 $t->text_contains( $recipe2->name );
 
-is $rotd->count => $public, "picked as many recipes as there public ones";
+is $rotd->count => $public->count, "picked as many recipes as there public ones";
 
 done_testing;

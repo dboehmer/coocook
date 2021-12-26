@@ -1,7 +1,9 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use TestDB;
-use Test::Most tests => 7;
+
+plan(7);
 
 subtest "ResultSet::Unit->in_use()" => sub {
     my $db = TestDB->new;
@@ -33,7 +35,7 @@ is $kg->convertible_into->count => $_, "is convertible into $_ units" for 2;
 
 ok $kg->is_quantity_default, "unit is quantity default";
 
-throws_ok { $kg->delete } qr/FOREIGN KEY constraint failed/, "fails while rows reference unit";
+like dies { $kg->delete }, qr/FOREIGN KEY constraint failed/, "fails while rows reference unit";
 
 note "deleting referencing rows ...";
 $db->resultset($_)->delete for qw<
@@ -43,7 +45,7 @@ $db->resultset($_)->delete for qw<
   ArticleUnit
 >;
 
-throws_ok { $kg->delete } qr/FOREIGN KEY constraint failed/, "fails when kg is default unit";
+like dies { $kg->delete }, qr/FOREIGN KEY constraint failed/, "fails when kg is default unit";
 
 note "deleting all other units ...";
 $kg->other_units_of_same_quantity->delete;

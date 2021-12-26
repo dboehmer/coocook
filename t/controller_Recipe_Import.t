@@ -1,8 +1,11 @@
-use lib 't/lib/';
+use Test2::V0;
 
 use Coocook::Model::ProjectImporter;
+
+use lib 't/lib/';
 use Test::Coocook;
-use Test::Most tests => 10;
+
+plan(10);
 
 my $t = Test::Coocook->new;
 

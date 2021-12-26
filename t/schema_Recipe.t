@@ -1,7 +1,7 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use TestDB;
-use Test::Most;
 
 subtest duplicate => sub {
     my $db = TestDB->new;

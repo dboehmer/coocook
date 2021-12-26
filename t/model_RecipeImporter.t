@@ -1,9 +1,12 @@
-use lib 't/lib/';
+use Test2::V0;
 
+use Coocook::Model::RecipeImporter;
 use Coocook::Model::ProjectImporter;
+
+use lib 't/lib/';
 use TestDB;
-use Test::Deep;
-use Test::Most tests => 33;
+
+plan(32);
 
 my $schema = TestDB->new();
 
@@ -18,47 +21,61 @@ my $target_project = $schema->resultset('Project')->create(
     }
 );
 
-use_ok 'Coocook::Model::RecipeImporter';
+ok my $importer = Coocook::Model::RecipeImporter->new(
+    project => $target_project,
+    recipe  => $source_recipe,
+);
 
-my $importer = new_ok 'Coocook::Model::RecipeImporter',
-  [ project => $target_project, recipe => $source_recipe ];
-
-cmp_deeply $_=> [
-    superhashof(
-        { id => 3, article => superhashof( { id => 3 } ), unit => superhashof( { id => 3 } ) }
-    ),
-    superhashof(
-        { id => 2, article => superhashof( { id => 1 } ), unit => superhashof( { id => 2 } ) }
-    ),
-    superhashof(
-        { id => 1, article => superhashof( { id => 2 } ), unit => superhashof( { id => 1 } ), value => 15 }
-    ),
-    superhashof(    # not only same IDs but same hashrefs
-        { id => 4, article => shallow( $_->[2]{article} ), unit => shallow( $_->[2]{unit} ), value => 10 }
-    ),
-  ],
+is $_ => array {
+    item hash {
+        field id      => 3;
+        field article => hash { field id => 3; etc() };
+        field unit    => hash { field id => 3; etc() };
+        etc();
+    };
+    item hash {
+        field id      => 2;
+        field article => hash { field id => 1; etc() };
+        field unit    => hash { field id => 2; etc() };
+        etc();
+    };
+    item hash {
+        field id      => 1;
+        field article => hash { field id => 2; etc() };
+        field unit    => hash { field id => 1; etc() };
+        field value   => 15;
+        etc();
+    };
+    item hash {    # not only same IDs but same hashrefs
+        field id      => 4;
+        field article => D();    #exact_ref( $_->[2]{article} );
+        field unit    => D();    #exact_ref( $_->[2]{unit} );
+        field value   => 10;
+        etc();
+    };
+},
   "... ingredients"
   for $importer->ingredients;
 
-is $importer->identify_candidates() => $importer,
+is $importer->identify_candidates() => exact_ref($importer),
   '$importer->identify_candidates() returns $importer';
 
-cmp_deeply $importer->source_articles => [
-    superhashof( { target_candidate => undef, name => 'flour' } ),
-    superhashof( { target_candidate => undef, name => 'salt' } ),
-    superhashof( { target_candidate => undef, name => 'water' } ),
-  ],
+is $importer->source_articles => array {
+    item hash { field target_candidate => U(); field name => 'flour'; etc() };
+    item hash { field target_candidate => U(); field name => 'salt';  etc() };
+    item hash { field target_candidate => U(); field name => 'water'; etc() };
+},
   "... source_articles";
 
-cmp_deeply $importer->source_units => [
-    superhashof( { target_candidate => undef, long_name => 'grams' } ),
-    superhashof( { target_candidate => undef, long_name => 'kilograms' } ),
-    superhashof( { target_candidate => undef, long_name => 'liters' } ),
-  ],
+is $importer->source_units => array {
+    item hash { field target_candidate => U(); field long_name => 'grams';     etc() };
+    item hash { field target_candidate => U(); field long_name => 'kilograms'; etc() };
+    item hash { field target_candidate => U(); field long_name => 'liters';    etc() };
+},
   "... source_units";
 
-cmp_deeply $importer->target_articles => [], "... target_articles";
-cmp_deeply $importer->target_units    => [], "... target_units";
+is $importer->target_articles => [], "... target_articles";
+is $importer->target_units    => [], "... target_units";
 
 my $quantity = $target_project->quantities->create( { name => __FILE__ } );
 
@@ -77,46 +94,69 @@ my @units = $target_project->units->populate(
     ]
 );
 
-$importer = new_ok 'Coocook::Model::RecipeImporter',
-  [ project => $target_project, recipe => $source_recipe ];
+ok $importer = Coocook::Model::RecipeImporter->new(
+    project => $target_project,
+    recipe  => $source_recipe,
+);
 
 ok $importer->identify_candidates, "identify_candidates()";
 
-cmp_deeply $importer->source_articles => [
-    superhashof( { name => 'flour', target_candidate => superhashof( { id => $articles[1]->id } ) } ),
-    superhashof( { name => 'salt',  target_candidate => undef } ),
-    superhashof( { name => 'water', target_candidate => undef } ),
-  ],
+is $importer->source_articles => array {
+    item hash {
+        field name             => 'flour';
+        field target_candidate => hash { field id => $articles[1]->id; etc() };
+        etc();
+    };
+    item hash {
+        field name             => 'salt';
+        field target_candidate => U();
+        etc();
+    };
+    item hash {
+        field name             => 'water';
+        field target_candidate => U();
+        etc();
+    };
+},
   "... source_articles";
 
-cmp_deeply $importer->source_units => [
-    superhashof( { long_name => 'grams', target_candidate => superhashof( { id => $units[1]->id } ) } ),
-    superhashof(
-        { long_name => 'kilograms', target_candidate => superhashof( { id => $units[0]->id } ) }
-    ),
-    superhashof( { long_name => 'liters', target_candidate => undef } ),
-  ],
+is $importer->source_units => array {
+    item hash {
+        field long_name        => 'grams';
+        field target_candidate => hash { field id => $units[1]->id; etc() };
+        etc();
+    };
+    item hash {
+        field long_name        => 'kilograms';
+        field target_candidate => hash { field id => $units[0]->id; etc() };
+        etc();
+    };
+    item hash {
+        field long_name        => 'liters';
+        field target_candidate => U();
+        etc();
+    };
+},
   "... source_units";
 
-cmp_deeply $importer->target_articles => [
-    superhashof( { name => 'flour' } ),    #perltidy
-    superhashof( { name => 'lava' } ),
-  ],
+is $importer->target_articles => array {
+    item hash { field name => 'flour'; etc() };
+    item hash { field name => 'lava';  etc() };
+},
   "... target_articles";
 
-cmp_deeply $importer->target_units => [
-    superhashof( { short_name => 'g' } ),           #perltidy
-    superhashof( { long_name  => 'kilograms' } ),
-  ],
+is $importer->target_units => array {
+    item hash { field short_name => 'g';         etc() };
+    item hash { field long_name  => 'kilograms'; etc() };
+},
   "... target_units";
 
-throws_ok { $importer->import_data( ingredients => {} ) } qr/missing mapping/;
+like dies { $importer->import_data( ingredients => {} ) } => qr/missing mapping/;
 
-throws_ok {
+like dies {
     $importer->import_data(
         ingredients => { $importer->ingredients->[0]{id} => { article => 99999, unit => 99999 } } )
-}
-qr/invalid (article|unit)/;
+} => qr/invalid (article|unit)/;
 
 is $target_project->recipes->count  => 0;
 is $target_project->articles->count => scalar(@articles);
@@ -131,8 +171,10 @@ Coocook::Model::ProjectImporter->new->import_data(
     [qw< articles quantities units >]
 );
 
-$importer = new_ok 'Coocook::Model::RecipeImporter',
-  [ project => $target_project, recipe => $source_recipe ];
+ok $importer = Coocook::Model::RecipeImporter->new(
+    project => $target_project,
+    recipe  => $source_recipe,
+);
 
 ok $importer->identify_candidates, "identify_candidates()";
 
@@ -145,36 +187,32 @@ my %ingredients = (
           { article => $_->{article}{target_candidate}{id}, unit => $_->{unit}{target_candidate}{id} }
     } @{ $importer->ingredients }
 );
-##note explain \%ingredients;
 
 $ingredients{1}{comment} = my $comment = "comment from line " . __LINE__;
 $ingredients{2} = { skip => 1 };
 
-isa_ok my $target_recipe =
-  $importer->import_data( ingredients => \%ingredients ) => 'Coocook::Schema::Result::Recipe',
+isa_ok my $target_recipe = $importer->import_data( ingredients => \%ingredients ),
+  ['Coocook::Schema::Result::Recipe'],
   "return value of import_data()";
 
-cmp_deeply $_ => [
-    superhashof( { value => 0.5, comment => "" } ),
-    superhashof( { value => 15,  comment => $comment } ),
-    superhashof( { value => 10,  comment => "if you like salty" } ),
-  ],
-  "new recipe's ingredients"
-  or note explain $_
-  for [ $target_recipe->ingredients_sorted->hri->all ];
+is [ $target_recipe->ingredients_sorted->hri->all ] => array {
+    item hash { field value => 0.5; field comment => "";                  etc() };
+    item hash { field value => 15;  field comment => $comment;            etc() };
+    item hash { field value => 10;  field comment => "if you like salty"; etc() };
+},
+  "new recipe's ingredients";
 
-{
-    local $TODO = "implement precheck or exception handling";
-    throws_ok { $importer->import_data( ingredients => \%ingredients ) } qr/recipe already exists/;
-}
+todo "implement precheck or exception handling" => sub {
+    like dies { $importer->import_data( ingredients => \%ingredients ) } => qr/recipe already exists/;
+};
 
 ok my $target_recipe2 =
   $importer->import_data( ingredients => \%ingredients, name => "foobar", servings => 42 );
 
-cmp_deeply [ $target_project->recipes->hri->all ] => [
-    superhashof( { name => "pizza",  servings => 4 } ),
-    superhashof( { name => "foobar", servings => 42 } ),
-  ],
+is [ $target_project->recipes->hri->all ] => array {
+    item hash { field name => "pizza";  field servings => 4;  etc() };
+    item hash { field name => "foobar"; field servings => 42; etc() };
+},
   "created recipes in target project";
 
 is $target_recipe2->ingredients->count => 3,

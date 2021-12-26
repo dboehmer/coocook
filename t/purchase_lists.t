@@ -1,7 +1,7 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use TestDB;
-use Test::Most;
 
 my $db = TestDB->new;
 
@@ -35,7 +35,7 @@ article_has_items $flour => "1000g 1kg";
 
 {
     my $liters = $db->resultset('Unit')->find( { short_name => 'l' } );
-    throws_ok { $item->convert($liters) } qr/quantity/;
+    like dies { $item->convert($liters) }, qr/quantity/;
 }
 
 my $grams = $db->resultset('Unit')->find( { short_name => 'g' } );

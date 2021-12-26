@@ -1,7 +1,9 @@
-use lib 't/lib';
+use Test2::V0;
 
+use lib 't/lib';
 use TestDB;
-use Test::Most tests => 2;
+
+plan(2);
 
 my $db = TestDB->new();
 

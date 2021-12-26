@@ -1,15 +1,15 @@
+use Test2::V0;
+
 use Test2::Require::Module 'Test::PostgreSQL';
 use Test2::Require::Module 'DateTime::Format::Pg';
-
-use lib 't/lib';
 
 use Coocook::Script::Deploy;
 use Coocook::Schema;
 use DBIx::Diff::Schema qw(diff_db_schema);
+
+use lib 't/lib';
 use TestDB qw(install_ok upgrade_ok);
 use Test::Coocook;
-use Test::Deep;
-use Test::Most;
 
 my $FIRST_PGSQL_SCHEMA_VERSION = 21;
 
@@ -17,7 +17,7 @@ plan tests => 2 + 3 * ( $Coocook::Schema::VERSION - $FIRST_PGSQL_SCHEMA_VERSION 
 
 my $pg_dbic          = Test::PostgreSQL->new();
 my $schema_from_dbic = Coocook::Schema->connect( $pg_dbic->dsn );
-lives_ok { $schema_from_dbic->deploy() } "deploy with DBIx::Class";
+ok lives { $schema_from_dbic->deploy() }, "deploy with DBIx::Class";
 
 my $pg_deploy          = Test::PostgreSQL->new();
 my $schema_from_deploy = Coocook::Schema->connect( $pg_deploy->dsn );
@@ -90,46 +90,43 @@ $schema_from_deploy->storage->dbh_do( sub { $_[1]->do('ALTER SCHEMA public RENAM
 schema_diff_like(
     $schema_from_deploy,
     $sqlite_schema,
-    {
-        deleted_tables => [
+    hash {
+        field deleted_tables => [
             'main.dbix_class_deploymenthandler_versions',    # not created by DBIC
-        ],
-        modified_tables => {
-            map ( {
-                    (    # SQLite PKs are deployed with uppercase 'id INTEGER PRIMARY KEY'
-                        'main.' . $_ => { modified_columns => { id => { old_type => 'integer', new_type => 'INTEGER' } } }
-                    )
-                } qw<
-                  articles
-                  blacklist_emails
-                  blacklist_usernames
-                  dishes
-                  dish_ingredients
-                  faqs
-                  items
-                  meals
-                  organizations
-                  projects
-                  purchase_lists
-                  quantities
-                  recipe_ingredients
-                  recipes_of_the_day
-                  recipes
-                  shop_sections
-                  tag_groups
-                  tags
-                  terms
-                  units
-                  users
-                > ),
-            map { 'main.' . $_ => ignore }    # https://github.com/perlancar/perl-DBIx-Diff-Schema/issues/1
-              qw<
+        ];
+        field modified_tables => hash {
+
+            # SQLite PKs are deployed with uppercase 'id INTEGER PRIMARY KEY'
+            field 'main.'
+              . $_ => { modified_columns => { id => { old_type => 'integer', new_type => 'INTEGER' } } }
+              for qw<
+              articles
+              blacklist_emails
+              blacklist_usernames
+              dishes
+              meals
+              organizations
+              projects
+              purchase_lists
+              quantities
+              recipes_of_the_day
+              recipes
+              shop_sections
+              tag_groups
+              tags
+              terms
+              units
+              users
+              >;
+
+            # https://github.com/perlancar/perl-DBIx-Diff-Schema/issues/1
+            field 'main.' . $_ => E() for qw<
               dish_ingredients
               faqs
               items
               recipe_ingredients
-              >
-        },
+            >;
+        };
     }
 );
 
@@ -198,7 +195,5 @@ sub schema_diff_like {
     # TODO doesn't detect constraint changes, e.g. missing UNIQUEs
     my $diff = diff_db_schema( map { $_->storage->dbh } $schema1, $schema2 );
 
-    cmp_deeply $diff => $expected_diff,
-      $name // "database schemas equal"
-      or diag explain $diff;
+    is $diff => $expected_diff, $name // "database schemas equal";
 }

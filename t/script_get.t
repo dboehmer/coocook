@@ -1,18 +1,20 @@
-use lib 't/lib/';
+use Test2::V0;
 
+use Coocook::Script::Get;
+use Test::Output qw(stdout_from);
+
+use lib 't/lib/';
 use TestDB;
 use Test::Coocook;    # also makes Coocook::Script::Get not read real config files
-use Test::Output qw(stdout_from);
-use Test::Most tests => 6;
 
-use_ok 'Coocook::Script::Get';
+plan(5);
 
 Test::Coocook->reload_config( { canonical_url_base => 'https://coocook.example/' } );
 
 my $db = TestDB->new();
 Coocook->model('DB')->schema->storage( $db->storage );
 
-throws_ok { Coocook::Script::Get->new_with_options( ARGV => [] ) } qr/usage/i,
+like dies { Coocook::Script::Get->new_with_options( ARGV => [] ) }, qr/usage/i,
   "displays usage without arguments";
 
 ok my $app = Coocook::Script::Get->new_with_options( ARGV => ['/internal_server_error'] );
