@@ -67,7 +67,7 @@ subtest view_project => sub {
 };
 
 subtest archiving => sub {
-    has_cap_ok archive_project     => { project => $project1, user => $user1 };
+    has_cap_ok archive_project => { project => $project1, user => $user1 };
     hasnt_cap_ok unarchive_project => { project => $project1, user => $user1 };
 
     $project1->archive();

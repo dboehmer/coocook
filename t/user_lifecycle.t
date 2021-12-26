@@ -187,7 +187,7 @@ $t->email_like(qr{ /admin/user/test2 }x);
 $t->shift_emails();
 
 for my $user2 ( $schema->resultset('User')->find( { name => 'test2' } ) ) {
-    ok !$user2->has_any_role('site_owner'), "2nd user created hasn't 'site_owner' role";
+    ok !$user2->has_any_role('site_owner'),      "2nd user created hasn't 'site_owner' role";
     ok $user2->has_any_role('private_projects'), "2nd user created has 'private_projects' role";
 }
 

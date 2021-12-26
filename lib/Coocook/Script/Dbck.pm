@@ -84,11 +84,11 @@ sub check_schema {
 
         s/^/  /gm for $code_sql, $live_sql;
 
-        warn "<" x 7, " code\n";
+        warn "<" x 7,   " code\n";
         warn $code_sql, "\n";
-        warn "-" x 7, "\n";
+        warn "-" x 7,   "\n";
         warn $live_sql, "\n";
-        warn ">" x 7, " live\n";
+        warn ">" x 7,   " live\n";
     }
 }
 
