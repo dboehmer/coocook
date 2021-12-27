@@ -126,7 +126,7 @@ is my $project_plan = $plan->project($project) => array {
                         field preparation        => '';
                         field description        => 'Make them really sweet!';
                         field comment            => '';
-                        field servings => 4
+                        field servings           => 4;
                     };
                 };
                 field prepared_dishes => [];
@@ -154,7 +154,7 @@ is my $project_plan = $plan->project($project) => array {
                         field preparation        => '';
                         field description        => '';
                         field comment            => '';
-                        field servings => 2
+                        field servings           => 2;
                     };
                 };
                 field prepared_dishes => array {
@@ -168,7 +168,7 @@ is my $project_plan = $plan->project($project) => array {
                         field preparation        => 'Bake bread!';
                         field description        => '';
                         field comment            => '';
-                        field servings => 4
+                        field servings           => 4;
                     };
                 };
             };
