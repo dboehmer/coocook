@@ -59,7 +59,7 @@ sub name_valid {
     defined($name)
       or return;
 
-    return $name =~ m/ \A [0-9a-zA-Z_]+ \Z /x;
+    return $name =~ m/ \A [0-9a-zA-Z_]+ \z /x;
 }
 
 =head1 SUBSET METHODS
