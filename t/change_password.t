@@ -150,6 +150,7 @@ subtest "password recovery after email change request" => sub {
     cols_are_set();
     $t->clear_emails();
     $t->request_recovery_link_ok($johns_new_email);
+    $t->get_ok_email_link_like( qr/reset_password/, "click email recovery link" );
     cols_are_null('new_email_fc');
     $t->submit_form_ok( { with_fields => { password => 'p', password2 => 'p' } }, "reset password" );
     cols_are_null();
