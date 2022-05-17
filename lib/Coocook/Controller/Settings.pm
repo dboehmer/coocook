@@ -31,6 +31,9 @@ sub account : GET HEAD Chained('base') Args(0) RequiresCapability('view_account_
     $c->user->new_email_fc
       and $c->stash( cancel_email_change_url => $c->uri_for_action('/settings/change_email/cancel') );
 
+    push @{ $c->stash->{js} }, '/js/user/register.js';
+    push @{ $c->stash->{js} }, '/lib/zxcvbn.js';
+
     $c->stash(
         profile_url             => $c->uri_for_action( '/user/show', [ $c->user->name ] ),
         change_display_name_url => $c->uri_for( $self->action_for('change_display_name') ),
@@ -59,12 +62,12 @@ sub change_password : POST Chained('base') Args(0) RequiresCapability('change_pa
     $user->check_password( $c->req->params->get('current_password') )
       or $c->detach( redirect => [ { error => "current password doesn’t match" } ] );
 
-    my $new_password = $c->req->params->get('new_password');
+    my $new_password = $c->req->params->get('password');
 
     length $new_password > 0
       or $c->detach( redirect => [ { error => "new password must not be empty" } ] );
 
-    $c->req->params->get('new_password2') eq $new_password
+    $c->req->params->get('password2') eq $new_password
       or $c->detach( redirect => [ { error => "new passwords don’t match" } ] );
 
     # TODO this should probably logout all other existing sessions of this user!

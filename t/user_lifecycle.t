@@ -212,8 +212,8 @@ $t->submit_form_ok(
     {
         with_fields => {
             current_password => 's3cr3t',
-            new_password     => 'P@ssw0rd',
-            new_password2    => 'P@ssw0rd',
+            password         => 'P@ssw0rd',
+            password2        => 'P@ssw0rd',
         },
     },
     "submit change password form"
