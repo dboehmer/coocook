@@ -36,19 +36,22 @@
 </div>
 </form>
 
-<form method="post" action="[% change_password_url %]">
-<div class="card">
+<div class="card my-4">
     <div class="card-header"><h3>Change your password</h3></div>
 
 <div class="card-body">
-    <p>
-    <input type="password" name="current_password"  placeholder="current password">
-    <input type="password" name="new_password"  placeholder="new password">
-    <input type="password" name="new_password2" placeholder="new password">
-
+    <form method="post" action="[% change_password_url %]">
+    <div class="mb-2">
+        <input type="password" name="current_password"  placeholder="current password">
+    </div>
+    <div class="mb-2">
+        <input type="password" name="password"  placeholder="new password">
+    </div>
+    <div class="mb-2">
+        <input type="password" name="password2" placeholder="new password">
+    </div>
     <input type="submit" value="Change password">
-    </p>
-
+    </form>
     <p>
         If you don’t know your current password anymore, you can
         <a href="[% recovery_url %]">request a recovery link</a>
@@ -56,9 +59,8 @@
     </p>
 </div>
 </div>
-</form>
 
-<div class="card">
+<div class="card my-4">
     <div class="card-header"><h3>Change your email address</h3></div>
 
     <div class="card-body">
