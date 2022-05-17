@@ -304,8 +304,14 @@ subtest "password recovery" => sub {
 
     ok $user->check_password('P@ssw0rd'), "password is same as before";
 
-    $t->request_recovery_link_ok('test@example.com');
+    $t->request_recovery_link_ok('not-registered@example.com');
+    my $content_unregistered = $t->response->decoded_content;
 
+    $t->request_recovery_link_ok('test@example.com');
+    is $t->response->decoded_content => $content_unregistered,
+      "content is same for unregistered email addresses";
+
+    $t->get_ok_email_link_like(qr/reset_password/);
     $t->text_contains('verified');
 
     $t->submit_form_ok(
@@ -344,6 +350,7 @@ subtest "password recovery marks email address verified" => sub {
       "email_verified IS NULL";
 
     $t->request_recovery_link_ok('test2@example.com');
+    $t->get_ok_email_link_like(qr/reset_password/);
     $t->submit_form_ok( { with_fields => { map { $_ => 'sUpEr s3cUr3' } 'password', 'password2' } },
         "submit password reset form" );
 

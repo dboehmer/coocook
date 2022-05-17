@@ -270,9 +270,7 @@ sub post_recover : POST Chained('/base') PathPart('recover') Args(0) Public {
 
         $c->visit( '/email/recovery_link', [ $user, $token ] );
     }
-    else {
-        $c->visit( '/email/recovery_unregistered', [$email_fc] );
-    }
+    else { }    # nothing actually happens, difference invisible
 
     $c->messages->info("Recovery link sent");
     $c->response->redirect( $c->uri_for_action('/index') );

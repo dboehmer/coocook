@@ -57,15 +57,6 @@ sub recovery_link : Private {
     );
 }
 
-sub recovery_unregistered : Private {
-    my ( $self, $c, $email ) = @_;
-
-    $c->stash(
-        email        => { to => $email },
-        register_url => $c->uri_for_action('/user/register'),
-    );
-}
-
 sub verify : Private {
     my ( $self, $c, $user, $token ) = @_;
 

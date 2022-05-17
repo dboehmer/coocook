@@ -265,17 +265,17 @@ sub _get_email_body {
 
     my $emails = $self->emails;
 
-    if ( @$emails == 0 ) {
-        carp "no emails stored";
-        return;
-    }
-
-    my $checked = $self->{coocook_checked_email_count} || 1;
-
     {
-        local $Carp::Internal{'Test::Coocook'} = 1;
-        local $Carp::Internal{'Test::Builder'} = 1;
-        local $Carp::Internal{'Test::More'}    = 1;
+        local $Carp::Internal{'Test2::API'}            = 1;
+        local $Carp::Internal{'Test2::Tools::Subtest'} = 1;
+        local $Carp::Internal{'Test::Coocook'}         = 1;
+
+        if ( @$emails == 0 ) {
+            carp "no emails stored";
+            return;
+        }
+
+        my $checked = $self->{coocook_checked_email_count} || 1;
 
         @$emails > $checked
           and carp "More than 1 email stored";
@@ -413,8 +413,6 @@ sub request_recovery_link_ok {
 
         $self->text_contains('Recovery link sent')
           or note $self->text;
-
-        $self->get_ok_email_link_like( qr/reset_password/, $name || "click email recovery link" );
     };
 }
 
