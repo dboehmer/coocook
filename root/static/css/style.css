@@ -158,18 +158,18 @@ main {
     padding-bottom: 12em; /*necessary for position of footer*/
 }
 
-a[href] {
+a[href]:not(.btn) {
     text-decoration:none;
     color: #333333;
 }
 
-main a[href] {
+main a[href]:not(.btn) {
     text-decoration:none;
     color: #4CAF50;
 }
 
-main a[href]:hover,
-main a[href]:active {
+main a[href]:hover:not(.btn),
+main a[href]:active:not(.btn) {
     color: #333333;
 }
 
