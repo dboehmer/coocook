@@ -1,5 +1,7 @@
 use Test2::V0;
 
+our $USER;
+BEGIN { $USER = $ENV{USER} ||= 'coocook_test_user' }
 use Coocook::Script::Passwd;
 
 use lib 't/lib';
@@ -7,8 +9,6 @@ use TestDB;
 use Test::Coocook;    # makes Coocook::Script::Passwd not read real config files
 
 plan(4);
-
-our $USER = $ENV{USER} ||= 'coocook_test_user';
 
 our @stdin;
 {
