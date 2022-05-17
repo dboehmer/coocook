@@ -1,0 +1,16 @@
+---
+# copy this file to the project root as coocook_local.yaml
+# to set your custom settings
+
+# custom application title
+name: My Coocook
+
+# by default only 1 user might register and becomes site admin
+enable_user_registration: true
+
+# comply to German law
+about_page_title: Impressum
+
+about_page_md: |
+    This is custom text
+    for your about page.
