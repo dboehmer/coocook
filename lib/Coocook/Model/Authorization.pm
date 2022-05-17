@@ -16,18 +16,19 @@ use Carp;
 my @rules = (
     {
         needs_input         => [],
-        rule                => sub { 1 },                             # currently no actual check required
-        grants_capabilities => [qw< view_organization view_user >],
+        rule                => sub { 1 },                   # currently no actual check required
+        grants_capabilities => [qw< view_organization >],
     },
     {
         needs_input         => ['user'],
-        rule                => sub { !!$_->{user} },                  # simply: is anyone logged in?
+        rule                => sub { !!$_->{user} },        # simply: is anyone logged in?
         grants_capabilities => [
             qw<
               view_dashboard create_project
               view_account_settings change_display_name change_password change_email
               view_user_organizations create_organization
               view_user_projects
+              view_user
               logout
             >
         ],

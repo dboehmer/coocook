@@ -62,8 +62,6 @@ sub show : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         projects          => \@projects,
         profile_admin_url => $c->uri_for_action_if_permitted( '/admin/user/show', [ $user->name ] ),
     );
-
-    $c->stash->{robots}->archive(0);
 }
 
 sub register : GET HEAD Chained('/base') Args(0) Does('~HasCSS') Does('~HasJS') Public {
