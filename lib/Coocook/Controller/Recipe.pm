@@ -99,6 +99,9 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
         add_ingredient_url => $c->project_uri( $self->action_for('add'),    $recipe->id ),
     );
 
+    $recipe->project->is_public
+      and $c->stash( public_url => $c->uri_for_action( '/browse/recipe/show', [ $recipe->id, $recipe->url_name ] ) );
+
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/recipe/reposition', $ingredient->{id} );
     }
