@@ -302,7 +302,7 @@ subtest "password recovery" => sub {
     my $user         = $t->schema->resultset('User')->find( { email_fc => 'test@example.com' } );
     my $new_password = 'new, nice & shiny';
 
-    ok !$user->check_password($new_password), "password is different before";
+    ok $user->check_password('P@ssw0rd'), "password is same as before";
 
     $t->request_recovery_link_ok('test@example.com');
 
@@ -321,7 +321,7 @@ subtest "password recovery" => sub {
     $t->text_like(qr/don.t match/);
 
     $user->discard_changes();
-    ok !$user->check_password($new_password), "password hasn't been changed";
+    ok $user->check_password('P@ssw0rd'), "password hasn't been changed";
 
     $t->submit_form_ok( { with_fields => { map { $_ => $new_password } 'password', 'password2' } },
         "submit new password twice" );
