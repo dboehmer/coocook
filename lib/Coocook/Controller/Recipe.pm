@@ -107,6 +107,7 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
       and $c->stash(
         import_url => $c->uri_for_action( '/browse/recipe/import', [ $recipe->id, $recipe->url_name ] ) );
 
+    push @{ $c->stash->{js} }, '/js/unsavedChanges.js';
 }
 
 sub new_recipe : GET HEAD Chained('submenu') PathPart('recipes/new')

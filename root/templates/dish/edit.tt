@@ -10,33 +10,33 @@
     <input type="submit" value="Delete dish">
 </form>
 
-<form action="[% dish.update_url %]" method="post">
-<p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
-<p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
-<p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn’t recalculate values!</em></p>
-<p>Tags: <input type="text" name="tags" value="[% dish.tags_joined %]"></p>
-<p><label for="prepare_at_meal">Prepare at meal:</label>
-    <select id="prepare_at_meal" name="prepare_at_meal">
-        <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
-[% FOR meal IN prepare_meals %]
-        <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
-[% END %]
-    </select>
-</p>
+<form class="confirmIfUnsavedChanges" action="[% dish.update_url %]" method="post">
+    <p>Name: <input type="text" name="name" value="[% dish.name | html %]"></p>
+    <p>Comment: <input type="text" name="comment" value="[% dish.comment %]"></p>
+    <p>Servings: <input type="number" name="servings" value="[% dish.servings %]"> <em>Changing here doesn’t recalculate values!</em></p>
+    <p>Tags: <input type="text" name="tags" value="[% dish.tags_joined %]"></p>
+    <p><label for="prepare_at_meal">Prepare at meal:</label>
+        <select id="prepare_at_meal" name="prepare_at_meal">
+            <option value="" [% 'selected' IF NOT dish.prepare_at_meal.defined %]>(none)</option>
+    [% FOR meal IN prepare_meals %]
+            <option value="[% meal.id %]" [% 'selected' IF dish.prepare_at_meal.id == meal.id %]>[% display_date(meal.date) %]: [% meal.name | html %]</option>
+    [% END %]
+        </select>
+    </p>
 
-<h3>Preparation</h3>
-<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation | html %]</textarea>
+    <h3>Preparation</h3>
+    <textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation | html %]</textarea>
 
-<h3>Description</h3>
-<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description | html %]</textarea>
+    <h3>Description</h3>
+    <textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description | html %]</textarea>
 
-<p><input type="submit" value="Update Dish"></p>
+    <p><input type="submit" value="Update Dish"></p>
 
-<h2><a name="ingredients">Ingredients</a></h2>
+    <h2><a name="ingredients">Ingredients</a></h2>
 
-[% INCLUDE 'includes/forms/ingredients_editor.tt' %]
+    [% INCLUDE 'includes/forms/ingredients_editor.tt' %]
 
-<input type="submit" value="Update Dish">
+    <input type="submit" value="Update Dish">
 </form>
 
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]

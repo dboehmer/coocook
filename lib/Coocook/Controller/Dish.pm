@@ -81,6 +81,8 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
     for my $ingredient ( @{ $c->stash->{ingredients} } ) {
         $ingredient->{reposition_url} = $c->project_uri( '/dish/reposition', $ingredient->{id} );
     }
+
+    push @{ $c->stash->{js} }, '/js/unsavedChanges.js';
 }
 
 sub delete : POST Chained('base') PathPart('delete') Args(0) RequiresCapability('edit_project') {
