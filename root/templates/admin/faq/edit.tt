@@ -9,10 +9,20 @@
     <p>HTML anchor name: <input type="text" name="anchor" pattern="([-?/:@._~!$&'()*+,;=a-zA-Z0-9]|%[0-9a-fA-F]{2})*" value="[% faq.anchor | html %]"></p>
 
     <h3>Question</h3>
-    <input class="with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
+    <div class="row mb-2">
+        <div class="col-sm-6 mb-sm-0 mb-2">
+            <input class="form-control with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
+        </div>
+    </div>
+    
 
     <h3>Answer</h3>
-    <textarea class="with-markdown-preview" name="answer">[% faq.answer_md | html %]</textarea>
+    <div class="row mb-2">
+        <div class="col-sm-6 mb-sm-0 mb-2">
+            <textarea class="form-control with-markdown-preview" name="answer" rows="10">[% faq.answer_md | html %]</textarea>
+        </div>
+    </div>
+    
 
     <p><input type="submit" value="[% faq.in_storage ? 'Update' : 'Create' %]"></p>
 </form>

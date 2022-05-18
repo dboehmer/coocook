@@ -25,10 +25,19 @@
 </p>
 
 <h3>Preparation</h3>
-<textarea class="with-markdown-preview" name="preparation" cols="80" rows="10">[% dish.preparation | html %]</textarea>
+<div class="row mb-2">
+    <div class="col-sm-6 mb-sm-0 mb-2">
+        <textarea class="form-control with-markdown-preview" name="preparation" rows="10">[% dish.preparation | html %]</textarea>
+    </div>
+</div>
+
 
 <h3>Description</h3>
-<textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% dish.description | html %]</textarea>
+<div class="row mb-2">
+    <div class="col-sm-6 mb-sm-0 mb-2">
+        <textarea class="form-control with-markdown-preview" name="description" rows="10">[% dish.description | html %]</textarea>
+    </div>
+</div>
 
 <p><input type="submit" value="Update Dish"></p>
 
