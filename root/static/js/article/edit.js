@@ -1,11 +1,14 @@
-$(function() {
+(() => {
     // check 'preorder' when changing preorder details
-    $('input[name="preorder_workdays"],input[name="preorder_servings"]').on( 'change click input', function() {
-        $('input[name="preorder"').prop('checked', true);
+    const preorderInputElem = document.getElementById('preorder');
+    const preorderWorkdaysInputElem = document.getElementById('preorder_workdays');
+    const preorderServingsInputElem = document.getElementById('preorder_servings');
+    [preorderWorkdaysInputElem, preorderServingsInputElem].forEach(elem => {
+        elem.addEventListener('input', () => preorderInputElem.checked = true);
     });
 
     // check 'shelf life' when changing shelf life period
-    $('input[name="shelf_life_days"]').on( 'change click input', function() {
-        $('input[name="shelf_life"').prop('checked', true);
-    });
-});
+    const shelfLifeInputElem = document.getElementById('shelf_life');
+    const shelfLifeDaysInputElem = document.getElementById('shelf_life_days');
+    shelfLifeDaysInputElem.addEventListener('input', () => shelfLifeInputElem.checked = true);
+})();
