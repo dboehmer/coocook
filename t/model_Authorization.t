@@ -5,7 +5,7 @@ use Coocook::Model::Authorization;
 use lib 't/lib/';
 use TestDB;
 
-plan(12);
+plan(11);
 
 my $db = TestDB->new;
 
@@ -44,7 +44,6 @@ is [ $authz->project_roles ] => bag {
 ok !$authz->capability_exists('foo');
 ok $authz->capability_exists('view_project');
 
-is [ sort $authz->capability_needs_input('view_user') ]    => [];
 is [ sort $authz->capability_needs_input('edit_project') ] => [ 'project', 'user' ];
 
 like dies { $authz->has_capability( foobar => {} ) }, qr/capability/, "invalid capability";

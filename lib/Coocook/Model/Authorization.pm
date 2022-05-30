@@ -15,13 +15,8 @@ use Carp;
 # - how to define lexical variables like $project before calling the anonymous sub?
 my @rules = (
     {
-        needs_input         => [],
-        rule                => sub { 1 },                   # currently no actual check required
-        grants_capabilities => [qw< view_organization >],
-    },
-    {
         needs_input         => ['user'],
-        rule                => sub { !!$_->{user} },        # simply: is anyone logged in?
+        rule                => sub { !!$_->{user} },    # simply: is anyone logged in?
         grants_capabilities => [
             qw<
               view_dashboard create_project
@@ -29,6 +24,7 @@ my @rules = (
               view_user_organizations create_organization
               view_user_projects
               view_user
+              view_organization
               logout
             >
         ],
