@@ -9,9 +9,9 @@
     passwordElem.parentElement.appendChild(meterElem);
 
     passwordElem.addEventListener('input', () => {
-        const password = passwordElem.value;
+        let password = passwordElem.value;
 
-        const stars = password == '' ? 0 : ( zxcvbn(password).score + 1 );
+        let stars = password == '' ? 0 : ( zxcvbn(password).score + 1 );
 
         let html = 'strength: ';
         html += '&#x2605;'.repeat(             stars );
@@ -26,8 +26,8 @@
 
     [passwordElem, password2Elem].forEach(item => {
         item.addEventListener('input', () => {
-            const password  = passwordElem.value;
-            const password2 = password2Elem.value;
+            let password  = passwordElem.value;
+            let password2 = password2Elem.value;
 
             if( password.length || password2.length ) {
                 comparatorElem.innerHTML = password == password2 ? "matches" : "doesn't match";

@@ -10,7 +10,7 @@
 
             // event handler
             articleElem.onchange = () => {
-                const data_units = articleElem.options[articleElem.selectedIndex].getAttribute('data-units');
+                let data_units = articleElem.options[articleElem.selectedIndex].getAttribute('data-units');
 
                 let units = data_units.split(',');
                 let units_hash = {};
