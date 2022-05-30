@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "@material-ui/icons": "./@material-ui/icons.js",
+    "bootstrap/dist/css/bootstrap.min.css": "./bootstrap/dist/css/bootstrap.min.css",
+    "react": "./react.js",
+    "react-bootstrap": "./react-bootstrap.js",
+    "react-dnd": "./react-dnd.js",
+    "react-dnd-html5-backend": "./react-dnd-html5-backend.js",
+    "react-dom": "./react-dom.js"
+  }
+}

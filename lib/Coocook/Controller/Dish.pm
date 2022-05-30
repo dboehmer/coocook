@@ -2,6 +2,7 @@ package Coocook::Controller::Dish;
 
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
+use JSON;
 
 BEGIN { extends 'Coocook::Controller' }
 
@@ -49,6 +50,11 @@ sub edit : GET HEAD Chained('base') PathPart('') Args(0) RequiresCapability('vie
 
     $c->stash(
         dish => {
+            project => {
+                id => $c->project->id,
+                name => $c->project->name,
+            },
+            id => $dish->id,
             name        => $dish->name,
             comment     => $dish->comment,
             servings    => $dish->servings,
@@ -226,6 +232,28 @@ sub reposition : POST Chained('/project/base') PathPart('dish_ingredient/reposit
     }
 
     $c->detach( redirect => [ $ingredient->dish_id, '#ingredients' ] );
+}
+
+sub ingredients : GET HEAD Does('~Ajax') Chained('base') {
+    my ( $self, $c ) = @_;
+
+    my $ingredients = $c->model('Ingredients')->new(
+        project     => $c->project,
+        ingredients => $c->stash->{dish}->ingredients,
+    );
+
+    $c->stash->{json_data} = $ingredients->for_ingredients_editor;
+
+    #$c->forward('View::JSON');
+}
+
+sub updateAJAX : POST PathPart('ingredient/update') Does('~Ajax') Chained('base') RequiresCapability('edit_project') {
+    my ( $self, $c ) = @_;
+    my $json = $c->req->body_data;
+    my $ingredient = $json->{ingredient} || die "wrong JSON body!";
+
+
+    $c->stash->{json_data} = { id => $ingredient->{id} };
 }
 
 sub redirect : Private {

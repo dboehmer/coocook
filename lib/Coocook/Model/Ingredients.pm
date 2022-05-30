@@ -72,18 +72,50 @@ sub as_arrayref {
         while ( my $ingredient = $ingredients->next ) {
             push @ingredients,
               {
-                id      => $ingredient->id,
-                prepare => $ingredient->format_bool( $ingredient->prepare ),
-                value   => $ingredient->value * $self->factor,
-                comment => $ingredient->comment,
-                unit    => $units{ $ingredient->unit_id },
-                article => $articles{ $ingredient->article_id },
+                id       => $ingredient->id,
+                prepare  => $ingredient->format_bool( $ingredient->prepare ),
+                position => $ingredient->position,
+                value    => $ingredient->value * $self->factor,
+                comment  => $ingredient->comment,
+                unit     => $units{ $ingredient->unit_id },
+                article  => $articles{ $ingredient->article_id },
               };
         }
     }
 
     $self->all_articles($articles);
     $self->all_units($units);
+
+    return \@ingredients;
+}
+
+sub for_ingredients_editor {
+    my $self = shift;
+
+    my $ingredients = $self->as_arrayref;
+
+    my @ingredients = map {
+        my $unit              = $_->{unit};
+        my @convertible_units = $unit->convertible_into->all;
+
+        # transform Result::Unit objects into plain hashes
+        for ( $unit, @convertible_units ) {
+            my $u = $_;
+
+            $_ = { map { $_ => $u->get_column($_) } qw<id short_name long_name> };
+        }
+
+        {
+            id           => $_->{id},
+            prepare      => $_->{prepare},
+            position     => $_->{position},
+            value        => $_->{value},
+            comment      => $_->{comment},
+            article      => { name => $_->{article}->name, comment => $_->{article}->comment },
+            current_unit => $unit,
+            units        => \@convertible_units,
+        }
+    } @$ingredients;
 
     return \@ingredients;
 }

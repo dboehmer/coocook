@@ -1,0 +1,49 @@
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-items: center;
+}
+
+.align-start {
+    align-items: start;
+}
+
+.justify-start {
+    justify-items: start;
+}
+
+.grid {
+    display: grid;
+}
+
+.scrollable-y {
+    overflow-y: scroll;
+    scrollbar-color: black;
+    scrollbar-width: thin;
+}
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ml-truncate {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}

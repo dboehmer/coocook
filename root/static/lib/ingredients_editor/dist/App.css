@@ -1,0 +1,8 @@
+a {
+    text-decoration: none;
+    text-align: center;
+}
+
+::placeholder {
+    color: gray;
+}
