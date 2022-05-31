@@ -123,14 +123,12 @@ subtest "static URIs" => sub {
 
 subtest "robots meta tag" => sub {
     $t->get_ok('/');
-    $t->content_lacks('noarchive');
-    $t->content_lacks('noindex');
+    $t->robots_flags_ok( { archive => 1, index => 1 } );
 
     subtest "404 pages" => sub {
         $t->get('/doesnt_exist');
         $t->status_is(404);
-        $t->content_contains('noarchive');
-        $t->content_contains('noindex');
+        $t->robots_flags_ok( { archive => 0, index => 0 } );
     };
 
     subtest "bad request pages" => sub {
@@ -138,8 +136,7 @@ subtest "robots meta tag" => sub {
 
         $t->get_ok('/register');
         $t->submit_form_fails( { with_fields => { username => '' } }, "submit form" );
-        $t->content_contains('noarchive');
-        $t->content_contains('noindex');
+        $t->robots_flags_ok( { archive => 0, index => 0 } );
     };
 
     subtest "internal server error" => sub {
@@ -151,13 +148,11 @@ subtest "robots meta tag" => sub {
 
         $t->get_ok('/internal_server_error');
         $t->status_is(200);
-        $t->content_contains('noarchive');
-        $t->content_contains('noindex');
+        $t->robots_flags_ok( { archive => 0, index => 0 } );
     };
 
     $t->get_ok('/user/john_doe');
-    $t->content_contains('noarchive');
-    $t->content_lacks('noindex');
+    $t->robots_flags_ok( { archive => 0, index => 1 } );
 
     subtest "under simulation of fatal mistake in permission" => sub {
         $t->get('/project/2/Other-Project');
@@ -171,16 +166,14 @@ subtest "robots meta tag" => sub {
         $t->reload_ok();
         $t->status_is(200);                                                     # not the login page
 
-        $t->content_contains('noarchive');
-        $t->content_contains('noindex');
+        $t->robots_flags_ok( { archive => 0, index => 0 } );
     };
 
     $t->max_redirect(1);
 
     $t->login_ok( 'john_doe', 'P@ssw0rd' );
     $t->get_ok('/');
-    $t->content_contains('noarchive');
-    $t->content_contains('noindex');
+    $t->robots_flags_ok( { archive => 0, index => 0 } );
 };
 
 subtest "Redirect URL parameter" => sub {
