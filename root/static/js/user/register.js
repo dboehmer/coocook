@@ -1,17 +1,15 @@
-$( function() {
-    $('input[name="url"]').attr('tabindex', -1);
+(() => {
+    document.querySelector('input[name="url"]')?.setAttribute('tabindex', -1);
 
-    var MAX_STARS = 5;
+    const MAX_STARS = 5;
 
-    let $password  = $('input[name="password"]');
-    let $password2 = $('input[name="password2"]');
-    let $meter = $( '<span>' );
+    const passwordElem  = document.querySelector('input[name="password"]');
+    const password2Elem = document.querySelector('input[name="password2"]');
+    const meterElem =  document.createElement('span');
+    passwordElem.parentElement.appendChild(meterElem);
 
-    $meter.insertAfter($password);
-    $meter.before('&nbsp;');
-
-    $password.on( 'change input', function() {
-        let password = $password.val();
+    passwordElem.addEventListener('input', () => {
+        let password = passwordElem.value;
 
         let stars = password == '' ? 0 : ( zxcvbn(password).score + 1 );
 
@@ -19,26 +17,24 @@ $( function() {
         html += '&#x2605;'.repeat(             stars );
         html += '&#x2606;'.repeat( MAX_STARS - stars );
 
-        $meter.html( html );
-        $meter.attr( 'title', stars + ' of ' + MAX_STARS );
+        meterElem.innerHTML = html;
+        meterElem.setAttribute( 'title', stars + ' of ' + MAX_STARS );
     });
 
-    $password.change();
+    const comparatorElem = document.createElement('span');
+    password2Elem.parentElement.appendChild(comparatorElem);
 
-    let $comparator = $('<span>');
+    [passwordElem, password2Elem].forEach(item => {
+        item.addEventListener('input', () => {
+            let password  = passwordElem.value;
+            let password2 = password2Elem.value;
 
-    $comparator.insertAfter($password2);
-    $comparator.before('&nbsp;');
-
-    $password.add($password2).on('change input', function() {
-        let password  = $password .val();
-        let password2 = $password2.val();
-
-        if( password.length || password2.length ) {
-            $comparator.text( password == password2 ? "matches" : "doesn't match" );
-        }
-        else {
-            $comparator.text('');
-        }
+            if( password.length || password2.length ) {
+                comparatorElem.innerHTML = password == password2 ? "matches" : "doesn't match";
+            }
+            else {
+                comparatorElem.innerHTML = '';
+            }
+        });
     });
-} );
+})();

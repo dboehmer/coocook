@@ -1,42 +1,30 @@
-$(function() {
+(() => {
 
     // reduce options of <select> inputs for unit to units applicable to selected article
-    $('select[name=article]').each(function() {
-        let $article = $(this);
-        let $unit    = $article.closest('form').find('select[name=unit]');
+    const articleElems = document.getElementsByName('article');
+    Array.from(articleElems).forEach(articleElem => {
+        const unitElem = articleElem.closest('form').querySelector('select[name=unit]');
 
-        if( $unit.length == 1 ) {
-            let $units = $unit.find('option');
+        if( unitElem.type == "select-one" ) {
+            const unitOptionElems = unitElem.options;
 
             // event handler
-            $article.change(function() {
-                let data_units = $article.find('option:selected').attr('data-units');
-
-                if( ! data_units ) {    // no 'data-units' attribute, e.g. for "choose article" placeholder
-                    $units.show();
-                    return;
-                }
+            articleElem.onchange = () => {
+                let data_units = articleElem.options[articleElem.selectedIndex].getAttribute('data-units');
 
                 let units = data_units.split(',');
                 let units_hash = {};
                 units.forEach(function(unit) { units_hash[unit] = true } );
 
-                $units.each(function() {
-                    let $unit = $(this);
-                    $unit.toggle( Boolean( units_hash[ $unit.attr('value') ] ) );
-                });
-
-                $units.prop('selected', false);
-
-                // select first visible option ( :visible does not work properly for select options)
-                $units.each(function () {
-                    if ($(this).css('display') != 'none') {
-                        $(this).prop('selected', true);
-                        return false;
+                Array.from(unitOptionElems).forEach(unitOptionElem => {
+                    if( Boolean( units_hash[ unitOptionElem.value ] ) ) {
+                        unitOptionElem.style.display = "block";
+                        unitOptionElem.selected = true;
+                    } else {
+                        unitOptionElem.style.display = "none";
                     }
                 });
-            })
-            .change();    // trigger on page load
+            }
         }
     });
 
@@ -75,4 +63,4 @@ $(function() {
         }
     });
 
-});
+})();
