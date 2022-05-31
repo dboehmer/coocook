@@ -18,10 +18,12 @@
 
                 Array.from(unitOptionElems).forEach(unitOptionElem => {
                     if( Boolean( units_hash[ unitOptionElem.value ] ) ) {
+                        unitOptionElem.disabled = false; // if option was disabled, it must be enabled
                         unitOptionElem.style.display = "block";
                         unitOptionElem.selected = true;
                     } else {
                         unitOptionElem.style.display = "none";
+                        unitOptionElem.disabled = true; // unable option for selection
                     }
                 });
             }
