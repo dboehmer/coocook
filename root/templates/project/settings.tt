@@ -1,10 +1,22 @@
 [% escape_title( "Project settings", project.name ) %]
 
-<form method="post" action="[% update_url %]">
-    <textarea class="with-markdown-preview" name="description" cols="80" rows="10">[% project.description | html %]</textarea>
-
-    <input type="submit" value="Update description">
-</form>
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Description</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <form method="post" action="[% update_url %]" class="col">
+            <div class="row mb-2">
+                <div class="col-sm-6 mb-sm-0 mb-2">
+                    <textarea class="form-control with-markdown-preview" name="description" rows="10">[% project.description | html %]</textarea>
+                </div>
+            </div>
+            <input type="submit" value="Update description">
+            </form>
+        </div>
+    </div>
+</div>
 
 <form action="[% rename_url %]" method="post">
     <div class="card">

@@ -13,7 +13,11 @@
 
 <h3>Description</h3>
 <form method="post" action="[% update_url %]">
-    <p><textarea class="with-markdown-preview" name="description_md">[% organization.description_md | html %]</textarea></p>
+    <div class="row mb-2">
+        <div class="col-sm-6 mb-sm-0 mb-2">
+            <textarea class="form-control with-markdown-preview" name="description_md" rows="10">[% organization.description_md | html %]</textarea>
+        </div>
+    </div>
     <p><input type="submit" value="Update"></p>
 </form>
 [% ELSE %]

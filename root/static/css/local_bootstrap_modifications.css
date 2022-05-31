@@ -86,8 +86,12 @@ markdown preview
     overflow: auto;
     background-color: rgb(240,240,240);
     border: 1px solid white;
-    border-radius:4px;
-    margin-left:1em;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+}
+
+input.with-markdown-preview {
+  height: 100%;
 }
 
 

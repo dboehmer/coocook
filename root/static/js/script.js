@@ -41,19 +41,38 @@ $(function() {
     });
 
     // show Markdown preview right of <textarea> inputs with class .with-markdown-preview
-    $('textarea.with-markdown-preview, input[type="text"].with-markdown-preview').each(function() {
-        let $input   = $(this);
-        let $row     = $('<div>', {class: 'row'}).insertBefore($input);
-        let $preview = $('<div>', {class: 'markdown-preview'}).appendTo($row);
+    document.querySelectorAll("textarea.with-markdown-preview, input[type=text].with-markdown-preview").forEach( elem => {
+        let row = elem.parentNode.parentNode;
+        let col = document.createElement("div");
+        col.className = "col-sm-6";
+        let preview = document.createElement("div");
+        preview.className = "markdown-preview";
 
-        $input.detach().prependTo($row);
+        col.append(preview)
+        row.append(col);
 
-        $input.addClass('col');
-        $preview.addClass('col');
+        elem.addEventListener("input", e => {
+            preview.innerHTML = marked(e.target.value);
+        });
 
-        $input.on('change input', function() {
-            $preview.html( marked( $input.val() ) );
-        }).change();
+        elem.dispatchEvent(new Event("input"));
+
+        if (elem.tagName === "TEXTAREA") {
+            let obs = new ResizeObserver(() => {
+                let height = elem.clientHeight;
+                // Adding 2px to height to prevent infinity loop of resizing
+                preview.style.height = `${height + 2}px`;
+            });
+
+            obs.observe(elem);
+
+            const syncScrolling = (e, linkedElem) => {
+                linkedElem.scrollTop = e.currentTarget.scrollTop;
+            }
+
+            elem.addEventListener("scroll", e => syncScrolling(e, preview));
+            preview.addEventListener("scroll", e => syncScrolling(e, elem));
+        }
     });
 
 });
