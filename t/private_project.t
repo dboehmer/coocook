@@ -9,6 +9,9 @@ my $project = $t->schema->resultset('Project')->find(1);
 
 my $username = $project->owner->name;
 
+$t->get('/');
+$t->login_ok( 'john_doe', 'P@ssw0rd' );
+
 $t->get_ok("/user/$username");
 $t->text_contains( $project->name );
 

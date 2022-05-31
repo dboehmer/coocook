@@ -151,9 +151,6 @@ subtest "robots meta tag" => sub {
         $t->robots_flags_ok( { archive => 0, index => 0 } );
     };
 
-    $t->get_ok('/user/john_doe');
-    $t->robots_flags_ok( { archive => 0, index => 1 } );
-
     subtest "under simulation of fatal mistake in permission" => sub {
         $t->get('/project/2/Other-Project');
         $t->status_is(302);    # actually the login page
