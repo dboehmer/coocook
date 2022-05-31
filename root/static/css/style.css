@@ -173,7 +173,7 @@ main a[href]:active {
     color: #333333;
 }
 
-a.btn-secondary {
+a.btn-secondary, a.btn-primary {
     color: #fff !important;
 }
 
