@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<form method="post" action="[% update_url %]">
+<form class="confirmIfUnsavedChanges" method="post" action="[% update_url %]">
 
     <div class="row">
         <div class="col-sm-12 py-3">
