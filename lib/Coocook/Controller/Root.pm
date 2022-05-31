@@ -96,7 +96,6 @@ sub auto : Private {
             '/css/style.css',
         ],
         js => [
-            '/lib/jquery-3.5.1' .                      ( $c->debug ? '.js' : '.min.js' ),
             '/lib/bootstrap-4.4.1-dist/js/bootstrap' . ( $c->debug ? '.js' : '.min.js' ),
             '/lib/marked/marked' .                     ( $c->debug ? '.js' : '.min.js' ),
             '/js/script.js',
