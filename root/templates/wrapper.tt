@@ -44,7 +44,7 @@
 
 
                 <div class="col-6 login_logout d-flex align-items-center">
-                    <div class="w-100 py-2 text-right">
+                    <div class="w-100 py-2 text-end">
 [% IF user %]
                         <h4>Welcome to [% name | html %], <a href="[% user_url %]">[% user.display_name | html %]</a></h4>
 [% END %]

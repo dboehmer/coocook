@@ -57,7 +57,7 @@
                         
                     </div>
                     
-                    <div class="offset-sm-2 col-sm-10 py-3 text-right">
+                    <div class="offset-sm-2 col-sm-10 py-3 text-end">
                         <button type="reset" class="btn btn-secondary mr-1" value="Reset">Reset</button>
                         <button type="submit" class="btn btn-primary">Update Recipe</button>
                     </div>
