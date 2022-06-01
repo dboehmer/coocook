@@ -42,7 +42,7 @@
         row.append(col);
 
         elem.addEventListener("input", e => {
-            preview.innerHTML = marked(e.target.value);
+            preview.innerHTML = marked.parse(e.target.value);
         });
 
         elem.dispatchEvent(new Event("input"));
