@@ -16,161 +16,69 @@ html {
 body {
     margin: 0;
     position: relative;
-    height: 100%;
-    color: #333333;
+    color: var(--bs-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-#container {
-    min-height: 100%;
-    position: relative;
+a {
+    text-decoration: none;
+    color: var(--bs-dark);
+}
+
+a.hov-under:hover,
+a.hov-under:focus,
+button.alert-link:hover,
+button.alert-link:focus,
+a.alert-link:hover,
+a.alert-link:focus {
+    text-decoration: underline;
 }
 
 /******** header part ********/
 
 /*** general part ***/
-
-header {
-    margin: 0;
-    background-color: #4CAF50;
-}
-
-header nav ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-header nav li {
-    display: inline;
-}
-
-/* "Logout" must be button for POST request but style like link */
-header nav input[name="logout"]:hover,
-header nav input[name="logout"] {
-    border: 0;
-    font-family: inherit;
-    font-size:   inherit;
-    cursor: pointer;
-}
-
-/*
- * stop Firefox adding 2px to the submit button's height
- * see https://stackoverflow.com/questions/12288175/firefox-adds-2px-padding-in-a-submit-button
- */
-header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
-
 header h1 {
     font-size: 2.5em;
 }
 
-header p {
-    margin: 0;
-    padding: 0 0.5em 0 0.5em;
-    color: #f5f5ef;
+header a {
+    color: inherit;
 }
 
-header p a[href] {
-    color: #f5f5ef;
-}
-
-/*** user nav ***/
-header #user_nav {
-    height: 7em;
-    padding: 0 1.5em 0 1.5em;
-    display: flex;
-    justify-content: space-between;
-}
-
-header #h1-div {
-    align-self: center;
-}
-
-header #user_nav li {
-    padding-left: 1em;
-}
-
-header #user_nav a {
-    padding: 0;
-}
-
-header #user_nav h4 a:hover,
-header #user_nav h4 a:active {
-    color: #333333;
-}
-
-header #user_nav a:hover,
-header #user_nav a:active {
-    color: #f5f5ef;
-}
-
-header #user_nav ul {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-header #user_nav ul p + div {
-    margin-top: 1em;
-}
-
-header #user_nav ul div:only-child {
-    margin-top: 3em;
-}
-
-header #user_nav h4 {
-    margin: 0;
-    padding: 0 0.5em 0 0.5em;
-    color: #f5f5ef;
-}
-
-header #user_nav h4 a {
-    color: #f5f5ef;
-}
-
-header nav input[name="logout"] {
-    background-color: #4CAF50;
-    color: #333333;
-}
-
-header nav input[name="logout"]:active,
-header nav input[name="logout"]:hover {
-    color: #f5f5ef;
-
-    box-shadow:         0px 0px 0px grey !important;
+header a:hover,
+header a:focus {
+    color: inherit;
 }
 
 /*** project nav ***/
+#project_nav .nav-link {
+    color: var(--bs-light);
+}
 
-header #project_nav a:hover {
-    background-color:#f5f5ef;
-    color: #333333;
+#project_nav a:hover,
+#project_nav a:focus {
+    background: var(--bs-light);
+    color: var(--bs-dark);
 }
 
 /*** submenu nav ***/
-header #submenu_nav a:hover,
-header #submenu_nav a.current {
-    color: #f5f5ef !important;
+#submenu_nav a:hover,
+#submenu_nav a.active,
+#submenu_nav a:focus {
+    color: var(--bs-light) !important;
+    background: var(--cc-green-dark);
 }
 
 /******** content part ********/
-
-main {
-    padding: 1.5em;
-    padding-bottom: 12em; /*necessary for position of footer*/
+main a {
+    color: var(--cc-green);
 }
 
-a[href] {
-    text-decoration:none;
-    color: #333333;
-}
-
-main a[href] {
-    text-decoration:none;
-    color: #4CAF50;
-}
-
-main a[href]:hover,
-main a[href]:active {
-    color: #333333;
+main a:hover,
+main a:focus {
+    color: var(--bs-dark);
 }
 
 a.btn-secondary {
@@ -202,17 +110,11 @@ code {
     padding:       0.25em;
 }
 
-.message {
-    border: 2px solid;
-    border-radius: 0.5em;
-    padding: 0 0.5em;
-    margin:  0.5em 0;
+button.alert-link {
+    background: transparent;
+    border: none;
+    padding: 0;
 }
-
-.message-debug { background-color: #f5f5ef;                          color: DarkGrey; }
-.message-info  { background-color: #dfd;                             color: DarkGreen; }
-.message-warn  { background-color: orange; border-color: DarkOrange; color: black; }
-.message-error { background-color: #f55;   border-color: DarkRed;    color: black; }
 
 .inline,
 .inline * {
@@ -329,37 +231,11 @@ input[type=number].editable-content:not(:focus) {
 }
 
 /******** footer part ********/
-
-footer {
-    background-color: #333333;
-    color: #f5f5ef;
-    position: absolute; /*necessary to position it at the bottom in all cases*/
-    bottom: 0;
-    width: 100%;
-    padding: 0.5em 1em 0.5em 1em;
-    margin: 0 auto;
-    display: inline-block;
-    line-height: 1.5;
-    height: 12em; /*adjust if there are additional links in the footer*/
-}
-
-footer nav ul {
-    list-style-type: none;
-    float: left;
-}
-
-footer nav ul:first-child {
-    padding-left: 10px;
-}
-
-footer nav h4 {
-    margin: 0;
-}
-
-footer a[href] {
+footer a {
     color: inherit;
 }
 
-footer a[href]:hover {
+footer a:hover {
     text-decoration: underline;
+    color: inherit;
 }
