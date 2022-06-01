@@ -34,52 +34,6 @@
 <div id="container">
     <header>
 
-        <div class="container-fluid bg-header">
-            <div class="row">
-                <div class="col-6 d-flex align-items-center">
-                    <a class="navbar-brand py-3 px-4" href="[% homepage_url %]">
-                        <h1 class="text-dark">[% name | html %]</h1>
-                    </a>
-                </div>
-
-
-                <div class="col-6 login_logout d-flex align-items-center">
-                    <div class="w-100 py-2 text-end">
-[% IF user %]
-                        <h4>Welcome to [% name | html %], <a href="[% user_url %]">[% user.display_name | html %]</a></h4>
-[% END %]
-
-[% IF logout_url %]
-    [% IF project %]
-                        <p>You’re currently working on <a href="[% project_urls.project %]">project [% project.name | html%]</a></p>
-    [% ELSE %]
-                        <p>Please create or choose a project now.</p>
-    [% END %]
-[% END %]
-
-[% IF login_url %]
-                        <a class="pl-2" href="[% login_url %]"><i class="material-icons">person</i> Sign in</a>
-[% END %]
-
-[% IF register_url %]
-                        <a class="pl-2" href="[% register_url %]">Sign up</a>
-[% END %]
-
-[% IF settings_url %]
-                        <a class="pl-2" href="[% settings_url %]"><i class="material-icons">settings</i> Settings</a>
-[% END %]
-
-[% IF logout_url %]
-                        <form class="inline pl-2" method="post" action="[% logout_url %]">
-                            <button name="logout"><i class="material-icons">exit_to_app</i> Sign out</button>
-                        </form>
-[% END %]
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="container-fluid p-0 m-0">
             <div class="row p-0 m-0">
                 <div class="col-12 p-0 m-0 bg-dark">
@@ -90,35 +44,73 @@
                             </button>
                         </div>
 
-
-
                         <div class="collapse navbar-collapse flex-column " id="navbar">
-                            <ul class="navbar-nav justify-content-left p-0 m-0 w-100 bg-dark py-1 px-2" id="project_nav">
-                                <span class="pl-4"></span>
-                                <li class="nav-item group-end"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
-
+                            <div class="navbar-nav d-flex justify-content-between align-items-center w-100 bg-dark py-2 px-2">
+                                <div class="d-flex gap-2 mx-2">
+                                    <a class="navbar-brand text-white fw-bold" href="[% homepage_url %]">[% name | html %]</a>
+                                    <ul class="d-flex p-0 m-0" id="project_nav">
+                                        <li class="nav-item group-end"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
 [% IF project_urls %]
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Project</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Project</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
 [% END %]
-                            </ul>
+                                    </ul>
+                                </div>
+                                <div class="d-flex gap-2 mx-2">
+[% IF login_url %]
+                                    <a class="btn btn-sm text-white" href="[% login_url %]">Sign in</a>
+[% END %]
+[% IF register_url %]
+                                    <a class="btn btn-outline-light btn-sm" id="sign-up-btn" href="[% register_url %]">Sign up</a>
+[% END %]
 
-                            <ul class="navbar-nav justify-content-left w-100 bg-header py-1 px-2" id="submenu_nav">
-                                <span class="pl-4"></span>
+[% IF user %]
+                                    <div class="dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="material-icons">person</i> [% user.display_name | html %]
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                            <li><a class="dropdown-item" href="[% user_url %]">Profile</a></li>
+    [% IF settings_url %]
+                                            <li><a class="dropdown-item" href="[% settings_url %]">Settings</a></li>
+    [% END %]
+    [% IF logout_url %]
+                                            <li><form class="px-3 py-2" method="post" action="[% logout_url %]">
+                                                <button class="btn btn-sm btn-outline-light w-100" name="logout">Sign out</button>
+                                            </form></li>
+    [% END %]
+                                        </ul>
+                                    </div>
+[% END %]
+
+                                </div>
+                            </div>
+
+                            <div class="navbar-nav d-flex justify-content-between align-items-center w-100 bg-header px-2" id="submenu_nav">
+                                <ul class="d-flex p-0 m-0">
 [% FOR item IN submenu_items;
     IF item.url %]
-                                <li class="nav-item"><a class="nav-link text-dark" href="[% item.url %]">[% item.text %]</a></li>
+                                    <li class="nav-item"><a class="nav-link text-dark" href="[% item.url %]">[% item.text %]</a></li>
     [% ELSE; # TODO setting href="" doesn’t work if page is response to POST request and URL isn’t available via GET %]
-                                <li class="nav-item active"><a class="nav-link" href="" class="current">[% item.text %]</a></li>
+                                    <li class="nav-item active"><a class="nav-link" href="" class="current">[% item.text %]</a></li>
     [% END;
 END %]
-                            </ul>
-
+                                </ul>
+                                <div>
+[% IF logout_url %]
+    [% IF project %]
+                                    <p class="text-dark">You’re currently working on <a class="text-dark" href="[% project_urls.project %]">project [% project.name | html%]</a></p>
+    [% ELSE %]
+                                    <p class="text-dark my-2">Please create or choose a project now.</p>
+    [% END %]
+[% END %]
+                                </div>
+                            </div>
                         </div>
 
                     </nav>
@@ -160,7 +152,7 @@ END %]
             <div class="row">
                 <div class="col-md">
                     <h3><span class="tiny">Browse</span></h3>
-                    <ul class="non-intended small">
+                    <ul class="list-unstyled small">
                         <li><a href="[% recipes_url %]">Recipes</a></li>
                         <li><a href="[% projects_url %]">Projects</a></li>
                     </ul>
