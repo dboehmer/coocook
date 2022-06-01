@@ -1,10 +1,10 @@
 [% title = "Statistics" %]
 
 <ul class="non-intended">
-    <li><span class="badge badge-primary">approx. [% numerus(statistics.dishes_served,  'dish', 'dishes', { nice_number => 1 } ) %]</span> served until today</li>
-    <li><span class="badge badge-primary">approx. [% numerus(statistics.dishes_planned, 'dish', 'dishes', { nice_number => 1 } ) %]</span> planned to be served</li>
-    <li><span class="badge badge-primary">approx. [% numerus(statistics.recipes, 'recipe', 'different recipes', { nice_number => 1 } ) %]</span></li>
-    <li><span class="badge badge-primary">[% numerus(statistics.public_projects, 'project', 'projects', { infix => 'public' } ) %]</span></li>
-    <li><span class="badge badge-primary">[% numerus(statistics.users, 'user', 'users') %]</span></li>
-    <li><span class="badge badge-primary">[% numerus(statistics.organizations, 'organization', 'organizations') %]</span></li>
+    <li><span class="badge bg-primary">approx. [% numerus(statistics.dishes_served,  'dish', 'dishes', { nice_number => 1 } ) %]</span> served until today</li>
+    <li><span class="badge bg-primary">approx. [% numerus(statistics.dishes_planned, 'dish', 'dishes', { nice_number => 1 } ) %]</span> planned to be served</li>
+    <li><span class="badge bg-primary">approx. [% numerus(statistics.recipes, 'recipe', 'different recipes', { nice_number => 1 } ) %]</span></li>
+    <li><span class="badge bg-primary">[% numerus(statistics.public_projects, 'project', 'projects', { infix => 'public' } ) %]</span></li>
+    <li><span class="badge bg-primary">[% numerus(statistics.users, 'user', 'users') %]</span></li>
+    <li><span class="badge bg-primary">[% numerus(statistics.organizations, 'organization', 'organizations') %]</span></li>
 </ul>
