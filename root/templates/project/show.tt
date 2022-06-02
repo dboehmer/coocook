@@ -1,6 +1,6 @@
+[% IF project.archived %]
 <div class="alert alert-success">
-[% IF project.archived;
-    IF can_unarchive %]
+    [% IF can_unarchive %]
     <form id="unarchive" method="post" action="[% project_urls.unarchive %]"></form>
     <p class="m-0">
         📁 This project is archived (read-only). You can
@@ -8,8 +8,10 @@
     </p>
     [% ELSE %]
     <p class="m-0">📁 This project has been archived.</p>
-    [% END;
-ELSIF can_edit %]
+    [% END %]
+</div>
+[% ELSIF can_edit %]
+<div class="alert alert-success">
     <p class="m-0">
     [% IF inventory.quantities == 0
         AND inventory.articles == 0
@@ -45,9 +47,9 @@ ELSIF can_edit %]
         </form>
     [% ELSE %]
         Once you’ve finished this project you can <a class="alert-link" href="[% project_urls.print %]">print documents</a> to take action.
-    [% END;
-END %]
+    [% END %]
 </div>
+[% END %]
 
 [% INCLUDE 'print/project.tt' %]
 
