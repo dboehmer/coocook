@@ -63,10 +63,10 @@
                                 </div>
                                 <div class="d-flex gap-2 mx-2">
 [% IF login_url %]
-                                    <a class="btn btn-sm text-white" href="[% login_url %]">Sign in</a>
+                                    <a class="btn btn-sm dark-link" href="[% login_url %]">Sign in</a>
 [% END %]
 [% IF register_url %]
-                                    <a class="btn btn-outline-light btn-sm" id="sign-up-btn" href="[% register_url %]">Sign up</a>
+                                    <a class="btn btn-outline-light btn-sm dark-link" href="[% register_url %]">Sign up</a>
 [% END %]
 
 [% IF user %]
@@ -153,8 +153,8 @@ END %]
                 <div class="col-md">
                     <h3><span class="tiny">Browse</span></h3>
                     <ul class="list-unstyled small">
-                        <li><a href="[% recipes_url %]">Recipes</a></li>
-                        <li><a href="[% projects_url %]">Projects</a></li>
+                        <li><a class="dark-link" href="[% recipes_url %]">Recipes</a></li>
+                        <li><a class="dark-link" href="[% projects_url %]">Projects</a></li>
                     </ul>
                 </div>
 
@@ -162,10 +162,10 @@ END %]
                     <h3><span class="tiny">Get Help</span></h3>
                     <ul class="list-unstyled small">
 [% IF faq_url %]
-                        <li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
+                        <li><a class="dark-link" href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
 [% END %]
 [% FOR help_link IN help_links %]
-                        <li><a href="[% help_link.url %]">[% help_link.title | html %]</a></li>
+                        <li><a class="dark-link" href="[% help_link.url %]">[% help_link.title | html %]</a></li>
 [% END %]
                     </ul>
 
@@ -173,13 +173,13 @@ END %]
 
 [% IF admin_url %]
                 <div class="col-md">
-                    <h3><span class="tiny"><a href="[% admin_url %]">Admin</a></span></h3>
+                    <h3><span class="tiny"><a class="dark-link" href="[% admin_url %]">Admin</a></span></h3>
                     <ul class="list-unstyled small">
-                        <li><a href="[% admin_urls.faq %]">FAQ</a></li>
-                        <li><a href="[% admin_urls.organizations %]">Organizations</a></li>
-                        <li><a href="[% admin_urls.projects %]">Projects</a></li>
-                        <li><a href="[% admin_urls.terms %]">Terms</a></li>
-                        <li><a href="[% admin_urls.users %]">Users</a></li>
+                        <li><a class="dark-link" href="[% admin_urls.faq %]">FAQ</a></li>
+                        <li><a class="dark-link" href="[% admin_urls.organizations %]">Organizations</a></li>
+                        <li><a class="dark-link" href="[% admin_urls.projects %]">Projects</a></li>
+                        <li><a class="dark-link" href="[% admin_urls.terms %]">Terms</a></li>
+                        <li><a class="dark-link" href="[% admin_urls.users %]">Users</a></li>
                     </ul>
                 </div>
 [% END %]
@@ -188,10 +188,10 @@ END %]
                 <div class="col-md">
                     <h3><span class="tiny">About [% name | html %]</span></h3>
                     <ul class="list-unstyled small">
-                        <li><a href="[% statistics_url %]">Statistics</a></li>
-                        <li><a href="[% about_url %]">[% about_title %]</a></li>
+                        <li><a class="dark-link" href="[% statistics_url %]">Statistics</a></li>
+                        <li><a class="dark-link" href="[% about_url %]">[% about_title %]</a></li>
 [% IF terms_url %]
-                        <li><a href="[% terms_url %]">Terms</a></li>
+                        <li><a class="dark-link" href="[% terms_url %]">Terms</a></li>
 [% END %]
                     </ul>
 

@@ -138,15 +138,6 @@ header nav input[name="logout"]:hover {
     box-shadow:         0px 0px 0px grey !important;
 }
 
-header nav #sign-up-btn {
-    color: #f5f5ef;
-    padding: 4px 14px 4px 14px !important;
-}
-
-header nav #sign-up-btn:hover {
-    color: #333333;
-}
-
 /*** project nav ***/
 
 header #project_nav a:hover {
@@ -338,6 +329,15 @@ input[type=number].editable-content:not(:focus) {
 
 .btn:focus {
     box-shadow: none !important;
+}
+
+a.dark-link {
+    color: #f5f5ef !important;
+}
+
+a.dark-link:hover {
+    text-decoration: none !important;
+    color: #4CAF50 !important;
 }
 
 /******** footer part ********/
