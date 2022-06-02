@@ -38,8 +38,9 @@ header nav ul {
     padding-left: 0;
 }
 
-header nav li {
-    display: inline;
+header nav .nav-item {
+    display: inline-flex;
+    align-items: center;
 }
 
 /* "Logout" must be button for POST request but style like link */
@@ -304,11 +305,11 @@ input[type=number].editable-content:not(:focus) {
     box-shadow: none !important;
 }
 
-a.dark-link {
+a.dark-link, button.dark-link {
     color: #f5f5ef !important;
 }
 
-a.dark-link:hover {
+a.dark-link:hover, button.dark-link:hover {
     text-decoration: none !important;
     color: #4CAF50 !important;
 }
@@ -318,6 +319,29 @@ a.dark-link:hover {
     padding: 1.5rem;
     border-radius: 1rem;
     margin-bottom: 1rem;
+}
+
+.item-box {
+    background-color: #4CAF50;
+    width: 100px;
+    height: 100px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    overflow: hidden; 
+}
+
+.item-box span {
+    display: inline;
+    width: 100%;
+    word-wrap: break-word;
+    white-space: normal;
+    -moz-hyphens: auto;
+   -o-hyphens: auto;
+   -webkit-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
 }
 
 /******** footer part ********/

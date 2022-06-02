@@ -47,7 +47,7 @@
                         <div class="collapse navbar-collapse flex-column" id="navbar">
                             <div class="navbar-nav container-md d-flex justify-content-between align-items-center w-100 py-2 px-2">
                                 <div class="d-flex gap-2 mx-2">
-                                    <a class="navbar-brand text-white fw-bold" href="[% homepage_url %]">[% name | html %]</a>
+                                    <a class="navbar-brand text-white fs-4 fw-bold" href="[% homepage_url %]">[% name | html %]</a>
                                     <ul class="d-flex p-0 m-0" id="project_nav">
                                         <li class="nav-item group-end"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
 [% IF project_urls %]
@@ -71,7 +71,7 @@
 
 [% IF user %]
                                     <div class="dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <a class="nav-link dropdown-toggle dark-link" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="material-icons">person</i> [% user.display_name | html %]
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
@@ -81,7 +81,7 @@
     [% END %]
     [% IF logout_url %]
                                             <li><form class="px-3 py-2" method="post" action="[% logout_url %]">
-                                                <button class="btn btn-sm btn-outline-light w-100" name="logout">Sign out</button>
+                                                <button class="btn btn-sm btn-outline-light dark-link w-100" name="logout">Sign out</button>
                                             </form></li>
     [% END %]
                                         </ul>
@@ -105,7 +105,7 @@ END %]
                                     <div>
 [% IF logout_url %]
     [% IF project %]
-                                        <p class="text-dark">You’re currently working on <a class="text-dark" href="[% project_urls.project %]">project [% project.name | html%]</a></p>
+                                        <p class="text-dark my-2">You’re currently working on <a class="text-dark" href="[% project_urls.project %]">project [% project.name | html%]</a></p>
     [% ELSE %]
                                         <p class="text-dark my-2">Please create or choose a project now.</p>
     [% END %]
@@ -124,7 +124,7 @@ END %]
 
 
     <main>
-        <div class="container-fluid pb-2"><!-- main container-fluid -->
+        <div class="container-md pb-2"><!-- main container-fluid -->
             <div class="row py-3">
 
                 <div class="col-12">
