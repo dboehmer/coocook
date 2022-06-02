@@ -1,1 +1,15 @@
-<p>Coocook, a web application for collecting recipes and making food plans.</p>
+<div class="px-4">
+    <p>Coocook is a web application for collecting recipes and making food plans. You can ...</p>
+</div>
+<div class="content-box">
+    <ol>
+        <li>collect recipes</li>
+        <li>create a food plan</li>
+        <li>gather purchase lists</li>
+        <li>print a project overview</li>
+    </ol>
+</div>
+<div class="px-4">
+    <p>You are more interested in Coocook? Check out the <a href="https://coocook.org/faq">Coocook.org FAQ</a> and <a href="https://lists.coocook.org/mailman/listinfo/coocook">join our mailing list</a> to get more informations.</p>
+    <p>You celebrate Coocook as much as we do and want to make it better too? Great! <a href="https://github.com/dboehmer/coocook/issues">Report bugs or suggestions for improvement</a> or even become part of the open volunteer development team.</p>
+</div>
