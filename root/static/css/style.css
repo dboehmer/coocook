@@ -31,7 +31,6 @@ body {
 
 header {
     margin: 0;
-    background-color: #4CAF50;
 }
 
 header nav ul {
@@ -108,36 +107,6 @@ header #user_nav ul {
     align-items: flex-end;
 }
 
-header #user_nav ul p + div {
-    margin-top: 1em;
-}
-
-header #user_nav ul div:only-child {
-    margin-top: 3em;
-}
-
-header #user_nav h4 {
-    margin: 0;
-    padding: 0 0.5em 0 0.5em;
-    color: #f5f5ef;
-}
-
-header #user_nav h4 a {
-    color: #f5f5ef;
-}
-
-header nav input[name="logout"] {
-    background-color: #4CAF50;
-    color: #333333;
-}
-
-header nav input[name="logout"]:active,
-header nav input[name="logout"]:hover {
-    color: #f5f5ef;
-
-    box-shadow:         0px 0px 0px grey !important;
-}
-
 /*** project nav ***/
 
 header #project_nav a:hover {
@@ -145,6 +114,10 @@ header #project_nav a:hover {
 }
 
 /*** submenu nav ***/
+header #submenu_nav {
+    background-color: #4CAF50;
+}
+
 header #submenu_nav a:hover,
 header #submenu_nav a.current {
     color: #f5f5ef !important;
@@ -340,10 +313,16 @@ a.dark-link:hover {
     color: #4CAF50 !important;
 }
 
+.content-box {
+    background-color: var(--bs-light);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+}
+
 /******** footer part ********/
 
 footer {
-    background-color: #333333;
     color: #f5f5ef;
     position: absolute; /*necessary to position it at the bottom in all cases*/
     bottom: 0;
