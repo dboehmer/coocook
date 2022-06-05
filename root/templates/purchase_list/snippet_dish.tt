@@ -1,5 +1,3 @@
-
-
 <td style="text-align:right;">[% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]</td>
 <td style="text-align:center;">[% ingredient.dish.meal.date.strftime('%a, %F') %]</td>
 <td>[% ingredient.dish.meal.name | html %]</td>
