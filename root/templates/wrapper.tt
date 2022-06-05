@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <title>
-        [% title        _ ' · ' | html IF title %]
-        [% project.name _ ' · ' | html IF project %]
-        [% name | html %]
+        [% IF window_title;
+            window_title _ ' · ' | html;
+        ELSIF title;
+            title        _ ' · ' | html;
+        END;
+
+        IF project;
+            project.name _ ' · ' | html;
+        END;
+
+        name | html %]
     </title>
 
     <meta charset="UTF-8">
@@ -30,190 +38,167 @@
 </head>
 
 <body>
-<!--container div is necessary to keep the footer down, see https://matthewjamestaylor.com/bottom-footer -->
-<div id="container">
-    <header>
+    <header class="bg-header">
+        <div class="container-fluid d-flex flex-wrap">
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand py-3 px-4" href="[% homepage_url %]">
+                    <h1 class="text-dark">[% name | html %]</h1>
+                </a>
+            </div>
 
-        <div class="container-fluid bg-header">
-            <div class="row">
-                <div class="col-6 d-flex align-items-center">
-                    <a class="navbar-brand py-3 px-4" href="[% homepage_url %]">
-                        <h1 class="text-dark">[% name | html %]</h1>
-                    </a>
-                </div>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="py-2 text-end">
+                    [% IF user %]
+                    <h4>Welcome to [% name | html %], <a class="hov-under" href="[% user_url %]">[% user.display_name | html %]</a></h4>
+                    [% END %]
 
+                    [% IF logout_url %]
+                        <p class="text-light m-0">
+                            [% IF project %]
+                            You’re currently working on <a class="hov-under" href="[% project_urls.project %]">project [% project.name | html%]</a>
+                            [% ELSE %]
+                            Please create or choose a project now.
+                            [% END %]
+                        </p>
+                    [% END %]
 
-                <div class="col-6 login_logout d-flex align-items-center">
-                    <div class="w-100 py-2 text-end">
-[% IF user %]
-                        <h4>Welcome to [% name | html %], <a href="[% user_url %]">[% user.display_name | html %]</a></h4>
-[% END %]
+                    <div class="d-flex flex-wrap align-items-center justify-content-end">
+                        [% IF login_url %]
+                        <a class="ms-2 login-logout-btn" href="[% login_url %]"><i class="material-icons">person</i> Sign in</a>
+                        [% END %]
 
-[% IF logout_url %]
-    [% IF project %]
-                        <p>You’re currently working on <a href="[% project_urls.project %]">project [% project.name | html%]</a></p>
-    [% ELSE %]
-                        <p>Please create or choose a project now.</p>
-    [% END %]
-[% END %]
+                        [% IF register_url %]
+                        <a class="ms-2 login-logout-btn" href="[% register_url %]">Sign up</a>
+                        [% END %]
 
-[% IF login_url %]
-                        <a class="pl-2" href="[% login_url %]"><i class="material-icons">person</i> Sign in</a>
-[% END %]
+                        [% IF settings_url %]
+                        <a class="ms-2 login-logout-btn" href="[% settings_url %]"><i class="material-icons">settings</i> Settings</a>
+                        [% END %]
 
-[% IF register_url %]
-                        <a class="pl-2" href="[% register_url %]">Sign up</a>
-[% END %]
-
-[% IF settings_url %]
-                        <a class="pl-2" href="[% settings_url %]"><i class="material-icons">settings</i> Settings</a>
-[% END %]
-
-[% IF logout_url %]
-                        <form class="inline pl-2" method="post" action="[% logout_url %]">
-                            <button name="logout"><i class="material-icons">exit_to_app</i> Sign out</button>
+                        [% IF logout_url %]
+                        <form method="post" action="[% logout_url %]">
+                            <button class="p-0 ms-2 login-logout-btn" name="logout"><i class="material-icons">exit_to_app</i> Sign out</button>
                         </form>
-[% END %]
-
+                        [% END %]
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="container-fluid p-0 m-0">
-            <div class="row p-0 m-0">
-                <div class="col-12 p-0 m-0 bg-dark">
-                    <nav class="navbar p-0 m-0 navbar-expand-md navbar-dark">
-                        <div class="navbar-toggler-right">
-                            <button class="navbar-toggler px-1 ml-4" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                        </div>
+        <nav class="navbar navbar-dark bg-dark p-0 navbar-expand-md">
+            <button class="navbar-toggler m-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+            <div class="collapse navbar-collapse flex-column" id="navbar">
+                <nav class="navbar-nav me-auto ms-md-1 mt-1 mt-md-0" id="project_nav">
+                    <a class="nav-link px-2" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a>
 
+                    [% IF project_urls %]
+                    <a class="nav-link px-2" href="[% project_urls.project %]">Project</a>
+                    <a class="nav-link px-2" href="[% project_urls.recipes %]">Recipes</a>
+                    <a class="nav-link px-2" href="[% project_urls.articles %]">Articles</a>
+                    <a class="nav-link px-2" href="[% project_urls.tags %]">Tags</a>
+                    <a class="nav-link px-2" href="[% project_urls.purchase_lists %]">Purchase Lists</a>
+                    <a class="nav-link px-2" href="[% project_urls.units %]">Units</a>
+                    <a class="nav-link px-2" href="[% project_urls.import %]">Import</a>
+                    [% END %]
+                </nav>
 
-                        <div class="collapse navbar-collapse flex-column " id="navbar">
-                            <ul class="navbar-nav justify-content-left p-0 m-0 w-100 bg-dark py-1 px-2" id="project_nav">
-                                <span class="pl-4"></span>
-                                <li class="nav-item group-end"><a class="nav-link [% font_color %]" href="[% dashboard_url ? dashboard_url : homepage_url %]">Start</a></li>
-
-[% IF project_urls %]
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.project %]">Project</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.recipes %]">Recipes</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.articles %]">Articles</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.tags %]">Tags</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.purchase_lists %]">Purchase Lists</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.units %]">Units</a></li>
-                                <li class="nav-item"><a class="nav-link" href="[% project_urls.import %]">Import</a></li>
-[% END %]
-                            </ul>
-
-                            <ul class="navbar-nav justify-content-left w-100 bg-header py-1 px-2" id="submenu_nav">
-                                <span class="pl-4"></span>
-[% FOR item IN submenu_items;
-    IF item.url %]
-                                <li class="nav-item"><a class="nav-link text-dark" href="[% item.url %]">[% item.text %]</a></li>
-    [% ELSE; # TODO setting href="" doesn’t work if page is response to POST request and URL isn’t available via GET %]
-                                <li class="nav-item active"><a class="nav-link" href="" class="current">[% item.text %]</a></li>
-    [% END;
-END %]
-                            </ul>
-
-                        </div>
-
-                    </nav>
-                </div>
+                <nav class="navbar-nav ps-md-1 w-100 pt-1 pt-md-0 bg-header" id="submenu_nav">
+                [% FOR item IN submenu_items;
+                    IF item.url %]
+                    <a class="nav-link text-dark px-2" href="[% item.url %]">[% item.text %]</a>
+                    [% ELSE; # TODO setting href="" doesn’t work if page is response to POST request and URL isn’t available via GET %]
+                    <a class="nav-link active px-2" href="">[% item.text %]</a>
+                    [% END;
+                END %]
+                </nav>
             </div>
-
-        </div>
+        </nav>
     </header>
 
-
-    <main>
-        <div class="container-fluid pb-2"><!-- main container-fluid -->
-            <div class="row py-3">
-
-                <div class="col-12">
-                    <h1 id="print_h1" style="display: none">[% name | html; IF project %]: [% project.name | html; END %]</h1>
-
-[% IF html_title %]<h2>[% html_title # may contain HTML %]</h2>
-[% ELSIF   title %]<h2>[% title | html %]</h2>
-[% END %]
-
-[% WHILE (message = messages.next) %]
-                    <div class="message message-[% message.type %]">
-    [% IF message.html;
-            message.html;
-    ELSE %]
-                        <p>[% message.text | html %]</p>
-    [% END %]
+    <main class="container-md mb-2">
+        <div class="row my-3">
+            <div class="col-12">
+            [% WHILE (message = messages.next) %]
+                <div class="alert alert-[% SWITCH message.type; CASE "debug" %]dark[% CASE "warn" %]warning[% CASE "error" %]danger[% CASE %]success[% END %]" role="alert">
+                [% IF message.html;
+                    message.html;
+                ELSE %]
+                    <p class="m-0">[% message.text | html %]</p>
+                [% END %]
                     </div>
-[% END %]
-                </div>
+            [% END %]
             </div>
-    [% content %]
-        </div><!-- END main container-fluid -->
+            <div class="col-12">
+                <h1 id="print_h1" style="display: none">[% name | html; IF project %]: [% project.name | html; END %]</h1>
+                <h2>
+                [% IF html_title;
+                    html_title; # may contain HTML
+                ELSIF title;
+                    title | html;
+                END %]
+                </h2>
+            </div>
+        </div>
+        [% content %]
     </main>
 
-    <footer class="bg-dark text-white">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md">
-                    <h3><span class="tiny">Browse</span></h3>
-                    <ul class="non-intended small">
-                        <li><a href="[% recipes_url %]">Recipes</a></li>
-                        <li><a href="[% projects_url %]">Projects</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-md">
-                    <h3><span class="tiny">Get Help</span></h3>
-                    <ul class="list-unstyled small">
-[% IF faq_url %]
-                        <li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
-[% END %]
-[% FOR help_link IN help_links %]
-                        <li><a href="[% help_link.url %]">[% help_link.title | html %]</a></li>
-[% END %]
-                    </ul>
-
-                </div>
-
-[% IF admin_url %]
-                <div class="col-md">
-                    <h3><span class="tiny"><a href="[% admin_url %]">Admin</a></span></h3>
-                    <ul class="list-unstyled small">
-                        <li><a href="[% admin_urls.faq %]">FAQ</a></li>
-                        <li><a href="[% admin_urls.organizations %]">Organizations</a></li>
-                        <li><a href="[% admin_urls.projects %]">Projects</a></li>
-                        <li><a href="[% admin_urls.terms %]">Terms</a></li>
-                        <li><a href="[% admin_urls.users %]">Users</a></li>
-                    </ul>
-                </div>
-[% END %]
-
-
-                <div class="col-md">
-                    <h3><span class="tiny">About [% name | html %]</span></h3>
-                    <ul class="list-unstyled small">
-                        <li><a href="[% statistics_url %]">Statistics</a></li>
-                        <li><a href="[% about_url %]">[% about_title %]</a></li>
-[% IF terms_url %]
-                        <li><a href="[% terms_url %]">Terms</a></li>
-[% END %]
-                    </ul>
-
-                </div>
+    <footer class="container-fluid bg-dark text-white px-3 py-2 mt-auto">
+        <div class="row">
+            <div class="col-md col-sm-6 mb-3 mb-md-0">
+                <h3><span class="tiny">Browse</span></h3>
+                <ul class="list-unstyled small m-0">
+                    <li><a href="[% recipes_url %]">Recipes</a></li>
+                    <li><a href="[% projects_url %]">Projects</a></li>
+                </ul>
             </div>
+
+            <div class="col-md col-sm-6 mb-3 mb-md-0">
+                <h3><span class="tiny">Get Help</span></h3>
+                <ul class="list-unstyled small m-0">
+                    [% IF faq_url %]
+                    <li><a href="[% faq_url %]"><abbr title="Frequently Asked Questions">FAQ</abbr></a></li>
+                    [% END %]
+                    [% FOR help_link IN help_links %]
+                    <li><a href="[% help_link.url %]">[% help_link.title | html %]</a></li>
+                    [% END %]
+                </ul>
+            </div>
+
+            [% IF admin_url %]
+            <div class="col-md col-sm-6 mb-3 mb-md-0">
+                <h3><span class="tiny"><a href="[% admin_url %]">Admin</a></span></h3>
+                <ul class="list-unstyled small m-0">
+                    <li><a href="[% admin_urls.faq %]">FAQ</a></li>
+                    <li><a href="[% admin_urls.organizations %]">Organizations</a></li>
+                    <li><a href="[% admin_urls.projects %]">Projects</a></li>
+                    <li><a href="[% admin_urls.terms %]">Terms</a></li>
+                    <li><a href="[% admin_urls.users %]">Users</a></li>
+                </ul>
+            </div>
+            [% END %]
+
+            <div class="col-md col-sm-6 mb-3 mb-md-0">
+                <h3><span class="tiny">About [% name | html %]</span></h3>
+                <ul class="list-unstyled small m-0">
+                    <li><a href="[% statistics_url %]">Statistics</a></li>
+                    <li><a href="[% about_url %]">[% about_title %]</a></li>
+                    [% IF terms_url %]
+                    <li><a href="[% terms_url %]">Terms</a></li>
+                    [% END %]
+                </ul>
+            </div>
+
         </div>
     </footer>
 
-[% FOR path IN js %]
+    [% FOR path IN js %]
     <script src="[% path %]"></script>
-[% END %]
+    [% END %]
 
-[% INCLUDE 'wrapper_footer.tt' %]
+    [% INCLUDE 'wrapper_footer.tt' %]
 
-</div>
 </body>
 </html>

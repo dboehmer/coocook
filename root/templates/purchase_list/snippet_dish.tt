@@ -1,0 +1,12 @@
+<td style="text-align:right;">[% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]</td>
+<td style="text-align:center;">[% ingredient.dish.meal.date.strftime('%a, %F') %]</td>
+<td>[% ingredient.dish.meal.name | html %]</td>
+<td>[% ingredient.dish.name | html %]</td>
+<td>
+	<form method="post" action="[% ingredient.remove_url %]">
+		<button type="submit" class="btn btn-danger btn-sm btn-quad" title="Remove from purchase list">
+			<i class="material-icons">delete_forever</i>
+		</button>
+	</form>
+</td>
+<td>[% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</td>

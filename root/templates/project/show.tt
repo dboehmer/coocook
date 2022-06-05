@@ -1,78 +1,56 @@
-<div class="container-fluid">
 [% IF project.archived %]
-<div class="message message-info">
+<div class="alert alert-success">
     [% IF can_unarchive %]
-    <form method="post" action="[% project_urls.unarchive %]">
-        <p>
-            📁 This project is archived (read-only).
-            You can
-            <input type="submit" value="Un-archive this project">
-        </p>
-    </form>
+    <form id="unarchive" method="post" action="[% project_urls.unarchive %]"></form>
+    <p class="m-0">
+        📁 This project is archived (read-only). You can
+        <button class="alert-link" type="submit" form="unarchive">Un-archive this project</button>
+    </p>
     [% ELSE %]
-        <p>📁 This project has been archived.</p>
+    <p class="m-0">📁 This project has been archived.</p>
     [% END %]
 </div>
 [% ELSIF can_edit %]
-<div class="message message-info">
-[% IF inventory.quantities == 0
-     AND inventory.articles == 0
-     AND inventory.meals == 0
-     AND inventory.shop_sections == 0
-     AND inventory.tags == 0 %]
-    <p>
+<div class="alert alert-success">
+    <p class="m-0">
+    [% IF inventory.quantities == 0
+        AND inventory.articles == 0
+        AND inventory.meals == 0
+        AND inventory.shop_sections == 0
+        AND inventory.tags == 0 %]
         This is a fresh project without any data.
-        You can <a href="[% project_urls.import %]">import data</a> from other projects
-        or start from scratch, e.g. by <a href="[% project_urls.quantities %]">creating quantities</a>.
-    </p>
-[% ELSIF inventory.quantities == 0 %]
-    <p>
-        This project lacks any quantities. You can <a href="[% project_urls.import %]">import them</a>
-        or <a href="[% project_urls.quantities %]">create some</a> from scratch.
-    </p>
-[% ELSIF inventory.units == 0 %]
-    <p>
-        This project lacks any units. You can <a href="[% project_urls.units %]">create some</a>.
-    </p>
-[% ELSIF inventory.articles == 0 %]
-    <p>
-        This project lacks any articles. You can <a href="[% project_urls.import %]">import them</a>
-        or <a href="[% project_urls.articles %]">create some</a> from scratch.
-    </p>
-[% ELSIF inventory.meals == 0 OR inventory.dishes == 0 %]
-    <p>
+        You can <a class="alert-link" href="[% project_urls.import %]">import data</a> from other projects
+        or start from scratch, e.g. by <a class="alert-link" href="[% project_urls.quantities %]">creating quantities</a>.
+    [% ELSIF inventory.quantities == 0 %]
+        This project lacks any quantities. You can <a class="alert-link" href="[% project_urls.import %]">import them</a>
+        or <a class="alert-link" href="[% project_urls.quantities %]">create some</a> from scratch.
+    [% ELSIF inventory.units == 0 %]
+        This project lacks any units. You can <a class="alert-link" href="[% project_urls.units %]">create some</a>.
+    [% ELSIF inventory.articles == 0 %]
+        This project lacks any articles. You can <a class="alert-link" href="[% project_urls.import %]">import them</a>
+        or <a class="alert-link" href="[% project_urls.articles %]">create some</a> from scratch.
+    [% ELSIF inventory.meals == 0 OR inventory.dishes == 0 %]
         This project lacks any [% inventory.meals == 0 ? 'meals' : 'dishes' %].
-        You can <a href="[% project_urls.edit %]">create some</a> now.
-    [% IF inventory.recipes == 0 %]
-        You can also <a href="[% project_urls.recipes %]">create a recipe</a> for dishes.
-    [% END %]
-    </p>
-[% ELSIF inventory.purchase_lists == 0 %]
-    <p>
-        This project lacks any purchase lists. You can <a href="[% project_urls.purchase_lists %]">create some</a>.
-    </p>
-[% ELSIF inventory.unassigned_items > 0 %]
-    <p>
+        You can <a class="alert-link" href="[% project_urls.edit %]">create some</a> now.
+        [% IF inventory.recipes == 0 %]
+            You can also <a class="alert-link" href="[% project_urls.recipes %]">create a recipe</a> for dishes.
+        [% END %]
+    [% ELSIF inventory.purchase_lists == 0 %]
+        This project lacks any purchase lists. You can <a class="alert-link" href="[% project_urls.purchase_lists %]">create some</a>.
+    [% ELSIF inventory.unassigned_items > 0 %]
         There are some ingredient items not yet assigned to a purchase list.
-        You can <a href="[% project_urls.unassigned_items %]">assign items to purchase lists</a> now.
-    </p>
-[% ELSIF project.is_stale %]
-    <form method="post" action="[% project_urls.archive %]">
-        <p>
+        You can <a class="alert-link" href="[% project_urls.unassigned_items %]">assign items to purchase lists</a> now.
+    [% ELSIF project.is_stale %]
+        <form class="d-inline" method="post" action="[% project_urls.archive %]">
             This project is stale (all meals and purchase lists in are in the past).
-            You can
-            <input type="submit" value="📁Archive this project">
-        </p>
-    </form>
-[% ELSE %]
-    <p>
-        Once you’ve finished this project you can <a href="[% project_urls.print %]">print documents</a> to take action.
-    </p>
-[% END %]
+            You can <button class="alert-link" type="submit">📁 Archive this project</button>
+        </form>
+    [% ELSE %]
+        Once you’ve finished this project you can <a class="alert-link" href="[% project_urls.print %]">print documents</a> to take action.
+    [% END %]
 </div>
 [% END %]
 
 [% INCLUDE 'print/project.tt' %]
 
 <p>Created at [% display_datetime(project.created) %] UTC</p>
-</div>
