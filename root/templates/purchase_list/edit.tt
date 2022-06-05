@@ -44,24 +44,22 @@ html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 							<option value="[% item.next_higher_value %]">
 							<option value="[% item.next_lower_value%]">
 						</datalist>
-                        <form id="total-[% loop.count %]" name="total" method="post" action="[% item.update_offset_url %]"></form>
-						<form id="units-[% loop.count %]" method="post" action="[% item.convert_url %]"></form>
-                        <div class="d-flex justify-content-between">
+                        <form id="total-[% loop.count %]" class="d-flex justify-content-between" name="total" method="post" action="[% item.update_offset_url %]">
 							<div class="input-group flex-nowrap">
 								[% IF item.offset %]<span class="input-group-text px-1">ca.</span>[% END %]
 								<input id="total" class="form-control" form="total-[% loop.count %]" type="number" min="0" step="any" name="total" list="values-[% loop.count %]" value="[% item.value + item.offset %]">
 								<span class="input-group-text">[% display_unit( item.unit, {html=>1} ) %]</span>
 							</div>
 							<button class="btn btn-outline-primary ms-1 material-icons" form="total-[% loop.count %]" type="submit" title="Update amount">sync</button>
-						</div>
+						</form>
 						[% IF item.convert_url %]
-						<div class="d-flex flex-wrap border rounded my-1 w-100">
+						<form id="units-[% loop.count %]" class="d-flex flex-wrap border rounded my-1 w-100" name="convert" method="post" action="[% item.convert_url %]">
 						[% idx = loop.count;
 							FOREACH unit IN item.convertible_into %]
 							<button class="btn btn-outline-secondary btn-sm m-1" form="units-[% idx %]" type="submit" name="unit" value="[% unit.id %]">[% unit.short_name | html %]</button>
-							[% END;
-						END %]
-						</div>
+							[% END %]
+						</form>
+						[% END %]
 					</td>
 					<td rowspan="[% rowspan %]">[% item.article.name | html %]</td>
 					
