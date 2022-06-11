@@ -1,45 +1,37 @@
-[% title = "Sign Up" %]
+<div class="mx-auto" style="width:500px;">
+    <div class="content-box mb-3">
+        <div class="text-center mb-3">
+            <h2>Sign up</h2>
+        </div>
 
-<p><a href="[% login_url %]">Already have an account? Sign in here.</a></p>
-
-<form method="post" action="[% post_register_url %]">
-<table class="register">
-    <tr class="username">
-        <th><label for="username">Username</label></th>
-        <td>
-            <input id="username" type="text" name="username" placeholder="username" pattern="[A-Za-z0-9_]+" value="[% last_input.username | html %]" [% 'autofocus' IF NOT last_input.username %]>
-            [% IF example_username %]e.g. <code>[% example_username | html %]</code>[% END %]
-        </td>
-    </tr>
-    <tr class="email">
-        <th><label for="email">Email address</label></th>
-        <td><input  id="email" type="email" name="email" placeholder="email address" value="[% last_input.email | html %]" [% 'autofocus' IF last_input.username AND NOT last_input.email %]></td>
-    </tr>
-[%~ IF use_hidden_input %]
-    <tr class="url">
-        <th><label for="url">Website</label></th>
-        <td><input  id="url" type="url" name="url" placeholder="address of your website" value="[%# THIS INPUT FIELD ONLY WORKS AS CAPTCHA! %]" ></td>
-    </tr>
-[%~ END %]
-    <tr class="password">
-        <th><label for="password">Password</label></th>
-        <td><input  id="password"  type="password" placeholder="password" name="password" [% 'autofocus' IF last_input.username AND last_input.email %]></td>
-    </tr>
-    <tr class="password2">
-        <th><label for="password2">Confirm password</label></th>
-        <td><input  id="password2" type="password" placeholder="password" name="password2"></td>
-    </tr>
-</table>
-
-[% label = "Sign up";
-
-IF terms %]
-<input type="hidden" name="accept_terms" value="[% terms.id %]">
-
-<p>By clicking <em>[% label %]</em> you accept our <a href="[% terms.url %]">terms as of [% display_date(terms.valid_from, {html=>1}) %]</a>.</p>
+        <form method="post" action="[% post_register_url %]" class="d-flex flex-column gap-3">
+            <div>
+                <input id="username" type="text" name="username" placeholder="username" pattern="[A-Za-z0-9_]+" value="[% last_input.username | html %]" [% 'autofocus' IF NOT last_input.username %] class="form-control">
+[% IF example_username %]
+                e.g. <i>[% example_username | html %]</i>
 [% END %]
+            </div>
+            <input id="email" type="email" name="email" placeholder="email address" value="[% last_input.email | html %]" [% 'autofocus' IF last_input.username AND NOT last_input.email %] class="form-control">         
+[%~ IF use_hidden_input %]
+            <input id="url" type="url" name="url" placeholder="address of your website" value="[%# THIS INPUT FIELD ONLY WORKS AS CAPTCHA! %]" class="form-control">
+[%~ END %]
+            <div>
+                <input id="password"  type="password" placeholder="password" name="password" [% 'autofocus' IF last_input.username AND last_input.email %] class="form-control">
+                <span id="meter"></span>
+            </div>
+            <div>
+                <input id="password2" type="password" placeholder="confirm password" name="password2" class="form-control">
+                <span id="comparator"></span>
+            </div>
+[% label = "Sign up";
+IF terms %]
+            <input type="hidden" name="accept_terms" value="[% terms.id %]">
+            <span>By clicking <em>[% label %]</em> you accept our <a href="[% terms.url %]">terms as of [% display_date(terms.valid_from, {html=>1}) %]</a>.</span>
+[% END %]
+            <span>You will receive an email with a web link to verify your email address.</span>
+            <input type="submit" value="[% label %]" class="btn btn-primary">
+        </form>
+    </div>
 
-<p>You will receive an email with a web link to verify your email address.</p>
-
-<input type="submit" value="[% label %]">
-</form>
+    <p>Already have an account? <a href="[% login_url %]">Sign in here.</a></p>
+</div>

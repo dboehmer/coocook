@@ -1,9 +1,15 @@
-[% title = "Password recovery" %]
+<div class="mx-auto" style="width:500px;">
+    <div class="content-box mb-3">
+        <div class="text-center mb-3">
+            <h2>Password recovery</h2>
+        </div>
 
-<p>You can request a password recovery link to your email address.
-When you click it you can set a new password for your account.</p>
+        <p>You can request a password recovery link to your email address.
+        When you click it you can set a new password for your account.</p>
 
-<form method="post" action="[% recover_url %]">
-    <input type="email" name="email" value="[% email | html %]" placeholder="email address">
-    <input type="submit" value="Send recovery link">
-</form>
+        <form method="post" action="[% recover_url %]" class="d-flex flex-column gap-3">
+            <input type="email" name="email" value="[% email | html %]" placeholder="email address" class="form-control">
+            <input type="submit" value="Send recovery link" class="btn btn-primary">
+        </form>
+    </div>
+</div>
