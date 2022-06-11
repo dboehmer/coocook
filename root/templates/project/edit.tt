@@ -67,7 +67,7 @@
             [% END %]
                 </select>
                 <input type="number" name="servings" value="4">
-                <input type="submit" value="Import recipe">
+                <input type="submit" value="Use recipe">
             </form>
         [% END %]
         </td>
