@@ -228,8 +228,6 @@ li.checkbox {
     list-style-type: none;
 }
 
-
-
 form th {
     text-align: left;
 }
@@ -326,6 +324,10 @@ input[type=number].editable-content:not(:focus) {
 
 .hidden {
     display: none;
+}
+
+input:focus {
+    box-shadow: none !important;
 }
 
 /******** footer part ********/

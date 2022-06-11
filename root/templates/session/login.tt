@@ -1,19 +1,24 @@
-[% title = "Sign In" %]
+<div class="mx-auto" style="width:500px;">
+    <div class="content-box mb-3">
+        <div class="text-center mb-3">
+            <h2>Sign in</h2>
+        </div>
 
-[% IF register_url %]
-<p>You don’t have an account yet? <a href="[% register_url %]">Sign up now!</a></p>
-[% END %]
+        <form method="post" action="[% post_login_url %]" class="d-flex flex-column gap-3">
+            <input type="text"     name="username" placeholder="username" [% 'autofocus' IF NOT username %] value="[% username | html %]" class="form-control">
+            <input type="password" name="password" placeholder="password" [% 'autofocus' IF     username %] value="" class="form-control">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <input id="store_username" class="form-check-input" type="checkbox" name="store_username" [% 'checked' IF store_username %]>
+                    <label for="store_username">Remember me</label>
+                </div>
+                <a href="[% recover_url %]">Lost your password?</a>
+            </div>
+            <input type="submit" value="Sign in" class="btn btn-primary">
+        </form>
+    </div>
 
-<form method="post" action="[% post_login_url %]">
-    <p>
-        <input type="text"     name="username" placeholder="username" [% 'autofocus' IF NOT username %] value="[% username | html %]">
-        <input type="password" name="password" placeholder="password" [% 'autofocus' IF     username %] value="">
-        <input type="submit" value="Sign in">
-    </p>
-    <p>
-        <input  id="store_username" type="checkbox" name="store_username" [% 'checked' IF store_username %]>
-        <label for="store_username">Permanently store username in browser</label>
-    </p>
-</form>
-
-<p><a href="[% recover_url %]">Lost your password?</a></p>
+    [% IF register_url %]
+        <p>You don’t have an account yet? <a href="[% register_url %]">Sign up now!</a></p>
+    [% END %]
+</div>
