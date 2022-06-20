@@ -1,8 +1,29 @@
-[% title = "FAQ" %]
+[% title = "Edit FAQ";
+USE Markdown; %]
 
-<ul>
-[% FOR faq IN faqs %]
-    <li><a href="[% faq.url %]">[% faq.question_md | html %]<a></li>
-[% END %]
-    <li><a href="[% new_faq_url %]">Create new FAQ entry</a>
-</ul>
+<div class="row my-3">
+    <div class="col">
+        <table class="table align-middle md">
+            <thead>
+                <tr>
+                    <th colspan="2">Entries</th>
+                </tr>
+            </thead>
+            <tbody>
+            [% FOR faq IN faqs %]
+                <tr>
+                    <td>[% faq.question_md | $Markdown %]</td>
+                    <td class="btn-icon-1">
+                        <a class="btn btn-primary btn-sm btn-quad material-icons" href="[% faq.url %]">edit<a>
+                    </td>
+                </tr>
+            [% END %]
+            <tr>
+                <td colspan="2">
+                    <a class="btn btn-outline-primary w-100 material-icons" href="[% new_faq_url %]" title="Create FAQ entry">add</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

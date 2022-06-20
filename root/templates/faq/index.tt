@@ -2,21 +2,29 @@
 html_title = 'Frequently Asked Questions' %]
 
 [% IF admin_faq_url %]
-    <p><a href="[% admin_faq_url %]">Edit FAQ</a></p>
+<div class="row my-3">
+    <div class="col">
+        <a class="btn btn-outline-primary" href="[% admin_faq_url %]">Edit FAQ</a>
+    </div>
+</div>
 [% END;
 
 USE Markdown;
 
 FOR faq IN faqs %]
-<div class="faq" id="[% faq.anchor | html %]">
-    <h2>
-        <a class="anchor inline" href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a>
-    [% IF faq.edit_url %]
-        <form class="inline" method="GET" action="[% faq.edit_url %]">
-            <input type="submit" value="Edit">
-        </form>
-    [% END %]
-    </h2>
-
-    <div>[% faq.answer_md | $Markdown %]</div>
+<div class="row my-3 faq" id="[% faq.anchor | html %]">
+    <div class="col">
+        <div class="d-flex flex-wrap align-items-center">
+            <h3>
+                <a class="anchor" href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a>
+            </h3>
+            [% IF faq.edit_url %]
+                <form class="ms-auto" method="GET" action="[% faq.edit_url %]">
+                    <button class="btn btn-primary btn-sm btn-quad ms-1 material-icons" type="submit" title="Edit">edit</button>
+                </form>
+            [% END %]
+        </div>
+        <div>[% faq.answer_md | $Markdown %]</div>
+    </div>
+</div>
 [% END %]

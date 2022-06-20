@@ -47,6 +47,9 @@ footer a:focus,
     text-decoration: underline;
 }
 
+.md p {
+    margin: 0;
+}
 
 /*===========================================================================
   align material icons vertical: https://stackoverflow.com/questions/56171473/different-material-icons-styles-do-not-align
@@ -138,18 +141,25 @@ header h1 {
 
 
 /******** start content part ********/
-a.anchor {
-    color: inherit;
+.anchor {
+    color: inherit !important;
+    position: relative;
 }
 
-a.anchor:before {
+.anchor:before {
     content: '¶ ';
     color: grey;
     visibility: hidden;
+    position: absolute;
+    left: -20px;
 }
 
-a.anchor:hover:before {
+.anchor:hover:before {
     visibility: visible;
+}
+
+.faq .anchor p {
+    display: inline;
 }
 
 abbr[title] { /* reset default Browser style with underline */

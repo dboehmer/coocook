@@ -11,7 +11,7 @@
             </button>
         </div>
         [% IF public_url %]
-        <a class="btn-group col-xxl-3 col-md-4 col-sm-6" href="[% public_url %]">
+        <a class="btn-group text-decoration-none col-xxl-3 col-md-4 col-sm-6" href="[% public_url %]">
             <button class="btn btn-secondary">Share link</button>
         </a>
         [% END;
