@@ -7,11 +7,11 @@ html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 [% FOREACH section IN sections %]
 <div class="row my-3">
 	<div class="col-12 mb-2">
-		<h3 class="text-success">[% section.name || "No shop section" | html FILTER ucfirst %]</h3>
+		<h3 class="text-primary">[% section.name || "No shop section" | html FILTER ucfirst %]</h3>
 	</div>
 	
 	<div class="col-12 mb-2 table-responsive">
-		<table id="pl-editor" class="table align-middle">
+		<table class="table align-middle pl-editor">
 			<colgroup>
 				<col style="width:25%">
 				<col style="width:10%">

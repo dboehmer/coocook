@@ -4,7 +4,7 @@
     <form id="unarchive" method="post" action="[% project_urls.unarchive %]"></form>
     <p class="m-0">
         📁 This project is archived (read-only). You can
-        <button class="alert-link" type="submit" form="unarchive">Un-archive this project</button>
+        <button class="alert-link" type="submit" form="unarchive">unarchive this project</button>
     </p>
     [% ELSE %]
     <p class="m-0">📁 This project has been archived.</p>
@@ -43,7 +43,7 @@
     [% ELSIF project.is_stale %]
         <form class="d-inline" method="post" action="[% project_urls.archive %]">
             This project is stale (all meals and purchase lists in are in the past).
-            You can <button class="alert-link" type="submit">📁 Archive this project</button>
+            You can <button class="alert-link" type="submit">📁 archive this project</button>
         </form>
     [% ELSE %]
         Once you’ve finished this project you can <a class="alert-link" href="[% project_urls.print %]">print documents</a> to take action.

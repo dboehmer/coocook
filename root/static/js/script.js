@@ -64,5 +64,14 @@
             preview.addEventListener("scroll", e => syncScrolling(e, elem));
         }
     });
-
 })();
+
+// Init bootstrap tooltips
+let tooltipList = [];
+
+function initTootips() {
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipList = tooltipTriggerList.map(elem => new bootstrap.Tooltip(elem));
+}
+
+initTootips();

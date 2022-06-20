@@ -38,7 +38,7 @@
 </head>
 
 <body>
-    <header class="bg-header">
+    <header class="bg-primary">
         <div class="container-fluid d-flex flex-wrap">
             <div class="d-flex align-items-center">
                 <a class="navbar-brand py-3 px-4" href="[% homepage_url %]">
@@ -105,7 +105,7 @@
                     [% END %]
                 </nav>
 
-                <nav class="navbar-nav ps-md-1 w-100 pt-1 pt-md-0 bg-header" id="submenu_nav">
+                <nav class="navbar-nav ps-md-1 w-100 pt-1 pt-md-0 bg-primary" id="submenu_nav">
                 [% FOR item IN submenu_items;
                     IF item.url %]
                     <a class="nav-link text-dark px-2" href="[% item.url %]">[% item.text %]</a>

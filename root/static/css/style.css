@@ -1,55 +1,103 @@
-/******** general settings ********/
-
-html {
-  height: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+/******** start general settings ********/
+:root {
+    --cc-primary: var(--bs-primary);
+    --cc-green-dark: #3A8E3D;
+    --cc-green-light: #6CBF6F;
 }
 
 body {
     margin: 0;
     position: relative;
-    color: var(--bs-dark);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-a {
-    text-decoration: none;
-    color: var(--bs-dark);
+textarea {
+    resize: vertical;
 }
 
-a.hov-under:hover,
-a.hov-under:focus,
-button.alert-link:hover,
-button.alert-link:focus,
-a.alert-link:hover,
-a.alert-link:focus {
+.btn-sm.btn-quad {
+    padding: .25rem;
+}
+
+.btn-icon-1 {
+    width: calc(24px + 1.5rem);
+}
+
+.table colgroup+thead {
+    border-top: none !important;
+}
+
+ul.non-intended {
+    margin-left: 0px;
+    padding-left: 17px;
+}
+
+.tiny {
+    font-size: 65%;
+}
+
+.hov-under:hover,
+.hov-under:focus,
+footer a:hover,
+footer a:focus,
+.alert-link:hover,
+.alert-link:focus {
     text-decoration: underline;
 }
 
-/******** header part ********/
 
-/*** general part ***/
-header h1 {
-    font-size: 2.5em;
+/*===========================================================================
+  align material icons vertical: https://stackoverflow.com/questions/56171473/different-material-icons-styles-do-not-align
+  ===========================================================================*/
+i.material-icons,
+i.material-icons-outlined {
+    vertical-align: middle;
+    position: relative;
 }
 
-header a {
+.material-icons.md-36 {
+    font-size: 36px;
+}
+
+
+/*===========================================================================
+  markdown preview
+  ===========================================================================*/
+.row .markdown-preview {
+    overflow: auto;
+    background-color: #f0f0f0;
+    border: 1px solid white;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+}
+
+input.with-markdown-preview {
+    height: 100%;
+}
+
+/*** header and footer links ***/
+header a,
+footer a {
+    text-decoration: none;
     color: inherit;
 }
 
 header a:hover,
-header a:focus {
+header a:focus,
+footer a:hover,
+footer a:focus {
     color: inherit;
+}
+
+/******** end general settings ********/
+
+
+/******** start header part ********/
+/*** general part ***/
+header h1 {
+    font-size: 2.5em;
 }
 
 /*** project nav ***/
@@ -71,21 +119,25 @@ header a:focus {
     background: var(--cc-green-dark);
 }
 
-/******** content part ********/
-main a {
-    color: var(--cc-green);
+/*** login logout section ***/
+.login-logout-btn {
+    background-color: transparent;
+    border: 0px;
+    -webkit-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
+    -moz-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
+    box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
 }
 
-main a:hover,
-main a:focus {
-    color: var(--bs-dark);
-    text-decoration: underline;
+.login-logout-btn:active,
+.login-logout-btn:hover,
+.login-logout-btn:focus {
+    color: var(--bs-light);
 }
 
-a.btn-secondary {
-    color: #fff !important;
-}
+/******** end header part ********/
 
+
+/******** start content part ********/
 a.anchor {
     color: inherit;
 }
@@ -133,86 +185,48 @@ table td input[type="checkbox"]:first-child:last-child {
     margin-right: auto;
 }
 
-table td.right-align { text-align: right }
+table td.right-align {
+    text-align: right
+}
 
-fieldset{
+fieldset {
     border: 1px solid #333333;
 }
 
 legend {
-  color: #4CAF50;
-  font-size: 1.5em;
-  }
-  
-fieldset > fieldset{
-  margin: 1em 0 1em 0;
+    color: #4CAF50;
+    font-size: 1.5em;
 }
 
-fieldset > fieldset > legend {
+fieldset>fieldset {
+    margin: 1em 0 1em 0;
+}
+
+fieldset>fieldset>legend {
     font-size: 1em;
 }
 
-.tooltip {
-    position: relative;
-    background-color: #4CAF50;
-    border: 1px solid black;
-    width: 1em;
+.cc-tooltip {
+    cursor: pointer;
     display: inline-block;
-    text-align: center;
 }
 
-.tooltip:hover {
+.cc-tooltip:hover {
     box-shadow: 2px 2px 3px grey;
-} 
-
-/* text for the tooltip*/
-.tooltip span {
-    visibility: hidden;
-    width: auto;
-    background-color: white;
-    color: black;
-    text-align: center;
-    padding: 5px;
-    border: 1px solid black;
-    position: absolute;
-    z-index: 1;
-    left: 110%;
-    top: -5px;
-    font-size: smaller;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover span {
-    visibility: visible;
 }
 
 ul {
-    overflow: hidden; /* fix position of bullet points at the side of floating blocks
+    overflow: hidden;
+    /* fix position of bullet points at the side of floating blocks
                        * see https://stackoverflow.com/a/710264/498634 */
 }
 
-#pl-editor {
+.pl-editor {
     min-width: 1150px;
 }
-
-
-/* unstyled list without a specific type */
-ul.list-style-type-none {
-	list-style-type:none;
-	padding-left: 0;
-}
-
 
 input:focus {
     box-shadow: none !important;
 }
 
-/******** footer part ********/
-footer a {
-    color: inherit;
-}
-
-footer a:hover {
-    text-decoration: underline;
-    color: inherit;
-}
+/******** end content part ********/
