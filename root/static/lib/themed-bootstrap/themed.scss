@@ -1,0 +1,71 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+
+// colors
+$primary: #4CAF50;
+$secondary: #a0a0a0;
+$accent: #af4cab;
+$info: #4638ef;
+$green: #3df110;
+
+// misc
+$enable-negative-margins: true;
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins";
+
+// add colors to theme
+$custom-colors: (
+    "accent": $accent,
+    "secondary-light": #f6fffb
+);
+$theme-colors: map-merge($theme-colors, $custom-colors);
+$theme-colors-rgb: map-merge($theme-colors-rgb, ("accent": to-rgb($accent),));
+$utilities-text-colors: map-merge($utilities-text-colors, ("accent": rgba-css-var("accent", "text"),));
+$utilities-bg-colors: map-merge($utilities-bg-colors, ("accent": rgba-css-var("accent", "bg"),));
+
+@import "../bootstrap/scss/root";
+
+// 4. Include any optional Bootstrap CSS as needed
+@import "../bootstrap/scss/utilities";
+@import "../bootstrap/scss/reboot";
+@import "../bootstrap/scss/type";
+@import "../bootstrap/scss/images";
+@import "../bootstrap/scss/containers";
+@import "../bootstrap/scss/grid";
+@import "../bootstrap/scss/tables";
+@import "../bootstrap/scss/forms";
+@import "../bootstrap/scss/buttons";
+@import "../bootstrap/scss/transitions";
+@import "../bootstrap/scss/dropdown";
+@import "../bootstrap/scss/button-group";
+@import "../bootstrap/scss/nav";
+@import "../bootstrap/scss/navbar";
+@import "../bootstrap/scss/card";
+@import "../bootstrap/scss/accordion";
+@import "../bootstrap/scss/breadcrumb";
+@import "../bootstrap/scss/pagination";
+@import "../bootstrap/scss/badge";
+@import "../bootstrap/scss/alert";
+@import "../bootstrap/scss/progress";
+@import "../bootstrap/scss/list-group";
+@import "../bootstrap/scss/close";
+@import "../bootstrap/scss/toasts";
+@import "../bootstrap/scss/modal";
+@import "../bootstrap/scss/tooltip";
+@import "../bootstrap/scss/popover";
+@import "../bootstrap/scss/carousel";
+@import "../bootstrap/scss/spinners";
+@import "../bootstrap/scss/offcanvas";
+@import "../bootstrap/scss/placeholders";
+@import "../bootstrap/scss/helpers";
+
+// 5. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "../bootstrap/scss/utilities/api";
+
+// 6. Add additional custom code here
+
+

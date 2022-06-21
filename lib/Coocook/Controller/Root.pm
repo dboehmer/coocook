@@ -90,13 +90,12 @@ sub auto : Private {
 
     $c->stash(
         css => [
-            '/lib/bootstrap-5.1.3-dist/css/bootstrap' . ( $c->debug ? '.css' : '.min.css' ),
-            '/css/local_bootstrap_modifications.css',
+            '/lib/themed-bootstrap/themed' . ( $c->debug ? '.css' : '.min.css' ),
             '/css/material-design-icons.css',
             '/css/style.css',
         ],
         js => [
-            '/lib/bootstrap-5.1.3-dist/js/bootstrap' . ( $c->debug ? '.js' : '.min.js' ),
+            '/lib/bootstrap/dist/js/bootstrap.bundle' . ( $c->debug ? '.js' : '.min.js' ),
             '/lib/marked/marked.min.js',
             '/js/script.js',
         ],

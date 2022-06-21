@@ -34,7 +34,7 @@
     document.querySelectorAll("textarea.with-markdown-preview, input[type=text].with-markdown-preview").forEach( elem => {
         let row = elem.parentNode.parentNode;
         let col = document.createElement("div");
-        col.className = "col-sm-6";
+        col.className = "col-md-6";
         let preview = document.createElement("div");
         preview.className = "markdown-preview";
 
@@ -64,5 +64,14 @@
             preview.addEventListener("scroll", e => syncScrolling(e, elem));
         }
     });
-
 })();
+
+// Init bootstrap tooltips
+let tooltipList = [];
+
+function initTootips() {
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipList = tooltipTriggerList.map(elem => new bootstrap.Tooltip(elem));
+}
+
+initTootips();

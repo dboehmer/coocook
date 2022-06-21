@@ -1,226 +1,180 @@
-/******** general settings ********/
-
-html {
-  height: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+/******** start general settings ********/
+:root {
+    --cc-primary: var(--bs-primary);
+    --cc-green-dark: #3A8E3D;
+    --cc-green-light: #6CBF6F;
 }
 
 body {
     margin: 0;
     position: relative;
-    height: 100%;
-    color: #333333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-#container {
-    min-height: 100%;
+textarea {
+    resize: vertical;
+}
+
+.btn-sm.btn-quad {
+    padding: .25rem;
+}
+
+.btn-icon-1 {
+    width: calc(24px + 1.5rem);
+}
+
+.table colgroup+thead {
+    border-top: none !important;
+}
+
+ul.non-intended {
+    margin-left: 0px;
+    padding-left: 17px;
+}
+
+.tiny {
+    font-size: 65%;
+}
+
+.hov-under:hover,
+.hov-under:focus,
+footer a:hover,
+footer a:focus,
+.alert-link:hover,
+.alert-link:focus {
+    text-decoration: underline;
+}
+
+.md p {
+    margin: 0;
+}
+
+/*===========================================================================
+  align material icons vertical: https://stackoverflow.com/questions/56171473/different-material-icons-styles-do-not-align
+  ===========================================================================*/
+i.material-icons,
+i.material-icons-outlined {
+    vertical-align: middle;
     position: relative;
 }
 
-/******** header part ********/
+.material-icons.md-36 {
+    font-size: 36px;
+}
 
+
+/*===========================================================================
+  markdown preview
+  ===========================================================================*/
+.row .markdown-preview {
+    overflow: auto;
+    background-color: #f0f0f0;
+    border: 1px solid white;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+}
+
+input.with-markdown-preview {
+    height: 100%;
+}
+
+/*** header and footer links ***/
+header a,
+footer a {
+    text-decoration: none;
+    color: inherit;
+}
+
+header a:hover,
+header a:focus,
+footer a:hover,
+footer a:focus {
+    color: inherit;
+}
+
+/******** end general settings ********/
+
+
+/******** start header part ********/
 /*** general part ***/
-
-header {
-    margin: 0;
-    background-color: #4CAF50;
-}
-
-header nav ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-header nav li {
-    display: inline;
-}
-
-/* "Logout" must be button for POST request but style like link */
-header nav input[name="logout"]:hover,
-header nav input[name="logout"] {
-    border: 0;
-    font-family: inherit;
-    font-size:   inherit;
-    cursor: pointer;
-}
-
-/*
- * stop Firefox adding 2px to the submit button's height
- * see https://stackoverflow.com/questions/12288175/firefox-adds-2px-padding-in-a-submit-button
- */
-header nav input[name="logout"]::-moz-focus-inner { border:0; padding:0 }
-
 header h1 {
     font-size: 2.5em;
 }
 
-header p {
-    margin: 0;
-    padding: 0 0.5em 0 0.5em;
-    color: #f5f5ef;
-}
-
-header p a[href] {
-    color: #f5f5ef;
-}
-
-/*** user nav ***/
-header #user_nav {
-    height: 7em;
-    padding: 0 1.5em 0 1.5em;
-    display: flex;
-    justify-content: space-between;
-}
-
-header #h1-div {
-    align-self: center;
-}
-
-header #user_nav li {
-    padding-left: 1em;
-}
-
-header #user_nav a {
-    padding: 0;
-}
-
-header #user_nav h4 a:hover,
-header #user_nav h4 a:active {
-    color: #333333;
-}
-
-header #user_nav a:hover,
-header #user_nav a:active {
-    color: #f5f5ef;
-}
-
-header #user_nav ul {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-header #user_nav ul p + div {
-    margin-top: 1em;
-}
-
-header #user_nav ul div:only-child {
-    margin-top: 3em;
-}
-
-header #user_nav h4 {
-    margin: 0;
-    padding: 0 0.5em 0 0.5em;
-    color: #f5f5ef;
-}
-
-header #user_nav h4 a {
-    color: #f5f5ef;
-}
-
-header nav input[name="logout"] {
-    background-color: #4CAF50;
-    color: #333333;
-}
-
-header nav input[name="logout"]:active,
-header nav input[name="logout"]:hover {
-    color: #f5f5ef;
-
-    box-shadow:         0px 0px 0px grey !important;
-}
-
 /*** project nav ***/
+#project_nav .nav-link {
+    color: var(--bs-light);
+}
 
-header #project_nav a:hover {
-    background-color:#f5f5ef;
-    color: #333333;
+#project_nav a:hover,
+#project_nav a:focus {
+    background: var(--bs-light);
+    color: var(--bs-dark);
 }
 
 /*** submenu nav ***/
-header #submenu_nav a:hover,
-header #submenu_nav a.current {
-    color: #f5f5ef !important;
+#submenu_nav a:hover,
+#submenu_nav a.active,
+#submenu_nav a:focus {
+    color: var(--bs-light) !important;
+    background: var(--cc-green-dark);
 }
 
-/******** content part ********/
-
-main {
-    padding: 1.5em;
-    padding-bottom: 12em; /*necessary for position of footer*/
+/*** login logout section ***/
+.login-logout-btn {
+    background-color: transparent;
+    border: 0px;
+    -webkit-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
+    -moz-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
+    box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.0) !important;
 }
 
-a[href] {
-    text-decoration:none;
-    color: #333333;
+.login-logout-btn:active,
+.login-logout-btn:hover,
+.login-logout-btn:focus {
+    color: var(--bs-light);
 }
 
-main a[href] {
-    text-decoration:none;
-    color: #4CAF50;
-}
+/******** end header part ********/
 
-main a[href]:hover,
-main a[href]:active {
-    color: #333333;
-}
 
-a.btn-secondary {
-    color: #fff !important;
-}
-
-a.anchor {
-    color: inherit;
-}
-
-a.anchor:before {
-    content: '¶ ';
+/******** start content part ********/
+.anchor {
+    opacity: 0;
     color: grey;
-    visibility: hidden;
+    margin-left: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    -webkit-transition: opacity 200ms ease-in-out;
+    transition: opacity 200ms ease-in-out;
 }
 
-a.anchor:hover:before {
-    visibility: visible;
+h3:hover > .anchor {
+    opacity: 1;
 }
 
-abbr[title] { /* reset default Browser style with underline */
-    border-bottom:   none;
+.faq h3 p {
+    display: inline;
+}
+
+abbr[title] {
+    /* reset default Browser style with underline */
+    border-bottom: none;
     text-decoration: none;
 }
 
 code {
     background-color: LightGray;
     border-radius: 0.25em;
-    padding:       0.25em;
+    padding: 0.25em;
 }
 
-.message {
-    border: 2px solid;
-    border-radius: 0.5em;
-    padding: 0 0.5em;
-    margin:  0.5em 0;
-}
-
-.message-debug { background-color: #f5f5ef;                          color: DarkGrey; }
-.message-info  { background-color: #dfd;                             color: DarkGreen; }
-.message-warn  { background-color: orange; border-color: DarkOrange; color: black; }
-.message-error { background-color: #f55;   border-color: DarkRed;    color: black; }
-
-.inline,
-.inline * {
-    display: inline;
-}
-
-input[type="number"] {
-    text-align: right;
+button.alert-link {
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 /* <li>s with checkbox inside should not have any bullet point */
@@ -239,129 +193,48 @@ table td input[type="checkbox"]:first-child:last-child {
     margin-right: auto;
 }
 
-table td.right-align { text-align: right }
-
-select:hover, select:active {
-    box-shadow: 2px 2px 3px grey;
+table td.right-align {
+    text-align: right
 }
 
-fieldset{
+fieldset {
     border: 1px solid #333333;
 }
 
 legend {
-  color: #4CAF50;
-  font-size: 1.5em;
-  }
-  
-fieldset > fieldset{
-  margin: 1em 0 1em 0;
+    color: #4CAF50;
+    font-size: 1.5em;
 }
 
-fieldset > fieldset > legend {
+fieldset>fieldset {
+    margin: 1em 0 1em 0;
+}
+
+fieldset>fieldset>legend {
     font-size: 1em;
 }
 
-.tooltip {
-    position: relative;
-    background-color: #4CAF50;
-    border: 1px solid black;
-    width: 1em;
+.cc-tooltip {
+    cursor: pointer;
     display: inline-block;
-    text-align: center;
 }
 
-.tooltip:hover {
+.cc-tooltip:hover {
     box-shadow: 2px 2px 3px grey;
-} 
-
-/* text for the tooltip*/
-.tooltip span {
-    visibility: hidden;
-    width: auto;
-    background-color: white;
-    color: black;
-    text-align: center;
-    padding: 5px;
-    border: 1px solid black;
-    position: absolute;
-    z-index: 1;
-    left: 110%;
-    top: -5px;
-    font-size: smaller;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover span {
-    visibility: visible;
 }
 
 ul {
-    overflow: hidden; /* fix position of bullet points at the side of floating blocks
+    overflow: hidden;
+    /* fix position of bullet points at the side of floating blocks
                        * see https://stackoverflow.com/a/710264/498634 */
 }
 
-/* incognito text input fields that don't clutter the page until they are focused
- * see https://webapphuddle.com/inline-edit-design/ */
-.editable-content {
-    text-align: right;
-}
-.editable-content:not(:focus) {
-    border: 1px solid grey;
-    border-radius: 0.25em;
-    background-color: inherit;
-    box-shadow: none;
-}
-
-input[type=number].editable-content:not(:focus)::-webkit-inner-spin-button,
-input[type=number].editable-content:not(:focus)::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-}
-
-input[type=number].editable-content:not(:focus) {
-    -moz-appearance: textfield;
-}
-
-.hidden {
-    display: none;
+.pl-editor {
+    min-width: 1150px;
 }
 
 input:focus {
     box-shadow: none !important;
 }
 
-/******** footer part ********/
-
-footer {
-    background-color: #333333;
-    color: #f5f5ef;
-    position: absolute; /*necessary to position it at the bottom in all cases*/
-    bottom: 0;
-    width: 100%;
-    padding: 0.5em 1em 0.5em 1em;
-    margin: 0 auto;
-    display: inline-block;
-    line-height: 1.5;
-    height: 12em; /*adjust if there are additional links in the footer*/
-}
-
-footer nav ul {
-    list-style-type: none;
-    float: left;
-}
-
-footer nav ul:first-child {
-    padding-left: 10px;
-}
-
-footer nav h4 {
-    margin: 0;
-}
-
-footer a[href] {
-    color: inherit;
-}
-
-footer a[href]:hover {
-    text-decoration: underline;
-}
+/******** end content part ********/

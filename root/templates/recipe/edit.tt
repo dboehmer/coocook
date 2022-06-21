@@ -1,91 +1,87 @@
 
 [% escape_title( 'Recipe', recipe.name ) %]
 
-<div class="row mb-5">
-    <div class="col">
-        [% IF import_url %]
-        <form method="get" action="[% import_url %]" class="inline">
-            <button type="submit" class="btn btn-secondary"  data-toggle="tooltip" title="Import this recipe into another one of your projects">
+[% IF import_url %]<form id="import"method="get" action="[% import_url %]"></form>[% END %]
+
+<div class="my-3">
+    <div class="row gy-2">
+        <div class="btn-group offset-xxl-3 col-xxl-3 col-md-4 col-sm-6">
+            <button type="button" class="btn btn-primary dropdown-toggle[% dishes.size == 0 ? " disabled" : "" %]" data-bs-toggle="collapse" data-bs-target="#usage" aria-expanded="false" aria-controls="usage">
+    	    	Used in <span class="badge bg-light text-dark">[% dishes.size %]</span> dish[% dishes.size != 1 ? "es" : "" %]
+            </button>
+        </div>
+        [% IF public_url %]
+        <a class="btn-group text-decoration-none col-xxl-3 col-md-4 col-sm-6" href="[% public_url %]">
+            <button class="btn btn-secondary">Share link</button>
+        </a>
+        [% END;
+        IF import_url %]
+        <div class="btn-group col-xxl-3 col-md-4 col-sm-6">
+            <button type="submit" class="btn btn-secondary" form="import" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Import this recipe into another one of your projects">
                 <i class="material-icons ">import_export</i> Import into another project
             </button>
-        </form>
-        [% END %]
-        [% IF public_url %]
-        <a href="[% public_url %]" class="btn btn-secondary">Share link</a>
+        </div>
         [% END %]
     </div>
+    
+	[% IF dishes.size > 0 %]
+		<div class="collapse mt-2" id="usage">
+			<div class="card">
+				<ul class="list-group">
+				[% FOR dish IN dishes %]
+					<li class="list-group-item">[% loop.count %]. dish <a href="[% dish.url %]">[% dish.name | html %]</a> for meal <em>[% dish.meal | html %]</em> on [% display_date(dish.date, {html=>1}) %]</li>
+				[% END %]
+				</ul>
+			</div>
+		</div>
+	[% END %]	
 </div>
 
 <form method="post" action="[% update_url %]">
 
-    <div class="row">
-        <div class="col-sm-12 py-3">
-            <div class="card">
-                <div class="card-header">
-                    <h3>General information</h3>
-                </div>
-                <div class="card-body">
-                    
-                    <div class="form-group row">
-                        <label for="name" class="col-sm-2 col-form-label">Name</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="name" id="name" value="[% recipe.name | html %]">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="servings" class="col-sm-2 col-form-label">Servings</label>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control" name="servings" id="servings" value="[% recipe.servings %]">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="tags" class="col-sm-2 col-form-label">Tags</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="tags" id="tags" value="[% recipe.tags_rs.joined %]">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="preparation" class="col-sm-2 col-form-label">Preparation</label>
-                        <div class="col-sm-10">
-                            <div class="row">
-                                <div class="col-sm-6 mb-sm-0 mb-2">
-                                    <textarea class="form-control with-markdown-preview" name="preparation" id="preparation" rows="10">[% recipe.preparation | html %]</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="preparation" class="col-sm-2 col-form-label">Description</label>
-                        <div class="col-sm-10">
-                            <div class="row">
-                                <div class="col-sm-6 mb-sm-0 mb-2">
-                                    <textarea class="form-control with-markdown-preview" name="description" id="description" rows="10">[% recipe.description | html %]</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row py-3">
-                        <label for="preparation" class="col-sm-2 col-form-label"></label>
-                        <div class="col-sm-10 text-end">
-                            <button type="submit" class="btn btn-primary">Update Recipe</button>
-                        </div>
-                    </div>
-                    
+<div class="card">
+    <div class="card-header">
+        <h3>General information</h3>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md">
+                <label for="name" class="form-label">Name</label>
+                <input id="name" class="form-control" type="text" name="name" value="[% recipe.name | html %]">
+            </div>
+            <div class="col-md mt-3 mt-md-0">
+                <label for="servings" class="form-label">Servings</label>
+                <input id="servings" class="form-control" type="number" name="servings" value="[% recipe.servings %]">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="tags" class="form-label">Tags</label>
+            <input id="tags" class="form-control" type="text" name="tags" value="[% recipe.tags_rs.joined %]">
+        </div>
+        <div class="mb-3">
+            <label for="preparation" class="form-label">Preparation</label>
+            <div class="row">
+                <div class="col-md-6 mb-md-0 mb-2">
+                    <textarea id="preparation" class="form-control with-markdown-preview" name="preparation" rows="10">[% recipe.preparation | html %]</textarea>
                 </div>
             </div>
         </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <div class="row">
+                <div class="col-sm-6 mb-sm-0 mb-2">
+                    <textarea id="description" class="form-control with-markdown-preview" name="description" rows="10">[% recipe.description | html %]</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Update Recipe</button>
+        </div>
     </div>
+</div>
 
 [% INCLUDE 'includes/forms/ingredients_editor.tt' %]
 
 </form>
 
 [% INCLUDE 'includes/forms/ingredients_add.tt' %]
-
-<h2>Where <em>[% recipe.name | html %]</em> is used</h2>
-
-<ul>
-[% FOR dish IN dishes %]
-    <li>dish <a href="[% dish.url %]">[% dish.name | html %]</a> for meal <em>[% dish.meal | html %]</em> on [% display_date(dish.date, {html=>1}) %]</li>
-[% END %]
-</ul>

@@ -1,28 +1,42 @@
 [% title = faq.in_storage ? "Edit FAQ entry" : "Create new FAQ entry" %]
 
 [% IF faq %]
-    <p><a href="[% faq.url %]">Show existing FAQ entry</a></p>
+<div class="row my-3">
+    <div class="col">
+        <a class="btn btn-outline-primary" href="[% faq.url %]">Show the FAQ entry</a>
+    </div>
+</div>
 [% END %]
 
-<form method="post" action="[% submit_url %]">
-    <!-- URL fragment format regex taken from https://stackoverflow.com/a/26119120/498634 -->
-    <p>HTML anchor name: <input type="text" name="anchor" pattern="([-?/:@._~!$&'()*+,;=a-zA-Z0-9]|%[0-9a-fA-F]{2})*" value="[% faq.anchor | html %]"></p>
+<form class="my-3" method="post" action="[% submit_url %]">
 
-    <h3>Question</h3>
-    <div class="row mb-2">
-        <div class="col-sm-6 mb-sm-0 mb-2">
-            <input class="form-control with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <label for="anchor" class="form-label">HTML anchor name</label>
+            <!-- URL fragment format regex taken from https://stackoverflow.com/a/26119120/498634 -->
+            <input id="anchor" class="form-control" type="text" name="anchor" pattern="([-?/:@._~!$&'()*+,;=a-zA-Z0-9]|%[0-9a-fA-F]{2})*" value="[% faq.anchor | html %]">
+        </div>
+        <div class="mb-3">
+            <label for="question" class="form-label">Question</label>
+            <div class="row">
+                <div class="col-md-6 mb-md-0 mb-2">
+                    <input id="question" class="form-control with-markdown-preview" type="text" name="question" value="[% faq.question_md | html %]">
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="answer" class="form-label">Answer</label>
+            <div class="row">
+                <div class="col-sm-6 mb-sm-0 mb-2">
+                    <textarea id="answer" class="form-control with-markdown-preview" name="answer" rows="10">[% faq.answer_md | html %]</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">[% faq.in_storage ? 'Update' : 'Create' %] Entry</button>
         </div>
     </div>
-    
+</div>
 
-    <h3>Answer</h3>
-    <div class="row mb-2">
-        <div class="col-sm-6 mb-sm-0 mb-2">
-            <textarea class="form-control with-markdown-preview" name="answer" rows="10">[% faq.answer_md | html %]</textarea>
-        </div>
-    </div>
-    
-
-    <p><input type="submit" value="[% faq.in_storage ? 'Update' : 'Create' %]"></p>
 </form>
