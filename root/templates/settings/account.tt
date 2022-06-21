@@ -3,11 +3,11 @@
 [% IF confirm_email_change_url %]
 <div class="message message-info">
     <form method="post" action="[% confirm_email_change_url %]" name="confirm_email_change">
-    <p>
+    <div>
         You can confirm to change your email address to
         <strong>[% user.new_email_fc | html %]</strong>
-        <input type="submit" value="Confirm email change">
-    </p>
+        <input type="submit" value="Confirm email change" class="btn btn-primary">
+    </div>
     </form>
 </div>
 [% END %]
@@ -16,80 +16,86 @@
 
 <form method="post" action="[% change_display_name_url %]">
 <div class="card">
-    <div class="card-header"><h3>Change your user’s display name</h3></div>
+    <div class="card-header"><h3 class="my-2">Change your user’s display name</h3></div>
 
 <div class="card-body">
-    <p><label>Username:</label> [% user.name %]</p>
+    <div class="mb-3"><label>Username:</label> [% user.name %]</div>
 
-    <p>
-    <label for="display_name">Display name:</label>
-    <input type="text" name="display_name" value="[% user.display_name | html %]" id="display_name">
-    <input type="submit" value="Change display name">
-    </p>
+    <div class="row g-3 align-items-center mb-3">
+        <div class="col-auto">
+            <label for="display_name" class="col-form-label">Display name:</label>
+        </div>
+        <div class="col-auto">
+            <input type="text" name="display_name" value="[% user.display_name | html %]" id="display_name" class="form-control">
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Change display name" class="btn btn-primary">
+        </div>
+    </div>
 
-    <p>
+    <div>
         You can’t change your username that you use for login
         and that others use to reference your account,
         e.g. to give you permissions on their projects.
-    </p>
+    </div>
 </div>
 </div>
 </form>
 
 <div class="card my-4">
-    <div class="card-header"><h3>Change your password</h3></div>
+    <div class="card-header"><h3 class="my-2">Change your password</h3></div>
 
 <div class="card-body">
     <form method="post" action="[% change_password_url %]">
-    <div class="mb-2">
-        <input type="password" name="current_password"  placeholder="current password">
-    </div>
-    <div class="mb-2">
-        <input type="password" name="password"  placeholder="new password">
-    </div>
-    <div class="mb-2">
-        <input type="password" name="password2" placeholder="new password">
-    </div>
-    <input type="submit" value="Change password">
+        <div class="mb-3" style="max-width: 300px;">
+        <input type="password" name="current_password"  placeholder="current password" class="form-control mb-1">
+        <input type="password" name="password"  placeholder="new password" class="form-control mb-1">
+        <input type="password" name="password2" placeholder="confirm new password" class="form-control">
+        </div>
+        <input type="submit" value="Change password" class="btn btn-primary mb-3">
     </form>
-    <p>
+    <div>
         If you don’t know your current password anymore, you can
         <a href="[% recovery_url %]">request a recovery link</a>
         to set a new password.
-    </p>
+    </div>
 </div>
 </div>
 
 <div class="card my-4">
-    <div class="card-header"><h3>Change your email address</h3></div>
+    <div class="card-header"><h3 class="my-2">Change your email address</h3></div>
 
     <div class="card-body">
-        <p>
+        <div class="mb-3">
             This is the email address that you get notifications from [% name %] sent to
             and that you can use to recover your account in case you lost your password.
             The address is never displayed to other users.
-        </p>
+        </div>
 
 [% IF user.new_email_fc %]
         <form method="post" action="[% cancel_email_change_url %]" name="cancel_email_change">
-            <p>
+            <div class="mb-3">
             You’ve requested change to <strong>[% user.new_email_fc | html %]</strong>
             at [% display_datetime(user.token_created, {short=>1}) %] UTC
-                <input type="submit" value="Cancel">
-            </p>
+                <input type="submit" value="Cancel" class="btn btn-primary">
+            </div>
         </form>
 [% END %]
 
         <form method="post" action="[% change_email_url %]">
-            <p>
-                <input type="email"  value="[% user.email_fc | html %]" name="new_email" required placeholder="new email address">
-                <input type="submit" value="Change email address">
-            </p>
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-auto">
+                    <input type="email"  value="[% user.email_fc | html %]" name="new_email" required placeholder="new email address" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <input type="submit" value="Change email address" class="btn btn-primary">
+                </div>
+            </div>
         </form>
 
-        <p>
+        <div>
             You’ll receive an email to both your current and the new email address
             and need to click a link to confirm the change.
-        </p>
+        </div>
     </div>
 </div>

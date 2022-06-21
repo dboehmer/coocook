@@ -10,7 +10,7 @@
             [% link_organization(organization_user.organization, organization_user.organization_url) %] ([% organization_user.role %])
         [% IF organization_user.leave_url %]
             <form class="inline" method="post" action="[% organization_user.leave_url %]">
-                <input type="submit" value="Leave organization">
+                <input type="submit" value="Leave organization" class="btn btn-primary">
             </form>
         [% END %]
         </li>
@@ -20,19 +20,21 @@
     <p>You are not member of any organization yet.</p>
 [% END %]
 
-<div class="container-fluid">
 <form method="post" action="[% create_organization_url %]">
 <div class="card">
-    <div class="card-header"><h3>Create a new user organization</h3></div>
+    <div class="card-header"><h3 class="my-2">Create a new user organization</h3></div>
 
 <div class="card-body">
-    <p>You can pool users in organizations and grant organizations permissions on projects.
-    You will be member and owner of the new organization.</p>
+    <div class="mb-3">You can pool users in organizations and grant organizations permissions on projects.
+    You will be member and owner of the new organization.</div>
 
-    <input type="text" name="name" placeholder="organization name" pattern="[A-Za-z0-9_]+" value="[% last_input.name %]">
-
-    <input type="submit" name="create" value="Create organization">
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <input type="text" name="name" placeholder="organization name" pattern="[A-Za-z0-9_]+" value="[% last_input.name %]" class="form-control">
+        </div>
+        <div class="col-auto">
+            <input type="submit" name="create" value="Create organization" class="btn btn-primary">
+        </div>
 </div>
 </div>
 </form>
-</div>
