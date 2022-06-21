@@ -63,16 +63,21 @@ html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 					<td rowspan="[% rowspan %]">[% item.article.name | html %]</td>
 					
 					[% FOREACH ingredient IN item.ingredients %]
-						[% IF loop.index == 0 %]
-							[% INCLUDE purchase_list/snippet_dish.tt %]
+					[% '<tr>' UNLESS loop.index == 0 %]
+					<td style="text-align:right;">[% display_value_unit( ingredient.value, ingredient.unit, {html=>1} ) %]</td>
+					<td style="text-align:center;">[% ingredient.dish.meal.date.strftime('%a, %F') %]</td>
+					<td>[% ingredient.dish.meal.name | html %]</td>
+					<td>[% ingredient.dish.name | html %]</td>
+					<td>
+						<form method="post" action="[% ingredient.remove_url %]">
+							<button type="submit" class="btn btn-outline-danger btn-sm btn-quad" title="Remove from purchase list">
+								<i class="material-icons">delete_forever</i>
+							</button>
+						</form>
+					</td>
+					<td>[% IF ingredient.comment; '('; ingredient.comment | html; ')'; END %]</td>
 				</tr>
-						
-						[% ELSE %]
-				<tr>
-							[% INCLUDE purchase_list/snippet_dish.tt %]
-				</tr>
-						[% END;
-					END;
+					[% END;
 					
 					IF item.offset %]
 				<tr>	
