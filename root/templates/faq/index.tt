@@ -16,7 +16,8 @@ FOR faq IN faqs %]
     <div class="col">
         <div class="d-flex flex-wrap align-items-center">
             <h3>
-                <a class="anchor" href="#[% faq.anchor | html %]">[% faq.question_md | $Markdown %]</a>
+                <span>[% faq.question_md | $Markdown %]</span>
+                <a class="anchor" href="#[% faq.anchor | html %]" title="Permalink to this FAQ">¶</a>
             </h3>
             [% IF faq.edit_url %]
                 <form class="ms-auto" method="GET" action="[% faq.edit_url %]">

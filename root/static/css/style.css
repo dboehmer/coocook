@@ -142,35 +142,33 @@ header h1 {
 
 /******** start content part ********/
 .anchor {
-    color: inherit !important;
-    position: relative;
-}
-
-.anchor:before {
-    content: '¶ ';
+    opacity: 0;
     color: grey;
-    visibility: hidden;
-    position: absolute;
-    left: -20px;
+    margin-left: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    -webkit-transition: opacity 200ms ease-in-out;
+    transition: opacity 200ms ease-in-out;
 }
 
-.anchor:hover:before {
-    visibility: visible;
+h3:hover > .anchor {
+    opacity: 1;
 }
 
-.faq .anchor p {
+.faq h3 p {
     display: inline;
 }
 
-abbr[title] { /* reset default Browser style with underline */
-    border-bottom:   none;
+abbr[title] {
+    /* reset default Browser style with underline */
+    border-bottom: none;
     text-decoration: none;
 }
 
 code {
     background-color: LightGray;
     border-radius: 0.25em;
-    padding:       0.25em;
+    padding: 0.25em;
 }
 
 button.alert-link {
