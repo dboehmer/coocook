@@ -77,7 +77,7 @@ html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 					IF item.offset %]
 				<tr>	
 					<td colspan="4" class="text-end">
-						<small>[% display_value_unit( item.offset, ingredient.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em></small>
+						<small>[% display_value_unit( item.offset, item.unit, {html=>1, force_sign=>1} ) %] – <em>rounding difference</em></small>
 					</td>
 					<td>
 						<form name="remove-offset" method="post" action="[% item.update_offset_url %]">
