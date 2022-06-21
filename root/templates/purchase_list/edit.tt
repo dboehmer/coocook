@@ -81,7 +81,7 @@ html_title = html_title _ ' for ' _ display_date(list.date, {html=>1});
 					</td>
 					<td>
 						<form name="remove-offset" method="post" action="[% item.update_offset_url %]">
-							<button type="submit" class="btn btn-danger btn-sm btn-quad mb-1 material-icons" title="Reset rounding" name="offset" value="0">undo</button>
+							<button type="submit" class="btn btn-outline-danger btn-sm btn-quad mb-1 material-icons" title="Reset rounding" name="offset" value="0">undo</button>
 						</form>
 					</td>
 					<td></td>
