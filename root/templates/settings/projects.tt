@@ -3,14 +3,14 @@
 [% IF projects.size > 0 %]
 <p>These are all projects that you own or that you have permissions for.</p>
 
-<table>
+<table class="table">
     <thead>
         <tr>
-            <th title="Archived projects">📁</th>
-            <th title="Private projects">🔒</th>
-            <th>Name</th>
-            <th>Your role</th>
-            <th>Created</th>
+            <th title="Archived projects" scope="col">📁</th>
+            <th title="Private projects" scope="col">🔒</th>
+            <th scope="col">Name</th>
+            <th scope="col">Your role</th>
+            <th scope="col">Created</th>
         </tr>
     </thead>
     <tbody>
